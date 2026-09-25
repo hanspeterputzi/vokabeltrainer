@@ -488,8 +488,14 @@
 
     isListening = true;
     micBtn.classList.add("listening");
-    micStatus.textContent = "🎙️ Ich höre zu ...";
+    // "Ich höre zu" darf erst erscheinen, wenn die Erkennung TATSAECHLICH
+    // aktiv ist (onstart) - vorher zu sprechen wird sonst oft nicht erfasst
+    // und faelschlich als "no-speech" gemeldet, obwohl sofort gesprochen wurde.
+    micStatus.textContent = "Mikrofon wird aktiviert ...";
 
+    recognizer.onstart = () => {
+      micStatus.textContent = "🎙️ Jetzt sprechen ...";
+    };
     recognizer.onresult = (event) => {
       // Spracherkennung haengt oft einen Satzpunkt an einzelne Woerter an
       // (z.B. "Essere.") - das wuerde den exakten Textvergleich faelschlich
