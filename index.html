@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vokabeltrainer Deutsch-Italienisch</title>
+<style>
+  :root {
+    --bg: #f5f7fa;
+    --card-bg: #ffffff;
+    --text: #1b2430;
+    --muted: #64748b;
+    --border: #dce3ec;
+    --accent: #ea580c;
+    --accent-hover: #c2410c;
+    --correct: #2563eb;
+    --correct-bg: #dbeafe;
+    --wrong: #ea580c;
+    --wrong-bg: #ffedd5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px 60px;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 560px;
+  }
+  h1 {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--muted);
+    margin-bottom: 24px;
+    font-size: 0.9rem;
+  }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .card h2 {
+    font-size: 1.05rem;
+    margin: 0 0 14px;
+  }
+  .row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  input[type="text"] {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: var(--bg);
+    color: var(--text);
+  }
+  input[type="text"]:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+  }
+  select {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: var(--bg);
+    color: var(--text);
+  }
+  button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent);
+    color: white;
+    font-size: 0.95rem;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  button:hover { background: var(--accent-hover); }
+  button.secondary {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  button.secondary:hover {
+    background: var(--bg);
+    color: var(--text);
+  }
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 20px;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat .num {
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+  .stat.correct .num { color: var(--correct); }
+  .stat.wrong .num { color: var(--wrong); }
+  .stat .label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .category-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .cat-btn {
+    padding: 7px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .cat-btn:hover {
+    background: var(--bg);
+    color: var(--text);
+  }
+  .cat-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .quiz-progress {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.78rem;
+    margin-bottom: 6px;
+  }
+  .quiz-word {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 8px 0 4px;
+  }
+  .quiz-hint {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
+  .feedback {
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    font-weight: 600;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct {
+    background: var(--correct-bg);
+    color: var(--correct);
+  }
+  .feedback.wrong {
+    background: var(--wrong-bg);
+    color: var(--wrong);
+  }
+  .mic-btn {
+    flex: 0 0 auto;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 1.1rem;
+    padding: 10px 14px;
+  }
+  .mic-btn:hover {
+    background: var(--bg);
+  }
+  .mic-btn.listening {
+    background: var(--wrong-bg);
+    border-color: var(--wrong);
+    color: var(--wrong);
+  }
+  .mic-status {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.82rem;
+    margin: -4px 0 12px;
+    min-height: 1.1em;
+  }
+  .quiz-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  .quiz-buttons button { flex: 1; }
+  .word-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+  .word-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 4px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.92rem;
+    gap: 8px;
+  }
+  .word-list li:last-child { border-bottom: none; }
+  .word-list .pair {
+    min-width: 0;
+  }
+  .word-list .pair span:first-child {
+    font-weight: 600;
+  }
+  .word-list .pair span.arrow {
+    color: var(--muted);
+    margin: 0 6px;
+    font-weight: 400;
+  }
+  .cat-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1px 6px;
+    margin-top: 3px;
+  }
+  .delete-btn {
+    background: transparent;
+    color: var(--wrong);
+    border: none;
+    padding: 4px 8px;
+    font-size: 0.85rem;
+    flex: 0 0 auto;
+  }
+  .delete-btn:hover {
+    background: var(--wrong-bg);
+    border-radius: 6px;
+  }
+  .empty-msg {
+    text-align: center;
+    color: var(--muted);
+    padding: 20px 0;
+    font-size: 0.9rem;
+  }
+  .reset-row {
+    text-align: center;
+    margin-top: 8px;
+  }
+  .reset-row button {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12161d;
+      --card-bg: #1b212b;
+      --text: #edf1f7;
+      --muted: #93a0b4;
+      --border: #2b3440;
+      --accent: #fb923c;
+      --accent-hover: #f97316;
+      --correct: #60a5fa;
+      --correct-bg: #16233a;
+      --wrong: #fb923c;
+      --wrong-bg: #3a2413;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Vokabeltrainer</h1>
+  <div class="subtitle">Deutsch ⇄ Italienisch</div>
+
+  <div class="stats">
+    <div class="stat correct">
+      <div class="num" id="correctCount">0</div>
+      <div class="label">Richtig</div>
+    </div>
+    <div class="stat wrong">
+      <div class="num" id="wrongCount">0</div>
+      <div class="label">Falsch</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Wortart</h2>
+    <div class="category-bar" id="categoryBar"></div>
+  </div>
+
+  <div class="card">
+    <h2>Abfrage</h2>
+    <div id="quizArea">
+      <div class="empty-msg" id="noWordsMsg">Noch keine Vokabeln vorhanden. Füge unten welche hinzu.</div>
+      <div id="quizContent" style="display:none;">
+        <div class="quiz-hint" id="quizDirection">Deutsch → Italienisch</div>
+        <div class="quiz-progress" id="quizProgress"></div>
+        <div class="quiz-word" id="quizWord">—</div>
+        <div class="row">
+          <input type="text" id="answerInput" placeholder="Übersetzung eingeben oder sprechen..." autocomplete="off">
+          <button id="micBtn" class="mic-btn" type="button" title="Antwort sprechen">🎤</button>
+        </div>
+        <div class="mic-status" id="micStatus"></div>
+        <div class="feedback" id="feedback"></div>
+        <button id="speakBtn" class="secondary" style="display:none; width:100%; margin-bottom:10px;">🔊 Aussprache wiederholen</button>
+        <div class="quiz-buttons">
+          <button id="checkBtn">Prüfen</button>
+          <button id="nextBtn" class="secondary">Nächste Vokabel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Vokabel hinzufügen</h2>
+    <div class="row">
+      <input type="text" id="germanInput" placeholder="Deutsch">
+      <input type="text" id="italianInput" placeholder="Italienisch">
+    </div>
+    <div class="row">
+      <select id="categorySelectAdd"></select>
+    </div>
+    <button id="addBtn">Hinzufügen</button>
+  </div>
+
+  <div class="card">
+    <h2>Wortliste (<span id="wordCount">0</span>)</h2>
+    <ul class="word-list" id="wordList"></ul>
+    <div class="reset-row">
+      <button class="secondary" id="resetStatsBtn">Zähler zurücksetzen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const STORAGE_KEY = "vokabeltrainer_words";
+  const STATS_KEY = "vokabeltrainer_stats";
+  const SEED_VERSION_KEY = "vokabeltrainer_seed_version";
+  const PROGRESS_KEY = "vokabeltrainer_progress";
+  const CATEGORY_KEY = "vokabeltrainer_selected_category";
+  // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
+  // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
+  const SEED_VERSION = "2026-09-25-wortarten";
+
+  // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
+  // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
+  const CATEGORIES = ["Feste Wendungen", "Nomen", "Verben", "Adjektive", "Präpositionen", "Pronomen", "Adverbien", "Konjunktionen", "Interjektionen"];
+
+  const SEED_WORDS = [{"de": "Wie heisst du?", "it": "Come ti chiami?", "cat": "Feste Wendungen"}, {"de": "Wie heissen Sie?", "it": "Lei come si chiama?", "cat": "Feste Wendungen"}, {"de": "Wie schreibt man das?", "it": "Come si scrive?", "cat": "Feste Wendungen"}, {"de": "Wie sagt man auf Italienisch...?", "it": "Come si dice in italiano?", "cat": "Feste Wendungen"}, {"de": "Das habe ich nicht verstanden", "it": "Questo non l'ho capito", "cat": "Feste Wendungen"}, {"de": "Sprich italienisch mit mir", "it": "Parla italiano con me", "cat": "Feste Wendungen"}, {"de": "Sprechen Sie italienisch mit mir", "it": "Parli italiano con me", "cat": "Feste Wendungen"}, {"de": "Sprich langsamer", "it": "Parla più piano", "cat": "Feste Wendungen"}, {"de": "Könnten Sie das bitte wiederholen?", "it": "Può ripetere per favore?", "cat": "Feste Wendungen"}, {"de": "Ich weiss es nicht", "it": "Non lo so", "cat": "Feste Wendungen"}, {"de": "Woher kommst du?", "it": "Di dove sei?", "cat": "Feste Wendungen"}, {"de": "Woher kommen Sie?", "it": "Di dov'è?", "cat": "Feste Wendungen"}, {"de": "Was machst du beruflich?", "it": "Che lavoro fai?", "cat": "Feste Wendungen"}, {"de": "Was macht er/sie beruflich?", "it": "Che lavoro fa?", "cat": "Feste Wendungen"}, {"de": "Welche Sprachen sprichst du?", "it": "Che lingue parli?", "cat": "Feste Wendungen"}, {"de": "Welche Sprachen sprechen Sie?", "it": "Che lingue parla?", "cat": "Feste Wendungen"}, {"de": "Wie geht es dir?", "it": "Come stai? / Come va?", "cat": "Feste Wendungen"}, {"de": "Wie geht es Ihnen?", "it": "Come sta?", "cat": "Feste Wendungen"}, {"de": "Mir geht es gut", "it": "Sto bene", "cat": "Feste Wendungen"}, {"de": "Es geht soweit / nicht schlecht", "it": "Così così / non c'è male", "cat": "Feste Wendungen"}, {"de": "Was ist los?", "it": "Ma cosa c'è?", "cat": "Feste Wendungen"}, {"de": "Das stimmt nicht", "it": "Non è vero", "cat": "Feste Wendungen"}, {"de": "Das ist falsch", "it": "Questo è sbagliato", "cat": "Feste Wendungen"}, {"de": "Es tut mir leid", "it": "Mi dispiace", "cat": "Feste Wendungen"}, {"de": "Wollen wir duzen?", "it": "Vogliamo darci del tu?", "cat": "Feste Wendungen"}, {"de": "Ich stelle dir Katia vor", "it": "Ti presento Katia", "cat": "Feste Wendungen"}, {"de": "Ich bin aus Chur", "it": "Sono di Coira", "cat": "Feste Wendungen"}, {"de": "Wie lautet Ihre Telefonnummer?", "it": "Qual è il Suo numero di telefono?", "cat": "Feste Wendungen"}, {"de": "Welche Zahl ist es?", "it": "Che numero è?", "cat": "Feste Wendungen"}, {"de": "Bis zum nächsten Mal", "it": "Alla prossima volta", "cat": "Feste Wendungen"}, {"de": "Bis bald (mehrere Tage)", "it": "A presto", "cat": "Feste Wendungen"}, {"de": "Bis später (gleicher Tag)", "it": "A dopo", "cat": "Feste Wendungen"}, {"de": "Guten Tag (formell)", "it": "Buongiorno", "cat": "Feste Wendungen"}, {"de": "Guten Tag, Herr Doktor", "it": "Buongiorno, dottore", "cat": "Feste Wendungen"}, {"de": "Guten Tag, Doktor Visconti (dottore ohne e)", "it": "Buongiorno dottor Visconti", "cat": "Feste Wendungen"}, {"de": "Guten Tag (unter Kollegen)", "it": "Salve / ciao", "cat": "Feste Wendungen"}, {"de": "Guten Abend (formell, nach 18 Uhr)", "it": "Buona sera", "cat": "Feste Wendungen"}, {"de": "Schönen Abend (unter Kollegen)", "it": "Buona serata", "cat": "Feste Wendungen"}, {"de": "Schönen Nachmittag", "it": "Buon pomeriggio", "cat": "Feste Wendungen"}, {"de": "Wir sehen uns", "it": "Ci vediamo", "cat": "Feste Wendungen"}, {"de": "Auf Wiedersehen", "it": "Arrivederci", "cat": "Feste Wendungen"}, {"de": "Gute Nacht (nach 22 Uhr)", "it": "Buonanotte", "cat": "Feste Wendungen"}, {"de": "Freut mich / Angenehm!", "it": "Piacere!", "cat": "Feste Wendungen"}, {"de": "Sehr erfreut, förmlich (m/w)", "it": "Molto lieto / molta lieta", "cat": "Feste Wendungen"}, {"de": "Duzen", "it": "dare il tu", "cat": "Feste Wendungen"}, {"de": "Siezen", "it": "dare il Lei", "cat": "Feste Wendungen"}, {"de": "Bekanntschaft machen", "it": "fare conoscenza", "cat": "Feste Wendungen"}, {"de": "Nein, ich bin nicht Franzose", "it": "No, non sono francese", "cat": "Feste Wendungen"}, {"de": "Erste Kontakte", "it": "i primi contatti", "cat": "Nomen"}, {"de": "Buchstabe", "it": "la lettera", "cat": "Nomen"}, {"de": "Wort / Wörter", "it": "la parola / le parole", "cat": "Nomen"}, {"de": "Adresse", "it": "l'indirizzo", "cat": "Nomen"}, {"de": "Frau", "it": "la signora", "cat": "Nomen"}, {"de": "Herr", "it": "il signore", "cat": "Nomen"}, {"de": "Alphabet", "it": "l'alfabeto", "cat": "Nomen"}, {"de": "Vorname", "it": "il nome", "cat": "Nomen"}, {"de": "Nachname", "it": "il cognome", "cat": "Nomen"}, {"de": "Krokodil", "it": "il coccodrillo", "cat": "Nomen"}, {"de": "Mutter", "it": "la madre", "cat": "Nomen"}, {"de": "Vater", "it": "il padre", "cat": "Nomen"}, {"de": "Tisch", "it": "il tavolo", "cat": "Nomen"}, {"de": "Stuhl", "it": "la sedia", "cat": "Nomen"}, {"de": "Bett", "it": "il letto", "cat": "Nomen"}, {"de": "Messer", "it": "il coltello", "cat": "Nomen"}, {"de": "Gabel", "it": "la forchetta", "cat": "Nomen"}, {"de": "Löffel", "it": "il cucchiaio", "cat": "Nomen"}, {"de": "Abendessen", "it": "la cena", "cat": "Nomen"}, {"de": "Mittagessen", "it": "il pranzo", "cat": "Nomen"}, {"de": "Kino (Ausnahme: il)", "it": "il cinema", "cat": "Nomen"}, {"de": "Gitarre", "it": "la chitarra", "cat": "Nomen"}, {"de": "Katze", "it": "il gatto", "cat": "Nomen"}, {"de": "Hund", "it": "il cane", "cat": "Nomen"}, {"de": "Eule", "it": "il gufo", "cat": "Nomen"}, {"de": "Arbeitsplatz", "it": "il posto di lavoro", "cat": "Nomen"}, {"de": "Dorf", "it": "il villaggio", "cat": "Nomen"}, {"de": "Stadt", "it": "la città", "cat": "Nomen"}, {"de": "Altstadt", "it": "la città vecchia", "cat": "Nomen"}, {"de": "Zeitung", "it": "il giornale", "cat": "Nomen"}, {"de": "Kaffee", "it": "il caffè", "cat": "Nomen"}, {"de": "Glace", "it": "il gelato", "cat": "Nomen"}, {"de": "Käse", "it": "il formaggio", "cat": "Nomen"}, {"de": "Zucker", "it": "lo zucchero", "cat": "Nomen"}, {"de": "Spaghetti", "it": "gli spaghetti", "cat": "Nomen"}, {"de": "Kamm", "it": "il pettine", "cat": "Nomen"}, {"de": "Telefon", "it": "il telefono", "cat": "Nomen"}, {"de": "Mobiltelefon", "it": "il cellulare", "cat": "Nomen"}, {"de": "Festnetztelefon", "it": "il telefono fisso", "cat": "Nomen"}, {"de": "Maschine", "it": "la macchina", "cat": "Nomen"}, {"de": "Herz", "it": "il cuore", "cat": "Nomen"}, {"de": "Fussball", "it": "il calcio", "cat": "Nomen"}, {"de": "Begegnung", "it": "l'incontro", "cat": "Nomen"}, {"de": "Kind / Kinder", "it": "il bambino / i bambini", "cat": "Nomen"}, {"de": "Klang", "it": "il suono", "cat": "Nomen"}, {"de": "Schlüssel", "it": "la chiave", "cat": "Nomen"}, {"de": "Töff", "it": "la moto", "cat": "Nomen"}, {"de": "Velo", "it": "la bici", "cat": "Nomen"}, {"de": "Foto", "it": "la foto", "cat": "Nomen"}, {"de": "Buchhandlung", "it": "la libreria", "cat": "Nomen"}, {"de": "Party / Fest", "it": "la festa", "cat": "Nomen"}, {"de": "Vorstellung / Präsentation", "it": "la presentazione", "cat": "Nomen"}, {"de": "Beispiel", "it": "l'esempio", "cat": "Nomen"}, {"de": "Übung / Übungen", "it": "l'esercizio / gli esercizi", "cat": "Nomen"}, {"de": "Dialog / Dialoge", "it": "il dialogo / i dialoghi", "cat": "Nomen"}, {"de": "Spass", "it": "il divertimento", "cat": "Nomen"}, {"de": "Wiederholung", "it": "il ripasso", "cat": "Nomen"}, {"de": "Lektion", "it": "la lezione", "cat": "Nomen"}, {"de": "Zahl", "it": "il numero", "cat": "Nomen"}, {"de": "Telefonnummer", "it": "il numero di telefono", "cat": "Nomen"}, {"de": "Geburtsdatum", "it": "la data di nascita", "cat": "Nomen"}, {"de": "Seite", "it": "la pagina", "cat": "Nomen"}, {"de": "Einmal / Mal", "it": "la volta", "cat": "Nomen"}, {"de": "Farbe", "it": "il colore", "cat": "Nomen"}, {"de": "Freund / Freundin", "it": "l'amico / l'amica", "cat": "Nomen"}, {"de": "Die italienische Sprache", "it": "la lingua italiana", "cat": "Nomen"}, {"de": "Das Rätoromanische", "it": "il romancio", "cat": "Nomen"}, {"de": "Koch / Köchin", "it": "il cuoco / la cuoca", "cat": "Nomen"}, {"de": "Arzt", "it": "il medico / il dottore", "cat": "Nomen"}, {"de": "Doktor", "it": "il dottore", "cat": "Nomen"}, {"de": "Lehrer/Professor", "it": "il professore", "cat": "Nomen"}, {"de": "Fussballer", "it": "il calciatore", "cat": "Nomen"}, {"de": "Arbeiter / Arbeiterin", "it": "l'operaio / l'operaia", "cat": "Nomen"}, {"de": "Verkäufer / Verkäuferin", "it": "il commesso / la commessa", "cat": "Nomen"}, {"de": "Lehrer / Lehrerin", "it": "l'insegnante", "cat": "Nomen"}, {"de": "Chauffeur / Chauffeuse (Wort gleich für m/w)", "it": "l'autista", "cat": "Nomen"}, {"de": "Anwalt / Anwältin", "it": "l'avvocato / l'avvocatessa", "cat": "Nomen"}, {"de": "Journalist / Journalistin", "it": "il giornalista / la giornalista", "cat": "Nomen"}, {"de": "Krankenpfleger / Krankenschwester", "it": "l'infermiere / l'infermiera", "cat": "Nomen"}, {"de": "Sekretär / Sekretärin", "it": "il segretario / la segretaria", "cat": "Nomen"}, {"de": "Kosmetiker/in (Wort gleich für m/w)", "it": "l'estetista", "cat": "Nomen"}, {"de": "Architekt/in (Wort gleich für m/w)", "it": "l'architetto", "cat": "Nomen"}, {"de": "Chirurg / Chirurgin", "it": "il chirurgo / la chirurga", "cat": "Nomen"}, {"de": "Montag", "it": "il lunedì", "cat": "Nomen"}, {"de": "Dienstag", "it": "il martedì", "cat": "Nomen"}, {"de": "Mittwoch", "it": "il mercoledì", "cat": "Nomen"}, {"de": "Donnerstag", "it": "il giovedì", "cat": "Nomen"}, {"de": "Freitag", "it": "il venerdì", "cat": "Nomen"}, {"de": "Samstag", "it": "il sabato", "cat": "Nomen"}, {"de": "Sonntag", "it": "la domenica", "cat": "Nomen"}, {"de": "Sommer", "it": "l'estate", "cat": "Nomen"}, {"de": "Herbst", "it": "l'autunno", "cat": "Nomen"}, {"de": "Winter", "it": "l'inverno", "cat": "Nomen"}, {"de": "Frühling", "it": "la primavera", "cat": "Nomen"}, {"de": "Heute", "it": "oggi", "cat": "Nomen"}, {"de": "Schweiz", "it": "la Svizzera / svizzero-tedesco / lo svizzero / la svizzera", "cat": "Nomen"}, {"de": "Italien", "it": "l'Italia / italiano / l'italiano / l'italiana", "cat": "Nomen"}, {"de": "Deutschland", "it": "la Germania / tedesco / il tedesco / la tedesca", "cat": "Nomen"}, {"de": "Frankreich", "it": "la Francia / francese / il francese / la francese", "cat": "Nomen"}, {"de": "Österreich", "it": "l'Austria / austriaco / l'austriaco / l'austriaca", "cat": "Nomen"}, {"de": "Spanien", "it": "la Spagna / spagnolo / lo spagnolo / la spagnola", "cat": "Nomen"}, {"de": "Portugal", "it": "il Portogallo / portoghese / il portoghese / la portoghese", "cat": "Nomen"}, {"de": "England", "it": "l'Inghilterra / inglese / l'inglese (Sg.) / gli inglesi (Pl.)", "cat": "Nomen"}, {"de": "Argentinien", "it": "l'Argentina / argentino / l'argentino / l'argentina", "cat": "Nomen"}, {"de": "Niederlande", "it": "l'Olanda / olandese / l'olandese", "cat": "Nomen"}, {"de": "Schweden", "it": "la Svezia / svedese / lo svedese / la svedese", "cat": "Nomen"}, {"de": "Griechenland", "it": "la Grecia / greco / il greco / la greca", "cat": "Nomen"}, {"de": "Amerika (USA)", "it": "l'America / americano / l'americano / l'americana", "cat": "Nomen"}, {"de": "Russland", "it": "la Russia / russo / il russo / la russa", "cat": "Nomen"}, {"de": "Paris", "it": "Parigi", "cat": "Nomen"}, {"de": "Rom", "it": "Roma", "cat": "Nomen"}, {"de": "London", "it": "Londra", "cat": "Nomen"}, {"de": "Berlin", "it": "Berlino", "cat": "Nomen"}, {"de": "Madrid", "it": "Madrid", "cat": "Nomen"}, {"de": "Wien", "it": "Vienna", "cat": "Nomen"}, {"de": "Bern", "it": "Berna", "cat": "Nomen"}, {"de": "Zürich", "it": "Zurigo", "cat": "Nomen"}, {"de": "Lissabon", "it": "Lisbona", "cat": "Nomen"}, {"de": "sein", "it": "essere", "cat": "Verben"}, {"de": "haben", "it": "avere", "cat": "Verben"}, {"de": "tun / machen", "it": "fare", "cat": "Verben"}, {"de": "gehen", "it": "andare", "cat": "Verben"}, {"de": "sprechen", "it": "parlare", "cat": "Verben"}, {"de": "wohnen", "it": "abitare", "cat": "Verben"}, {"de": "sich nennen / heissen", "it": "chiamarsi", "cat": "Verben"}, {"de": "da sein (nur 3. Person)", "it": "esserci: c'è (Sg.) / ci sono (Pl.)", "cat": "Verben"}, {"de": "schauen", "it": "guardare", "cat": "Verben"}, {"de": "denken", "it": "pensare", "cat": "Verben"}, {"de": "zuhören", "it": "ascoltare", "cat": "Verben"}, {"de": "lernen / studieren", "it": "studiare", "cat": "Verben"}, {"de": "waschen", "it": "lavare", "cat": "Verben"}, {"de": "zurückkommen", "it": "tornare", "cat": "Verben"}, {"de": "essen", "it": "mangiare", "cat": "Verben"}, {"de": "grüssen", "it": "salutare", "cat": "Verben"}, {"de": "lieben", "it": "amare", "cat": "Verben"}, {"de": "kochen", "it": "cucinare", "cat": "Verben"}, {"de": "einkaufen", "it": "comprare", "cat": "Verben"}, {"de": "erwarten", "it": "aspettare", "cat": "Verben"}, {"de": "singen", "it": "cantare", "cat": "Verben"}, {"de": "schwimmen", "it": "nuotare", "cat": "Verben"}, {"de": "drehen", "it": "girare", "cat": "Verben"}, {"de": "fahren", "it": "guidare", "cat": "Verben"}, {"de": "überprüfen", "it": "verificare", "cat": "Verben"}, {"de": "arbeiten", "it": "lavorare", "cat": "Verben"}, {"de": "komplettieren", "it": "completare", "cat": "Verben"}, {"de": "bleiben / sich fühlen", "it": "stare", "cat": "Verben"}, {"de": "vorstellen", "it": "presentare", "cat": "Verben"}, {"de": "leben", "it": "vivere", "cat": "Verben"}, {"de": "schreiben", "it": "scrivere", "cat": "Verben"}, {"de": "nehmen", "it": "prendere", "cat": "Verben"}, {"de": "schlafen", "it": "dormire", "cat": "Verben"}, {"de": "verstehen", "it": "capire", "cat": "Verben"}, {"de": "fragen", "it": "chiedere", "cat": "Verben"}, {"de": "wiederholen", "it": "ripetere", "cat": "Verben"}, {"de": "wissen", "it": "sapere", "cat": "Verben"}, {"de": "geboren sein (passato prossimo)", "it": "sono nato/a – sei nato/a – è nato/a", "cat": "Verben"}, {"de": "Erste/r (Ordinalzahl)", "it": "primo", "cat": "Adjektive"}, {"de": "Alt", "it": "vecchio", "cat": "Adjektive"}, {"de": "Neu", "it": "nuovo", "cat": "Adjektive"}, {"de": "Wahr", "it": "vero", "cat": "Adjektive"}, {"de": "Richtig", "it": "giusto", "cat": "Adjektive"}, {"de": "Falsch", "it": "scorretto / scorretta (gebräuchlicher: sbagliato)", "cat": "Adjektive"}, {"de": "Exakt", "it": "esatto", "cat": "Adjektive"}, {"de": "Gleich", "it": "stesso", "cat": "Adjektive"}, {"de": "Laut", "it": "forte / ad alta voce", "cat": "Adjektive"}, {"de": "Leise", "it": "silenzioso", "cat": "Adjektive"}, {"de": "Fremd", "it": "straniero", "cat": "Adjektive"}, {"de": "Interessant", "it": "interessante", "cat": "Adjektive"}, {"de": "Heiss", "it": "caldo", "cat": "Adjektive"}, {"de": "Kalt", "it": "freddo", "cat": "Adjektive"}, {"de": "Schwarz", "it": "nero", "cat": "Adjektive"}, {"de": "Weiss", "it": "bianco", "cat": "Adjektive"}, {"de": "Rot", "it": "rosso", "cat": "Adjektive"}, {"de": "Blau", "it": "blu", "cat": "Adjektive"}, {"de": "Gelb", "it": "giallo", "cat": "Adjektive"}, {"de": "Grün", "it": "verde", "cat": "Adjektive"}, {"de": "Orange", "it": "arancione", "cat": "Adjektive"}, {"de": "Braun", "it": "marrone", "cat": "Adjektive"}, {"de": "Violett", "it": "viola", "cat": "Adjektive"}, {"de": "Grau", "it": "grigio", "cat": "Adjektive"}, {"de": "Türkis", "it": "turchese", "cat": "Adjektive"}, {"de": "Schweizerdeutsch", "it": "svizzero-tedesco", "cat": "Adjektive"}, {"de": "italienisch", "it": "italiano", "cat": "Adjektive"}, {"de": "deutsch", "it": "tedesco", "cat": "Adjektive"}, {"de": "französisch", "it": "francese", "cat": "Adjektive"}, {"de": "österreichisch", "it": "austriaco", "cat": "Adjektive"}, {"de": "spanisch", "it": "spagnolo", "cat": "Adjektive"}, {"de": "portugiesisch", "it": "portoghese", "cat": "Adjektive"}, {"de": "englisch", "it": "inglese", "cat": "Adjektive"}, {"de": "argentinisch", "it": "argentino", "cat": "Adjektive"}, {"de": "holländisch", "it": "olandese", "cat": "Adjektive"}, {"de": "schwedisch", "it": "svedese", "cat": "Adjektive"}, {"de": "griechisch", "it": "greco", "cat": "Adjektive"}, {"de": "amerikanisch", "it": "americano", "cat": "Adjektive"}, {"de": "russisch", "it": "russo", "cat": "Adjektive"}, {"de": "nach (z.B. irgendwohin gehen)", "it": "a", "cat": "Präpositionen"}, {"de": "von / aus", "it": "di", "cat": "Präpositionen"}, {"de": "mit (mir)", "it": "con (me)", "cat": "Präpositionen"}, {"de": "oben / über", "it": "sopra", "cat": "Präpositionen"}, {"de": "unten / unter", "it": "sotto", "cat": "Präpositionen"}, {"de": "ich", "it": "io / mi", "cat": "Pronomen"}, {"de": "du", "it": "tu / te", "cat": "Pronomen"}, {"de": "er", "it": "lui", "cat": "Pronomen"}, {"de": "sie / Sie (formell)", "it": "lei / Lei", "cat": "Pronomen"}, {"de": "mein (m/w)", "it": "mio / mia", "cat": "Pronomen"}, {"de": "dein", "it": "tuo", "cat": "Pronomen"}, {"de": "Ihre (formell)", "it": "Suo", "cat": "Pronomen"}, {"de": "sein / ihr", "it": "suo / sua", "cat": "Pronomen"}, {"de": "man / sich", "it": "si", "cat": "Pronomen"}, {"de": "dieser/dieses (m)", "it": "questo", "cat": "Pronomen"}, {"de": "diese (w)", "it": "questa", "cat": "Pronomen"}, {"de": "Sehr", "it": "molto", "cat": "Adverbien"}, {"de": "Gut", "it": "bene", "cat": "Adverbien"}, {"de": "Sehr gut", "it": "benissimo / molto bene", "cat": "Adverbien"}, {"de": "Schlecht", "it": "male", "cat": "Adverbien"}, {"de": "Sehr schlecht", "it": "malissimo / molto male", "cat": "Adverbien"}, {"de": "Auch / Ich auch", "it": "anche / anch'io", "cat": "Adverbien"}, {"de": "Nur", "it": "solo", "cat": "Adverbien"}, {"de": "Nur ein bisschen", "it": "solo un po'", "cat": "Adverbien"}, {"de": "Jetzt", "it": "adesso", "cat": "Adverbien"}, {"de": "Genau / tatsächlich", "it": "proprio", "cat": "Adverbien"}, {"de": "Leider", "it": "purtroppo", "cat": "Adverbien"}, {"de": "Dagegen / hingegen", "it": "invece", "cat": "Adverbien"}, {"de": "Heute", "it": "oggi", "cat": "Adverbien"}, {"de": "Plus / mehr", "it": "più", "cat": "Adverbien"}, {"de": "Minus / weniger", "it": "meno", "cat": "Adverbien"}, {"de": "Rechts", "it": "a destra", "cat": "Adverbien"}, {"de": "Links", "it": "a sinistra", "cat": "Adverbien"}, {"de": "Dann", "it": "poi", "cat": "Adverbien"}, {"de": "Wie", "it": "come", "cat": "Adverbien"}, {"de": "Wieviele?", "it": "quanti?", "cat": "Adverbien"}, {"de": "Ach ja", "it": "ah già", "cat": "Adverbien"}, {"de": "Von hier", "it": "di qui", "cat": "Adverbien"}, {"de": "Und", "it": "e", "cat": "Konjunktionen"}, {"de": "Oder", "it": "o", "cat": "Konjunktionen"}, {"de": "Aber", "it": "però", "cat": "Konjunktionen"}, {"de": "Wenn", "it": "quando", "cat": "Konjunktionen"}, {"de": "Was / dass", "it": "che", "cat": "Konjunktionen"}, {"de": "Freut mich!", "it": "Piacere!", "cat": "Interjektionen"}, {"de": "Aber nein!", "it": "Ma no!", "cat": "Interjektionen"}, {"de": "Entschuldigung", "it": "Scusi", "cat": "Interjektionen"}, {"de": "Bitte / gerne (nach Dank)", "it": "Prego", "cat": "Interjektionen"}, {"de": "Bitte (als Bitte)", "it": "Per favore", "cat": "Interjektionen"}];
+
+  let words = loadWords();
+  let stats = loadStats();
+  let progress = loadProgress(); // { "<Kategorie>": naechsterIndex }
+  let selectedCategory = localStorage.getItem(CATEGORY_KEY) || "Alle";
+  let currentQuiz = null; // { word, direction: 'de-it' }
+
+  // --- Persistence ---
+  function loadWords() {
+    try {
+      const storedVersion = localStorage.getItem(SEED_VERSION_KEY);
+      if (storedVersion !== SEED_VERSION) {
+        // Neue Quelldatei: komplette Liste ersetzen, statt nur zu ergaenzen.
+        localStorage.setItem(SEED_VERSION_KEY, SEED_VERSION);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED_WORDS));
+        return SEED_WORDS.slice();
+      }
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : SEED_WORDS.slice();
+    } catch (e) {
+      return SEED_WORDS.slice();
+    }
+  }
+  function saveWords() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(words));
+  }
+  function loadStats() {
+    try {
+      const raw = localStorage.getItem(STATS_KEY);
+      return raw ? JSON.parse(raw) : { correct: 0, wrong: 0 };
+    } catch (e) {
+      return { correct: 0, wrong: 0 };
+    }
+  }
+  function saveStats() {
+    localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+  }
+  function loadProgress() {
+    try {
+      const raw = localStorage.getItem(PROGRESS_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+  function saveProgress() {
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+  }
+
+  // --- DOM refs ---
+  const germanInput = document.getElementById("germanInput");
+  const italianInput = document.getElementById("italianInput");
+  const categorySelectAdd = document.getElementById("categorySelectAdd");
+  const addBtn = document.getElementById("addBtn");
+  const wordList = document.getElementById("wordList");
+  const wordCount = document.getElementById("wordCount");
+  const correctCountEl = document.getElementById("correctCount");
+  const wrongCountEl = document.getElementById("wrongCount");
+  const noWordsMsg = document.getElementById("noWordsMsg");
+  const quizContent = document.getElementById("quizContent");
+  const quizWord = document.getElementById("quizWord");
+  const quizDirection = document.getElementById("quizDirection");
+  const quizProgress = document.getElementById("quizProgress");
+  const answerInput = document.getElementById("answerInput");
+  const checkBtn = document.getElementById("checkBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const feedback = document.getElementById("feedback");
+  const resetStatsBtn = document.getElementById("resetStatsBtn");
+  const speakBtn = document.getElementById("speakBtn");
+  const categoryBar = document.getElementById("categoryBar");
+  const micBtn = document.getElementById("micBtn");
+  const micStatus = document.getElementById("micStatus");
+
+  // --- Sprachausgabe (Italienisch) ---
+  let lastSpokenText = "";
+
+  function speakItalian(text) {
+    if (!text || !("speechSynthesis" in window)) return;
+    lastSpokenText = text;
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "it-IT";
+      const voices = window.speechSynthesis.getVoices();
+      const itVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith("it"));
+      if (itVoice) utterance.voice = itVoice;
+      window.speechSynthesis.speak(utterance);
+      speakBtn.style.display = "block";
+    } catch (e) {
+      // Sprachausgabe im Browser nicht verfuegbar - kein Blocker fuer den Trainer.
+    }
+  }
+
+  speakBtn.addEventListener("click", () => speakItalian(lastSpokenText));
+
+  // --- Spracherkennung (mündliche Antwort statt Tippen) ---
+  const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let isListening = false;
+
+  if (!SpeechRecognitionCtor) {
+    micBtn.disabled = true;
+    micStatus.textContent = "Spracherkennung wird von diesem Browser nicht unterstützt – bitte Antwort eintippen.";
+  }
+
+  micBtn.addEventListener("click", () => {
+    if (!SpeechRecognitionCtor || !currentQuiz || isListening || checkBtn.disabled) return;
+    const recognizer = new SpeechRecognitionCtor();
+    recognizer.lang = "it-IT";
+    recognizer.interimResults = false;
+    recognizer.maxAlternatives = 1;
+
+    isListening = true;
+    micBtn.classList.add("listening");
+    micStatus.textContent = "🎙️ Ich höre zu ...";
+
+    recognizer.onresult = (event) => {
+      // Spracherkennung haengt oft einen Satzpunkt an einzelne Woerter an
+      // (z.B. "Essere.") - das wuerde den exakten Textvergleich faelschlich
+      // scheitern lassen, deshalb hier entfernen.
+      const transcript = event.results[0][0].transcript.replace(/[.,!?]+$/, "").trim();
+      answerInput.value = transcript;
+      micStatus.textContent = "Erkannt: \"" + transcript + "\"";
+    };
+    recognizer.onerror = (event) => {
+      micStatus.textContent = "Spracherkennung fehlgeschlagen (" + event.error + "). Bitte erneut versuchen oder eintippen.";
+    };
+    recognizer.onend = () => {
+      isListening = false;
+      micBtn.classList.remove("listening");
+      if (answerInput.value.trim() && !checkBtn.disabled) {
+        checkAnswer();
+      }
+    };
+    try {
+      recognizer.start();
+    } catch (e) {
+      isListening = false;
+      micBtn.classList.remove("listening");
+      micStatus.textContent = "Mikrofon konnte nicht gestartet werden.";
+    }
+  });
+
+  // --- Rendering ---
+  function renderStats() {
+    correctCountEl.textContent = stats.correct;
+    wrongCountEl.textContent = stats.wrong;
+  }
+
+  function renderCategoryBar() {
+    categoryBar.innerHTML = "";
+    const names = ["Alle"].concat(CATEGORIES);
+    names.forEach(name => {
+      const count = name === "Alle" ? words.length : words.filter(w => w.cat === name).length;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "cat-btn" + (name === selectedCategory ? " active" : "");
+      btn.textContent = name + " (" + count + ")";
+      btn.addEventListener("click", () => selectCategory(name));
+      categoryBar.appendChild(btn);
+    });
+  }
+
+  function selectCategory(name) {
+    if (name === selectedCategory) return;
+    selectedCategory = name;
+    localStorage.setItem(CATEGORY_KEY, name);
+    renderCategoryBar();
+    currentQuiz = null;
+    repeatQueued = false;
+    nextQuiz();
+  }
+
+  function renderCategorySelectAdd() {
+    categorySelectAdd.innerHTML = "";
+    CATEGORIES.forEach(name => {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      categorySelectAdd.appendChild(opt);
+    });
+  }
+
+  function renderWordList() {
+    wordList.innerHTML = "";
+    wordCount.textContent = words.length;
+    words.forEach((w, idx) => {
+      const li = document.createElement("li");
+      const pair = document.createElement("div");
+      pair.className = "pair";
+      pair.innerHTML = "<div><span>" + escapeHtml(w.de) + "</span><span class=\"arrow\">→</span><span>" + escapeHtml(w.it) + "</span></div><span class=\"cat-badge\">" + escapeHtml(w.cat || "Sonstige") + "</span>";
+      const delBtn = document.createElement("button");
+      delBtn.className = "delete-btn";
+      delBtn.textContent = "Löschen";
+      delBtn.addEventListener("click", () => deleteWord(idx));
+      li.appendChild(pair);
+      li.appendChild(delBtn);
+      wordList.appendChild(li);
+    });
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function renderQuizVisibility() {
+    if (words.length === 0) {
+      noWordsMsg.style.display = "block";
+      quizContent.style.display = "none";
+    } else {
+      noWordsMsg.style.display = "none";
+      quizContent.style.display = "block";
+    }
+  }
+
+  // --- Italienischer Artikel: Heuristik nach Endung/Anlaut ---
+  const ARTICLE_PREFIXES = /^(il|lo|la|l'|i|gli|le|un|uno|una|un')\s/i;
+  const FEMININE_O_EXCEPTIONS = new Set(["mano", "radio", "foto", "moto", "dinamo", "biro", "eco"]);
+  const MASCULINE_A_EXCEPTIONS = new Set(["poeta", "pilota", "papa", "atleta", "collega", "monarca"]);
+  // haeufige feminine Woerter auf -e, wo die Endung selbst keine sichere
+  // Geschlechtsbestimmung erlaubt (ca. haelfte aller -e Nomen ist maskulin)
+  const FEMININE_E_COMMON = new Set([
+    "chiave", "classe", "notte", "gente", "neve", "nave", "parte", "fonte",
+    "arte", "luce", "croce", "voce", "legge", "valle", "torre", "nube",
+    "febbre", "carne", "pelle", "estate", "fame", "sete", "salute", "calce",
+    "veste", "mole", "sorte", "morte", "fede", "sede", "rete",
+  ]);
+  const S_IMPURA = /^(s[bcdfglmnpqrtv]|z|gn|pn|ps|x|y)/i;
+  const VOWEL = /^[aeiouàèéìòù]/i;
+
+  // Schritt 1: grammatisches Geschlecht schaetzen (Endung + kleine Ausnahmelisten)
+  function guessGender(lower) {
+    if (/ma$/.test(lower)) return "m";                     // problema, cinema, clima ...
+    if (/(tore|sore|dore)$/.test(lower)) return "m";        // professore, dottore ...
+    if (/(zione|sione|gione)$/.test(lower)) return "f";
+    if (/(anza|enza)$/.test(lower)) return "f";             // importanza, esperienza ...
+    if (/udine$/.test(lower)) return "f";                   // abitudine, solitudine ...
+    if (/(tà|tù)$/.test(lower)) return "f";
+    if (/ie$/.test(lower)) return "f";
+    if (/o$/.test(lower)) return FEMININE_O_EXCEPTIONS.has(lower) ? "f" : "m";
+    if (/a$/.test(lower)) return MASCULINE_A_EXCEPTIONS.has(lower) ? "m" : "f";
+    if (/e$/.test(lower)) return FEMININE_E_COMMON.has(lower) ? "f" : "m";
+    return "m";                                             // Konsonant: unsicher, Default
+  }
+
+  // haeufige Nomen, die zufaellig wie Verb-Infinitive auf -are/-ere/-ire enden
+  const NOUN_VERB_LOOKALIKES = new Set(["mare", "altare", "calamare"]);
+
+  // Schritt 2: aus Geschlecht + Anlaut die konkrete Artikelform ableiten
+  function guessArticolo(word) {
+    const w = word.trim();
+    if (!w || w.includes(" ")) return null;               // nur Einzelwoerter
+    if (ARTICLE_PREFIXES.test(w + " ")) return null;       // Artikel schon vorhanden
+    const lower = w.toLowerCase();
+    if (/(are|ere|ire)$/.test(lower) && !NOUN_VERB_LOOKALIKES.has(lower)) return null; // Verb-Infinitiv
+    if (/ista$/.test(lower)) return null;                  // epizoen (il/la ...ista)
+    if (/mente$/.test(lower)) return null;                 // Adverb
+
+    if (VOWEL.test(lower)) return "l'" + w;                // Elision gilt fuer beide Geschlechter
+    const gender = guessGender(lower);
+    if (gender === "f") return "la " + w;
+    return (S_IMPURA.test(lower) ? "lo " : "il ") + w;
+  }
+
+  function applyArticleGuess() {
+    const guess = guessArticolo(italianInput.value);
+    if (guess && guess !== italianInput.value.trim()) {
+      italianInput.value = guess;
+    }
+  }
+  italianInput.addEventListener("blur", applyArticleGuess);
+
+  // --- Word management ---
+  function addWord() {
+    const de = germanInput.value.trim();
+    applyArticleGuess();
+    const it = italianInput.value.trim();
+    if (!de || !it) return;
+    const cat = categorySelectAdd.value || CATEGORIES[0];
+    words.push({ de, it, cat });
+    saveWords();
+    germanInput.value = "";
+    italianInput.value = "";
+    germanInput.focus();
+    renderWordList();
+    renderCategoryBar();
+    renderQuizVisibility();
+    if (!currentQuiz) {
+      nextQuiz();
+    }
+  }
+
+  function deleteWord(idx) {
+    const removed = words[idx];
+    words.splice(idx, 1);
+    saveWords();
+    renderWordList();
+    renderCategoryBar();
+    renderQuizVisibility();
+    if (currentQuiz && removed && currentQuiz.word.de === removed.de && currentQuiz.word.it === removed.it) {
+      nextQuiz();
+    }
+  }
+
+  // --- Quiz logic ---
+  let repeatQueued = false;
+
+  function activePool() {
+    if (selectedCategory === "Alle") return words;
+    return words.filter(w => w.cat === selectedCategory);
+  }
+
+  function nextQuiz() {
+    feedback.className = "feedback";
+    feedback.textContent = "";
+    answerInput.value = "";
+    checkBtn.disabled = false;
+    answerInput.disabled = false;
+    micBtn.disabled = !SpeechRecognitionCtor;
+    speakBtn.style.display = "none";
+
+    const pool = activePool();
+
+    if (pool.length === 0) {
+      currentQuiz = null;
+      repeatQueued = false;
+      quizWord.textContent = words.length === 0 ? "—" : "Keine Vokabeln in dieser Wortart";
+      quizProgress.textContent = "";
+      return;
+    }
+
+    const currentStillExists = currentQuiz && pool.some(
+      w => w.de === currentQuiz.word.de && w.it === currentQuiz.word.it
+    );
+    if (repeatQueued && currentStillExists) {
+      answerInput.focus();
+      return;
+    }
+    repeatQueued = false;
+
+    let idx = progress[selectedCategory] || 0;
+    if (idx >= pool.length) idx = 0;
+    const word = pool[idx];
+    progress[selectedCategory] = (idx + 1) % pool.length;
+    saveProgress();
+
+    currentQuiz = { word, direction: "de-it" };
+
+    quizDirection.textContent = "Deutsch → Italienisch";
+    quizWord.textContent = word.de;
+    quizProgress.textContent = selectedCategory + " · Vokabel " + (idx + 1) + " / " + pool.length;
+    answerInput.focus();
+  }
+
+  function checkAnswer() {
+    if (!currentQuiz) return;
+    const userAnswer = answerInput.value.trim().toLowerCase();
+    if (!userAnswer) return;
+
+    const correctAnswer = currentQuiz.direction === "de-it"
+      ? currentQuiz.word.it
+      : currentQuiz.word.de;
+
+    const isCorrect = userAnswer === correctAnswer.trim().toLowerCase();
+
+    speakItalian(correctAnswer);
+
+    if (isCorrect) {
+      stats.correct++;
+      repeatQueued = false;
+      feedback.className = "feedback show correct";
+      feedback.textContent = "Richtig!";
+    } else {
+      stats.wrong++;
+      repeatQueued = true;
+      feedback.className = "feedback show wrong";
+      feedback.textContent = "Falsch. Richtige Antwort: " + correctAnswer + " (wird nochmals abgefragt)";
+    }
+    saveStats();
+    renderStats();
+    checkBtn.disabled = true;
+    answerInput.disabled = true;
+    micBtn.disabled = true;
+  }
+
+  function resetStats() {
+    stats = { correct: 0, wrong: 0 };
+    saveStats();
+    renderStats();
+  }
+
+  // --- Events ---
+  addBtn.addEventListener("click", addWord);
+  [germanInput, italianInput].forEach(inp => {
+    inp.addEventListener("keydown", e => {
+      if (e.key === "Enter") addWord();
+    });
+  });
+
+  checkBtn.addEventListener("click", checkAnswer);
+  answerInput.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      if (checkBtn.disabled) {
+        nextQuiz();
+      } else {
+        checkAnswer();
+      }
+    }
+  });
+  nextBtn.addEventListener("click", nextQuiz);
+  resetStatsBtn.addEventListener("click", resetStats);
+
+  // --- Init ---
+  renderCategorySelectAdd();
+  renderCategoryBar();
+  renderStats();
+  renderWordList();
+  renderQuizVisibility();
+  if (words.length > 0) nextQuiz();
+})();
+</script>
+</body>
+</html>
