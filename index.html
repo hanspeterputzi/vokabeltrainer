@@ -63,6 +63,7 @@
   }
   input[type="text"] {
     flex: 1;
+    min-width: 0;
     padding: 10px 12px;
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -76,6 +77,7 @@
   }
   select {
     flex: 1;
+    min-width: 0;
     padding: 10px 12px;
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -322,6 +324,13 @@
     text-align: center;
   }
   .g-expl.show { display: block; }
+  .conj-row { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
+  .conj-row label { flex: 0 0 64px; padding-top: 11px; text-align: right; color: var(--muted); font-size: 0.9rem; }
+  .conj-field { flex: 1; min-width: 0; }
+  .conj-field input { width: 100%; }
+  .conj-field input.ok { border-color: var(--correct); background: var(--correct-bg); }
+  .conj-field input.bad { border-color: var(--wrong); background: var(--wrong-bg); }
+  .conj-sol { color: var(--wrong); font-size: 0.8rem; min-height: 0; margin-top: 2px; }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #12161d;
@@ -375,7 +384,20 @@
         <button id="speakBtn" class="secondary" style="display:none; width:100%; margin-bottom:10px;">🔊 Aussprache wiederholen</button>
         <div class="quiz-buttons">
           <button id="checkBtn">Prüfen</button>
+          <button id="showBtn" class="secondary" type="button">Zeigen</button>
           <button id="nextBtn" class="secondary">Nächste Vokabel</button>
+        </div>
+      </div>
+      <div id="conjContent" style="display:none;">
+        <div class="quiz-hint">Konjugiere im Präsens</div>
+        <div class="quiz-progress" id="conjProgress"></div>
+        <div class="quiz-word" id="conjVerb">—</div>
+        <div id="conjGrid" style="margin-top:14px;"></div>
+        <div class="feedback" id="conjFeedback"></div>
+        <div class="quiz-buttons">
+          <button id="conjCheckBtn" type="button">Prüfen</button>
+          <button id="conjShowBtn" class="secondary" type="button">Zeigen</button>
+          <button id="conjNextBtn" class="secondary" type="button">Nächstes Verb</button>
         </div>
       </div>
     </div>
@@ -602,6 +624,12 @@
       btn.addEventListener("click", () => selectCategory(name));
       categoryBar.appendChild(btn);
     });
+    const cbtn = document.createElement("button");
+    cbtn.type = "button";
+    cbtn.className = "cat-btn" + (selectedCategory === "Konjugation" ? " active" : "");
+    cbtn.textContent = "Konjugation (" + CONJ_VERBS.length + ")";
+    cbtn.addEventListener("click", () => selectCategory("Konjugation"));
+    categoryBar.appendChild(cbtn);
   }
 
   function selectCategory(name) {
@@ -611,7 +639,8 @@
     renderCategoryBar();
     currentQuiz = null;
     repeatQueued = false;
-    nextQuiz();
+    renderQuizVisibility();
+    if (name === "Konjugation") conjNext(); else nextQuiz();
   }
 
   function renderCategorySelectAdd() {
@@ -649,6 +678,9 @@
   }
 
   function renderQuizVisibility() {
+    const conj = selectedCategory === "Konjugation";
+    document.getElementById("conjContent").style.display = conj ? "block" : "none";
+    if (conj) { noWordsMsg.style.display = "none"; quizContent.style.display = "none"; return; }
     if (words.length === 0) {
       noWordsMsg.style.display = "block";
       quizContent.style.display = "none";
@@ -756,6 +788,7 @@
   }
 
   function nextQuiz() {
+    if (selectedCategory === "Konjugation") return;
     feedback.className = "feedback";
     feedback.textContent = "";
     answerInput.value = "";
@@ -1193,12 +1226,166 @@
   tabVocab.addEventListener("click", () => showTab("vocab"));
   tabGrammar.addEventListener("click", () => showTab("grammar"));
 
+  // --- "Zeigen": Loesung anzeigen fuer unbekannte Woerter ---
+  const showBtn = document.getElementById("showBtn");
+  showBtn.addEventListener("click", () => {
+    if (!currentQuiz || checkBtn.disabled) return;
+    const ans = currentQuiz.word.it;
+    speakItalian(ans);
+    repeatQueued = true;
+    feedback.className = "feedback show wrong";
+    feedback.textContent = "Lösung: " + ans + " (wird nochmals abgefragt)";
+    checkBtn.disabled = true;
+    answerInput.disabled = true;
+    micBtn.disabled = true;
+  });
+
+  // --- Konjugation (Praesens): Verb vorgegeben, alle 6 Formen eintippen ---
+  const CONJ_VERBS = [{"inf": "andare", "de": "gehen", "f": ["vado", "vai", "va", "andiamo", "andate", "vanno"]}, {"inf": "avere", "de": "haben", "f": ["ho", "hai", "ha", "abbiamo", "avete", "hanno"]}, {"inf": "chiamarsi", "de": "heissen", "f": ["mi chiamo", "ti chiami", "si chiama", "ci chiamiamo", "vi chiamate", "si chiamano"]}, {"inf": "essere", "de": "sein", "f": ["sono", "sei", "è", "siamo", "siete", "sono"]}, {"inf": "parlare", "de": "sprechen", "f": ["parlo", "parli", "parla", "parliamo", "parlate", "parlano"]}, {"inf": "fare", "de": "tun/machen", "f": ["faccio", "fai", "fa", "facciamo", "fate", "fanno"]}, {"inf": "abitare", "de": "wohnen", "f": ["abito", "abiti", "abita", "abitiamo", "abitate", "abitano"]}, {"inf": "rispondere", "de": "antworten", "f": ["rispondo", "rispondi", "risponde", "rispondiamo", "rispondete", "rispondono"]}, {"inf": "lavorare", "de": "arbeiten", "f": ["lavoro", "lavori", "lavora", "lavoriamo", "lavorate", "lavorano"]}, {"inf": "intervistare", "de": "befragen", "f": ["intervisto", "intervisti", "intervista", "intervistiamo", "intervistate", "intervistano"]}, {"inf": "stare", "de": "bleiben/sich fühlen", "f": ["sto", "stai", "sta", "stiamo", "state", "stanno"]}, {"inf": "avere bisogno di", "de": "brauchen", "f": ["ho bisogno di", "hai bisogno di", "ha bisogno di", "abbiamo bisogno di", "avete bisogno di", "hanno bisogno di"]}, {"inf": "pensare", "de": "denken", "f": ["penso", "pensi", "pensa", "pensiamo", "pensate", "pensano"]}, {"inf": "girare", "de": "drehen", "f": ["giro", "giri", "gira", "giriamo", "girate", "girano"]}, {"inf": "comprare", "de": "einkaufen", "f": ["compro", "compri", "compra", "compriamo", "comprate", "comprano"]}, {"inf": "aspettare", "de": "erwarten", "f": ["aspetto", "aspetti", "aspetta", "aspettiamo", "aspettate", "aspettano"]}, {"inf": "mangiare", "de": "essen", "f": ["mangio", "mangi", "mangia", "mangiamo", "mangiate", "mangiano"]}, {"inf": "guidare", "de": "fahren", "f": ["guido", "guidi", "guida", "guidiamo", "guidate", "guidano"]}, {"inf": "chiedere", "de": "fragen", "f": ["chiedo", "chiedi", "chiede", "chiediamo", "chiedete", "chiedono"]}, {"inf": "dare", "de": "geben", "f": ["do", "dai", "dà", "diamo", "date", "danno"]}, {"inf": "salutare", "de": "grüssen", "f": ["saluto", "saluti", "saluta", "salutiamo", "salutate", "salutano"]}, {"inf": "evidenziare", "de": "hervorheben", "f": ["evidenzio", "evidenzi", "evidenzia", "evidenziamo", "evidenziate", "evidenziano"]}, {"inf": "conoscere", "de": "kennen", "f": ["conosco", "conosci", "conosce", "conosciamo", "conoscete", "conoscono"]}, {"inf": "cucinare", "de": "kochen", "f": ["cucino", "cucini", "cucina", "cuciniamo", "cucinate", "cucinano"]}, {"inf": "completare", "de": "komplettieren", "f": ["completo", "completi", "completa", "completiamo", "completate", "completano"]}, {"inf": "vivere", "de": "leben", "f": ["vivo", "vivi", "vive", "viviamo", "vivete", "vivono"]}, {"inf": "studiare", "de": "lernen/studieren", "f": ["studio", "studi", "studia", "studiamo", "studiate", "studiano"]}, {"inf": "amare", "de": "lieben", "f": ["amo", "ami", "ama", "amiamo", "amate", "amano"]}, {"inf": "cancellare", "de": "löschen", "f": ["cancello", "cancelli", "cancella", "cancelliamo", "cancellate", "cancellano"]}, {"inf": "prendere", "de": "nehmen", "f": ["prendo", "prendi", "prende", "prendiamo", "prendete", "prendono"]}, {"inf": "ordinare", "de": "ordnen", "f": ["ordino", "ordini", "ordina", "ordiniamo", "ordinate", "ordinano"]}, {"inf": "spremere", "de": "pressen, Saft", "f": ["spremo", "spremi", "spreme", "spremiamo", "spremete", "spremono"]}, {"inf": "indovinare", "de": "raten", "f": ["indovino", "indovini", "indovina", "indoviniamo", "indovinate", "indovinano"]}, {"inf": "guardare", "de": "schauen", "f": ["guardo", "guardi", "guarda", "guardiamo", "guardate", "guardano"]}, {"inf": "dormire", "de": "schlafen", "f": ["dormo", "dormi", "dorme", "dormiamo", "dormite", "dormono"]}, {"inf": "scrivere", "de": "schreiben", "f": ["scrivo", "scrivi", "scrive", "scriviamo", "scrivete", "scrivono"]}, {"inf": "nuotare", "de": "schwimmen", "f": ["nuoto", "nuoti", "nuota", "nuotiamo", "nuotate", "nuotano"]}, {"inf": "lavorare in proprio", "de": "selbständig sein", "f": ["lavoro in proprio", "lavori in proprio", "lavora in proprio", "lavoriamo in proprio", "lavorate in proprio", "lavorano in proprio"]}, {"inf": "inviare", "de": "senden", "f": ["invio", "invii", "invia", "inviamo", "inviate", "inviano"]}, {"inf": "cantare", "de": "singen", "f": ["canto", "canti", "canta", "cantiamo", "cantate", "cantano"]}, {"inf": "giocare", "de": "spielen", "f": ["gioco", "giochi", "gioca", "giochiamo", "giocate", "giocano"]}, {"inf": "cercare", "de": "suchen", "f": ["cerco", "cerchi", "cerca", "cerchiamo", "cercate", "cercano"]}, {"inf": "verificare", "de": "überprüfen", "f": ["verifico", "verifichi", "verifica", "verifichiamo", "verificate", "verificano"]}, {"inf": "tradurre", "de": "übersetzen", "f": ["traduco", "traduci", "traduce", "traduciamo", "traducete", "traducono"]}, {"inf": "sottolineare", "de": "unterstreichen", "f": ["sottolineo", "sottolinei", "sottolinea", "sottolineiamo", "sottolineate", "sottolineano"]}, {"inf": "capire", "de": "verstehen", "f": ["capisco", "capisci", "capisce", "capiamo", "capite", "capiscono"]}, {"inf": "presentare", "de": "vorstellen", "f": ["mi presento", "ti presenti / le presento (Sie)", "si presenta", "ci presentiamo", "vi presentate", "si presentano"]}, {"inf": "scegliere", "de": "wählen", "f": ["scelgo", "scegli", "sceglie", "scegliamo", "scegliete", "scelgono"]}, {"inf": "lavare", "de": "waschen", "f": ["lavo", "lavi", "lava", "laviamo", "lavate", "lavano"]}, {"inf": "ripetere", "de": "wiederholen", "f": ["ripeto", "ripeti", "ripete", "ripetiamo", "ripetete", "ripetono"]}, {"inf": "sapere", "de": "wissen", "f": ["so", "sai", "sa", "sappiamo", "sapete", "sanno"]}, {"inf": "ascoltare", "de": "zuhören", "f": ["ascolto", "ascolti", "ascolta", "ascoltiamo", "ascoltate", "ascoltano"]}, {"inf": "tornare", "de": "zurückkommen", "f": ["torno", "torni", "torna", "torniamo", "tornate", "tornano"]}];
+  const CONJ_PRON = ["io", "tu", "lui/lei", "noi", "voi", "loro"];
+  const CONJ_CLITIC = /^(mi|ti|si|ci|vi) /;
+  const conjEl = {
+    verb: document.getElementById("conjVerb"),
+    progress: document.getElementById("conjProgress"),
+    grid: document.getElementById("conjGrid"),
+    feedback: document.getElementById("conjFeedback"),
+    check: document.getElementById("conjCheckBtn"),
+    show: document.getElementById("conjShowBtn"),
+    next: document.getElementById("conjNextBtn"),
+  };
+  let conjCurrent = null; // { v, idx }
+  let conjRepeat = false;
+  let conjDone = false;
+  let conjInputs = [];
+  let conjSols = [];
+
+  function conjNorm(s) {
+    return s.trim().toLowerCase().replace(/[’‘`´]/g, "'").replace(/\s+/g, " ");
+  }
+  // Alternativen mit " / " erlaubt, Klammerzusaetze zaehlen nicht; reflexives Pronomen optional
+  function conjOk(user, form) {
+    const u = conjNorm(user);
+    if (!u) return false;
+    return form.split(" / ").map(v => conjNorm(v.replace(/\s*\([^)]*\)/g, ""))).some(
+      v => u === v || u.replace(CONJ_CLITIC, "") === v.replace(CONJ_CLITIC, "")
+    );
+  }
+
+  function conjBuildGrid() {
+    conjEl.grid.innerHTML = "";
+    conjInputs = [];
+    conjSols = [];
+    CONJ_PRON.forEach((p, i) => {
+      const row = document.createElement("div");
+      row.className = "conj-row";
+      const lab = document.createElement("label");
+      lab.textContent = p;
+      const wrap = document.createElement("div");
+      wrap.className = "conj-field";
+      const inp = document.createElement("input");
+      inp.type = "text";
+      inp.autocomplete = "off";
+      inp.autocapitalize = "off";
+      inp.setAttribute("autocorrect", "off");
+      inp.spellcheck = false;
+      inp.addEventListener("keydown", e => {
+        if (e.key !== "Enter") return;
+        e.preventDefault();
+        if (conjDone) conjNext();
+        else if (i < 5) conjInputs[i + 1].focus();
+        else conjCheck();
+      });
+      const sol = document.createElement("div");
+      sol.className = "conj-sol";
+      wrap.appendChild(inp);
+      wrap.appendChild(sol);
+      row.appendChild(lab);
+      row.appendChild(wrap);
+      conjEl.grid.appendChild(row);
+      conjInputs.push(inp);
+      conjSols.push(sol);
+    });
+  }
+
+  function conjNext() {
+    if (!conjInputs.length) conjBuildGrid();
+    conjDone = false;
+    conjEl.feedback.className = "feedback";
+    conjEl.feedback.textContent = "";
+    conjInputs.forEach((inp, i) => {
+      inp.value = "";
+      inp.disabled = false;
+      inp.classList.remove("ok", "bad");
+      conjSols[i].textContent = "";
+    });
+    conjEl.check.disabled = false;
+    conjEl.show.disabled = false;
+    if (conjRepeat && conjCurrent) {
+      conjRepeat = false;
+    } else {
+      let idx = progress["Konjugation"] || 0;
+      if (idx >= CONJ_VERBS.length) idx = 0;
+      conjCurrent = { v: CONJ_VERBS[idx], idx };
+      progress["Konjugation"] = (idx + 1) % CONJ_VERBS.length;
+      saveProgress();
+    }
+    conjEl.verb.textContent = conjCurrent.v.inf + " (" + conjCurrent.v.de + ")";
+    conjEl.progress.textContent = "Konjugation · Verb " + (conjCurrent.idx + 1) + " / " + CONJ_VERBS.length;
+    conjInputs[0].focus();
+  }
+
+  function conjFinish() {
+    conjDone = true;
+    conjInputs.forEach(inp => { inp.disabled = true; });
+    conjEl.check.disabled = true;
+    conjEl.show.disabled = true;
+  }
+
+  function conjCheck() {
+    if (!conjCurrent || conjDone) return;
+    const v = conjCurrent.v;
+    let ok = 0;
+    conjInputs.forEach((inp, i) => {
+      const good = conjOk(inp.value, v.f[i]);
+      inp.classList.add(good ? "ok" : "bad");
+      if (good) ok++; else conjSols[i].textContent = "→ " + v.f[i];
+    });
+    if (ok === 6) {
+      conjRepeat = false;
+      conjEl.feedback.className = "feedback show correct";
+      conjEl.feedback.textContent = "Richtig!";
+    } else {
+      conjRepeat = true;
+      conjEl.feedback.className = "feedback show wrong";
+      conjEl.feedback.textContent = ok + " von 6 richtig (wird nochmals abgefragt)";
+    }
+    conjFinish();
+  }
+
+  function conjShow() {
+    if (!conjCurrent || conjDone) return;
+    conjCurrent.v.f.forEach((f, i) => {
+      conjInputs[i].value = f;
+      conjInputs[i].classList.remove("ok", "bad");
+      conjSols[i].textContent = "";
+    });
+    conjRepeat = true;
+    conjEl.feedback.className = "feedback show wrong";
+    conjEl.feedback.textContent = "Lösung angezeigt (wird nochmals abgefragt)";
+    conjFinish();
+  }
+
+  conjEl.check.addEventListener("click", conjCheck);
+  conjEl.show.addEventListener("click", conjShow);
+  conjEl.next.addEventListener("click", conjNext);
+
   // --- Init ---
   renderCategorySelectAdd();
   renderCategoryBar();
   renderWordList();
   renderQuizVisibility();
-  if (words.length > 0) nextQuiz();
+  if (selectedCategory === "Konjugation") conjNext();
+  else if (words.length > 0) nextQuiz();
   gRenderTopics();
   gEl.explainBody.innerHTML = gTopic().explain;
   showTab(lsGet(TAB_KEY, "vocab"));
