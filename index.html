@@ -930,7 +930,7 @@
       feedback.textContent = fuzzy ? "Richtig! (erkannt: \u201e" + userAnswer + "\u201c, richtig: " + correctAnswer + ")" : "Richtig!";
     } else {
       stats.wrong++;
-      repeatQueued = true;
+      repeatQueued = !currentFromReview; // in der Wiederholungsrunde zaehlt nur der erste Versuch
       addReview(selectedCategory, { de: currentQuiz.word.de, it: currentQuiz.word.it });
       feedback.className = "feedback show wrong";
       feedback.textContent = "Falsch (erkannt: \u201e" + answerInput.value.trim() + "\u201c). Richtige Antwort: " + correctAnswer + " (wird nochmals abgefragt)";
@@ -1309,7 +1309,7 @@
     if (!currentQuiz || checkBtn.disabled) return;
     const ans = currentQuiz.word.it;
     speakItalian(ans);
-    repeatQueued = true;
+    repeatQueued = !currentFromReview;
     addReview(selectedCategory, { de: currentQuiz.word.de, it: currentQuiz.word.it });
     feedback.className = "feedback show wrong";
     feedback.textContent = "Lösung: " + ans + " (wird nochmals abgefragt)";
@@ -1455,7 +1455,7 @@
       conjEl.feedback.className = "feedback show correct";
       conjEl.feedback.textContent = "Richtig!";
     } else {
-      conjRepeat = true;
+      conjRepeat = !conjFromReview;
       addReview("Konjugation", { de: v.de, it: v.inf });
       conjEl.feedback.className = "feedback show wrong";
       conjEl.feedback.textContent = ok + " von 6 richtig (wird nochmals abgefragt)";
@@ -1470,7 +1470,7 @@
       conjInputs[i].classList.remove("ok", "bad");
       conjSols[i].textContent = "";
     });
-    conjRepeat = true;
+    conjRepeat = !conjFromReview;
     addReview("Konjugation", { de: conjCurrent.v.de, it: conjCurrent.v.inf });
     conjEl.feedback.className = "feedback show wrong";
     conjEl.feedback.textContent = "Lösung angezeigt (wird nochmals abgefragt)";
