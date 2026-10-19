@@ -843,7 +843,9 @@
     // gleichermassen - Spracherkennung haengt sie manchmal faelschlich an
     // (z.B. "Essere.") oder laesst sie weg, und Antworten wie "Come si
     // scrive?" sollen auch ohne mitgesprochenes/-getipptes "?" gelten.
-    const normalizeForCompare = (s) => s.trim().toLowerCase().replace(/[.,!?]+$/, "");
+    // Leerzeichen, Apostrophe und Bindestriche zaehlen nicht: die Spracherkennung
+    // schreibt z.B. "buona notte" statt "Buonanotte".
+    const normalizeForCompare = (s) => s.trim().toLowerCase().replace(/[’‘`´]/g, "'").replace(/[.,!?]+$/, "").replace(/[\s'\-]+/g, "");
     const isCorrect = normalizeForCompare(userAnswer) === normalizeForCompare(correctAnswer);
 
     speakItalian(correctAnswer);
