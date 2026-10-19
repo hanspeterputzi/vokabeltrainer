@@ -474,6 +474,7 @@
   let stats = loadStats();
   let progress = loadProgress(); // { "<Kategorie>": naechsterIndex }
   let selectedCategory = localStorage.getItem(CATEGORY_KEY) || "Alle";
+  let voiceAnswers = []; // Alternativen der letzten Spracheingabe (leer bei getippter Antwort)
   let currentQuiz = null; // { word, direction: 'de-it' }
 
   // --- Persistence ---
@@ -575,7 +576,7 @@
     const recognizer = new SpeechRecognitionCtor();
     recognizer.lang = "it-IT";
     recognizer.interimResults = false;
-    recognizer.maxAlternatives = 1;
+    recognizer.maxAlternatives = 5;
 
     isListening = true;
     micBtn.classList.add("listening");
@@ -590,6 +591,9 @@
     recognizer.onresult = (event) => {
       const transcript = event.results[0][0].transcript.trim();
       answerInput.value = transcript;
+      // alle Erkennungs-Alternativen merken: die richtige steht oft auf Platz 2-5
+      voiceAnswers = [];
+      for (let i = 0; i < event.results[0].length; i++) voiceAnswers.push(event.results[0][i].transcript.trim());
       micStatus.textContent = "Erkannt: \"" + transcript + "\"";
     };
     recognizer.onerror = (event) => {
@@ -787,11 +791,33 @@
     return words.filter(w => w.cat === selectedCategory);
   }
 
+  function editDistance(a, b) {
+    const prev = [];
+    for (let j = 0; j <= b.length; j++) prev[j] = j;
+    for (let i = 1; i <= a.length; i++) {
+      let diag = prev[0];
+      prev[0] = i;
+      for (let j = 1; j <= b.length; j++) {
+        const tmp = prev[j];
+        prev[j] = Math.min(prev[j] + 1, prev[j - 1] + 1, diag + (a[i - 1] === b[j - 1] ? 0 : 1));
+        diag = tmp;
+      }
+    }
+    return prev[b.length];
+  }
+  // Toleranz nur fuer laengere Antworten: bis 5 Zeichen exakt, bis 14 ein Fehler, darueber zwei
+  function closeEnough(a, b) {
+    const n = Math.max(a.length, b.length);
+    if (n <= 5) return a === b;
+    return editDistance(a, b) <= (n <= 14 ? 1 : 2);
+  }
+
   function nextQuiz() {
     if (selectedCategory === "Konjugation") return;
     feedback.className = "feedback";
     feedback.textContent = "";
     answerInput.value = "";
+    voiceAnswers = [];
     checkBtn.disabled = false;
     answerInput.disabled = false;
     micBtn.disabled = !SpeechRecognitionCtor;
@@ -833,6 +859,7 @@
   function checkAnswer() {
     if (!currentQuiz) return;
     const userAnswer = answerInput.value.trim().toLowerCase();
+    const spoken = voiceAnswers.slice();
     if (!userAnswer) return;
 
     const correctAnswer = currentQuiz.direction === "de-it"
@@ -847,8 +874,14 @@
     // Bei mehreren Loesungen ("Salve / ciao") genuegt eine davon; Klammerzusaetze sind optional.
     const candidates = [correctAnswer].concat(correctAnswer.split(" / "));
     candidates.slice().forEach(c => candidates.push(c.replace(/\s*\([^)]*\)/g, "")));
-    const given = normalizeForCompare(userAnswer);
-    const isCorrect = candidates.some(c => normalizeForCompare(c) === given);
+    const heard = [userAnswer].concat(spoken);
+    let isCorrect = heard.some(h => candidates.some(c => normalizeForCompare(c) === normalizeForCompare(h)));
+    // Nur bei Spracheingabe: kleine Erkennungsfehler ("Poira" statt "Coira") verzeihen
+    let fuzzy = false;
+    if (!isCorrect && spoken.length) {
+      fuzzy = heard.some(h => candidates.some(c => closeEnough(normalizeForCompare(h), normalizeForCompare(c))));
+      isCorrect = fuzzy;
+    }
 
     speakItalian(correctAnswer);
 
@@ -856,7 +889,7 @@
       stats.correct++;
       repeatQueued = false;
       feedback.className = "feedback show correct";
-      feedback.textContent = "Richtig!";
+      feedback.textContent = fuzzy ? "Richtig! (erkannt: \u201e" + userAnswer + "\u201c, richtig: " + correctAnswer + ")" : "Richtig!";
     } else {
       stats.wrong++;
       repeatQueued = true;
@@ -878,6 +911,7 @@
   });
 
   checkBtn.addEventListener("click", checkAnswer);
+  answerInput.addEventListener("input", () => { voiceAnswers = []; }); // getippt = streng pruefen
   answerInput.addEventListener("keydown", e => {
     if (e.key === "Enter") {
       if (checkBtn.disabled) {
