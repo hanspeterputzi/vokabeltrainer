@@ -352,16 +352,6 @@
 
   <div id="vocabView">
 
-  <div class="stats">
-    <div class="stat correct">
-      <div class="num" id="correctCount">0</div>
-      <div class="label">Richtig</div>
-    </div>
-    <div class="stat wrong">
-      <div class="num" id="wrongCount">0</div>
-      <div class="label">Falsch</div>
-    </div>
-  </div>
 
   <div class="card">
     <h2>Wortart</h2>
@@ -406,24 +396,10 @@
   <div class="card">
     <h2>Wortliste (<span id="wordCount">0</span>)</h2>
     <ul class="word-list" id="wordList"></ul>
-    <div class="reset-row">
-      <button class="secondary" id="resetStatsBtn">Zähler zurücksetzen</button>
-    </div>
   </div>
   </div><!-- /vocabView -->
 
   <div id="grammarView" style="display:none;">
-    <div class="stats">
-      <div class="stat correct">
-        <div class="num" id="gCorrectCount">0</div>
-        <div class="label">Richtig</div>
-      </div>
-      <div class="stat wrong">
-        <div class="num" id="gWrongCount">0</div>
-        <div class="label">Falsch</div>
-      </div>
-    </div>
-
     <div class="card">
       <h2>Thema</h2>
       <div class="category-bar" id="gTopicBar"></div>
@@ -450,9 +426,6 @@
       <div class="quiz-buttons">
         <button id="gCheckBtn">Prüfen</button>
         <button id="gNextBtn" class="secondary">Nächste Aufgabe</button>
-      </div>
-      <div class="reset-row" style="margin-top:14px;">
-        <button class="secondary" id="gResetBtn">Zähler zurücksetzen</button>
       </div>
     </div>
   </div>
@@ -530,8 +503,6 @@
   const addBtn = document.getElementById("addBtn");
   const wordList = document.getElementById("wordList");
   const wordCount = document.getElementById("wordCount");
-  const correctCountEl = document.getElementById("correctCount");
-  const wrongCountEl = document.getElementById("wrongCount");
   const noWordsMsg = document.getElementById("noWordsMsg");
   const quizContent = document.getElementById("quizContent");
   const quizWord = document.getElementById("quizWord");
@@ -541,7 +512,6 @@
   const checkBtn = document.getElementById("checkBtn");
   const nextBtn = document.getElementById("nextBtn");
   const feedback = document.getElementById("feedback");
-  const resetStatsBtn = document.getElementById("resetStatsBtn");
   const speakBtn = document.getElementById("speakBtn");
   const categoryBar = document.getElementById("categoryBar");
   const micBtn = document.getElementById("micBtn");
@@ -620,11 +590,6 @@
   });
 
   // --- Rendering ---
-  function renderStats() {
-    correctCountEl.textContent = stats.correct;
-    wrongCountEl.textContent = stats.wrong;
-  }
-
   function renderCategoryBar() {
     categoryBar.innerHTML = "";
     const names = ["Alle"].concat(CATEGORIES);
@@ -862,16 +827,9 @@
       feedback.textContent = "Falsch. Richtige Antwort: " + correctAnswer + " (wird nochmals abgefragt)";
     }
     saveStats();
-    renderStats();
     checkBtn.disabled = true;
     answerInput.disabled = true;
     micBtn.disabled = true;
-  }
-
-  function resetStats() {
-    stats = { correct: 0, wrong: 0 };
-    saveStats();
-    renderStats();
   }
 
   // --- Events ---
@@ -893,7 +851,6 @@
     }
   });
   nextBtn.addEventListener("click", nextQuiz);
-  resetStatsBtn.addEventListener("click", resetStats);
 
   // =====================================================================
   // GRAMMATIK
@@ -1097,19 +1054,9 @@
     expl: document.getElementById("gExpl"),
     check: document.getElementById("gCheckBtn"),
     next: document.getElementById("gNextBtn"),
-    reset: document.getElementById("gResetBtn"),
-    correct: document.getElementById("gCorrectCount"),
-    wrong: document.getElementById("gWrongCount"),
   };
 
   function gTopic() { return GRAMMAR_TOPICS.find(t => t.id === gTopicId); }
-
-  function gRenderStats() {
-    let c = 0, w = 0;
-    Object.keys(gStats).forEach(k => { c += gStats[k].correct || 0; w += gStats[k].wrong || 0; });
-    gEl.correct.textContent = c;
-    gEl.wrong.textContent = w;
-  }
 
   function gRenderTopics() {
     gEl.topicBar.innerHTML = "";
@@ -1164,9 +1111,7 @@
     }
 
     const ex = gCurrent.ex;
-    const st = gStats[topic.id] || { correct: 0, wrong: 0 };
-    gEl.progress.textContent = topic.title + " · Aufgabe " + (gCurrent.idx + 1) + " / " + total +
-      " · " + st.correct + " richtig, " + st.wrong + " falsch";
+    gEl.progress.textContent = topic.title + " · Aufgabe " + (gCurrent.idx + 1) + " / " + total;
     gEl.question.textContent = ex.q;
     gEl.hint.textContent = ex.hint || "";
 
@@ -1224,9 +1169,6 @@
     gEl.answer.disabled = true;
     gEl.check.disabled = true;
     lsSet(G_STATS_KEY, gStats);
-    gRenderStats();
-    gEl.progress.textContent = gEl.progress.textContent.replace(/ · \d+ richtig, \d+ falsch$/, "") +
-      " · " + st.correct + " richtig, " + st.wrong + " falsch";
   }
 
   gEl.check.addEventListener("click", () => gCheck());
@@ -1235,13 +1177,6 @@
     if (e.key !== "Enter") return;
     if (gAnswered) gNext(); else gCheck();
   });
-  gEl.reset.addEventListener("click", () => {
-    gStats = {};
-    lsSet(G_STATS_KEY, gStats);
-    gRenderStats();
-    if (gCurrent) gEl.progress.textContent = gEl.progress.textContent.replace(/ · \d+ richtig, \d+ falsch$/, "") + " · 0 richtig, 0 falsch";
-  });
-
   // --- Tabs ---
   const vocabViewEl = document.getElementById("vocabView");
   const tabVocab = document.getElementById("tabVocab");
@@ -1261,13 +1196,11 @@
   // --- Init ---
   renderCategorySelectAdd();
   renderCategoryBar();
-  renderStats();
   renderWordList();
   renderQuizVisibility();
   if (words.length > 0) nextQuiz();
   gRenderTopics();
   gEl.explainBody.innerHTML = gTopic().explain;
-  gRenderStats();
   showTab(lsGet(TAB_KEY, "vocab"));
 })();
 </script>
