@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vokabeltrainer Deutsch-Italienisch</title>
+<title>Italienisch-Trainer</title>
 <style>
   :root {
     --bg: #f5f7fa;
@@ -278,6 +278,50 @@
     font-size: 0.8rem;
     padding: 6px 12px;
   }
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .tab-btn {
+    flex: 1;
+    background: var(--card-bg);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    font-size: 1rem;
+    padding: 12px;
+  }
+  .tab-btn:hover { background: var(--bg); color: var(--text); }
+  .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  details.explain summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+  }
+  .explain h3 { font-size: 0.95rem; margin: 16px 0 6px; color: var(--accent); }
+  .explain p { margin: 6px 0; font-size: 0.92rem; line-height: 1.45; }
+  .explain ul { margin: 6px 0; padding-left: 20px; font-size: 0.92rem; line-height: 1.5; }
+  .explain .ex { color: var(--muted); }
+  .explain .ex b, .explain b { color: var(--text); }
+  .g-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .g-options button {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    text-align: left;
+  }
+  .g-options button:hover:not(:disabled) { background: var(--wrong-bg); }
+  .g-options button.right { background: var(--correct-bg); border-color: var(--correct); color: var(--correct); }
+  .g-options button.bad { background: var(--wrong-bg); border-color: var(--wrong); color: var(--wrong); }
+  .g-expl {
+    display: none;
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin: -6px 0 12px;
+    text-align: center;
+  }
+  .g-expl.show { display: block; }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #12161d;
@@ -298,8 +342,15 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>Vokabeltrainer</h1>
-  <div class="subtitle">Deutsch ⇄ Italienisch</div>
+  <h1>Italienisch-Trainer</h1>
+  <div class="subtitle">Vokabeln &amp; Grammatik · Deutsch ⇄ Italienisch</div>
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tabVocab" type="button">Vokabeln</button>
+    <button class="tab-btn" id="tabGrammar" type="button">Grammatik</button>
+  </div>
+
+  <div id="vocabView">
 
   <div class="stats">
     <div class="stat correct">
@@ -357,6 +408,52 @@
     <ul class="word-list" id="wordList"></ul>
     <div class="reset-row">
       <button class="secondary" id="resetStatsBtn">Zähler zurücksetzen</button>
+    </div>
+  </div>
+  </div><!-- /vocabView -->
+
+  <div id="grammarView" style="display:none;">
+    <div class="stats">
+      <div class="stat correct">
+        <div class="num" id="gCorrectCount">0</div>
+        <div class="label">Richtig</div>
+      </div>
+      <div class="stat wrong">
+        <div class="num" id="gWrongCount">0</div>
+        <div class="label">Falsch</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Thema</h2>
+      <div class="category-bar" id="gTopicBar"></div>
+    </div>
+
+    <div class="card explain">
+      <details id="gExplain" open>
+        <summary>Erklärung</summary>
+        <div id="gExplainBody"></div>
+      </details>
+    </div>
+
+    <div class="card">
+      <h2>Übung</h2>
+      <div class="quiz-progress" id="gProgress"></div>
+      <div class="quiz-word" id="gQuestion" style="font-size:1.3rem;">—</div>
+      <div class="quiz-hint" id="gHint"></div>
+      <div class="g-options" id="gOptions" style="display:none;"></div>
+      <div class="row" id="gFillRow">
+        <input type="text" id="gAnswer" placeholder="Antwort eingeben ..." autocomplete="off" autocapitalize="off">
+      </div>
+      <div class="feedback" id="gFeedback"></div>
+      <div class="g-expl" id="gExpl"></div>
+      <div class="quiz-buttons">
+        <button id="gCheckBtn">Prüfen</button>
+        <button id="gNextBtn" class="secondary">Nächste Aufgabe</button>
+      </div>
+      <div class="reset-row" style="margin-top:14px;">
+        <button class="secondary" id="gResetBtn">Zähler zurücksetzen</button>
+      </div>
     </div>
   </div>
 </div>
@@ -798,6 +895,369 @@
   nextBtn.addEventListener("click", nextQuiz);
   resetStatsBtn.addEventListener("click", resetStats);
 
+  // =====================================================================
+  // GRAMMATIK
+  // Neue Themen: einfach ein Objekt in GRAMMAR_TOPICS ergaenzen.
+  //   id, title, explain (HTML), exercises: [{ q, a:[akzeptierte Antworten],
+  //   options:[...] (optional -> Auswahl statt Eingabe), hint, why }]
+  // =====================================================================
+  const HC = ["hart", "weich"];
+  const GRAMMAR_TOPICS = [
+    {
+      id: "aussprache",
+      title: "Aussprache",
+      explain:
+        "<h3>Hart (wie k / g)</h3>" +
+        "<ul>" +
+        "<li><b>c</b> vor a/o/u: <span class='ex'>carota, colore, cuoco</span></li>" +
+        "<li><b>g</b> vor a/o/u: <span class='ex'>Garda, gonna, guanto</span></li>" +
+        "<li><b>ch</b> vor e/i: <span class='ex'>anche, chitarra</span></li>" +
+        "<li><b>gh</b> vor e/i: <span class='ex'>lunghe, ghiaccio</span></li>" +
+        "</ul>" +
+        "<h3>Weich (wie tsch / dsch)</h3>" +
+        "<ul>" +
+        "<li><b>c</b> vor e/i: <span class='ex'>cinema, cellulare, città</span></li>" +
+        "<li><b>g</b> vor e/i: <span class='ex'>gelato, Gigi</span></li>" +
+        "<li><b>ci</b> vor a/o/u: <span class='ex'>ciao, cioccolata, ciuffo</span></li>" +
+        "<li><b>gi</b> vor a/o/u: <span class='ex'>giacca, giornale, giusto</span></li>" +
+        "</ul>" +
+        "<p>Merkhilfe: Das <b>h</b> macht hart, das <b>i</b> macht weich (vor a/o/u).</p>",
+      exercises: [
+        { q: "carota – Wie wird das «c» gesprochen?", options: HC, a: ["hart"], why: "c vor a/o/u = hart" },
+        { q: "cinema – Wie wird das «c» gesprochen?", options: HC, a: ["weich"], why: "c vor e/i = weich" },
+        { q: "gonna – Wie wird das «g» gesprochen?", options: HC, a: ["hart"], why: "g vor a/o/u = hart" },
+        { q: "gelato – Wie wird das «g» gesprochen?", options: HC, a: ["weich"], why: "g vor e/i = weich" },
+        { q: "chitarra – Wie wird das «ch» gesprochen?", options: HC, a: ["hart"], why: "ch vor e/i = hart" },
+        { q: "ghiaccio – Wie wird das «gh» gesprochen?", options: HC, a: ["hart"], why: "gh vor e/i = hart" },
+        { q: "ciao – Wie wird das «c» gesprochen?", options: HC, a: ["weich"], why: "ci vor a/o/u = weich (das i ist nur Zeichen)" },
+        { q: "giornale – Wie wird das «g» gesprochen?", options: HC, a: ["weich"], why: "gi vor a/o/u = weich" },
+        { q: "cuoco – Wie wird das erste «c» gesprochen?", options: HC, a: ["hart"], why: "c vor u = hart" },
+        { q: "città – Wie wird das erste «c» gesprochen?", options: HC, a: ["weich"], why: "c vor i = weich" },
+        { q: "Ergänze: ___itarra (hartes k vor i)", hint: "c oder ch?", a: ["ch"], why: "Hart vor e/i schreibt man ch" },
+        { q: "Ergänze: lun___e (hartes g vor e)", hint: "g oder gh?", a: ["gh"], why: "Hart vor e/i schreibt man gh" },
+        { q: "Ergänze: ___ao (weiches tsch vor a)", hint: "c oder ci?", a: ["ci"], why: "Weich vor a/o/u schreibt man ci" },
+        { q: "Ergänze: ___ornale (weiches dsch vor o)", hint: "g oder gi?", a: ["gi"], why: "Weich vor a/o/u schreibt man gi" },
+      ],
+    },
+    {
+      id: "satzbau",
+      title: "Satzbau",
+      explain:
+        "<p>Im Italienischen gibt es <b>keinen Unterschied zwischen Frage- und Aussagesatz</b>. " +
+        "Der Unterschied liegt nur in der <b>Melodie</b> der Aussprache (Stimme geht am Ende hoch). " +
+        "Geschrieben setzt man einfach ein Fragezeichen.</p>" +
+        "<p class='ex'><b>Sei di Zurigo.</b> (Aussage) – <b>Sei di Zurigo?</b> (Frage)</p>",
+      exercises: [
+        { q: "Woran erkennt man im Italienischen eine Frage (ohne Fragewort)?", options: ["An der Wortstellung", "An der Melodie", "An einer besonderen Endung", "An einem Hilfswort"], a: ["An der Melodie"], why: "Kein Unterschied im Satzbau, nur die Melodie" },
+        { q: "Mach aus der Aussage eine Frage: «Sei di Zurigo.»", hint: "Nur das Satzzeichen ändert sich", a: ["Sei di Zurigo?"], why: "Gleicher Satz, am Ende ein Fragezeichen" },
+        { q: "Mach aus der Aussage eine Frage: «Lui è italiano.»", a: ["Lui è italiano?"], why: "Wortstellung bleibt gleich" },
+        { q: "Mach aus der Frage eine Aussage: «Parli italiano?»", a: ["Parli italiano."], why: "Wortstellung bleibt gleich" },
+        { q: "Muss man im Italienischen für eine Frage die Wörter umstellen?", options: ["Ja", "Nein"], a: ["Nein"], why: "Die Wortstellung bleibt, nur die Melodie ändert sich" },
+      ],
+    },
+    {
+      id: "geschlecht",
+      title: "Nomen: Geschlecht",
+      explain:
+        "<h3>Artikel im Singular</h3>" +
+        "<p><b>il / lo</b> = männlich, <b>la</b> = weiblich (vor Vokal: <b>l'</b>)</p>" +
+        "<h3>Endungen</h3>" +
+        "<ul>" +
+        "<li>meist <b>-o</b> = männlich, meist <b>-a</b> = weiblich</li>" +
+        "<li><b>-e</b> = männlich oder weiblich</li>" +
+        "<li>Konsonant = meist männlich: <span class='ex'>il bar, lo sport</span></li>" +
+        "</ul>" +
+        "<h3>Ausnahmen</h3>" +
+        "<ul>" +
+        "<li>weiblich trotz -o (Kurzformen): <span class='ex'>la moto, la foto, l'auto</span> (aus la motocicletta, la fotografia, l'automobile)</li>" +
+        "<li>männlich trotz -a: <span class='ex'>il cinema, il problema</span></li>" +
+        "</ul>" +
+        "<h3>Personenbezeichnungen</h3>" +
+        "<ul>" +
+        "<li>meist beide Formen: <span class='ex'>il commesso / la commessa, il bambino / la bambina</span></li>" +
+        "<li>nur eine Form, der Artikel zeigt das Geschlecht: <span class='ex'>il / la collega, il / la francese, il / la cliente</span></li>" +
+        "<li>wenige auf <b>-e</b> → <b>-essa</b>: <span class='ex'>lo studente / la studentessa</span></li>" +
+        "<li>wenige auf <b>-ore</b> → <b>-trice</b>: <span class='ex'>il traduttore / la traduttrice</span></li>" +
+        "</ul>",
+      exercises: [
+        { q: "___ bambino", hint: "il, lo, la oder l'?", a: ["il"], why: "-o = männlich" },
+        { q: "___ bambina", hint: "il, lo, la oder l'?", a: ["la"], why: "-a = weiblich" },
+        { q: "___ bar", hint: "il, lo, la oder l'?", a: ["il"], why: "Nomen auf Konsonant sind meist männlich" },
+        { q: "___ sport", hint: "il, lo, la oder l'?", a: ["lo"], why: "männlich; vor s + Konsonant steht lo" },
+        { q: "___ cinema", hint: "il, lo, la oder l'?", a: ["il"], why: "Ausnahme: männlich trotz -a" },
+        { q: "___ problema", hint: "il, lo, la oder l'?", a: ["il"], why: "Ausnahme: männlich trotz -a" },
+        { q: "___ foto", hint: "il, lo, la oder l'?", a: ["la"], why: "Ausnahme: weiblich trotz -o (Kurzform von la fotografia)" },
+        { q: "___ moto", hint: "il, lo, la oder l'?", a: ["la"], why: "Ausnahme: weiblich trotz -o (Kurzform von la motocicletta)" },
+        { q: "___ auto", hint: "il, lo, la oder l'?", a: ["l'"], why: "Vor Vokal steht l' (weiblich, Kurzform von l'automobile)" },
+        { q: "___ studente", hint: "il, lo, la oder l'?", a: ["lo"], why: "männlich; vor s + Konsonant steht lo" },
+        { q: "Weibliche Form von «il commesso»?", a: ["la commessa"], why: "-o → -a" },
+        { q: "Weibliche Form von «il bambino»?", a: ["la bambina"], why: "-o → -a" },
+        { q: "Weibliche Form von «lo studente»?", a: ["la studentessa"], why: "-e → -essa" },
+        { q: "Weibliche Form von «il traduttore»?", a: ["la traduttrice"], why: "-ore → -trice" },
+        { q: "Weibliche Form von «il collega»?", a: ["la collega"], why: "Nur eine Form, nur der Artikel ändert sich" },
+        { q: "Weibliche Form von «il francese»?", a: ["la francese"], why: "Nur eine Form, nur der Artikel ändert sich" },
+        { q: "Weibliche Form von «il cliente»?", a: ["la cliente"], why: "Nur eine Form, nur der Artikel ändert sich" },
+        { q: "Nomen auf Konsonant sind meist …", options: ["männlich", "weiblich"], a: ["männlich"], why: "z.B. il bar, lo sport" },
+      ],
+    },
+    {
+      id: "plural",
+      title: "Nomen: Plural",
+      explain:
+        "<h3>Artikel im Plural</h3>" +
+        "<ul>" +
+        "<li>männlich: <b>i</b>, vor Vokal (und lo-Wörtern): <b>gli</b></li>" +
+        "<li>weiblich: <b>le</b></li>" +
+        "</ul>" +
+        "<h3>Normalfälle</h3>" +
+        "<ul>" +
+        "<li>männlich auf -a / -e / -o → <b>-i</b>: <span class='ex'>il negozio → i negozi, il ponte → i ponti, il problema → i problemi</span></li>" +
+        "<li>männlich vor Vokal: <span class='ex'>l'amico → gli amici, l'asparago → gli asparagi</span></li>" +
+        "<li>weiblich auf -a → <b>-e</b>: <span class='ex'>la casa → le case</span></li>" +
+        "<li>weiblich auf -e → <b>-i</b>: <span class='ex'>la notte → le notti</span></li>" +
+        "</ul>" +
+        "<h3>Ausnahmen</h3>" +
+        "<ul>" +
+        "<li>betonte Silbe oder Konsonant am Ende: nur der Artikel ändert sich: <span class='ex'>il caffè → i caffè, la città → le città, il film → i film</span></li>" +
+        "<li>Kurzformen bleiben gleich: <span class='ex'>la bici → le bici, la foto → le foto, il cinema → i cinema</span></li>" +
+        "<li>-ca / -ga → <b>-che / -ghe</b>: <span class='ex'>l'amica → le amiche</span></li>" +
+        "<li>einige -co / -go → <b>-chi / -ghi</b>: <span class='ex'>il tedesco → i tedeschi, l'albergo → gli alberghi</span></li>" +
+        "<li>-cia / -gia → <b>-ce / -ge</b> (letzte Silbe unbetont): <span class='ex'>la mancia → le mance, la spiaggia → le spiagge</span></li>" +
+        "<li>-io → nur <b>-i</b>: <span class='ex'>il viaggio → i viaggi</span></li>" +
+        "<li>ist das i in -io betont, bleibt es: <span class='ex'>lo zio → gli zii</span></li>" +
+        "</ul>" +
+        "<h3>Unregelmässig</h3>" +
+        "<p class='ex'>l'uovo → <b>le uova</b>, il paio → <b>le paia</b>, la mano → <b>le mani</b></p>" +
+        "<h3>Nomen ohne Doppelform (nur Plural)</h3>" +
+        "<p class='ex'>la gente (die Leute), i pantaloni (die Hose), i dintorni (die Umgebung)</p>",
+      exercises: [
+        { q: "il negozio → ?", hint: "Plural mit Artikel", a: ["i negozi"], why: "-io → nur -i" },
+        { q: "il ponte → ?", a: ["i ponti"], why: "männlich auf -e → -i" },
+        { q: "il problema → ?", a: ["i problemi"], why: "männlich auf -a → -i" },
+        { q: "l'amico → ?", a: ["gli amici"], why: "männlich vor Vokal: gli … -i" },
+        { q: "l'asparago → ?", a: ["gli asparagi"], why: "männlich vor Vokal: gli … -i" },
+        { q: "la casa → ?", a: ["le case"], why: "weiblich -a → -e" },
+        { q: "la notte → ?", a: ["le notti"], why: "weiblich -e → -i" },
+        { q: "il caffè → ?", a: ["i caffè"], why: "Betonte Endsilbe: nur der Artikel ändert sich" },
+        { q: "la città → ?", a: ["le città"], why: "Betonte Endsilbe: nur der Artikel ändert sich" },
+        { q: "il film → ?", a: ["i film"], why: "Konsonant am Ende: nur der Artikel ändert sich" },
+        { q: "la bici → ?", a: ["le bici"], why: "Kurzform: bleibt gleich" },
+        { q: "la foto → ?", a: ["le foto"], why: "Kurzform: bleibt gleich" },
+        { q: "il cinema → ?", a: ["i cinema"], why: "Kurzform: bleibt gleich" },
+        { q: "l'amica → ?", a: ["le amiche"], why: "-ca → -che" },
+        { q: "il tedesco → ?", a: ["i tedeschi"], why: "-co → -chi" },
+        { q: "l'albergo → ?", a: ["gli alberghi"], why: "-go → -ghi" },
+        { q: "la mancia → ?", a: ["le mance"], why: "-cia → -ce (Silbe unbetont)" },
+        { q: "la spiaggia → ?", a: ["le spiagge"], why: "-gia → -ge (Silbe unbetont)" },
+        { q: "il viaggio → ?", a: ["i viaggi"], why: "-io → nur -i" },
+        { q: "lo zio → ?", a: ["gli zii"], why: "Betontes i in -io bleibt: zii" },
+        { q: "l'uovo → ?", a: ["le uova"], why: "Unregelmässig" },
+        { q: "il paio → ?", a: ["le paia"], why: "Unregelmässig" },
+        { q: "la mano → ?", a: ["le mani"], why: "Unregelmässig: -o, aber weiblich → -i" },
+        { q: "Wie heisst «die Hose» auf Italienisch?", options: ["il pantalone", "i pantaloni", "la pantalona"], a: ["i pantaloni"], why: "Nomen ohne Doppelform: nur Plural" },
+        { q: "Wie heisst «die Leute» auf Italienisch?", options: ["la gente", "le genti", "i gente"], a: ["la gente"], why: "Nomen ohne Doppelform: nur Singular" },
+      ],
+    },
+  ];
+
+  const G_STATS_KEY = "italienisch_grammar_stats";   // { topicId: {correct, wrong} }
+  const G_PROGRESS_KEY = "italienisch_grammar_progress";
+  const G_TOPIC_KEY = "italienisch_grammar_topic";
+  const TAB_KEY = "italienisch_tab";
+
+  function lsGet(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw === null ? fallback : JSON.parse(raw);
+    } catch (e) { return fallback; }
+  }
+  function lsSet(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  let gStats = lsGet(G_STATS_KEY, {});
+  let gProgress = lsGet(G_PROGRESS_KEY, {});
+  let gTopicId = lsGet(G_TOPIC_KEY, GRAMMAR_TOPICS[0].id);
+  if (!GRAMMAR_TOPICS.some(t => t.id === gTopicId)) gTopicId = GRAMMAR_TOPICS[0].id;
+  let gCurrent = null;      // { ex, idx }
+  let gRepeat = false;
+  let gAnswered = false;
+
+  const gEl = {
+    view: document.getElementById("grammarView"),
+    topicBar: document.getElementById("gTopicBar"),
+    explainBody: document.getElementById("gExplainBody"),
+    progress: document.getElementById("gProgress"),
+    question: document.getElementById("gQuestion"),
+    hint: document.getElementById("gHint"),
+    options: document.getElementById("gOptions"),
+    fillRow: document.getElementById("gFillRow"),
+    answer: document.getElementById("gAnswer"),
+    feedback: document.getElementById("gFeedback"),
+    expl: document.getElementById("gExpl"),
+    check: document.getElementById("gCheckBtn"),
+    next: document.getElementById("gNextBtn"),
+    reset: document.getElementById("gResetBtn"),
+    correct: document.getElementById("gCorrectCount"),
+    wrong: document.getElementById("gWrongCount"),
+  };
+
+  function gTopic() { return GRAMMAR_TOPICS.find(t => t.id === gTopicId); }
+
+  function gRenderStats() {
+    let c = 0, w = 0;
+    Object.keys(gStats).forEach(k => { c += gStats[k].correct || 0; w += gStats[k].wrong || 0; });
+    gEl.correct.textContent = c;
+    gEl.wrong.textContent = w;
+  }
+
+  function gRenderTopics() {
+    gEl.topicBar.innerHTML = "";
+    GRAMMAR_TOPICS.forEach(t => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "cat-btn" + (t.id === gTopicId ? " active" : "");
+      btn.textContent = t.title + " (" + t.exercises.length + ")";
+      btn.addEventListener("click", () => {
+        if (t.id === gTopicId) return;
+        gTopicId = t.id;
+        lsSet(G_TOPIC_KEY, gTopicId);
+        gCurrent = null;
+        gRepeat = false;
+        gRenderTopics();
+        gEl.explainBody.innerHTML = gTopic().explain;
+        gNext();
+      });
+      gEl.topicBar.appendChild(btn);
+    });
+  }
+
+  // Vergleich tolerant: Gross/Klein, typografischer Apostroph, Leerzeichen, Satzzeichen am Ende
+  function gNorm(s) {
+    return s.trim().toLowerCase()
+      .replace(/[’‘`´]/g, "'")
+      .replace(/\s+/g, " ")
+      .replace(/\s*'\s*/g, "'")
+      .replace(/[.,!?]+$/, "");
+  }
+
+  function gNext() {
+    gAnswered = false;
+    gEl.feedback.className = "feedback";
+    gEl.feedback.textContent = "";
+    gEl.expl.className = "g-expl";
+    gEl.expl.textContent = "";
+    gEl.answer.value = "";
+    gEl.answer.disabled = false;
+    gEl.check.disabled = false;
+
+    const topic = gTopic();
+    const total = topic.exercises.length;
+    if (gRepeat && gCurrent) {
+      gRepeat = false;
+    } else {
+      let idx = gProgress[topic.id] || 0;
+      if (idx >= total) idx = 0;
+      gCurrent = { ex: topic.exercises[idx], idx };
+      gProgress[topic.id] = (idx + 1) % total;
+      lsSet(G_PROGRESS_KEY, gProgress);
+    }
+
+    const ex = gCurrent.ex;
+    const st = gStats[topic.id] || { correct: 0, wrong: 0 };
+    gEl.progress.textContent = topic.title + " · Aufgabe " + (gCurrent.idx + 1) + " / " + total +
+      " · " + st.correct + " richtig, " + st.wrong + " falsch";
+    gEl.question.textContent = ex.q;
+    gEl.hint.textContent = ex.hint || "";
+
+    if (ex.options) {
+      gEl.options.style.display = "flex";
+      gEl.fillRow.style.display = "none";
+      gEl.check.style.display = "none";
+      gEl.options.innerHTML = "";
+      ex.options.forEach(opt => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = opt;
+        b.addEventListener("click", () => gCheck(opt, b));
+        gEl.options.appendChild(b);
+      });
+    } else {
+      gEl.options.style.display = "none";
+      gEl.fillRow.style.display = "flex";
+      gEl.check.style.display = "";
+      gEl.answer.focus();
+    }
+  }
+
+  function gCheck(given, optBtn) {
+    if (!gCurrent || gAnswered) return;
+    const ex = gCurrent.ex;
+    const value = given !== undefined ? given : gEl.answer.value;
+    if (!value.trim()) return;
+    const ok = ex.a.some(a => gNorm(a) === gNorm(value));
+    gAnswered = true;
+
+    const st = gStats[gTopicId] || (gStats[gTopicId] = { correct: 0, wrong: 0 });
+    if (ok) {
+      st.correct++;
+      gRepeat = false;
+      gEl.feedback.className = "feedback show correct";
+      gEl.feedback.textContent = "Richtig!";
+    } else {
+      st.wrong++;
+      gRepeat = true;
+      gEl.feedback.className = "feedback show wrong";
+      gEl.feedback.textContent = "Falsch. Richtige Antwort: " + ex.a[0] + " (wird nochmals abgefragt)";
+    }
+    if (ex.why) {
+      gEl.expl.textContent = ex.why;
+      gEl.expl.className = "g-expl show";
+    }
+    if (ex.options) {
+      Array.prototype.forEach.call(gEl.options.children, b => {
+        b.disabled = true;
+        if (ex.a.some(a => gNorm(a) === gNorm(b.textContent))) b.classList.add("right");
+        else if (b === optBtn) b.classList.add("bad");
+      });
+    }
+    gEl.answer.disabled = true;
+    gEl.check.disabled = true;
+    lsSet(G_STATS_KEY, gStats);
+    gRenderStats();
+    gEl.progress.textContent = gEl.progress.textContent.replace(/ · \d+ richtig, \d+ falsch$/, "") +
+      " · " + st.correct + " richtig, " + st.wrong + " falsch";
+  }
+
+  gEl.check.addEventListener("click", () => gCheck());
+  gEl.next.addEventListener("click", gNext);
+  gEl.answer.addEventListener("keydown", e => {
+    if (e.key !== "Enter") return;
+    if (gAnswered) gNext(); else gCheck();
+  });
+  gEl.reset.addEventListener("click", () => {
+    gStats = {};
+    lsSet(G_STATS_KEY, gStats);
+    gRenderStats();
+    if (gCurrent) gEl.progress.textContent = gEl.progress.textContent.replace(/ · \d+ richtig, \d+ falsch$/, "") + " · 0 richtig, 0 falsch";
+  });
+
+  // --- Tabs ---
+  const vocabViewEl = document.getElementById("vocabView");
+  const tabVocab = document.getElementById("tabVocab");
+  const tabGrammar = document.getElementById("tabGrammar");
+  function showTab(name) {
+    const g = name === "grammar";
+    vocabViewEl.style.display = g ? "none" : "";
+    gEl.view.style.display = g ? "" : "none";
+    tabVocab.classList.toggle("active", !g);
+    tabGrammar.classList.toggle("active", g);
+    lsSet(TAB_KEY, g ? "grammar" : "vocab");
+    if (g && !gCurrent) gNext();
+  }
+  tabVocab.addEventListener("click", () => showTab("vocab"));
+  tabGrammar.addEventListener("click", () => showTab("grammar"));
+
   // --- Init ---
   renderCategorySelectAdd();
   renderCategoryBar();
@@ -805,6 +1265,10 @@
   renderWordList();
   renderQuizVisibility();
   if (words.length > 0) nextQuiz();
+  gRenderTopics();
+  gEl.explainBody.innerHTML = gTopic().explain;
+  gRenderStats();
+  showTab(lsGet(TAB_KEY, "vocab"));
 })();
 </script>
 </body>
