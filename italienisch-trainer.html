@@ -845,8 +845,12 @@
     // scrive?" sollen auch ohne mitgesprochenes/-getipptes "?" gelten.
     // Leerzeichen, Apostrophe und Bindestriche zaehlen nicht: die Spracherkennung
     // schreibt z.B. "buona notte" statt "Buonanotte".
-    const normalizeForCompare = (s) => s.trim().toLowerCase().replace(/[’‘`´]/g, "'").replace(/[.,!?]+$/, "").replace(/[\s'\-]+/g, "");
-    const isCorrect = normalizeForCompare(userAnswer) === normalizeForCompare(correctAnswer);
+    const normalizeForCompare = (s) => s.trim().toLowerCase().replace(/[’‘`´]/g, "'").replace(/[.,!?]+$/, "").replace(/[\s'\-\/]+/g, "");
+    // Bei mehreren Loesungen ("Salve / ciao") genuegt eine davon; Klammerzusaetze sind optional.
+    const candidates = [correctAnswer].concat(correctAnswer.split(" / "));
+    candidates.slice().forEach(c => candidates.push(c.replace(/\s*\([^)]*\)/g, "")));
+    const given = normalizeForCompare(userAnswer);
+    const isCorrect = candidates.some(c => normalizeForCompare(c) === given);
 
     speakItalian(correctAnswer);
 
