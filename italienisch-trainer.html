@@ -474,6 +474,24 @@
   let stats = loadStats();
   let progress = loadProgress(); // { "<Kategorie>": naechsterIndex }
   let selectedCategory = localStorage.getItem(CATEGORY_KEY) || "Alle";
+  // Falsche/gezeigte Antworten pro Rubrik: werden am Schluss der Rubrik nochmals abgefragt
+  const REVIEW_KEY = "vokabeltrainer_review";
+  let reviewQueue = {};
+  try { reviewQueue = JSON.parse(localStorage.getItem(REVIEW_KEY)) || {}; } catch (e) { reviewQueue = {}; }
+  function saveReview() { try { localStorage.setItem(REVIEW_KEY, JSON.stringify(reviewQueue)); } catch (e) {} }
+  function sameWord(a, b) { return a.de === b.de && a.it === b.it; }
+  function addReview(cat, item) {
+    const q = reviewQueue[cat] || (reviewQueue[cat] = []);
+    if (!q.some(e => sameWord(e, item))) q.push(item);
+    saveReview();
+  }
+  function removeReview(cat, item) {
+    const q = reviewQueue[cat];
+    if (!q) return;
+    reviewQueue[cat] = q.filter(e => !sameWord(e, item));
+    saveReview();
+  }
+  let currentFromReview = false;
   let voiceAnswers = []; // Alternativen der letzten Spracheingabe (leer bei getippter Antwort)
   let currentQuiz = null; // { word, direction: 'de-it' }
 
@@ -843,16 +861,35 @@
     repeatQueued = false;
 
     let idx = progress[selectedCategory] || 0;
-    if (idx >= pool.length) idx = 0;
-    const word = pool[idx];
-    progress[selectedCategory] = (idx + 1) % pool.length;
-    saveProgress();
+    let word = null;
+    currentFromReview = false;
+    let label = "";
+    if (idx >= pool.length) {
+      // Ende der Rubrik erreicht: zuerst die falschen/gezeigten Woerter nochmals abfragen
+      const q = reviewQueue[selectedCategory] || (reviewQueue[selectedCategory] = []);
+      while (q.length && !pool.some(w => sameWord(w, q[0]))) q.shift();
+      if (q.length) {
+        const entry = q.shift();
+        word = pool.find(w => sameWord(w, entry));
+        currentFromReview = true;
+        label = selectedCategory + " · Wiederholung (noch " + (q.length + 1) + ")";
+        saveReview();
+      } else {
+        idx = 0;
+      }
+    }
+    if (!word) {
+      word = pool[idx];
+      progress[selectedCategory] = idx + 1;
+      saveProgress();
+      label = selectedCategory + " · Vokabel " + (idx + 1) + " / " + pool.length;
+    }
 
     currentQuiz = { word, direction: "de-it" };
 
     quizDirection.textContent = "Deutsch → Italienisch";
     quizWord.textContent = word.de;
-    quizProgress.textContent = selectedCategory + " · Vokabel " + (idx + 1) + " / " + pool.length;
+    quizProgress.textContent = label;
     answerInput.focus();
   }
 
@@ -888,11 +925,13 @@
     if (isCorrect) {
       stats.correct++;
       repeatQueued = false;
+      if (currentFromReview) removeReview(selectedCategory, currentQuiz.word);
       feedback.className = "feedback show correct";
       feedback.textContent = fuzzy ? "Richtig! (erkannt: \u201e" + userAnswer + "\u201c, richtig: " + correctAnswer + ")" : "Richtig!";
     } else {
       stats.wrong++;
       repeatQueued = true;
+      addReview(selectedCategory, { de: currentQuiz.word.de, it: currentQuiz.word.it });
       feedback.className = "feedback show wrong";
       feedback.textContent = "Falsch (erkannt: \u201e" + answerInput.value.trim() + "\u201c). Richtige Antwort: " + correctAnswer + " (wird nochmals abgefragt)";
     }
@@ -1271,6 +1310,7 @@
     const ans = currentQuiz.word.it;
     speakItalian(ans);
     repeatQueued = true;
+    addReview(selectedCategory, { de: currentQuiz.word.de, it: currentQuiz.word.it });
     feedback.className = "feedback show wrong";
     feedback.textContent = "Lösung: " + ans + " (wird nochmals abgefragt)";
     checkBtn.disabled = true;
@@ -1293,6 +1333,7 @@
   };
   let conjCurrent = null; // { v, idx }
   let conjRepeat = false;
+  let conjFromReview = false;
   let conjDone = false;
   let conjInputs = [];
   let conjSols = [];
@@ -1362,13 +1403,33 @@
       conjRepeat = false;
     } else {
       let idx = progress["Konjugation"] || 0;
-      if (idx >= CONJ_VERBS.length) idx = 0;
-      conjCurrent = { v: CONJ_VERBS[idx], idx };
-      progress["Konjugation"] = (idx + 1) % CONJ_VERBS.length;
-      saveProgress();
+      conjFromReview = false;
+      let v = null;
+      let label = "";
+      if (idx >= CONJ_VERBS.length) {
+        // Ende erreicht: zuerst falsche/gezeigte Verben nochmals
+        const q = reviewQueue["Konjugation"] || (reviewQueue["Konjugation"] = []);
+        while (q.length && !CONJ_VERBS.some(x => x.inf === q[0].it)) q.shift();
+        if (q.length) {
+          const entry = q.shift();
+          v = CONJ_VERBS.find(x => x.inf === entry.it);
+          conjFromReview = true;
+          label = "Konjugation · Wiederholung (noch " + (q.length + 1) + ")";
+          saveReview();
+        } else {
+          idx = 0;
+        }
+      }
+      if (!v) {
+        v = CONJ_VERBS[idx];
+        progress["Konjugation"] = idx + 1;
+        saveProgress();
+        label = "Konjugation · Verb " + (idx + 1) + " / " + CONJ_VERBS.length;
+      }
+      conjCurrent = { v, idx, label };
     }
     conjEl.verb.textContent = conjCurrent.v.inf + " (" + conjCurrent.v.de + ")";
-    conjEl.progress.textContent = "Konjugation · Verb " + (conjCurrent.idx + 1) + " / " + CONJ_VERBS.length;
+    conjEl.progress.textContent = conjCurrent.label;
     conjInputs[0].focus();
   }
 
@@ -1390,10 +1451,12 @@
     });
     if (ok === 6) {
       conjRepeat = false;
+      if (conjFromReview) removeReview("Konjugation", { de: v.de, it: v.inf });
       conjEl.feedback.className = "feedback show correct";
       conjEl.feedback.textContent = "Richtig!";
     } else {
       conjRepeat = true;
+      addReview("Konjugation", { de: v.de, it: v.inf });
       conjEl.feedback.className = "feedback show wrong";
       conjEl.feedback.textContent = ok + " von 6 richtig (wird nochmals abgefragt)";
     }
@@ -1408,6 +1471,7 @@
       conjSols[i].textContent = "";
     });
     conjRepeat = true;
+    addReview("Konjugation", { de: conjCurrent.v.de, it: conjCurrent.v.inf });
     conjEl.feedback.className = "feedback show wrong";
     conjEl.feedback.textContent = "Lösung angezeigt (wird nochmals abgefragt)";
     conjFinish();
