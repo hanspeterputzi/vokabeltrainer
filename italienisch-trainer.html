@@ -839,13 +839,11 @@
       ? currentQuiz.word.it
       : currentQuiz.word.de;
 
-    // Satzzeichen am Ende ignorieren wir beim Vergleich auf BEIDEN Seiten
-    // gleichermassen - Spracherkennung haengt sie manchmal faelschlich an
-    // (z.B. "Essere.") oder laesst sie weg, und Antworten wie "Come si
-    // scrive?" sollen auch ohne mitgesprochenes/-getipptes "?" gelten.
-    // Leerzeichen, Apostrophe und Bindestriche zaehlen nicht: die Spracherkennung
-    // schreibt z.B. "buona notte" statt "Buonanotte".
-    const normalizeForCompare = (s) => s.trim().toLowerCase().replace(/[’‘`´]/g, "'").replace(/[.,!?]+$/, "").replace(/[\s'\-\/]+/g, "");
+    // Vergleich tolerant: Gross/Klein, Akzente, Satzzeichen (auch Kommas in der
+    // Mitte), Leerzeichen, Apostrophe und Bindestriche zaehlen nicht. Die
+    // Spracherkennung schreibt z.B. "buongiorno dottore" statt "Buongiorno, dottore"
+    // oder "buona notte" statt "Buonanotte".
+    const normalizeForCompare = (s) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, "");
     // Bei mehreren Loesungen ("Salve / ciao") genuegt eine davon; Klammerzusaetze sind optional.
     const candidates = [correctAnswer].concat(correctAnswer.split(" / "));
     candidates.slice().forEach(c => candidates.push(c.replace(/\s*\([^)]*\)/g, "")));
@@ -863,7 +861,7 @@
       stats.wrong++;
       repeatQueued = true;
       feedback.className = "feedback show wrong";
-      feedback.textContent = "Falsch. Richtige Antwort: " + correctAnswer + " (wird nochmals abgefragt)";
+      feedback.textContent = "Falsch (erkannt: \u201e" + answerInput.value.trim() + "\u201c). Richtige Antwort: " + correctAnswer + " (wird nochmals abgefragt)";
     }
     saveStats();
     checkBtn.disabled = true;
