@@ -633,11 +633,18 @@
   @media (max-width: 700px) { body::before { height: 122px; } .streakbar { margin-top: 30px; } }
   .wrap { padding-top: 26px; }
   h1 { margin-top: 0; padding-top: 11px; }
+
+  /* ---- Ciao-Sprechblase wie im Icon ---- */
+  h1 { padding: 6px 38px 10px; border-radius: 24px; font-size: 2.6rem; font-weight: 800; letter-spacing: -.03em; line-height: 1.15; box-shadow: 0 6px 18px rgba(120,40,0,.18); }
+  h1::after { left: 30px; bottom: -22px; width: 0; height: 0; border-radius: 0; background: none; transform: none; z-index: 0;
+    border-top: 24px solid #fff; border-top-color: var(--k-card); border-right: 24px solid transparent; }
+  @media (max-width: 700px) { body::before { height: 152px; } .streakbar { margin-top: 38px; } }
+  @media (min-width: 701px) { body::before { height: 170px; } }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Italienisch-Trainer</h1>
+  <h1>Ciao</h1>
   
   <div class="tabs">
     <button class="tab-btn active" id="tabVocab" type="button">Vokabeln</button>
