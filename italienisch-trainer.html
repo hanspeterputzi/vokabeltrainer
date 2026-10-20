@@ -425,6 +425,90 @@
   .g-options button { border-width: 1.5px; border-radius: 14px; font-weight: 600; }
   .stat .num { font-weight: 800; }
   .word-list li { padding: 10px 4px; }
+:root{--k-card:var(--card-bg);--k-bg:var(--bg);--k-line:var(--border);--k-blue:var(--accent);--k-orange:var(--brand);--k-muted:var(--muted);--k-text:var(--text);}
+
+  /* ---- Modern v2: Kacheln, Fortschritt, Streak, Animationen ---- */
+  .category-bar {
+    display: flex !important; flex-wrap: nowrap !important; overflow-x: auto;
+    gap: 10px; padding: 6px 4px 14px; margin: 0 -4px;
+    scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .category-bar::-webkit-scrollbar { display: none; }
+  .cat-btn, .cat-chip {
+    flex: 0 0 auto; width: 112px; min-height: 94px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+    padding: 10px 6px; border-radius: 20px; border: 1.5px solid var(--k-line);
+    background: var(--k-card); color: var(--k-text);
+    scroll-snap-align: center; box-shadow: 0 2px 8px rgba(18,32,58,.05);
+    transition: transform .2s cubic-bezier(.3,1.4,.5,1), box-shadow .2s, background .2s;
+  }
+  .cat-btn:hover, .cat-chip:hover { background: var(--k-card); color: var(--k-text); border-color: var(--k-orange); transform: translateY(-2px); }
+  .cat-btn .ico, .cat-chip .ico { font-size: 1.7rem; line-height: 1; }
+  .cat-btn .nm, .cat-chip .nm { font-size: .72rem; overflow-wrap: anywhere; max-width: 100%; font-weight: 700; line-height: 1.15; text-align: center; }
+  .cat-btn .ct, .cat-chip .ct { font-size: .66rem; font-weight: 700; padding: 1px 9px; border-radius: 999px; background: var(--k-bg); color: var(--k-muted); }
+  .cat-btn.active, .cat-chip.active {
+    background: linear-gradient(145deg, var(--k-orange), #ff8a3d); color: #fff; border-color: transparent;
+    box-shadow: 0 8px 18px rgba(234,88,12,.35); transform: translateY(-3px);
+  }
+  .cat-btn.active .ct, .cat-chip.active .ct { background: rgba(255,255,255,.28); color: #fff; }
+
+  .pbar { height: 8px; border-radius: 999px; background: var(--k-bg); overflow: hidden; margin: 2px 0 14px; }
+  .pbar i { display: block; height: 100%; width: 0; border-radius: 999px;
+    background: linear-gradient(90deg, var(--k-blue), #5b8cff); transition: width .5s cubic-bezier(.3,1,.4,1); }
+
+  .quiz-word, .prompt, .g-q {
+    position: relative; display: block; text-align: center;
+    background: #eaf1ff; background: color-mix(in srgb, var(--k-blue) 11%, var(--k-card));
+    border-radius: 24px 24px 24px 6px; padding: 20px 22px; margin: 6px 0 26px;
+    color: var(--k-blue); min-height: 0;
+  }
+  .quiz-word::after, .prompt::after, .g-q::after {
+    content: ""; position: absolute; left: 26px; bottom: -8px; width: 18px; height: 18px; border-radius: 3px;
+    background: #eaf1ff; background: color-mix(in srgb, var(--k-blue) 11%, var(--k-card));
+    transform: rotate(45deg); z-index: -1;
+  }
+  .quiz-word, .prompt, .g-q { z-index: 0; }
+
+  .streakbar { display: flex; gap: 10px; margin: 20px 0 18px; }
+  .sb { flex: 1; background: var(--k-card); border-radius: 18px; padding: 10px 6px; text-align: center; box-shadow: 0 4px 14px rgba(18,32,58,.07); }
+  .sb b { display: block; font-size: 1.3rem; font-weight: 800; color: var(--k-text); }
+  .sb span { font-size: .66rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--k-muted); }
+  .sb.bump b { animation: bump .5s cubic-bezier(.3,1.6,.5,1); }
+
+  @keyframes up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes popin { 0% { transform: scale(.88); opacity: 0; } 60% { transform: scale(1.04); } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes bump { 0% { transform: scale(1); } 40% { transform: scale(1.45); color: var(--k-orange); } 100% { transform: scale(1); } }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 40% { transform: translateX(7px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(3px); } }
+  @keyframes glow { 0% { box-shadow: 0 0 0 0 rgba(37,99,235,.5); } 100% { box-shadow: 0 0 0 22px rgba(37,99,235,0); } }
+  .card, .quiz, .g-box { animation: up .45s cubic-bezier(.2,.8,.3,1) both; }
+  .card:nth-of-type(2), .g-box:nth-of-type(2) { animation-delay: .06s; }
+  .card:nth-of-type(3), .g-box:nth-of-type(3) { animation-delay: .12s; }
+  .feedback.correct, .feedback.wrong { animation: popin .35s cubic-bezier(.3,1.4,.5,1); }
+  .fx-ok { animation: glow .7s ease-out; }
+  .fx-bad { animation: shake .45s; }
+  .toast { position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 200;
+    background: var(--k-orange); color: #fff; font-weight: 800; padding: 11px 20px; border-radius: 999px;
+    box-shadow: 0 10px 24px rgba(234,88,12,.4); animation: popin .4s both; }
+  .fxlayer { position: fixed; inset: 0; pointer-events: none; z-index: 150; overflow: hidden; }
+  .fxlayer i { position: absolute; width: 9px; height: 9px; border-radius: 2px; }
+
+  .tab-btn .ti { display: none; }
+  @media (max-width: 700px) {
+    body::before { height: 185px; }
+    .wrap { padding-bottom: 130px; }
+    .subtitle { padding-bottom: 36px; }
+    .tabs {
+      position: fixed !important; left: 12px; right: 12px; margin: 0 !important; z-index: 90;
+      bottom: calc(12px + env(safe-area-inset-bottom)); top: auto;
+      background: color-mix(in srgb, var(--k-card) 88%, transparent);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px rgba(18,32,58,.22); border-radius: 24px;
+    }
+    .tab-btn { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: .72rem; padding: 8px 4px; }
+    .tab-btn .ti { display: block; font-size: 1.25rem; line-height: 1.1; }
+    .streakbar { margin-top: -4px; position: relative; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
@@ -2475,6 +2559,136 @@
   gRenderTopics();
   gEl.explainBody.innerHTML = gTopic().explain;
   showTab(lsGet(TAB_KEY, "vocab"));
+})();
+</script>
+<script>
+(function () {
+  var $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
+  var EMO = { "Alle": "📚", "Feste Wendungen": "💬", "Nomen": "🏠", "Hauptverben": "⭐", "Übrige Verben": "🏃", "Adjektive": "🎨", "ABC": "🔤", "Zahlen": "🔢", "Präpositionen": "📍", "Pronomen": "👤", "Adverbien": "⚡", "Konjunktionen": "🔗", "Interjektionen": "😮", "Konjugation Hauptverben": "🔄", "Konjugation Übrige Verben": "🔁" };
+  var GEMO = [[/aussprache/i, "🗣️"], [/satzbau/i, "🧩"], [/geschlecht/i, "🚻"], [/plural/i, "➕"], [/artikel/i, "📰"], [/verb|konjug/i, "🔄"], [/zahl/i, "🔢"], [/frage/i, "❓"], [/pr[aä]position/i, "📍"]];
+  function emo(name) {
+    if (EMO[name]) return EMO[name];
+    for (var i = 0; i < GEMO.length; i++) if (GEMO[i][0].test(name)) return GEMO[i][1];
+    return "📘";
+  }
+
+  function deco(bar) {
+    $$("#" + bar.id + " button").forEach(function (b) {
+      if (b.querySelector(".nm")) return;
+      var t = b.textContent.trim(), m = t.match(/^(.*?)\s*\((\d+)\)$/);
+      var name = m ? m[1] : t;
+      b.innerHTML = '<span class="ico">' + emo(name) + '</span><span class="nm"></span>' + (m ? '<span class="ct">' + m[2] + '</span>' : '');
+      b.querySelector(".nm").textContent = name;
+    });
+    var a = bar.querySelector(".active");
+    if (a && bar._act !== a) { bar._act = a; bar.scrollTo({ left: a.offsetLeft - bar.clientWidth / 2 + a.offsetWidth / 2, behavior: "smooth" }); }
+  }
+  ["categoryBar", "gTopicBar"].forEach(function (id) {
+    var bar = document.getElementById(id);
+    if (!bar) return;
+    deco(bar);
+    new MutationObserver(function () { deco(bar); }).observe(bar, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
+  });
+
+  ["quizProgress", "conjProgress", "gProgress"].forEach(function (id) {
+    var p = document.getElementById(id);
+    if (!p) return;
+    var bar = document.createElement("div");
+    bar.className = "pbar"; bar.innerHTML = "<i></i>";
+    p.parentNode.insertBefore(bar, p);
+    function upd() {
+      var m = p.textContent.match(/(\d+)\s*\/\s*(\d+)/);
+      bar.firstChild.style.width = (m ? Math.round(100 * m[1] / m[2]) : 0) + "%";
+    }
+    new MutationObserver(upd).observe(p, { childList: true, characterData: true, subtree: true });
+    upd();
+  });
+
+  var TI = { "Vokabeln": "📚", "Grammatik": "🧠", "Sprechen": "🎤" };
+  $$(".tab-btn").forEach(function (b) {
+    if (b.querySelector(".ti")) return;
+    var t = b.textContent.trim();
+    b.innerHTML = '<span class="ti">' + (TI[t] || "•") + "</span><span>" + t + "</span>";
+  });
+
+  var K = "it_streak_v1";
+  function load() { try { return JSON.parse(localStorage.getItem(K)) || {}; } catch (e) { return {}; } }
+  function save(s) { try { localStorage.setItem(K, JSON.stringify(s)); } catch (e) {} }
+  function day(d) { return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
+  function today() { return day(new Date()); }
+  function yest() { var d = new Date(); d.setDate(d.getDate() - 1); return day(d); }
+
+  var tabs = document.querySelector(".tabs");
+  var sbar = document.createElement("div");
+  sbar.className = "streakbar";
+  if (tabs) tabs.parentNode.insertBefore(sbar, tabs.nextSibling);
+  function render(bump) {
+    var s = load(), days = (s.last === today() || s.last === yest()) ? (s.days || 0) : 0;
+    sbar.innerHTML = '<div class="sb"><b>🔥 ' + days + '</b><span>Tage</span></div>' +
+      '<div class="sb' + (bump ? " bump" : "") + '"><b>⚡ ' + (s.run || 0) + '</b><span>in Folge</span></div>' +
+      '<div class="sb"><b>🏆 ' + (s.best || 0) + '</b><span>Rekord</span></div>';
+  }
+  render();
+
+  var layer = document.createElement("div");
+  layer.className = "fxlayer";
+  document.body.appendChild(layer);
+  function burst(el, n) {
+    var r = el.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    var cols = ["#ea580c", "#2563eb", "#ff8a3d", "#5b8cff", "#ffffff"];
+    for (var i = 0; i < n; i++) {
+      var p = document.createElement("i");
+      p.style.left = cx + "px"; p.style.top = cy + "px";
+      p.style.background = cols[i % cols.length];
+      layer.appendChild(p);
+      var a = Math.random() * Math.PI * 2, d = 60 + Math.random() * (n > 12 ? 190 : 110);
+      var anim = p.animate([
+        { transform: "translate(0,0) rotate(0) scale(1)", opacity: 1 },
+        { transform: "translate(" + Math.cos(a) * d + "px," + (Math.sin(a) * d - 40) + "px) rotate(" + (Math.random() * 540) + "deg) scale(.5)", opacity: 0 }
+      ], { duration: 800 + Math.random() * 400, easing: "cubic-bezier(.2,.8,.3,1)" });
+      anim.onfinish = (function (q) { return function () { q.remove(); }; })(p);
+    }
+  }
+  function toast(t) {
+    var el = document.createElement("div");
+    el.className = "toast"; el.textContent = t;
+    document.body.appendChild(el);
+    setTimeout(function () { el.remove(); }, 1800);
+  }
+  function fx(cls, el) {
+    var box = el.closest(".card, .quiz, .g-box");
+    if (!box) return;
+    box.classList.remove("fx-ok", "fx-bad"); void box.offsetWidth; box.classList.add(cls);
+    setTimeout(function () { box.classList.remove(cls); }, 800);
+  }
+  function hit(ok, el) {
+    var s = load();
+    if (ok) {
+      if (s.last !== today()) { s.days = (s.last === yest()) ? (s.days || 0) + 1 : 1; s.last = today(); }
+      s.run = (s.run || 0) + 1;
+      if (s.run > (s.best || 0)) s.best = s.run;
+    } else { s.run = 0; }
+    save(s); render(ok);
+    if (ok) {
+      fx("fx-ok", el);
+      var big = s.run % 5 === 0;
+      burst(el, big ? 34 : 9);
+      if (big) toast("🔥 " + s.run + " in Folge!");
+    } else fx("fx-bad", el);
+  }
+  $$(".feedback").forEach(function (el) {
+    var last = "";
+    function state() {
+      var cl = el.classList, txt = el.textContent.trim();
+      if (!txt || getComputedStyle(el).display === "none") return "";
+      return cl.contains("correct") ? "ok" : cl.contains("wrong") ? "bad" : "";
+    }
+    new MutationObserver(function () {
+      var st = state();
+      if (st && st !== last) hit(st === "ok", el);
+      last = st;
+    }).observe(el, { attributes: true, childList: true, characterData: true, subtree: true });
+  });
 })();
 </script>
 </body>
