@@ -563,18 +563,63 @@
   .streakbar { gap: 0; background: var(--k-card); border-radius: 24px; padding: 18px 4px 16px; box-shadow: 0 10px 30px rgba(18,32,58,.10); }
   .streakbar .sb { background: none; box-shadow: none; border-radius: 0; padding: 0 6px; position: relative; gap: 0; }
   .streakbar .sb + .sb::before { content: ""; position: absolute; left: 0; top: 8%; bottom: 8%; width: 1px; background: var(--k-line); }
-  .streakbar .sb b { font-size: 2.1rem; font-weight: 800; letter-spacing: -.04em; line-height: 1; color: var(--k-text) !important; font-variant-numeric: tabular-nums; }
+  .streakbar .sb b { font-size: 2.1rem; font-weight: 800; letter-spacing: -.04em; line-height: 1; color: var(--k-text) !important; }
   .streakbar .sb span { margin-top: 8px; font-size: .62rem; font-weight: 700; letter-spacing: .1em; color: var(--k-muted); }
   .streakbar .sb::after { content: ""; display: block; width: 22px; height: 3px; border-radius: 3px; margin-top: 10px; background: var(--k-orange); }
   .streakbar .sb.z::after { background: var(--k-blue); }
   .streakbar .sb.t::after { background: var(--k-line); }
+
+  /* ---- v5: Schrift-Hierarchie, kompakte Kopfzeile, Mobile-Feinschliff ---- */
+  body { font-weight: 400; }
+  .streakbar .sb::after { display: none !important; }
+  h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -.025em; }
+  .card h2, #talkView h2 { font-size: .68rem; font-weight: 600; letter-spacing: .14em; }
+  .quiz-hint, .quiz-label { font-size: .66rem; font-weight: 600; letter-spacing: .12em; color: var(--k-muted); }
+  .quiz-progress, .g-hint { font-size: .76rem; font-weight: 400; color: var(--k-muted); }
+  .quiz-word, .prompt, .g-q { font-weight: 800; letter-spacing: -.025em; }
+  .quiz-word, .prompt { font-size: 2rem; line-height: 1.15; }
+  input[type="text"] { font-weight: 500; }
+  input[type="text"]::placeholder { font-weight: 400; color: var(--k-muted); opacity: .7; }
+  button { font-weight: 700; }
+  button.secondary, button.ghost, .tk-sec { font-weight: 500; color: var(--k-muted); }
+  .cat-btn .nm, .cat-chip .nm { font-weight: 600; font-size: .78rem; }
+  .cat-btn .ct, .cat-chip .ct { font-weight: 500; font-size: .64rem; }
+  .feedback { font-weight: 500; }
+  .streakbar .sb b { font-weight: 800; }
+  .streakbar .sb span { font-weight: 600; font-size: .6rem; }
+  .tab-btn { font-weight: 600; }
+  .tab-btn.active { font-weight: 700; }
+  .explain p, .explain ul { font-weight: 400; }
+  .explain b { font-weight: 700; }
+  #talkView .tk-task { font-weight: 700; }
+  #talkView .tk-lbl { font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: .66rem; }
+  @media (min-width: 701px) { body::before { height: 150px; } .tabs { margin-top: 22px !important; } }
+  @media (max-width: 700px) {
+    body::before { height: 112px; border-radius: 0 0 28px 28px; }
+    .streakbar { margin-top: 22px; padding: 15px 4px 14px; border-radius: 22px; margin-bottom: 14px; }
+    .streakbar .sb b { font-size: 1.9rem; }
+    .streakbar .sb span { margin-top: 6px; }
+    .card, .quiz, .g-box { padding: 18px; border-radius: 24px; margin-bottom: 14px; }
+    .card h2 { margin-bottom: 10px; }
+    .tab-btn { font-size: .82rem; }
+  }
+
+  .subtitle { display: none; }
+  h1 { padding: 28px 4px 0; text-align: center; }
+  @media (max-width: 700px) {
+    .card:has(#quizArea) > h2 { display: none; }
+    .quiz-buttons { flex-wrap: wrap; gap: 8px; }
+    #checkBtn { flex: 1 1 100%; padding: 14px; font-size: 1rem; }
+    #showBtn, #nextBtn { flex: 1 1 calc(50% - 4px); font-size: .88rem; white-space: nowrap; padding: 13px 8px; }
+    .quiz-word { margin-bottom: 24px; }
+    #speakBtn { margin-bottom: 8px; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Italienisch-Trainer</h1>
-  <div class="subtitle">Deutsch ⇄ Italienisch</div>
-
+  
   <div class="tabs">
     <button class="tab-btn active" id="tabVocab" type="button">Vokabeln</button>
     <button class="tab-btn" id="tabGrammar" type="button">Grammatik</button>
