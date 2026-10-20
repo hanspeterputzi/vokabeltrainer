@@ -2839,7 +2839,7 @@
   if (tabs) tabs.parentNode.insertBefore(sbar, tabs.nextSibling);
   var GOAL = 1800, GK = "it_goal_v1";
   function loadG() {
-    try { var o = JSON.parse(localStorage.getItem(GK)) || {}; if (o.d !== today()) o = { d: today(), sec: 0, done: false }; return o; }
+    try { var o = JSON.parse(localStorage.getItem(GK)) || {}; if (o.d !== today()) o = { d: today(), sec: 0, done: false }; o.sec = 0; return o; }
     catch (e) { return { d: today(), sec: 0, done: false }; }
   }
   var g = loadG();
@@ -2870,7 +2870,13 @@
     if (g.sec % 5 === 0) saveG();
     paintGoal();
   }, 1000);
-  document.addEventListener("visibilitychange", function () { if (document.visibilityState !== "visible") saveG(); });
+  var hiddenAt = 0;
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState !== "visible") { hiddenAt = Date.now(); saveG(); return; }
+    // App war laenger als 20 Sekunden weg: die 30 Minuten beginnen von vorn
+    if (hiddenAt && Date.now() - hiddenAt > 20000 && !g.done) { g.sec = 0; paintGoal(); }
+    hiddenAt = 0;
+  });
   window.addEventListener("pagehide", saveG);
 
   function render(bump) {
