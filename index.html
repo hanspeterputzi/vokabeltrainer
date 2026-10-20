@@ -1495,6 +1495,25 @@
   conjEl.show.addEventListener("click", conjShow);
   conjEl.next.addEventListener("click", conjNext);
 
+  // --- Auto-Update: veraltete Kopie (Home-Bildschirm-Cache) erkennen und neu laden ---
+  function checkForUpdate() {
+    try {
+      if (location.protocol === "file:") return;
+      fetch(location.pathname + "?chk=" + Date.now(), { cache: "no-store" })
+        .then(r => r.text())
+        .then(t => {
+          const m = t.match(/const SEED_VERSION = "([^"]+)"/);
+          if (m && m[1] !== SEED_VERSION && sessionStorage.getItem("upd_try") !== m[1]) {
+            sessionStorage.setItem("upd_try", m[1]);
+            location.replace(location.pathname + "?v=" + encodeURIComponent(m[1]));
+          }
+        })
+        .catch(() => {});
+    } catch (e) {}
+  }
+  checkForUpdate();
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) checkForUpdate(); });
+
   // --- Init ---
   if (selectedCategory !== "Alle" && CATEGORIES.indexOf(selectedCategory) === -1 && !isConj(selectedCategory)) selectedCategory = "Alle";
   renderCategorySelectAdd();
