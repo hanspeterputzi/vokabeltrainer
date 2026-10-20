@@ -558,6 +558,16 @@
   #talkView .tk-sec { border-radius: 14px; border-width: 1.5px; font-weight: 600; padding: 13px 16px; }
   #talkView .tk-type input { border: 1.5px solid var(--k-line); border-radius: 14px; padding: 12px 14px; }
   #talkView .tk-sum .big { font-size: 1.8rem; font-weight: 800; color: var(--k-blue); }
+
+  /* ---- Streak: eine ruhige Karte ---- */
+  .streakbar { gap: 0; background: var(--k-card); border-radius: 24px; padding: 18px 4px 16px; box-shadow: 0 10px 30px rgba(18,32,58,.10); }
+  .streakbar .sb { background: none; box-shadow: none; border-radius: 0; padding: 0 6px; position: relative; gap: 0; }
+  .streakbar .sb + .sb::before { content: ""; position: absolute; left: 0; top: 8%; bottom: 8%; width: 1px; background: var(--k-line); }
+  .streakbar .sb b { font-size: 2.1rem; font-weight: 800; letter-spacing: -.04em; line-height: 1; color: var(--k-text) !important; font-variant-numeric: tabular-nums; }
+  .streakbar .sb span { margin-top: 8px; font-size: .62rem; font-weight: 700; letter-spacing: .1em; color: var(--k-muted); }
+  .streakbar .sb::after { content: ""; display: block; width: 22px; height: 3px; border-radius: 3px; margin-top: 10px; background: var(--k-orange); }
+  .streakbar .sb.z::after { background: var(--k-blue); }
+  .streakbar .sb.t::after { background: var(--k-line); }
 </style>
 </head>
 <body>
