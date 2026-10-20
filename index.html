@@ -614,6 +614,16 @@
     .quiz-word { margin-bottom: 24px; }
     #speakBtn { margin-bottom: 8px; }
   }
+
+  /* ---- Tagesziel ---- */
+  .streakbar { flex-wrap: wrap; }
+  .goal { flex: 0 0 calc(100% - 28px); margin: 14px 14px 0; padding-top: 12px; border-top: 1px solid var(--k-line); }
+  .gl { display: flex; justify-content: space-between; align-items: baseline; }
+  .gl span { font-size: .6rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--k-muted); }
+  .gl b { font-size: .85rem; font-weight: 700; color: var(--k-text); }
+  .gb { height: 8px; border-radius: 999px; background: var(--k-bg); margin-top: 8px; overflow: hidden; }
+  .gb i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--k-blue), #5b8cff); }
+  .goal.done .gb i { background: linear-gradient(90deg, var(--k-orange), #ff8a3d); }
 </style>
 </head>
 <body>
@@ -2755,11 +2765,48 @@
   var sbar = document.createElement("div");
   sbar.className = "streakbar";
   if (tabs) tabs.parentNode.insertBefore(sbar, tabs.nextSibling);
+  var GOAL = 1800, GK = "it_goal_v1";
+  function loadG() {
+    try { var o = JSON.parse(localStorage.getItem(GK)) || {}; if (o.d !== today()) o = { d: today(), sec: 0, done: false }; return o; }
+    catch (e) { return { d: today(), sec: 0, done: false }; }
+  }
+  var g = loadG();
+  function saveG() { try { localStorage.setItem(GK, JSON.stringify(g)); } catch (e) {} }
+  var goalEl = document.createElement("div");
+  goalEl.className = "goal";
+  function fmt(s) { var m = Math.floor(s / 60), r = s % 60; return m + ":" + (r < 10 ? "0" : "") + r; }
+  function paintGoal() {
+    var pct = Math.min(100, g.sec / GOAL * 100);
+    goalEl.innerHTML = '<div class="gl"><span>Tagesziel</span><b>' + (g.done ? "Geschafft" : fmt(g.sec) + " / 30:00") + '</b></div><div class="gb"><i style="width:' + pct + '%"></i></div>';
+    goalEl.classList.toggle("done", !!g.done);
+  }
+  var lastAct = Date.now();
+  ["pointerdown", "keydown", "touchstart", "scroll", "input"].forEach(function (ev) {
+    window.addEventListener(ev, function () { lastAct = Date.now(); }, { passive: true, capture: true });
+  });
+  function reach() {
+    var s = load();
+    if (s.last !== today()) { s.days = (s.last === yest()) ? (s.days || 0) + 1 : 1; s.last = today(); save(s); render(true); }
+    saveG(); burst(goalEl, 40); toast("Tagesziel geschafft");
+  }
+  setInterval(function () {
+    if (g.d !== today()) { g = loadG(); paintGoal(); }
+    if (document.visibilityState !== "visible") return;
+    if (Date.now() - lastAct > 120000) return;
+    g.sec++;
+    if (!g.done && g.sec >= GOAL) { g.done = true; reach(); }
+    if (g.sec % 5 === 0) saveG();
+    paintGoal();
+  }, 1000);
+  document.addEventListener("visibilitychange", function () { if (document.visibilityState !== "visible") saveG(); });
+  window.addEventListener("pagehide", saveG);
+
   function render(bump) {
     var s = load(), days = (s.last === today() || s.last === yest()) ? (s.days || 0) : 0;
     sbar.innerHTML = '<div class="sb f">' + svg("flame") + '<b>' + days + '</b><span>Tage</span></div>' +
       '<div class="sb z' + (bump ? " bump" : "") + '">' + svg("bolt") + '<b>' + (s.run || 0) + '</b><span>in Folge</span></div>' +
       '<div class="sb t">' + svg("trophy") + '<b>' + (s.best || 0) + '</b><span>Rekord</span></div>';
+    sbar.appendChild(goalEl); paintGoal();
   }
   render();
 
@@ -2797,7 +2844,6 @@
   function hit(ok, el) {
     var s = load();
     if (ok) {
-      if (s.last !== today()) { s.days = (s.last === yest()) ? (s.days || 0) + 1 : 1; s.last = today(); }
       s.run = (s.run || 0) + 1;
       if (s.run > (s.best || 0)) s.best = s.run;
     } else { s.run = 0; }
