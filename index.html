@@ -640,6 +640,18 @@
     border-top: 24px solid #fff; border-top-color: var(--k-card); border-right: 24px solid transparent; }
   @media (max-width: 700px) { body::before { height: 152px; } .streakbar { margin-top: 38px; } }
   @media (min-width: 701px) { body::before { height: 170px; } }
+
+  /* ---- Tabs oben (auch am Handy) ---- */
+  .tabs { margin-top: 34px !important; }
+  body::before { height: 160px !important; }
+  @media (max-width: 700px) {
+    .tabs { position: relative !important; left: auto !important; right: auto !important; bottom: auto !important; top: auto !important;
+      background: var(--k-card) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+      border-radius: 20px !important; box-shadow: 0 8px 24px rgba(18,32,58,.14) !important; }
+    .tab-btn { flex-direction: row; justify-content: center; align-items: center; text-align: center; padding: 13px 4px; font-size: .88rem; }
+    .wrap { padding-bottom: 40px !important; }
+    .streakbar { margin-top: 14px !important; }
+  }
 </style>
 </head>
 <body>
@@ -2088,7 +2100,6 @@
       const sc = loadScores();
       listBox.innerHTML = "";
       listBox.appendChild($("h2", "", "Sprechen – Dialoge"));
-      listBox.appendChild($("p", "tk-sub", "Wähle eine Situation. Dein Gesprächspartner spricht, du antwortest laut auf Italienisch. Kleine Aussprachefehler sind erlaubt. Tipp: Wörter antippen zeigt die deutsche Bedeutung."));
       if (!SR) listBox.appendChild($("p", "tk-sub", "Hinweis: Dieser Browser kann dein Sprechen nicht erkennen (z. B. im Artifact oder Home-Bildschirm-Icon). Du kannst die Antworten eintippen. Zum Sprechen: die Seite als normalen Safari-/Chrome-Tab öffnen."));
       const groups = [];
       TALK_DIALOGS.forEach(d => {
