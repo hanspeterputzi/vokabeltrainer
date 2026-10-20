@@ -468,7 +468,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-20-ergaenzt-10";
-  const APP_VERSION = "2026-10-20-d"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-20-e"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -506,10 +506,20 @@
     try {
       const storedVersion = localStorage.getItem(SEED_VERSION_KEY);
       if (storedVersion !== SEED_VERSION) {
-        // Neue Quelldatei: komplette Liste ersetzen, statt nur zu ergaenzen.
+        // Neue Quelldatei: Liste ersetzen, selbst hinzugefuegte Woerter aber behalten.
+        let keep = [];
+        try {
+          const old = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+          const low = x => String(x).trim().toLowerCase();
+          const seedIt = new Set(SEED_WORDS.map(w => low(w.it)));
+          const seedDe = new Set(SEED_WORDS.map(w => low(w.de)));
+          keep = old.filter(w => w && w.it && w.de && (w.user || (!seedIt.has(low(w.it)) && !seedDe.has(low(w.de)))))
+            .map(w => ({ de: w.de, it: w.it, cat: CATEGORIES.indexOf(w.cat) !== -1 ? w.cat : (w.cat === "Verben" ? "Übrige Verben" : "Nomen"), user: true }));
+        } catch (e) {}
+        const merged = SEED_WORDS.concat(keep);
         localStorage.setItem(SEED_VERSION_KEY, SEED_VERSION);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED_WORDS));
-        return SEED_WORDS.slice();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+        return merged;
       }
       const raw = localStorage.getItem(STORAGE_KEY);
       return raw ? JSON.parse(raw) : SEED_WORDS.slice();
@@ -778,14 +788,22 @@
   italianInput.addEventListener("blur", applyArticleGuess);
 
   // --- Word management ---
+  const addStatusEl = document.createElement("div");
+  addStatusEl.style.cssText = "margin-top:10px;font-size:0.9rem;color:var(--correct);";
+  addBtn.insertAdjacentElement("afterend", addStatusEl);
+  function addStatus(msg, bad) {
+    addStatusEl.textContent = msg;
+    addStatusEl.style.color = bad ? "var(--wrong)" : "var(--correct)";
+  }
   function addWord() {
     const de = germanInput.value.trim();
     applyArticleGuess();
     const it = italianInput.value.trim();
-    if (!de || !it) return;
+    if (!de || !it) { addStatus("Bitte Deutsch und Italienisch ausfüllen.", true); return; }
     const cat = categorySelectAdd.value || CATEGORIES[0];
-    words.push({ de, it, cat });
+    words.push({ de, it, cat, user: true });
     saveWords();
+    addStatus("✓ Hinzugefügt: " + de + " = " + it + " (" + cat + ") – steht ganz unten in der Wortliste.");
     germanInput.value = "";
     italianInput.value = "";
     germanInput.focus();
