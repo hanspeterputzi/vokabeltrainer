@@ -1143,11 +1143,11 @@
   // Ignoriert Subjektpronomen (io, tu ...) und Fuellwoerter, erlaubt -o/-a-Endungen
   // bei langen Woertern (svizzero/svizzera) und akzeptiert kleine Abweichungen
   // (80 % Uebereinstimmung). Verneinung und Zahlen muessen uebereinstimmen.
-  var LOOSE_SKIP = { io: 1, tu: 1, lui: 1, lei: 1, noi: 1, voi: 1, loro: 1, allora: 1, beh: 1, dunque: 1, ok: 1, okay: 1 };
+  var LOOSE_SKIP = { io: 1, tu: 1, lui: 1, lei: 1, noi: 1, voi: 1, loro: 1, allora: 1, beh: 1, dunque: 1, ok: 1, okay: 1, ciao: 1, salve: 1, buongiorno: 1, buonasera: 1, piacere: 1 };
   var LOOSE_NEG = { non: 1, mai: 1, nessun: 1, nessuno: 1, nessuna: 1, niente: 1, nulla: 1 };
   function looseTokens(s) {
     return String(s).toLowerCase().replace(/[\u2019\u2018`]/g, "'").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      .replace(/'/g, " ").split(/[^\p{L}\p{N}]+/u).filter(function (t) { return t && !LOOSE_SKIP[t]; });
+      .replace(/\bper (favore|piacere|cortesia)\b/g, " ").replace(/'/g, " ").split(/[^\p{L}\p{N}]+/u).filter(function (t) { return t && !LOOSE_SKIP[t]; });
   }
   function looseEq(a, b) {
     if (a === b) return true;
@@ -1159,9 +1159,13 @@
   }
   function looseMatch(heard, target) {
     var a = looseTokens(heard), b = looseTokens(target);
-    if (!a.length || !b.length) return false;
+    if (!b.length) return !a.length && /\p{L}/u.test(String(heard));
+    if (!a.length) return false;
     var na = a.some(function (w) { return LOOSE_NEG[w]; }), nb = b.some(function (w) { return LOOSE_NEG[w]; });
     if (na !== nb) return false;
+    // Der Name muss genau stimmen: Hans Peter, nicht nur Hans oder nur Peter
+    var nameOk = ["hans", "peter"].every(function (n) { return (a.indexOf(n) >= 0) === (b.indexOf(n) >= 0); });
+    if (!nameOk) return false;
     if (b.length < 3) return a.length === b.length && a.every(function (w, i) { return w === b[i]; });
     var used = [], m = 0;
     a.forEach(function (w) {
@@ -1787,8 +1791,8 @@
       { id: "vorstellen", icon: "👋", title: "Sich vorstellen", setting: "Du lernst Giulia auf einer Party kennen (du-Form).",
         turns: [
           N("Ciao! Come ti chiami?", "Hallo! Wie heisst du?"),
-          M("Sag, dass du Hans heisst.", "Mi chiamo Hans.", ["Sono Hans."]),
-          N("Piacere, Hans! Io sono Giulia. Di dove sei?", "Freut mich, Hans! Ich bin Giulia. Woher kommst du?"),
+          M("Sag, dass du Hans Peter heisst.", "Mi chiamo Hans Peter.", ["Sono Hans Peter.", "Il mio nome è Hans Peter.", "Mi chiamo Hans Peter, piacere.", "Sono Hans Peter, piacere."]),
+          N("Piacere, Hans Peter! Io sono Giulia. Di dove sei?", "Freut mich, Hans Peter! Ich bin Giulia. Woher kommst du?"),
           M("Sag, dass du aus Chur in der Schweiz bist.", "Sono di Coira, in Svizzera.", ["Sono di Coira.", "Sono svizzero."]),
           N("Che bello! Dove abiti?", "Wie schön! Wo wohnst du?"),
           M("Sag, dass du in Chur wohnst, und frag zurück.", "Abito a Coira. E tu?", ["Abito a Coira, e tu?"]),
@@ -1797,7 +1801,7 @@
         ] },
       { id: "smalltalk", icon: "☀️", title: "Smalltalk", setting: "Du triffst einen Bekannten auf der Strasse (du-Form).",
         turns: [
-          N("Ciao Hans! Come stai?", "Hallo Hans! Wie geht es dir?"),
+          N("Ciao Hans Peter! Come stai?", "Hallo Hans Peter! Wie geht es dir?"),
           M("Sag, dass es dir gut geht, und frag zurück.", "Sto bene, grazie. E tu?", ["Bene, grazie. E tu?"]),
           N("Bene, grazie. Che bella giornata oggi!", "Gut, danke. Was für ein schöner Tag heute!"),
           M("Sag: Ja, die Sonne scheint, aber es ist etwas kalt.", "Sì, c'è il sole, ma fa un po' freddo.", ["Sì, ma fa un po' freddo."]),
@@ -1888,7 +1892,7 @@
       { id: "hotel", icon: "🏨", title: "Im Hotel einchecken", setting: "Du kommst im Hotel an (Lei-Form).",
         turns: [
           N("Buonasera! Posso aiutarla?", "Guten Abend! Kann ich Ihnen helfen?"),
-          M("Sag, dass du eine Reservierung auf den Namen Hans hast.", "Buonasera, ho una prenotazione a nome Hans.", ["Ho prenotato una camera a nome Hans.", "Ho una prenotazione. Mi chiamo Hans."]),
+          M("Sag, dass du eine Reservierung auf den Namen Hans Peter hast.", "Buonasera, ho una prenotazione a nome Hans Peter.", ["Ho prenotato una camera a nome Hans Peter.", "Ho una prenotazione. Mi chiamo Hans Peter.", "Ho una prenotazione a nome di Hans Peter.", "Buonasera, mi chiamo Hans Peter. Ho una prenotazione.", "Ho una prenotazione a nome Hans Peter."]),
           N("Un momento... Sì, una camera singola per due notti.", "Einen Moment... Ja, ein Einzelzimmer für zwei Nächte."),
           M("Bestätige und frag, wann das Frühstück ist.", "Esatto. A che ora è la colazione?", ["A che ora è la colazione?", "Esatto. Quando è la colazione?"]),
           N("La colazione è dalle sette alle dieci.", "Das Frühstück ist von sieben bis zehn Uhr."),
@@ -1914,8 +1918,8 @@
           N("A che ora preferisce?", "Um wie viel Uhr bevorzugen Sie?"),
           M("Sag: Nachmittags, nach drei Uhr.", "Nel pomeriggio, dopo le tre.", ["Nel pomeriggio, per favore.", "Dopo le tre."]),
           N("Va bene, alle tre e mezza. Come si chiama?", "Gut, um halb vier. Wie heissen Sie?"),
-          M("Nenne deinen Namen.", "Mi chiamo Hans.", ["Hans.", "Sono Hans."]),
-          N("Perfetto, Hans. A domani!", "Perfekt, Hans. Bis morgen!"),
+          M("Nenne deinen Namen.", "Mi chiamo Hans Peter.", ["Hans Peter.", "Sono Hans Peter.", "Il mio nome è Hans Peter.", "Mi chiamo Hans Peter, grazie.", "Mi chiamo Hans Peter, arrivederci."]),
+          N("Perfetto, Hans Peter. A domani!", "Perfekt, Hans Peter. Bis morgen!"),
           M("Bedanke dich und sag: Bis morgen.", "A domani, grazie!", ["Grazie, a domani!", "Grazie, arrivederci!"])
         ] },
       { id: "kleidung", icon: "🧥", title: "Kleidung kaufen", setting: "Du suchst in einem Geschäft eine Jacke (Lei-Form).",
@@ -2004,7 +2008,7 @@
         ] },
       { id: "hobby", icon: "⚽", title: "Sport und Hobbys", setting: "Du sprichst mit Giulia über die Freizeit (du-Form).",
         turns: [
-          N("Ciao Hans! Che cosa fai nel tempo libero?", "Hallo Hans! Was machst du in deiner Freizeit?"),
+          N("Ciao Hans Peter! Che cosa fai nel tempo libero?", "Hallo Hans Peter! Was machst du in deiner Freizeit?"),
           M("Sag: Ich spiele Fussball und fahre Velo.", "Gioco a calcio e vado in bicicletta.", ["Gioco a calcio e vado in bici."]),
           N("Che bello! Quante volte alla settimana?", "Wie schön! Wie oft pro Woche?"),
           M("Sag: Zweimal pro Woche.", "Due volte alla settimana.", ["Due volte a settimana."]),
