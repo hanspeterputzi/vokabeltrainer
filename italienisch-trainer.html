@@ -1139,6 +1139,39 @@
     return words.filter(w => w.cat === selectedCategory);
   }
 
+  // Tolerante Satzpruefung: Es gibt oft mehrere richtige Formulierungen.
+  // Ignoriert Subjektpronomen (io, tu ...) und Fuellwoerter, erlaubt -o/-a-Endungen
+  // bei langen Woertern (svizzero/svizzera) und akzeptiert kleine Abweichungen
+  // (80 % Uebereinstimmung). Verneinung und Zahlen muessen uebereinstimmen.
+  var LOOSE_SKIP = { io: 1, tu: 1, lui: 1, lei: 1, noi: 1, voi: 1, loro: 1, allora: 1, beh: 1, dunque: 1, ok: 1, okay: 1 };
+  var LOOSE_NEG = { non: 1, mai: 1, nessun: 1, nessuno: 1, nessuna: 1, niente: 1, nulla: 1 };
+  function looseTokens(s) {
+    return String(s).toLowerCase().replace(/[\u2019\u2018`]/g, "'").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/'/g, " ").split(/[^\p{L}\p{N}]+/u).filter(function (t) { return t && !LOOSE_SKIP[t]; });
+  }
+  function looseEq(a, b) {
+    if (a === b) return true;
+    if (a.length >= 8 && a.length === b.length && a.slice(0, -1) === b.slice(0, -1)) {
+      var p = a.slice(-1) + b.slice(-1);
+      return p === "oa" || p === "ao";
+    }
+    return false;
+  }
+  function looseMatch(heard, target) {
+    var a = looseTokens(heard), b = looseTokens(target);
+    if (!a.length || !b.length) return false;
+    var na = a.some(function (w) { return LOOSE_NEG[w]; }), nb = b.some(function (w) { return LOOSE_NEG[w]; });
+    if (na !== nb) return false;
+    if (b.length < 3) return a.length === b.length && a.every(function (w, i) { return w === b[i]; });
+    var used = [], m = 0;
+    a.forEach(function (w) {
+      for (var i = 0; i < b.length; i++) {
+        if (!used[i] && looseEq(w, b[i])) { used[i] = 1; m++; break; }
+      }
+    });
+    return 2 * m / (a.length + b.length) >= 0.8;
+  }
+
   function editDistance(a, b) {
     const prev = [];
     for (let j = 0; j <= b.length; j++) prev[j] = j;
@@ -1243,6 +1276,8 @@
     candidates.slice().forEach(c => candidates.push(c.replace(/\s*\([^)]*\)/g, "")));
     const heard = [userAnswer].concat(spoken);
     let isCorrect = heard.some(h => candidates.some(c => normalizeForCompare(c) === normalizeForCompare(h)));
+    let loose = false;
+    if (!isCorrect) { loose = heard.some(h => candidates.some(c => looseMatch(h, c))); isCorrect = loose; }
     // Nur bei Spracheingabe: kleine Erkennungsfehler ("Poira" statt "Coira") verzeihen
     let fuzzy = false;
     if (!isCorrect && spoken.length) {
@@ -1257,7 +1292,7 @@
       repeatQueued = false;
       if (currentFromReview) removeReview(selectedCategory, currentQuiz.word);
       feedback.className = "feedback show correct";
-      feedback.textContent = fuzzy ? "Richtig! (erkannt: \u201e" + userAnswer + "\u201c, richtig: " + correctAnswer + ")" : "Richtig!";
+      feedback.textContent = loose ? "Richtig! Auch eine gute Formulierung. Musterlösung: " + correctAnswer : fuzzy ? "Richtig! (erkannt: \u201e" + userAnswer + "\u201c, richtig: " + correctAnswer + ")" : "Richtig!";
     } else {
       stats.wrong++;
       repeatQueued = !currentFromReview; // in der Wiederholungsrunde zaehlt nur der erste Versuch
@@ -2035,6 +2070,11 @@
       for (const h of hs) for (const g of goals) {
         const allowed = g.length < 8 ? 0 : Math.max(1, Math.floor(g.length * 0.12));
         if (allowed && dist(h, g) <= allowed) return { ok: true, exact: false };
+      }
+      const prep = s => String(s).replace(/\d+/g, m => " " + numIt(parseInt(m, 10)) + " ");
+      const raws = [turn.it].concat(turn.alts || []);
+      for (const h of heard) for (const g of raws) {
+        if (looseMatch(prep(h), prep(g))) return { ok: true, exact: false };
       }
       return { ok: false };
     }
