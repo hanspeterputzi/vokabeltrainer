@@ -468,7 +468,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-20-ergaenzt-9";
-  const APP_VERSION = "2026-10-20-b"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-20-c"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1535,6 +1535,148 @@
   renderQuizVisibility();
   if (isConj(selectedCategory)) conjNext();
   else if (words.length > 0) nextQuiz();
+  // --- Grammatik: Woerter antippen -> deutsche Bedeutung aus den Vokabeln ---
+  (function () {
+    const ART = /^(il|lo|la|l'|i|gli|le|un|uno|una|un')\s*/;
+    let idx = null, idxSize = -1;
+    function norm(s) {
+      return s.toLowerCase().replace(/[’‘`]/g, "'").replace(/\s*\([^)]*\)/g, "").replace(/[.,;:!?«»"„“”]/g, "").trim();
+    }
+    function add(key, entry) {
+      if (!key) return;
+      (idx[key] || (idx[key] = [])).push(entry);
+    }
+    function build() {
+      if (idx && idxSize === words.length) return;
+      idx = {}; idxSize = words.length;
+      words.forEach(w => {
+        const entry = { it: w.it, de: w.de, note: "" };
+        String(w.it).split(/\s*\/\s*|\s+–\s+/).forEach(v => {
+          const k = norm(v);
+          add(k, entry);
+          const k2 = k.replace(ART, "");
+          if (k2 !== k) add(k2, entry);
+        });
+      });
+      CONJ_VERBS.forEach(v => {
+        v.f.forEach((f, i) => {
+          if (f === null) return;
+          const entry = { it: f, de: v.de, note: "Form von " + v.inf };
+          f.split(/\s*\/\s*/).forEach(x => {
+            const k = norm(x);
+            add(k, entry);
+            const k2 = k.replace(/^(mi|ti|si|ci|vi)\s+/, "");
+            if (k2 !== k) add(k2, entry);
+          });
+        });
+      });
+    }
+    function lookupWord(tok) {
+      build();
+      const k = norm(tok);
+      return idx[k] || null;
+    }
+    const WORD = /[A-Za-zÀ-ÿ]+(?:'[A-Za-zÀ-ÿ]+)?/g;
+    function okToken(tok, hits) {
+      if (tok.length >= 3) return true;
+      return hits.some(h => h.note); // kurze Tokens (ho, ha, va, è …) nur als Verbform
+    }
+    function linkNode(root) {
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+      const nodes = [];
+      let n;
+      while ((n = walker.nextNode())) {
+        if (n.parentNode.closest && n.parentNode.closest(".lw")) continue;
+        nodes.push(n);
+      }
+      nodes.forEach(t => {
+        const text = t.nodeValue;
+        let last = 0, changed = false;
+        const frag = document.createDocumentFragment();
+        text.replace(WORD, (tok, off) => {
+          const hits = lookupWord(tok);
+          if (!hits || !okToken(tok, hits)) return tok;
+          if (off > last) frag.appendChild(document.createTextNode(text.slice(last, off)));
+          const sp = document.createElement("span");
+          sp.className = "lw";
+          sp.textContent = tok;
+          frag.appendChild(sp);
+          last = off + tok.length;
+          changed = true;
+          return tok;
+        });
+        if (changed) {
+          if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+          t.parentNode.replaceChild(frag, t);
+        }
+      });
+    }
+    // CSS + UI
+    const st = document.createElement("style");
+    st.textContent =
+      ".lw{border-bottom:1.5px dotted var(--accent,var(--orange,#ea580c));cursor:pointer}" +
+      ".lw:hover{background:var(--wrong-bg,var(--orange-soft,#ffedd5))}" +
+      "#lwBar{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);width:calc(100% - 28px);max-width:520px;z-index:50;display:none;" +
+      "background:var(--card-bg,var(--surface,#fff));color:var(--text,var(--ink,#1b2430));border:1px solid var(--accent,var(--orange,#ea580c));" +
+      "border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.25);padding:12px 40px 12px 14px;font-size:15px;line-height:1.45}" +
+      "#lwBar .x{position:absolute;right:6px;top:4px;border:none;background:none;color:var(--muted,var(--ink-muted,#666));font-size:22px;cursor:pointer;padding:4px 8px}" +
+      "#lwBar .it{font-weight:700}#lwBar .note{color:var(--muted,var(--ink-muted,#666));font-size:13px}" +
+      "#gSearch{margin-bottom:14px}#gSearch input{width:100%;font-size:16px;padding:10px 12px;border:1px solid var(--border,var(--line,#ccc));border-radius:8px;background:var(--bg,#f5f7fa);color:var(--text,var(--ink,#1b2430))}" +
+      "#gSearchRes{margin-top:8px;font-size:14px;line-height:1.5}#gSearchRes div{padding:3px 0}";
+    document.head.appendChild(st);
+    const bar = document.createElement("div");
+    bar.id = "lwBar";
+    document.body.appendChild(bar);
+    function line(h) {
+      return "<span class='it'>" + escapeHtml(h.it) + "</span> = " + escapeHtml(h.de) +
+        (h.note ? " <span class='note'>(" + escapeHtml(h.note) + ")</span>" : "");
+    }
+    function show(tok) {
+      const hits = lookupWord(tok) || [];
+      const seen = {};
+      const rows = hits.filter(h => { const k = h.it + "|" + h.de; if (seen[k]) return false; seen[k] = 1; return true; });
+      bar.innerHTML = "<button type='button' class='x' aria-label='Schliessen'>×</button>" + rows.map(line).join("<br>");
+      bar.style.display = "block";
+      bar.querySelector(".x").addEventListener("click", () => { bar.style.display = "none"; });
+    }
+    gEl.view.addEventListener("click", e => {
+      const sp = e.target.closest && e.target.closest(".lw");
+      if (sp) show(sp.textContent); else if (!e.target.closest("#lwBar")) bar.style.display = "none";
+    });
+    // Suchfeld
+    const box = document.createElement("div");
+    box.id = "gSearch";
+    box.className = "card g-box";
+    box.innerHTML = "<input type='text' id='gSearchIn' placeholder='Wort nachschlagen (italienisch oder deutsch)' autocomplete='off' autocapitalize='off' spellcheck='false'><div id='gSearchRes'></div>";
+    gEl.view.insertBefore(box, gEl.view.firstChild);
+    const sin = box.querySelector("#gSearchIn"), sres = box.querySelector("#gSearchRes");
+    sin.addEventListener("input", () => {
+      const q = norm(sin.value);
+      if (q.length < 2) { sres.innerHTML = ""; return; }
+      build();
+      const out = [], seen = {};
+      const push = h => { const k = h.it + "|" + h.de; if (!seen[k] && out.length < 8) { seen[k] = 1; out.push(h); } };
+      (idx[q] || []).forEach(push);
+      Object.keys(idx).forEach(k => { if (k.indexOf(q) === 0) idx[k].forEach(push); });
+      words.forEach(w => { if (w.de.toLowerCase().indexOf(q) !== -1) push({ it: w.it, de: w.de, note: "" }); });
+      sres.innerHTML = out.length ? out.map(h => "<div>" + line(h) + "</div>").join("") : "<div class='note'>Nichts gefunden.</div>";
+    });
+    // Automatisch verlinken, sobald sich Grammatik-Texte aendern
+    let busy = false;
+    const obs = new MutationObserver(recs => {
+      if (busy) return;
+      busy = true;
+      const targets = new Set();
+      recs.forEach(r => { const el = r.target.nodeType === 1 ? r.target : r.target.parentNode; if (el) targets.add(el); });
+      targets.forEach(el => { if (el.isConnected && !el.closest("#gSearch")) linkNode(el); });
+      obs.takeRecords();
+      busy = false;
+    });
+    [gEl.explainBody, gEl.question, gEl.hint, gEl.feedback, gEl.expl].forEach(el => {
+      obs.observe(el, { childList: true, characterData: true, subtree: true });
+    });
+  })();
+
   gRenderTopics();
   gEl.explainBody.innerHTML = gTopic().explain;
   showTab(lsGet(TAB_KEY, "vocab"));
