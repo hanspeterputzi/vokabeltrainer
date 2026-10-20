@@ -509,6 +509,21 @@
     .streakbar { margin-top: -4px; position: relative; }
   }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+  /* ---- Icons: Linien-Stil statt Emojis ---- */
+  .cat-btn .ico, .cat-chip .ico { width: 42px; height: 42px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+    background: #fff1e8; background: color-mix(in srgb, var(--k-orange) 13%, var(--k-card)); color: var(--k-orange); transition: background .2s, color .2s; }
+  .cat-btn .ico svg, .cat-chip .ico svg { width: 22px; height: 22px; }
+  .cat-btn.active .ico, .cat-chip.active .ico { background: rgba(255,255,255,.24); color: #fff; }
+  .tab-btn .ti svg { width: 22px; height: 22px; display: block; }
+  .tab-btn.active .ti { color: #fff; }
+  .sb { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+  .sb svg { width: 22px; height: 22px; margin-bottom: 2px; }
+  .sb.f svg { color: var(--k-orange); } .sb.z svg { color: var(--k-blue); } .sb.t svg { color: #f59e0b; }
+  .sb b { display: block; line-height: 1.1; }
+  .toast { display: flex; align-items: center; gap: 8px; } .toast svg { width: 18px; height: 18px; }
+  #micBtn svg, #speakBtn svg { width: 20px; height: 20px; vertical-align: middle; }
+  #speakBtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 </style>
 </head>
 <body>
@@ -2564,12 +2579,38 @@
 <script>
 (function () {
   var $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
-  var EMO = { "Alle": "📚", "Feste Wendungen": "💬", "Nomen": "🏠", "Hauptverben": "⭐", "Übrige Verben": "🏃", "Adjektive": "🎨", "ABC": "🔤", "Zahlen": "🔢", "Präpositionen": "📍", "Pronomen": "👤", "Adverbien": "⚡", "Konjunktionen": "🔗", "Interjektionen": "😮", "Konjugation Hauptverben": "🔄", "Konjugation Übrige Verben": "🔁" };
-  var GEMO = [[/aussprache/i, "🗣️"], [/satzbau/i, "🧩"], [/geschlecht/i, "🚻"], [/plural/i, "➕"], [/artikel/i, "📰"], [/verb|konjug/i, "🔄"], [/zahl/i, "🔢"], [/frage/i, "❓"], [/pr[aä]position/i, "📍"]];
+  var P = {
+    book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+    chat: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+    tag: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><path d="M7 7h.01"/>',
+    star: '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>',
+    pulse: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+    drop: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>',
+    type: '<path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/>',
+    hash: '<path d="M4 9h16"/><path d="M4 15h16"/><path d="M10 3L8 21"/><path d="M16 3l-2 18"/>',
+    pin: '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+    user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+    fwd: '<path d="M13 19l9-7-9-7v14z"/><path d="M2 19l9-7-9-7v14z"/>',
+    link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+    alert: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
+    cycle: '<path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>',
+    mic: '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v4"/><path d="M8 23h8"/>',
+    layers: '<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>',
+    users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    plus: '<circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/>',
+    open: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+    cap: '<path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
+    flame: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+    bolt: '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
+    trophy: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/>'
+  };
+  function svg(k) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (P[k] || P.open) + '</svg>'; }
+  var EMO = { "Alle": "book", "Feste Wendungen": "chat", "Nomen": "tag", "Hauptverben": "star", "Übrige Verben": "pulse", "Adjektive": "drop", "ABC": "type", "Zahlen": "hash", "Präpositionen": "pin", "Pronomen": "user", "Adverbien": "fwd", "Konjunktionen": "link", "Interjektionen": "alert", "Konjugation Hauptverben": "cycle", "Konjugation Übrige Verben": "cycle" };
+  var GEMO = [[/aussprache/i, "mic"], [/satzbau/i, "layers"], [/geschlecht/i, "users"], [/plural/i, "plus"], [/verb|konjug/i, "cycle"], [/zahl/i, "hash"], [/pr[aä]position/i, "pin"]];
   function emo(name) {
-    if (EMO[name]) return EMO[name];
-    for (var i = 0; i < GEMO.length; i++) if (GEMO[i][0].test(name)) return GEMO[i][1];
-    return "📘";
+    var k = EMO[name];
+    if (!k) for (var i = 0; i < GEMO.length; i++) if (GEMO[i][0].test(name)) { k = GEMO[i][1]; break; }
+    return svg(k || "open");
   }
 
   function deco(bar) {
@@ -2604,11 +2645,16 @@
     upd();
   });
 
-  var TI = { "Vokabeln": "📚", "Grammatik": "🧠", "Sprechen": "🎤" };
+  P.vol = '<path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>';
+  var mb = document.getElementById("micBtn");
+  if (mb && mb.textContent.trim() === "🎤") mb.innerHTML = svg("mic");
+  var sp = document.getElementById("speakBtn");
+  if (sp && sp.textContent.indexOf("🔊") === 0) sp.innerHTML = svg("vol") + " Aussprache wiederholen";
+  var TI = { "Vokabeln": "book", "Grammatik": "cap", "Sprechen": "mic" };
   $$(".tab-btn").forEach(function (b) {
     if (b.querySelector(".ti")) return;
     var t = b.textContent.trim();
-    b.innerHTML = '<span class="ti">' + (TI[t] || "•") + "</span><span>" + t + "</span>";
+    b.innerHTML = '<span class="ti">' + svg(TI[t] || "open") + "</span><span>" + t + "</span>";
   });
 
   var K = "it_streak_v1";
@@ -2624,9 +2670,9 @@
   if (tabs) tabs.parentNode.insertBefore(sbar, tabs.nextSibling);
   function render(bump) {
     var s = load(), days = (s.last === today() || s.last === yest()) ? (s.days || 0) : 0;
-    sbar.innerHTML = '<div class="sb"><b>🔥 ' + days + '</b><span>Tage</span></div>' +
-      '<div class="sb' + (bump ? " bump" : "") + '"><b>⚡ ' + (s.run || 0) + '</b><span>in Folge</span></div>' +
-      '<div class="sb"><b>🏆 ' + (s.best || 0) + '</b><span>Rekord</span></div>';
+    sbar.innerHTML = '<div class="sb f">' + svg("flame") + '<b>' + days + '</b><span>Tage</span></div>' +
+      '<div class="sb z' + (bump ? " bump" : "") + '">' + svg("bolt") + '<b>' + (s.run || 0) + '</b><span>in Folge</span></div>' +
+      '<div class="sb t">' + svg("trophy") + '<b>' + (s.best || 0) + '</b><span>Rekord</span></div>';
   }
   render();
 
@@ -2651,7 +2697,7 @@
   }
   function toast(t) {
     var el = document.createElement("div");
-    el.className = "toast"; el.textContent = t;
+    el.className = "toast"; el.innerHTML = svg("flame") + "<span></span>"; el.lastChild.textContent = t;
     document.body.appendChild(el);
     setTimeout(function () { el.remove(); }, 1800);
   }
@@ -2673,7 +2719,7 @@
       fx("fx-ok", el);
       var big = s.run % 5 === 0;
       burst(el, big ? 34 : 9);
-      if (big) toast("🔥 " + s.run + " in Folge!");
+      if (big) toast(s.run + " in Folge!");
     } else fx("fx-bad", el);
   }
   $$(".feedback").forEach(function (el) {
