@@ -790,6 +790,40 @@
   try { reviewQueue = JSON.parse(localStorage.getItem(REVIEW_KEY)) || {}; } catch (e) { reviewQueue = {}; }
   function saveReview() { try { localStorage.setItem(REVIEW_KEY, JSON.stringify(reviewQueue)); } catch (e) {} }
   function sameWord(a, b) { return a.de === b.de && a.it === b.it; }
+
+  // Zusaetzliche gueltige Antworten: eigene (Knopf "Meine Antwort war auch richtig") und Synonyme
+  const ALTS_KEY = "vokabeltrainer_alts";
+  let userAlts = {};
+  try { userAlts = JSON.parse(localStorage.getItem(ALTS_KEY)) || {}; } catch (e) { userAlts = {}; }
+  function saveAlts() { try { localStorage.setItem(ALTS_KEY, JSON.stringify(userAlts)); } catch (e) {} }
+  function altKey(w) { return w.de + "|" + w.it; }
+  const SYN_GROUPS = [
+    ["squisito", "delizioso", "buonissimo", "gustoso", "saporito"],
+    ["macchina", "auto", "automobile"],
+    ["bambino", "bimbo"], ["bambina", "bimba"],
+    ["soldi", "denaro"],
+    ["cellulare", "telefonino"],
+    ["ciao", "salve"],
+    ["mamma", "madre"], ["papà", "padre", "babbo"],
+    ["grande", "enorme"], ["piccolo", "piccino"],
+    ["bello", "bellissimo"], ["brutto", "orrendo"],
+    ["difficile", "complicato"], ["facile", "semplice"],
+    ["stanco", "esausto"], ["contento", "felice"],
+    ["subito", "immediatamente"], ["forse", "magari"],
+    ["lavoro", "impiego"], ["capo", "direttore"],
+    ["biglietto", "ticket"], ["negozio", "bottega"],
+    ["cominciare", "iniziare"], ["finire", "terminare"],
+    ["domanda", "richiesta"], ["comprare", "acquistare"],
+    ["parlare", "dire"], ["guardare", "osservare"]
+  ];
+  function synonymVariants(text) {
+    const out = [];
+    SYN_GROUPS.forEach(g => g.forEach(m => {
+      const re = new RegExp("(^|[^\\p{L}])" + m + "(?![\\p{L}])", "giu");
+      if (re.test(text)) g.forEach(o => { if (o !== m) out.push(text.replace(re, (all, pre) => pre + o)); });
+    }));
+    return out;
+  }
   function addReview(cat, item) {
     const q = reviewQueue[cat] || (reviewQueue[cat] = []);
     if (!q.some(e => sameWord(e, item))) q.push(item);
@@ -1278,6 +1312,13 @@
     // Bei mehreren Loesungen ("Salve / ciao") genuegt eine davon; Klammerzusaetze sind optional.
     const candidates = [correctAnswer].concat(correctAnswer.split(" / "));
     candidates.slice().forEach(c => candidates.push(c.replace(/\s*\([^)]*\)/g, "")));
+    // Weitere gueltige Loesungen: eigene (per Knopf gespeicherte), gleiche deutsche
+    // Vokabel mit anderer italienischer Uebersetzung, und Synonyme aus SYN_GROUPS.
+    if (currentQuiz.direction === "de-it") {
+      (userAlts[altKey(currentQuiz.word)] || []).forEach(a => candidates.push(a));
+      words.forEach(w => { if (w.de === currentQuiz.word.de && w.it !== currentQuiz.word.it) candidates.push(w.it, ...w.it.split(" / ")); });
+      candidates.slice().forEach(c => synonymVariants(c).forEach(v => candidates.push(v)));
+    }
     const heard = [userAnswer].concat(spoken);
     let isCorrect = heard.some(h => candidates.some(c => normalizeForCompare(c) === normalizeForCompare(h)));
     let loose = false;
@@ -1303,6 +1344,26 @@
       addReview(selectedCategory, { de: currentQuiz.word.de, it: currentQuiz.word.it });
       feedback.className = "feedback show wrong";
       feedback.textContent = "Falsch (erkannt: \u201e" + answerInput.value.trim() + "\u201c). Richtige Antwort: " + correctAnswer + " (wird nochmals abgefragt)";
+      if (currentQuiz.direction === "de-it") {
+        const altBtn = document.createElement("button");
+        altBtn.type = "button";
+        altBtn.textContent = "Meine Antwort war auch richtig";
+        altBtn.style.cssText = "display:block;margin-top:10px;padding:8px 12px;border-radius:10px;border:1px solid currentColor;background:transparent;color:inherit;font:inherit;cursor:pointer";
+        const quizWordNow = currentQuiz.word, givenNow = answerInput.value.trim(), fromReviewNow = currentFromReview;
+        altBtn.addEventListener("click", () => {
+          const k = altKey(quizWordNow);
+          (userAlts[k] = userAlts[k] || []).push(givenNow);
+          saveAlts();
+          stats.wrong = Math.max(0, stats.wrong - 1);
+          stats.correct++;
+          saveStats();
+          repeatQueued = false;
+          removeReview(selectedCategory, quizWordNow);
+          feedback.className = "feedback show correct";
+          feedback.textContent = "Gespeichert: \u201e" + givenNow + "\u201c gilt jetzt auch als richtig. Musterl\u00f6sung: " + correctAnswer;
+        });
+        feedback.appendChild(altBtn);
+      }
     }
     saveStats();
     checkBtn.disabled = true;
