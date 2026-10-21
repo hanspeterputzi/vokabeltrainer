@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-ma";
-  const APP_VERSION = "2026-10-23-l"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-m"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -2786,16 +2786,24 @@
       if (!key) return;
       (idx[key] || (idx[key] = [])).push(entry);
     }
+    const DE_PL = {"Abend": "Abende", "Abendessen": "Abendessen", "Abonnement": "Abonnements", "Adresse": "Adressen", "Agentur": "Agenturen", "Alphabet": "Alphabete", "Altstadt": "Altstädte", "Antwort": "Antworten", "Aperitiv": "Aperitifs", "Apfel": "Äpfel", "Apotheke": "Apotheken", "Arbeitsplatz": "Arbeitsplätze", "Art": "Arten", "At-Zeichen (@)": "At-Zeichen", "Ausländer": "Ausländer", "Auto": "Autos", "Bahnhof": "Bahnhöfe", "Bank (Geldinstitut)": "Banken", "Batterie / Akku": "Batterien / Akkus", "Bedürfnis / Bedarf": "Bedürfnisse", "Beschwerde": "Beschwerden", "Bestellung": "Bestellungen", "Brot": "Brote", "Brücke": "Brücken", "Bus / Autobus": "Busse", "Bäckerei": "Bäckereien", "Chef": "Chefs", "Code": "Codes", "Creme": "Cremes", "Datum": "Daten", "Dokument / Ausweis": "Dokumente / Ausweise", "E-Mail": "E-Mails", "Ende / Schluss": "Enden", "Euro": "Euro", "Fahrrad": "Fahrräder", "Film": "Filme", "Fotografie": "Fotografien", "Franken": "Franken", "Frühstück": "Frühstücke", "Fuss": "Füsse", "Geburt": "Geburten", "Gebühr / Kommission": "Gebühren / Kommissionen", "Gefallen / Gefälligkeit": "Gefallen / Gefälligkeiten", "Gepäck": "Gepäckstücke", "Geschäft": "Geschäfte", "Getränk": "Getränke", "Gigabyte": "Gigabyte", "Glas (zum Trinken)": "Gläser", "Gleis": "Gleise", "Gnocco": "Gnocchi", "Haltestelle": "Haltestellen", "Idee": "Ideen", "Identitätskarte": "Identitätskarten", "Karotte": "Karotten", "Karte": "Karten", "Kilo": "Kilos", "Kleines Mädchen": "Mädchen", "Kollege / Kollegin": "Kollegen / Kolleginnen", "Konfektionsgrösse": "Konfektionsgrössen", "Kontrolle": "Kontrollen", "Kopf": "Köpfe", "Krankenhaus": "Krankenhäuser", "Kredit": "Kredite", "Kreditkarte": "Kreditkarten", "Kunde / Kundin": "Kunden / Kundinnen", "Mahnung": "Mahnungen", "Medikament": "Medikamente", "Meer": "Meere", "Meldung / Anzeige": "Meldungen / Anzeigen", "Minute": "Minuten", "Moment": "Momente", "Monat": "Monate", "Morgen (Vormittag)": "Vormittage", "Motorrad": "Motorräder", "Nachmittag": "Nachmittage", "Paket": "Pakete", "Pass (Reisepass)": "Pässe", "Passwort": "Passwörter", "Person": "Personen", "Pizza": "Pizzen", "Problem": "Probleme", "Programm": "Programme", "Psychologe": "Psychologen", "Punkt": "Punkte", "Quittung": "Quittungen", "Rechnung (Faktura)": "Rechnungen", "Rechnung (im Restaurant)": "Rechnungen", "Regel": "Regeln", "Reifen": "Reifen", "Reservierung": "Reservierungen", "Rückfahrt / Rückkehr": "Rückfahrten / Rückkehren", "Salon (Friseursalon)": "Salons", "Schinken": "Schinken", "Schmerz / Übel": "Schmerzen / Übel", "Schokolade": "Schokoladen", "Schwimmbad": "Schwimmbäder", "SIM-Karte": "SIM-Karten", "Sonne": "Sonnen", "Spargel": "Spargel", "Sport": "Sportarten", "Strecke": "Strecken", "Stunde / Uhr(zeit)": "Stunden / Uhren", "Süssspeise / Dessert": "Süssspeisen / Desserts", "System": "Systeme", "Termin / Verabredung": "Termine / Verabredungen", "Thema": "Themen", "Ticket / Fahrkarte": "Tickets / Fahrkarten", "Tomate": "Tomaten", "Umkleidekabine": "Umkleidekabinen", "Wahl": "Wahlen", "Wein": "Weine", "Woche": "Wochen", "Wochenende": "Wochenenden", "Zeit / Wetter": "Zeiten", "Zug": "Züge", "Zuschlag": "Zuschläge", "Badezimmer": "Badezimmer", "Ball": "Bälle", "Banane": "Bananen", "Bar": "Bars", "Begegnung": "Begegnungen", "Beispiel": "Beispiele", "Bett": "Betten", "Bier": "Biere", "Birne": "Birnen", "Bruder": "Brüder", "Buch": "Bücher", "Buchhandlung": "Buchhandlungen", "Buchstabe": "Buchstaben", "Büro": "Büros", "Bushaltestelle": "Bushaltestellen", "Coiffure": "Coiffeure", "Computer": "Computer", "Das Ding": "Dinge", "Dessert": "Desserts", "Dialog / Dialoge": "Dialoge", "Dorf": "Dörfer", "Dusche": "Duschen", "Ei": "Eier", "einfaches Restaurant": "einfache Restaurants", "Eule": "Eulen", "Fabrik": "Fabriken", "Familie": "Familien", "Farbe": "Farben", "Fisch": "Fische", "Fluss": "Flüsse", "Foto": "Fotos", "Frage": "Fragen", "Frau": "Frauen", "Freund / Freundin": "Freunde / Freundinnen", "Frucht": "Früchte", "Gabel": "Gabeln", "Gebiet / Zone": "Gebiete / Zonen", "Geburtsdatum": "Geburtsdaten", "Geldautomat": "Geldautomaten", "Geldbeutel": "Geldbeutel", "Gipfeli": "Gipfeli", "Gitarre": "Gitarren", "Glace": "Glaces", "Glas Milch": "Gläser Milch", "grosses Gebäude": "grosse Gebäude", "Grund": "Gründe", "Gummi": "Gummis", "Haarsträhne": "Haarsträhnen", "Hand": "Hände", "Handschuh": "Handschuhe", "Haus": "Häuser", "Heft": "Hefte", "Herr": "Herren", "Herz": "Herzen", "Hotel": "Hotels", "Hund": "Hunde", "Imbissbude": "Imbissbuden", "Immobilienagentur": "Immobilienagenturen", "Jacke": "Jacken", "Jahr": "Jahre", "Joghurt": "Joghurts", "Junge": "Jungen", "Kaffee": "Kaffees", "Kaffeemaschine": "Kaffeemaschinen", "Kamm": "Kämme", "Käse": "Käse", "Kästchen (zum Ankreuzen)": "Kästchen", "Katze": "Katzen", "Kind / Kinder": "Kinder", "Kinematograf": "Kinematografen", "Kino (Ausnahme: il)": "Kinos", "Kiosk": "Kioske", "Kirche": "Kirchen", "Klang": "Klänge", "Konditorei": "Konditoreien", "Konversation": "Konversationen", "Krokodil": "Krokodile", "Lektion": "Lektionen", "Likör": "Liköre", "Limonade": "Limonaden", "Lineal": "Lineale", "Löffel": "Löffel", "Mädchen": "Mädchen", "Mann": "Männer", "Mäppchen": "Mäppchen", "Markt": "Märkte", "Marmelade": "Marmeladen", "Maschine": "Maschinen", "Messer": "Messer", "Metzgerei": "Metzgereien", "Mineralwasser": "Mineralwässer", "Mittagessen": "Mittagessen", "Mobiltelefon": "Mobiltelefone", "Mokka-Glacé": "Mokka-Glacés", "Mutter": "Mütter", "Nachname": "Nachnamen", "Nacht": "Nächte", "Onkel": "Onkel", "Orangenlimo": "Orangenlimos", "Orangensaft": "Orangensäfte", "Ort": "Orte", "Paar": "Paare", "Papagei": "Papageien", "Papeterie": "Papeterien", "Parkplatz": "Parkplätze", "Partner": "Partner", "Party / Fest": "Partys / Feste", "Pizzeria": "Pizzerien", "Radio": "Radios", "Reise": "Reisen", "Reisebüro": "Reisebüros", "Reisekoffer": "Reisekoffer", "Restaurant": "Restaurants", "Rock": "Röcke", "Rucksack": "Rucksäcke", "Schlüssel": "Schlüssel", "Schwester": "Schwestern", "Seite": "Seiten", "Sekt": "Sekte", "Sohn": "Söhne", "Spieler": "Spieler", "Sprachschule": "Sprachschulen", "Stadion": "Stadien", "Stadt": "Städte", "Staumauer": "Staumauern", "Stift": "Stifte", "Strand": "Strände", "Strasse": "Strassen", "Stuhl": "Stühle", "Supermarkt": "Supermärkte", "Tabakladen": "Tabakläden", "Tag": "Tage", "Tante": "Tanten", "Tattoo": "Tattoos", "Telefon": "Telefone", "Telefonnummer": "Telefonnummern", "Tisch": "Tische", "Toast": "Toasts", "Tochter": "Töchter", "Töff": "Töffs", "Töffli": "Töfflis", "Torte": "Torten", "Track / Aufzeichnung": "Tracks / Aufzeichnungen", "Trinkgeld": "Trinkgelder", "Turnhalle": "Turnhallen", "TV-Gerät": "TV-Geräte", "Uhr": "Uhren", "Übung / Übungen": "Übungen", "Vanille-Glace": "Vanille-Glaces", "Erdbeer-Glace": "Erdbeer-Glaces", "Vater": "Väter", "Velo": "Velos", "Vorname": "Vornamen", "Vorstellung / Präsentation": "Vorstellungen / Präsentationen", "Wäscherei": "Wäschereien", "Werbeagentur": "Werbeagenturen", "Wiederholung": "Wiederholungen", "Wohnung": "Wohnungen", "Wort / Wörter": "Wörter", "Xylofon": "Xylofone", "Zahl": "Zahlen", "Zeitung": "Zeitungen", "Zigarette": "Zigaretten", "Zimmer": "Zimmer", "Zitrone": "Zitronen", "Zucchini": "Zucchini", "Anwalt / Anwältin": "Anwälte / Anwältinnen", "Arbeiter / Arbeiterin": "Arbeiter / Arbeiterinnen", "Architekt/in (Wort gleich für m/w)": "Architekten / Architektinnen", "Arzt": "Ärzte", "Chauffeur / Chauffeuse (Wort gleich für m/w)": "Chauffeure / Chauffeusen", "Chirurg / Chirurgin": "Chirurgen / Chirurginnen", "Doktor": "Doktoren", "Fussballer": "Fussballer", "Hausfrau": "Hausfrauen", "Hausmann": "Hausmänner", "Journalist / Journalistin": "Journalisten / Journalistinnen", "Kellner": "Kellner", "Koch / Köchin": "Köche / Köchinnen", "Kosmetiker/in (Wort gleich für m/w)": "Kosmetiker / Kosmetikerinnen", "Krankenpfleger / Krankenschwester": "Krankenpfleger / Krankenschwestern", "Lehrer / Lehrerin": "Lehrer / Lehrerinnen", "Lehrer/Professor": "Lehrer / Professoren", "Opernsänger": "Opernsänger", "Orange": "Orangen", "Sekretär / Sekretärin": "Sekretäre / Sekretärinnen", "Student": "Studenten", "Studentin": "Studentinnen", "Übersetzer / Übersetzerin": "Übersetzer / Übersetzerinnen", "Verkäufer / Verkäuferin": "Verkäufer / Verkäuferinnen", "Dienstag": "Dienstage", "Donnerstag": "Donnerstage", "Freitag": "Freitage", "Mittwoch": "Mittwoche", "Montag": "Montage", "Samstag": "Samstage", "Sonntag": "Sonntage", "Frühling": "Frühlinge", "Herbst": "Herbste", "Sommer": "Sommer", "Winter": "Winter", "Ananas": "Ananas", "Öl": "Öle", "Saft": "Säfte"};
+    const IRREG_PL = { uomini: "uomo" };
+    function plHit(h, tok, base) {
+      if (h.cat !== "Nomen" || !h.pl) return null;
+      return { cat: h.cat, it: tok, de: "die " + h.pl, note: "Mehrzahl von " + base + " = " + h.de };
+    }
     function build() {
       if (idx && idxSize === words.length) return;
       idx = {}; idxSize = words.length;
       words.forEach(w => {
-        const entry = { it: w.it, de: w.de, note: "", cat: w.cat };
+        const entry = { it: w.it, de: w.de, note: "", cat: w.cat, pl: DE_PL[w.de] };
         String(w.it).replace(GENDER_RE, "").split(/\s*\/\s*|\s+–\s+/).forEach(v => {
           const k = norm(v);
-          add(k, entry);
+          const isPl = entry.pl && /^(i|gli|le)\s/.test(k);
+          const e = isPl ? { it: v.trim(), de: "die " + entry.pl, note: "Mehrzahl", cat: w.cat } : entry;
+          add(k, e);
           const k2 = k.replace(ART, "");
-          if (k2 !== k) add(k2, entry);
+          if (k2 !== k) add(k2, e);
         });
       });
       CONJ_VERBS.forEach(v => {
@@ -2814,15 +2822,17 @@
     const ARTINFO = { il: "der (männlich)", lo: "der (männlich, vor s+Konsonant / z)", la: "die (weiblich)", "l'": "der / die (vor Vokal)", i: "die (männlich, Mehrzahl)", gli: "die (männlich, Mehrzahl, vor Vokal / s+Konsonant)", le: "die (weiblich, Mehrzahl)", un: "ein (männlich)", uno: "ein (männlich, vor s+Konsonant / z)", una: "eine (weiblich)", "un'": "eine (weiblich, vor Vokal)" };
     const PLURAL = [["ghi", ["go"]], ["chi", ["co"]], ["ghe", ["ga"]], ["che", ["ca"]], ["ii", ["io"]], ["gge", ["ggia"]], ["ce", ["cia"]], ["ge", ["gia"]],
       ["i", ["o", "e", "io", "a"]], ["e", ["a", "o"]], ["a", ["o"]]];
-    function lookupWord(tok) {
+    function lookupWord(tok, asPl) {
       build();
       const k = norm(tok).replace(ART, "");
-      if (idx[k]) return idx[k];
+      if (!asPl && idx[k]) return idx[k];
+      if (IRREG_PL[k] && idx[IRREG_PL[k]]) return idx[IRREG_PL[k]].map(h => plHit(h, tok, IRREG_PL[k]) || h);
+      if (asPl && idx[k]) return idx[k].map(h => plHit(h, tok, k) || h);
       for (const [suf, reps] of PLURAL) {
         if (k.length > suf.length + 1 && k.endsWith(suf)) {
           for (const r of reps) {
             const base = k.slice(0, -suf.length) + r;
-            if (idx[base]) return idx[base].map(h => ({ cat: h.cat, it: h.it, de: h.de, note: h.note || ("Mehrzahl/Form von " + base) }));
+            if (idx[base]) return idx[base].map(h => plHit(h, tok, base) || ({ cat: h.cat, it: h.it, de: h.de, note: h.note || ("Mehrzahl/Form von " + base) }));
           }
         }
       }
@@ -2874,6 +2884,7 @@
           const sp = document.createElement("span");
           sp.className = "lw";
           sp.textContent = tok;
+          if (/(?:^|[\s(«„"])(?:i|gli|le)\s$/i.test(text.slice(Math.max(0, off - 5), off))) sp.dataset.pl = "1";
           frag.appendChild(sp);
           last = off + tok.length;
           changed = true;
@@ -2906,8 +2917,8 @@
         (h.note ? " <span class='note'>(" + escapeHtml(h.note) + ")</span>" : "") +
         (h.cat ? " <span class='note'>· " + escapeHtml(h.cat) + "</span>" : "");
     }
-    function show(tok) {
-      const hits = lookupWord(tok) || [];
+    function show(tok, asPl) {
+      const hits = lookupWord(tok, asPl) || [];
       const seen = {};
       const rows = hits.filter(h => { const k = h.it + "|" + h.de; if (seen[k]) return false; seen[k] = 1; return true; });
       bar.innerHTML = "<button type='button' class='x' aria-label='Schliessen'>×</button>" + rows.map(line).join("<br>");
@@ -2918,7 +2929,7 @@
     window.italoLookupWord = lookupWord;
     document.addEventListener("click", e => {
       const sp = e.target.closest && e.target.closest(".lw");
-      if (sp) show(sp.textContent); else if (!e.target.closest("#lwBar")) bar.style.display = "none";
+      if (sp) show(sp.textContent, !!sp.dataset.pl); else if (!e.target.closest("#lwBar")) bar.style.display = "none";
     });
     // Suchfeld
     const box = document.createElement("div");
