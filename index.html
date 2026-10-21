@@ -712,7 +712,7 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" id="addCard" style="display:none !important"><!-- vorübergehend ausgeblendet -->
     <h2>Vokabel hinzufügen</h2>
     <div class="row">
       <input type="text" id="germanInput" placeholder="Deutsch">
@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-n";
-  const APP_VERSION = "2026-10-23-u"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-v"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
