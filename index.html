@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-bestellung";
-  const APP_VERSION = "2026-10-21-m"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-21-n"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3272,9 +3272,9 @@
         W("il burro · il miele · la senape · l'olio", "Butter · Honig · Senf · Öl")
       ],
       grammar: {
-        title: "Der unbestimmte Artikel (ein / eine)",
-        text: ["männlich: un, vor s + Konsonant oder z: uno", "weiblich: una, vor Vokal: un'", "«Vorrei» heisst «ich möchte» und klingt beim Bestellen höflich."],
-        ex: [["un caffè", "ein Kaffee"], ["uno spumante", "ein Sekt"], ["una limonata", "eine Limonade"], ["un'arancia", "eine Orange"]]
+        title: "Nomen: Geschlecht (aus dem Tab Grammatik)",
+        text: ["il / lo = männlich, la = weiblich (vor Vokal: l')", "meist -o = männlich, meist -a = weiblich"],
+        ex: [["il succo", "der Saft (männlich, -o)"], ["il limone", "die Zitrone (männlich, -e)"], ["la mela", "der Apfel (weiblich, -a)"], ["la banana", "die Banane (weiblich, -a)"], ["l'olio", "das Öl (vor Vokal: l')"]]
       },
       tasks: [
         C("Was heisst «il succo»?", "Saft", ["Essig", "Senf", "Honig"]),
@@ -3289,7 +3289,8 @@
         O("Ich hätte gern ein Glas Wein, bitte.", "Vorrei un bicchiere di vino, per favore.", ["Per favore, vorrei un bicchiere di vino."]),
         P([["la verdura", "Gemüse"], ["il frutto", "Frucht"], ["la bevanda", "Getränk"], ["la pera", "Birne"], ["la banana", "Banane"]]),
         C("Welcher Artikel passt: «___ ananas»?", "l'", ["il", "la", "lo"]),
-        C("Welcher Artikel passt: «___ limonata»?", "una", ["un", "uno", "un'"]),
+        C("Welcher Artikel passt: «___ limonata»?", "la", ["il", "lo", "l'"]),
+        C("Welcher Artikel passt: «___ succo»?", "il", ["la", "l'", "una"]),
         Y("Übersetze: Die Rechnung, bitte.", "Il conto, per favore.", ["Il conto, per piacere.", "Il conto per cortesia."])
       ]
     },
@@ -3307,9 +3308,9 @@
       ],
       nw: [["ieri", "gestern"], ["domani", "morgen"], ["il giorno", "der Tag"], ["la giornata", "der Verlauf des Tages"], ["la settimana", "die Woche"], ["il mese", "der Monat"]],
       grammar: {
-        title: "Wochentage mit und ohne Artikel",
-        text: ["Ohne Artikel: ein bestimmter Tag, martedì = am Dienstag.", "Mit Artikel: jede Woche am gleichen Tag, il martedì = dienstags."],
-        ex: [["Martedì lavoro.", "Am Dienstag arbeite ich."], ["Il martedì lavoro.", "Dienstags arbeite ich."]]
+        title: "Nomen: Plural (aus dem Tab Grammatik)",
+        text: ["männlich: i, weiblich: le", "männlich auf -a / -e / -o wird -i", "weiblich auf -a wird -e, weiblich auf -e wird -i"],
+        ex: [["il giorno → i giorni", "der Tag → die Tage"], ["il mese → i mesi", "der Monat → die Monate"], ["la settimana → le settimane", "die Woche → die Wochen"], ["la sera → le sere", "der Abend → die Abende"]]
       },
       tasks: [
         C("Was heisst «ieri»?", "gestern", ["morgen", "heute", "jetzt"]),
@@ -3324,7 +3325,8 @@
         L("Buon pomeriggio."),
         Y("Übersetze: Guten Abend (formell, nach 18 Uhr)", "Buona sera.", ["Buonasera."]),
         O("Wir sehen uns morgen.", "Ci vediamo domani.", ["Domani ci vediamo."]),
-        C("Was bedeutet «Il martedì lavoro.»?", "Dienstags arbeite ich.", ["Am Dienstag arbeite ich (einmal).", "Morgen ist Dienstag.", "Ich arbeite nicht am Dienstag."]),
+        C("Plural von «la settimana»:", "le settimane", ["i settimane", "le settimani", "la settimane"]),
+        C("Plural von «il mese»:", "i mesi", ["le mesi", "i mese", "gli mesi"]),
         C("Wann sagst du «Buona serata»?", "am Abend", ["am Morgen", "am Nachmittag", "in der Nacht"])
       ]
     },
@@ -3342,9 +3344,9 @@
       ],
       nw: [["il figlio", "der Sohn"], ["la figlia", "die Tochter"], ["otto", "8"], ["dodici", "12"], ["venti", "20"], ["trenta", "30"], ["quaranta", "40"]],
       grammar: {
-        title: "Das Alter mit «avere» (haben)",
-        text: ["Im Italienischen hat man Jahre, man ist nicht alt.", "ho · hai · ha (ich · du · er/sie hat)", "abbiamo · avete · hanno (wir · ihr · sie haben)"],
-        ex: [["Ho trenta anni.", "Ich bin dreissig Jahre alt."], ["Quanti anni hai?", "Wie alt bist du?"], ["Il figlio di Rita ha otto anni.", "Der Sohn von Rita ist acht."]]
+        title: "Satzbau: Frage und Aussage (aus dem Tab Grammatik)",
+        text: ["Im Italienischen gibt es keinen Unterschied zwischen Frage- und Aussagesatz.", "Der Unterschied liegt nur in der Melodie. Geschrieben setzt man ein Fragezeichen."],
+        ex: [["Il figlio di Rita ha otto anni.", "Der Sohn von Rita ist acht Jahre alt. (Aussage)"], ["Il figlio di Rita ha otto anni?", "Ist der Sohn von Rita acht Jahre alt? (Frage)"]]
       },
       tasks: [
         C("Wie fragst du «Wie alt bist du?»", "Quanti anni hai?", ["Quanti anni ha?", "Come ti chiami?", "Quanto costa?"]),
@@ -3359,6 +3361,7 @@
         L("Quanti anni hai?"),
         O("Der Sohn von Rita ist acht Jahre alt.", "Il figlio di Rita ha otto anni."),
         Y("Übersetze: Die Tochter von Paolo ist zwölf Jahre alt.", "La figlia di Paolo ha dodici anni."),
+        Y("Mach aus der Aussage eine Frage: «Il figlio di Rita ha otto anni.»", "Il figlio di Rita ha otto anni?"),
         C("Quanti anni ___ il figlio di Rita?", "ha", ["hai", "ho", "hanno"])
       ]
     }
@@ -3377,9 +3380,9 @@
       ],
       nw: [["il cameriere", "der Kellner"], ["il cuoco / la cuoca", "Koch / Köchin"], ["l'infermiere / l'infermiera", "Krankenpfleger / Krankenschwester"], ["lo studente / la studentessa", "Student / Studentin"], ["il commesso / la commessa", "Verkäufer / Verkäuferin"], ["la fabbrica", "die Fabrik"]],
       grammar: {
-        title: "Berufe: männlich und weiblich",
-        text: ["-o wird -a: il cuoco, la cuoca", "-e wird -a: l'infermiere, l'infermiera", "-tore wird -trice: il traduttore, la traduttrice", "-nte wird -ntessa: lo studente, la studentessa", "Manche bleiben gleich: l'insegnante, l'autista, il / la giornalista"],
-        ex: [["Faccio il cuoco.", "Ich bin Koch."], ["Faccio la cuoca.", "Ich bin Köchin."]]
+        title: "Nomen: Geschlecht, Personenbezeichnungen (aus dem Tab Grammatik)",
+        text: ["meist beide Formen: il commesso / la commessa", "nur eine Form, der Artikel zeigt das Geschlecht: il / la collega, il / la cliente", "-e wird -essa: lo studente / la studentessa", "-ore wird -trice: il traduttore / la traduttrice"],
+        ex: [["il cuoco / la cuoca", "der Koch / die Köchin"], ["lo studente / la studentessa", "der Student / die Studentin"], ["il traduttore / la traduttrice", "der Übersetzer / die Übersetzerin"]]
       },
       tasks: [
         C("Was heisst «il cameriere»?", "Kellner", ["Koch", "Lehrer", "Arzt"]),
