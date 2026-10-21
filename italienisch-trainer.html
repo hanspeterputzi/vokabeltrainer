@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-bestellung";
-  const APP_VERSION = "2026-10-21-l"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-21-m"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -814,8 +814,47 @@
     ["biglietto", "ticket"], ["negozio", "bottega"],
     ["cominciare", "iniziare"], ["finire", "terminare"],
     ["domanda", "richiesta"], ["comprare", "acquistare"],
-    ["parlare", "dire"], ["guardare", "osservare"]
+    ["parlare", "dire"], ["guardare", "osservare"],
+    ["bevanda", "bibita"], ["marmellata", "confettura"], ["ananas", "ananasso"], ["caffè", "espresso"],
+    ["autobus", "bus"], ["medico", "dottore"], ["commesso", "venditore"], ["commessa", "venditrice"],
+    ["tipo", "genere"], ["cameriere", "barista"]
   ];
+  // --- Gleichwertige Schreibweisen: Subjektpronomen und "per favore" sind optional, Ziffern = Zahlwoerter ---
+  var EQ_U = ["zero","uno","due","tre","quattro","cinque","sei","sette","otto","nove","dieci","undici","dodici","tredici","quattordici","quindici","sedici","diciassette","diciotto","diciannove"];
+  var EQ_T = ["","","venti","trenta","quaranta","cinquanta","sessanta","settanta","ottanta","novanta"];
+  function eqNum(n) {
+    if (n < 20) return EQ_U[n];
+    if (n < 100) {
+      var t = Math.floor(n / 10), u = n % 10, base = EQ_T[t];
+      if (u === 1 || u === 8) base = base.slice(0, -1);
+      return base + (u ? (u === 3 ? "tre" : EQ_U[u]) : "");
+    }
+    if (n < 1000) { var h = Math.floor(n / 100), r = n % 100; return (h === 1 ? "cento" : EQ_U[h] + "cento") + (r ? eqNum(r) : ""); }
+    return String(n);
+  }
+  var EQ_STEPS = [
+    function (s) { return s.replace(/\d+/g, function (m) { return " " + eqNum(parseInt(m, 10)) + " "; }); },
+    function (s) { return s.replace(/(^|[^\p{L}])(io|tu|lui|lei|noi|voi|loro)(?![\p{L}'])/giu, "$1"); },
+    function (s) { return s.replace(/[,;]?\s*per (favore|piacere|cortesia)\s*([?.!]*)\s*$/i, "$2"); },
+    function (s) { return s.replace(/^\s*per (favore|piacere|cortesia),?\s*/i, ""); },
+    function (s) { return s.replace(/\bvorrei prendere\b/gi, "vorrei"); }
+  ];
+  function eqNorm(s) { return String(s).toLowerCase().replace(/[’‘`]/g, "'").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^\p{L}\p{N}]+/gu, ""); }
+  function eqVariants(text) {
+    var cur = [String(text).replace(/\s*\((io|tu|lui|lei|noi|voi|loro)\)\s*/gi, " ")];
+    EQ_STEPS.forEach(function (st) { cur = cur.concat(cur.map(st)); });
+    var out = {};
+    cur.forEach(function (v) { var n = eqNorm(v); if (n) out[n] = 1; });
+    return Object.keys(out);
+  }
+  // true, wenn eine gehoerte/getippte Fassung einer erlaubten Loesung gleichwertig ist
+  function italEqAny(heardList, goalList) {
+    var goals = {};
+    goalList.forEach(function (g) { eqVariants(g).forEach(function (v) { goals[v] = 1; }); });
+    return heardList.some(function (h) { return eqVariants(h).some(function (v) { return goals[v]; }); });
+  }
+  window.italEqAny = italEqAny;
+
   function synonymVariants(text) {
     const out = [];
     SYN_GROUPS.forEach(g => g.forEach(m => {
@@ -1323,6 +1362,7 @@
     const heard = [userAnswer].concat(spoken);
     let isCorrect = heard.some(h => candidates.some(c => normalizeForCompare(c) === normalizeForCompare(h)));
     let loose = false;
+    if (!isCorrect) isCorrect = italEqAny(heard, candidates);
     if (!isCorrect) { loose = heard.some(h => candidates.some(c => looseMatch(h, c))); isCorrect = loose; }
     // Nur bei Spracheingabe: kleine Erkennungsfehler ("Poira" statt "Coira") verzeihen
     let fuzzy = false;
@@ -1681,7 +1721,7 @@
     const ex = gCurrent.ex;
     const value = given !== undefined ? given : gEl.answer.value;
     if (!value.trim()) return;
-    const ok = ex.a.some(a => gNorm(a) === gNorm(value));
+    const ok = ex.a.some(a => gNorm(a) === gNorm(value)) || italEqAny([value], ex.a);
     gAnswered = true;
 
     const st = gStats[gTopicId] || (gStats[gTopicId] = { correct: 0, wrong: 0 });
@@ -2139,6 +2179,7 @@
       }
       const prep = s => String(s).replace(/\d+/g, m => " " + numIt(parseInt(m, 10)) + " ");
       const raws = [turn.it].concat(turn.alts || []);
+      if (italEqAny(heard, raws)) return { ok: true, exact: false };
       for (const h of heard) for (const g of raws) {
         if (looseMatch(prep(h), prep(g))) return { ok: true, exact: false };
       }
@@ -3206,12 +3247,12 @@
   // ---- Aufgaben-Kurzformen ----
   // C: Auswahl (Frage, richtige Antwort, falsche Antworten)
   // Y: Tippen (Frage, Antwort, weitere erlaubte Antworten)
-  // O: Satz aus Wortkacheln bauen (deutscher Satz, italienischer Satz)
+  // O: Satz aus Wortkacheln bauen (deutscher Satz, italienischer Satz, weitere Wortstellungen mit denselben Wörtern)
   // P: Paare zuordnen ([[italienisch, deutsch], ...])
   // L: Hoeren und aufschreiben (italienischer Satz)
   function C(q, a, w) { return { t: "choose", q: q, a: a, w: w }; }
   function Y(q, a, alts) { return { t: "type", q: q, a: a, alts: alts || [] }; }
-  function O(q, a) { return { t: "order", q: q, a: a }; }
+  function O(q, a, alts) { return { t: "order", q: q, a: a, alts: alts || [] }; }
   function P(pairs) { return { t: "pairs", pairs: pairs }; }
   function L(a, alts) { return { t: "listen", a: a, alts: alts || [] }; }
   function W(it, de) { return { it: it, de: de }; }
@@ -3240,16 +3281,16 @@
         C("Was heisst «la mela»?", "Apfel", ["Birne", "Zitrone", "Banane"]),
         P([["il burro", "Butter"], ["il miele", "Honig"], ["la senape", "Senf"], ["l'aceto", "Essig"], ["l'olio", "Öl"]]),
         C("Wie sagst du «Ich hätte gern»?", "Vorrei", ["Prendo", "Desidera", "Per me"]),
-        Y("Übersetze: Ich nehme einen Kaffee.", "Prendo un caffè.", ["Io prendo un caffè."]),
-        O("Für mich einen Orangensaft.", "Per me un succo d'arancia."),
+        Y("Übersetze: Ich nehme einen Kaffee.", "Prendo un caffè.", ["Io prendo un caffè.", "Prendo un caffè, per favore."]),
+        O("Für mich einen Orangensaft.", "Per me un succo d'arancia.", ["Un succo d'arancia per me."]),
         L("Vorrei una limonata, per favore."),
         C("Der Kellner fragt: «Desidera?»", "Sie wünschen?", ["Wie heissen Sie?", "Wo ist …?", "Wie viel kostet es?"]),
-        Y("Übersetze: Und was nimmst du?", "E tu che cosa prendi?"),
-        O("Ich hätte gern ein Glas Wein, bitte.", "Vorrei un bicchiere di vino, per favore."),
+        Y("Übersetze: Und was nimmst du?", "E tu che cosa prendi?", ["Che cosa prendi?", "E tu cosa prendi?", "Cosa prendi?", "E tu che prendi?", "Che cosa prendi tu?"]),
+        O("Ich hätte gern ein Glas Wein, bitte.", "Vorrei un bicchiere di vino, per favore.", ["Per favore, vorrei un bicchiere di vino."]),
         P([["la verdura", "Gemüse"], ["il frutto", "Frucht"], ["la bevanda", "Getränk"], ["la pera", "Birne"], ["la banana", "Banane"]]),
         C("Welcher Artikel passt: «___ ananas»?", "l'", ["il", "la", "lo"]),
         C("Welcher Artikel passt: «___ limonata»?", "una", ["un", "uno", "un'"]),
-        Y("Übersetze: Die Rechnung, bitte.", "Il conto, per favore.")
+        Y("Übersetze: Die Rechnung, bitte.", "Il conto, per favore.", ["Il conto, per piacere.", "Il conto per cortesia."])
       ]
     },
     {
@@ -3279,10 +3320,10 @@
         Y("Übersetze: Morgen (der nächste Tag)", "domani"),
         Y("Übersetze: Gestern", "ieri"),
         O("Bis morgen!", "A domani!"),
-        O("Was für ein schöner Tag heute!", "Che bella giornata oggi!"),
+        O("Was für ein schöner Tag heute!", "Che bella giornata oggi!", ["Oggi che bella giornata!"]),
         L("Buon pomeriggio."),
         Y("Übersetze: Guten Abend (formell, nach 18 Uhr)", "Buona sera.", ["Buonasera."]),
-        O("Wir sehen uns morgen.", "Ci vediamo domani."),
+        O("Wir sehen uns morgen.", "Ci vediamo domani.", ["Domani ci vediamo."]),
         C("Was bedeutet «Il martedì lavoro.»?", "Dienstags arbeite ich.", ["Am Dienstag arbeite ich (einmal).", "Morgen ist Dienstag.", "Ich arbeite nicht am Dienstag."]),
         C("Wann sagst du «Buona serata»?", "am Abend", ["am Morgen", "am Nachmittag", "in der Nacht"])
       ]
@@ -3311,10 +3352,10 @@
         C("Was heisst «la figlia»?", "die Tochter", ["der Sohn", "die Mutter", "die Schwester"]),
         P([["otto", "8"], ["dodici", "12"], ["venti", "20"], ["trenta", "30"], ["quaranta", "40"]]),
         C("Ich bin dreissig Jahre alt.", "Ho trenta anni.", ["Ha trenta anni.", "Hai trenta anni.", "Sono trenta anni."]),
-        Y("Übersetze: Ich bin 56 Jahre alt.", "Ho cinquantasei anni.", ["Ho 56 anni."]),
+        Y("Übersetze: Ich bin 56 Jahre alt.", "Ho cinquantasei anni.", ["Ho 56 anni.", "Io ho cinquantasei anni."]),
         C("Quanti anni ___ (tu)?", "hai", ["ha", "ho", "hanno"]),
-        Y("Übersetze: Wie alt ist er?", "Quanti anni ha?"),
-        O("Wie alt ist der Sohn von Rita?", "Quanti anni ha il figlio di Rita?"),
+        Y("Übersetze: Wie alt ist er?", "Quanti anni ha?", ["Quanti anni ha lui?", "Quanti anni ha lei?"]),
+        O("Wie alt ist der Sohn von Rita?", "Quanti anni ha il figlio di Rita?", ["Il figlio di Rita quanti anni ha?"]),
         L("Quanti anni hai?"),
         O("Der Sohn von Rita ist acht Jahre alt.", "Il figlio di Rita ha otto anni."),
         Y("Übersetze: Die Tochter von Paolo ist zwölf Jahre alt.", "La figlia di Paolo ha dodici anni."),
@@ -3346,15 +3387,15 @@
         P([["l'infermiere", "Krankenpfleger"], ["il commesso", "Verkäufer"], ["l'insegnante", "Lehrer / Lehrerin"], ["il medico", "Arzt"], ["l'autista", "Chauffeur"]]),
         C("Wie fragst du «Was machst du beruflich?»", "Che lavoro fai?", ["Dove lavori?", "Come ti chiami?", "Quanti anni hai?"]),
         C("Die Köchin heisst:", "la cuoca", ["il cuoco", "la cuoco", "lo cuoca"]),
-        Y("Übersetze: Wo arbeitest du?", "Dove lavori?"),
-        O("Ich arbeite in einer Fabrik in Mailand.", "Lavoro in una fabbrica a Milano."),
+        Y("Übersetze: Wo arbeitest du?", "Dove lavori?", ["Dove lavori tu?", "Tu dove lavori?"]),
+        O("Ich arbeite in einer Fabrik in Mailand.", "Lavoro in una fabbrica a Milano.", ["A Milano lavoro in una fabbrica."]),
         C("Die Studentin heisst:", "la studentessa", ["lo studente", "la studente", "il studentessa"]),
         L("Che lavoro fai?"),
-        Y("Übersetze: Ich bin Bankangestellter.", "Lavoro in banca."),
+        Y("Übersetze: Ich bin Bankangestellter.", "Lavoro in banca.", ["Io lavoro in banca.", "Lavoro in una banca.", "Lavoro presso una banca."]),
         O("Was macht er beruflich?", "Che lavoro fa?"),
         C("Die Übersetzerin heisst:", "la traduttrice", ["la traduttora", "la traduttessa", "il traduttrice"]),
         C("Die Lehrerin heisst:", "l'insegnante", ["l'insegnanta", "l'insegnantessa", "la insegnante"]),
-        Y("Übersetze: Viel Erfolg bei der Arbeit!", "Buon lavoro!")
+        Y("Übersetze: Viel Erfolg bei der Arbeit!", "Buon lavoro!", ["Buon lavoro a te!", "Buon lavoro."])
       ]
     }
   ];
@@ -3575,7 +3616,7 @@
       setTimeout(function () { try { inp.focus(); } catch (e) {} }, 50);
       armCheck(function () {
         var v = norm(inp.value), all = [t.a].concat(t.alts);
-        var exact = all.some(function (a) { return norm(a) === v; });
+        var exact = all.some(function (a) { return norm(a) === v; }) || (typeof window.italEqAny === "function" && window.italEqAny([inp.value], all));
         var near = !exact && all.some(function (a) { var n = norm(a); return n.length >= 10 && dist(v, n) <= 1; });
         inp.disabled = true;
         if (exact) finish(true, "Richtig!", null, t.a);
@@ -3599,7 +3640,7 @@
       body.appendChild(ans); body.appendChild(bank);
       armCheck(function () {
         var got = Array.prototype.map.call(ans.children, function (c) { return c.textContent; }).join(" ");
-        if (norm(got) === norm(t.a)) finish(true, "Richtig!", null, t.a);
+        if ([t.a].concat(t.alts || []).some(function (a) { return norm(a) === norm(got); })) finish(true, "Richtig!", null, t.a);
         else finish(false, "Nicht ganz.", "Richtig ist: " + t.a, t.a);
       });
     } else if (t.t === "pairs") {
