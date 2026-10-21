@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-geschlecht";
-  const APP_VERSION = "2026-10-22-l"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-22-m"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3940,5 +3940,77 @@
 })();
 </script>
 <!-- LEKTIONEN END -->
+<!-- WOERTERBUCH START -->
+<style>
+  #dictIdx { position: fixed; right: max(3px, env(safe-area-inset-right)); top: 9vh; bottom: 9vh; width: 24px; z-index: 40; display: flex; flex-direction: column; justify-content: space-between; align-items: stretch;
+    padding: 4px 0; border-radius: 12px; background: color-mix(in srgb, var(--k-card, #fff) 88%, transparent); box-shadow: 0 2px 10px rgba(18,32,58,.14); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    touch-action: none; user-select: none; -webkit-user-select: none; }
+  #dictIdx span { flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; font-size: min(11px, 2.1vh); font-weight: 700; line-height: 1; color: var(--k-orange, #ea580c); cursor: pointer; }
+  #dictIdx span.off { color: var(--k-muted, #999); opacity: .35; cursor: default; }
+  #dictIdx span.up { color: #fff; background: var(--k-blue, #2563eb); border-radius: 8px; margin: 0 2px 3px; flex: 0 0 auto; padding: 5px 0; font-size: 13px; }
+  #dictView.dict-idx #dictList { padding-right: 28px; }
+  #dictList .dw { scroll-margin-top: 12px; }
+</style>
+<script>
+(function () {
+  "use strict";
+  var view = document.getElementById("dictView");
+  var list = document.getElementById("dictList");
+  var inp = document.getElementById("dictIn");
+  if (!view || !list || !inp) return;
+
+  var LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  var fold = function (s) { return String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ß/g, "ss").replace(/[’‘`]/g, "'"); };
+  var stripArt = function (s) { return s.replace(/^(?:(?:il|lo|la|i|gli|le|un|uno|una)\s+|l'|un')/i, ""); };
+  // Gleiche Sortierung wie im Woerterbuch: Klammern und Sonderzeichen vorne sowie Artikel ueberspringen
+  function letterOf(text) {
+    var k = fold(stripArt(String(text).replace(/^\s*\([^)]*\)\s*/, "").replace(/^[^A-Za-zÀ-ÿ]+/, "")));
+    var c = (k.charAt(0) || "").toUpperCase();
+    return c >= "A" && c <= "Z" ? c : "";
+  }
+
+  var bar = document.createElement("div"); bar.id = "dictIdx";
+  var up = document.createElement("span"); up.className = "up"; up.textContent = "↑"; up.setAttribute("aria-label", "Nach oben zur Suche"); up.dataset.up = "1"; bar.appendChild(up);
+  var spans = {};
+  LETTERS.forEach(function (l) { var s = document.createElement("span"); s.textContent = l; s.dataset.l = l; bar.appendChild(s); spans[l] = s; });
+  view.appendChild(bar);
+
+  var first = {}; // Buchstabe -> erster Eintrag in der aktuellen Liste
+  function rebuild() {
+    first = {};
+    var searching = inp.value.trim() !== "";
+    if (!searching) {
+      Array.prototype.forEach.call(list.querySelectorAll(".dw"), function (el) {
+        var d = el.querySelector(".dit"); if (!d) return;
+        var l = letterOf(d.textContent);
+        if (l && !first[l]) first[l] = el;
+      });
+    }
+    LETTERS.forEach(function (l) {
+      spans[l].style.display = searching ? "none" : "";
+      spans[l].classList.toggle("off", !first[l]);
+    });
+    view.classList.toggle("dict-idx", !searching);
+  }
+  var pending = false;
+  function schedule() { if (pending) return; pending = true; requestAnimationFrame(function () { pending = false; rebuild(); }); }
+  new MutationObserver(schedule).observe(list, { childList: true });
+  inp.addEventListener("input", schedule);
+  rebuild();
+
+  function go(target) {
+    if (!target) return;
+    if (target.dataset.up) { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+    var l = target.dataset.l, el = l && first[l];
+    if (el) el.scrollIntoView({ block: "start" });
+  }
+  var down = false;
+  bar.addEventListener("pointerdown", function (e) { down = true; try { bar.setPointerCapture(e.pointerId); } catch (x) {} go(document.elementFromPoint(e.clientX, e.clientY)); e.preventDefault(); });
+  bar.addEventListener("pointermove", function (e) { if (!down) return; var t = document.elementFromPoint(e.clientX, e.clientY); if (t && t.dataset && t.dataset.l) go(t); });
+  var end = function () { down = false; };
+  bar.addEventListener("pointerup", end); bar.addEventListener("pointercancel", end);
+})();
+</script>
+<!-- WOERTERBUCH END -->
 </body>
 </html>
