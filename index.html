@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-plural";
-  const APP_VERSION = "2026-10-24-c"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-e"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4393,6 +4393,21 @@
   .category-bar .cat-btn .ct, .category-bar .cat-chip .ct, .category-bar .cat-btn .ico, .category-bar .cat-chip .ico { display: none !important; }
   .category-bar .cat-btn.active, .category-bar .cat-chip.active { background: var(--k-orange, #ea580c) !important; border-color: var(--k-orange, #ea580c) !important; color: #fff !important; box-shadow: none !important; }
   .category-bar .cat-btn.active .nm, .category-bar .cat-chip.active .nm { color: #fff !important; }
+
+  /* Aktiver Reiter immer schwarz (ID-Regeln der Reiter schlagen sonst .active) */
+  .tabs #tabVocab.active, .tabs #tabGrammar.active, .tabs #tabLessons.active, .tabs #tabTalk.active, .tabs #tabDict.active { background: var(--ink) !important; color: var(--on-ink) !important; box-shadow: 0 6px 14px rgba(0,0,0,.25) !important; }
+
+  /* Wortkarte Vokabeln: Wort ohne Kasten, nur zwischen zwei feinen Linien */
+  #quizWord, #prompt, #conjVerb { background: none !important; box-shadow: none !important; border-radius: 0 !important; min-height: 0 !important; display: block !important;
+    border-top: 1px solid var(--k-line, #e7e7e9); border-bottom: 1px solid var(--k-line, #e7e7e9); padding: 24px 0 !important; margin: 6px 0 18px !important;
+    font-size: 2rem !important; font-weight: 700 !important; color: var(--ink) !important; text-align: center; }
+  #quizWord::after, #prompt::after, #conjVerb::after { display: none !important; }
+  .swipe-hint { display: none !important; }
+
+  /* DeepL-Knoepfe im Woerterbuch */
+  #dictDeepl { display: none; gap: 8px; margin-top: 8px; }
+  #dictDeepl.on { display: flex; }
+  #dictDeepl button { flex: 1; padding: 8px 6px; border: 0; border-radius: 12px; background: color-mix(in srgb, var(--k-orange, #ea580c) 14%, var(--k-card, #fff)); color: var(--k-orange, #ea580c); font-size: .8rem; font-weight: 700; box-shadow: none; }
 </style>
 <script>
 (function () {
@@ -4525,7 +4540,28 @@
     var wc = document.getElementById("wordCount"), h = wc && wc.parentNode;
     if (h && h.tagName === "H2") { var up = function () { if (h.textContent !== "Wortliste") h.textContent = "Wortliste"; }; up(); }
   })();
-  function init() { wire("quizWord", "showBtn", "nextBtn"); wire("conjVerb", "conjShowBtn", "conjNextBtn"); stickySearch(); }
+
+  // Woerterbuch: Zahlen in den Kategorie-Pillen weg; DeepL-Knoepfe (oeffnen DeepL im Browser, ohne Schluessel)
+  function dictExtras() {
+    var cats = document.getElementById("dictCats");
+    function strip() { Array.prototype.forEach.call(document.querySelectorAll("#dictCats .cat-btn"), function (b) { var t = b.textContent.replace(/\s*\(\d+\)\s*$/, ""); if (t !== b.textContent) b.textContent = t; }); }
+    if (cats) { strip(); new MutationObserver(strip).observe(cats, { childList: true, subtree: true, characterData: true }); }
+    var bar = document.getElementById("dictSticky"), inp = document.getElementById("dictIn");
+    if (!bar || !inp || document.getElementById("dictDeepl")) return;
+    var row = document.createElement("div"); row.id = "dictDeepl";
+    function open(src, tgt) {
+      var t = inp.value.trim(); if (!t) return;
+      var url = "https://www.deepl.com/translator#" + src + "/" + tgt + "/" + encodeURIComponent(t).replace(/%2F/g, "%5C%2F");
+      window.open(url, "_blank", "noopener");
+    }
+    [["de", "it", "DeepL: DE → IT ↗"], ["it", "de", "DeepL: IT → DE ↗"]].forEach(function (c) {
+      var b = document.createElement("button"); b.type = "button"; b.textContent = c[2]; b.addEventListener("click", function () { open(c[0], c[1]); }); row.appendChild(b);
+    });
+    bar.appendChild(row);
+    function sync() { row.classList.toggle("on", !!inp.value.trim()); }
+    inp.addEventListener("input", sync); sync();
+  }
+  function init() { wire("quizWord", "showBtn", "nextBtn"); wire("conjVerb", "conjShowBtn", "conjNextBtn"); stickySearch(); dictExtras(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
 </script>
