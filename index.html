@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-n";
-  const APP_VERSION = "2026-10-23-o"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-p"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1241,7 +1241,7 @@
     var na = a.some(function (w) { return LOOSE_NEG[w]; }), nb = b.some(function (w) { return LOOSE_NEG[w]; });
     if (na !== nb) return false;
     // Der Name muss genau stimmen
-    var nameOk = ["luca"].every(function (n) { return (a.indexOf(n) >= 0) === (b.indexOf(n) >= 0); });
+    var nameOk = ["giovanni", "pietro"].every(function (n) { return (a.indexOf(n) >= 0) === (b.indexOf(n) >= 0); });
     if (!nameOk) return false;
     if (b.length < 3) return a.length === b.length && a.every(function (w, i) { return w === b[i]; });
     var used = [], m = 0;
@@ -1983,8 +1983,8 @@
       { id: "vorstellen", icon: "👋", title: "Sich vorstellen", setting: "Du lernst Giulia auf einer Party kennen (du-Form).",
         turns: [
           N("Ciao! Come ti chiami?", "Hallo! Wie heisst du?"),
-          M("Sag, dass du Luca heisst.", "Mi chiamo Luca.", ["Sono Luca.", "Il mio nome è Luca.", "Mi chiamo Luca, piacere.", "Sono Luca, piacere."]),
-          N("Piacere, Luca! Io sono Giulia. Di dove sei?", "Freut mich, Luca! Ich bin Giulia. Woher kommst du?"),
+          M("Sag, dass du Giovanni Pietro heisst.", "Mi chiamo Giovanni Pietro.", ["Sono Giovanni Pietro.", "Il mio nome è Giovanni Pietro.", "Mi chiamo Giovanni Pietro, piacere.", "Sono Giovanni Pietro, piacere."]),
+          N("Piacere, Giovanni Pietro! Io sono Giulia. Di dove sei?", "Freut mich, Giovanni Pietro! Ich bin Giulia. Woher kommst du?"),
           M("Sag, dass du aus Chur in der Schweiz bist.", "Sono di Coira, in Svizzera.", ["Sono di Coira.", "Sono svizzero."]),
           N("Che bello! Dove abiti?", "Wie schön! Wo wohnst du?"),
           M("Sag, dass du in Chur wohnst, und frag zurück.", "Abito a Coira. E tu?", ["Abito a Coira, e tu?"]),
@@ -1993,7 +1993,7 @@
         ] },
       { id: "smalltalk", icon: "☀️", title: "Smalltalk", setting: "Du triffst einen Bekannten auf der Strasse (du-Form).",
         turns: [
-          N("Ciao Luca! Come stai?", "Hallo Luca! Wie geht es dir?"),
+          N("Ciao Giovanni Pietro! Come stai?", "Hallo Giovanni Pietro! Wie geht es dir?"),
           M("Sag, dass es dir gut geht, und frag zurück.", "Sto bene, grazie. E tu?", ["Bene, grazie. E tu?"]),
           N("Bene, grazie. Che bella giornata oggi!", "Gut, danke. Was für ein schöner Tag heute!"),
           M("Sag: Ja, die Sonne scheint, aber es ist etwas kalt.", "Sì, c'è il sole, ma fa un po' freddo.", ["Sì, ma fa un po' freddo."]),
@@ -2084,7 +2084,7 @@
       { id: "hotel", icon: "🏨", title: "Im Hotel einchecken", setting: "Du kommst im Hotel an (Lei-Form).",
         turns: [
           N("Buonasera! Posso aiutarla?", "Guten Abend! Kann ich Ihnen helfen?"),
-          M("Sag, dass du eine Reservierung auf den Namen Luca hast.", "Buonasera, ho una prenotazione a nome Luca.", ["Ho prenotato una camera a nome Luca.", "Ho una prenotazione. Mi chiamo Luca.", "Ho una prenotazione a nome di Luca.", "Buonasera, mi chiamo Luca. Ho una prenotazione.", "Ho una prenotazione a nome Luca."]),
+          M("Sag, dass du eine Reservierung auf den Namen Giovanni Pietro hast.", "Buonasera, ho una prenotazione a nome Giovanni Pietro.", ["Ho prenotato una camera a nome Giovanni Pietro.", "Ho una prenotazione. Mi chiamo Giovanni Pietro.", "Ho una prenotazione a nome di Giovanni Pietro.", "Buonasera, mi chiamo Giovanni Pietro. Ho una prenotazione.", "Ho una prenotazione a nome Giovanni Pietro."]),
           N("Un momento... Sì, una camera singola per due notti.", "Einen Moment... Ja, ein Einzelzimmer für zwei Nächte."),
           M("Bestätige und frag, wann das Frühstück ist.", "Esatto. A che ora è la colazione?", ["A che ora è la colazione?", "Esatto. Quando è la colazione?"]),
           N("La colazione è dalle sette alle dieci.", "Das Frühstück ist von sieben bis zehn Uhr."),
@@ -2110,8 +2110,8 @@
           N("A che ora preferisce?", "Um wie viel Uhr bevorzugen Sie?"),
           M("Sag: Nachmittags, nach drei Uhr.", "Nel pomeriggio, dopo le tre.", ["Nel pomeriggio, per favore.", "Dopo le tre."]),
           N("Va bene, alle tre e mezza. Come si chiama?", "Gut, um halb vier. Wie heissen Sie?"),
-          M("Nenne deinen Namen.", "Mi chiamo Luca.", ["Luca.", "Sono Luca.", "Il mio nome è Luca.", "Mi chiamo Luca, grazie.", "Mi chiamo Luca, arrivederci."]),
-          N("Perfetto, Luca. A domani!", "Perfekt, Luca. Bis morgen!"),
+          M("Nenne deinen Namen.", "Mi chiamo Giovanni Pietro.", ["Giovanni Pietro.", "Sono Giovanni Pietro.", "Il mio nome è Giovanni Pietro.", "Mi chiamo Giovanni Pietro, grazie.", "Mi chiamo Giovanni Pietro, arrivederci."]),
+          N("Perfetto, Giovanni Pietro. A domani!", "Perfekt, Giovanni Pietro. Bis morgen!"),
           M("Bedanke dich und sag: Bis morgen.", "A domani, grazie!", ["Grazie, a domani!", "Grazie, arrivederci!"])
         ] },
       { id: "kleidung", icon: "🧥", title: "Kleidung kaufen", setting: "Du suchst in einem Geschäft eine Jacke (Lei-Form).",
@@ -2200,7 +2200,7 @@
         ] },
       { id: "hobby", icon: "⚽", title: "Sport und Hobbys", setting: "Du sprichst mit Giulia über die Freizeit (du-Form).",
         turns: [
-          N("Ciao Luca! Che cosa fai nel tempo libero?", "Hallo Luca! Was machst du in deiner Freizeit?"),
+          N("Ciao Giovanni Pietro! Che cosa fai nel tempo libero?", "Hallo Giovanni Pietro! Was machst du in deiner Freizeit?"),
           M("Sag: Ich spiele Fussball und fahre Velo.", "Gioco a calcio e vado in bicicletta.", ["Gioco a calcio e vado in bici."]),
           N("Che bello! Quante volte alla settimana?", "Wie schön! Wie oft pro Woche?"),
           M("Sag: Zweimal pro Woche.", "Due volte alla settimana.", ["Due volte a settimana."]),
