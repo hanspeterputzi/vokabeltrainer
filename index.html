@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-unregelmaessige";
-  const APP_VERSION = "2026-10-21-a"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-21-b"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1875,7 +1875,7 @@
       { id: "bar", icon: "☕", title: "In der Bar", setting: "Du bestellst am Tresen (Lei-Form, höflich).",
         turns: [
           N("Buongiorno! Cosa desidera?", "Guten Tag! Was möchten Sie?"),
-          M("Bestelle einen Kaffee und ein Gipfeli.", "Un caffè e un cornetto, per favore.", ["Vorrei un caffè e un cornetto, per favore."]),
+          M("Bestelle einen Kaffee und ein Gipfeli.", "Un caffè e un cornetto, per favore.", ["Vorrei un caffè e un cornetto, per favore.", "Prendo un caffè e un cornetto, per favore.", "Vorrei prendere un caffè e un cornetto, per favore."]),
           N("Il cornetto semplice o alla crema?", "Das Gipfeli normal oder mit Creme?"),
           M("Sag: Mit Creme, danke.", "Alla crema, grazie.", ["Alla crema, per favore.", "Con la crema, grazie."]),
           N("Va bene. Altro?", "Gut. Sonst noch etwas?"),
@@ -1890,7 +1890,7 @@
           N("Certo, prego, si accomodi. Cosa prende da bere?", "Natürlich, bitte, setzen Sie sich. Was nehmen Sie zu trinken?"),
           M("Bestelle ein Wasser und ein Glas Rotwein.", "Un'acqua e un bicchiere di vino rosso, per favore.", ["Acqua e vino rosso, per favore.", "Vorrei un'acqua e un vino rosso."]),
           N("E da mangiare?", "Und zu essen?"),
-          M("Bestelle Spaghetti mit Tomatensauce.", "Per me gli spaghetti al pomodoro, per favore.", ["Vorrei gli spaghetti al pomodoro.", "Prendo gli spaghetti al pomodoro."]),
+          M("Bestelle Spaghetti mit Tomatensauce.", "Per me gli spaghetti al pomodoro, per favore.", ["Vorrei gli spaghetti al pomodoro.", "Prendo gli spaghetti al pomodoro.", "Vorrei prendere gli spaghetti al pomodoro."]),
           N("Ottima scelta! Desidera un dolce?", "Ausgezeichnete Wahl! Möchten Sie ein Dessert?"),
           M("Lehne ab und bitte um die Rechnung.", "No, grazie. Il conto, per favore.", ["No, grazie. Il conto, per piacere."]),
           N("Subito!", "Sofort!")
@@ -1920,7 +1920,7 @@
       { id: "lieferdienst", icon: "🍕", title: "Lieferdienst (Telefon)", setting: "Du bestellst telefonisch Pizza (Lei-Form).",
         turns: [
           N("Pizzeria Da Mario, buonasera!", "Pizzeria Da Mario, guten Abend!"),
-          M("Sag, dass du zwei Pizzen bestellen möchtest.", "Buonasera. Vorrei ordinare due pizze, per favore.", ["Buonasera, vorrei due pizze, per favore.", "Vorrei due pizze, per favore."]),
+          M("Sag, dass du zwei Pizzen bestellen möchtest.", "Buonasera. Vorrei ordinare due pizze, per favore.", ["Buonasera, vorrei due pizze, per favore.", "Vorrei due pizze, per favore.", "Vorrei prendere due pizze, per favore.", "Prendo due pizze, per favore.", "Prendo due pizze."]),
           N("Certo. Quali pizze desidera?", "Natürlich. Welche Pizzen möchten Sie?"),
           M("Nenne: eine Margherita und eine mit Schinken.", "Una margherita e una pizza al prosciutto.", ["Una margherita e una al prosciutto."]),
           N("Perfetto. Qual è il suo indirizzo?", "Perfekt. Wie lautet Ihre Adresse?"),
