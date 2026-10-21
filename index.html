@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-n";
-  const APP_VERSION = "2026-10-23-p"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-q"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1508,7 +1508,7 @@
         "<h3>1 · Artikel im Singular</h3>" +
         "<ul>" +
         "<li>männlich: <b>il</b><span class='nt'>Hauptartikel: die meisten männlichen&nbsp;Wörter</span><span class='ex'><span class='ep'>il bambino,</span> <span class='ep'>il negozio,</span> <span class='ep'>il bar</span></span></li>" +
-        "<li>männlich: <b>lo</b><span class='nt'>Ausnahme: s + Konsonant, z, gn, pn, ps, x,&nbsp;y</span><span class='ex'><span class='ep'>lo sport,</span> <span class='ep'>lo studente</span></span></li>" +
+        "<li>männlich: <b>lo</b><span class='nt'>Ausnahme: s + Konsonant, z, gn, pn, ps, x,&nbsp;y</span><span class='ex'><span class='ep'>lo sport,</span> <span class='ep'>lo studente,</span> <span class='ep'>lo zaino</span></span></li>" +
         "<li>weiblich: <b>la</b><span class='ex'><span class='ep'>la bambina,</span> <span class='ep'>la casa</span></span></li>" +
         "<li>vor Vokal: <b>l'</b><span class='nt'>Für männlich und weiblich. Das Geschlecht steht dahinter in Klammern.</span><span class='ex'><span class='ep'>l'ufficio (männlich),</span> <span class='ep'>l'agenzia (weiblich),</span> <span class='ep'>l'amico (männlich),</span> <span class='ep'>l'amica (weiblich)</span></span></li>" +
         "</ul>" +
@@ -3296,7 +3296,8 @@
   .explain b { white-space: nowrap; }
   /* Merkhilfe in Grammatik-Bloecken (Tab Grammatik und Lektions-Intro): nur orange und mit mehr Abstand; gleiche Schriftgroesse, nicht fett, keine Trennlinie */
   .explain p.merk { margin: 18px 0 4px; color: var(--k-orange, var(--orange, #ea580c)); font-weight: 400; }
-  .explain p.merk b, .explain p.merk .lw { color: inherit; font-weight: inherit; }
+  .explain p.merk .lw { color: inherit; font-weight: inherit; }
+  .explain p.merk b { color: inherit; font-weight: 700; }
   @media (min-width: 481px) { .tabs { gap: 2px !important; } .tabs .tab-btn { font-size: .85rem !important; padding: 13px 4px !important; min-width: 0; overflow: hidden; white-space: nowrap; flex: 1 1 0 !important; } }
   @media (max-width: 480px) { .tabs { gap: 2px !important; padding: 5px !important; } .tabs .tab-btn { font-size: min(.68rem, 2.8vw) !important; letter-spacing: -.02em; padding: 12px 0 !important; min-width: 0; overflow: hidden; white-space: nowrap; flex: 1 1 0 !important; } }
   #lessonView .ls-card { background: var(--k-card, var(--surface, #fff)); border-radius: 22px; padding: 22px; margin-bottom: 14px; box-shadow: 0 4px 18px rgba(18,32,58,.07); }
