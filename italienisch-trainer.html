@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-bestellung";
-  const APP_VERSION = "2026-10-21-k"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-21-l"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3392,6 +3392,16 @@
   if (!wrap || !tabs) return;
   var view = el("div"); view.id = "lessonView"; view.style.display = "none";
   wrap.appendChild(view);
+  // Italienische Woerter unterstreichen und antippbar machen (wie in der Grammatik)
+  var linking = false;
+  var linkObs = new MutationObserver(function () {
+    if (linking || typeof window.italoLink !== "function") return;
+    linking = true;
+    try { window.italoLink(view); } catch (e) {}
+    linkObs.takeRecords();
+    linking = false;
+  });
+  linkObs.observe(view, { childList: true, subtree: true });
   var btn = el("button", "tab-btn", "Lektionen"); btn.type = "button"; btn.id = "tabLessons";
   var tv = document.getElementById("tabVocab");
   if (tv && tv.nextSibling) tabs.insertBefore(btn, tv.nextSibling); else tabs.appendChild(btn);
