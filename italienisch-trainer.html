@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-plural";
-  const APP_VERSION = "2026-10-23-zk"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-zl"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3319,6 +3319,25 @@
   #lessonView .ls-btn:disabled { opacity: .45; cursor: default; box-shadow: none; }
   #lessonView .ls-btn.sec { font-weight: 500; color: var(--k-muted, var(--ink-muted, #666)); }
   #lessonView .ls-path { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+  /* Lektionsliste als senkrechter Zeitstrahl */
+  #lessonView .ls-tl { margin-top: 6px; }
+  #lessonView .ls-row { display: flex; gap: 14px; width: 100%; position: relative; padding: 0 0 22px; border: 0; background: none; text-align: left; font: inherit; color: var(--k-text, var(--ink, #111)); cursor: pointer; }
+  #lessonView .ls-row:last-child { padding-bottom: 0; }
+  #lessonView .ls-row::before { content: ""; position: absolute; left: 19.5px; top: 40px; bottom: -2px; width: 3px; border-radius: 2px; background: var(--k-line, #d9deea); }
+  #lessonView .ls-row:last-child::before { display: none; }
+  #lessonView .ls-row.done::before { background: var(--k-blue, #2563eb); }
+  #lessonView .ls-row .dw { flex: 0 0 42px; display: flex; justify-content: center; position: relative; z-index: 1; }
+  #lessonView .ls-row .dot { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; background: var(--k-bg, #eef1f5); color: var(--k-muted, #666); }
+  #lessonView .ls-row.done .dot { background: var(--k-blue, #2563eb); color: #fff; }
+  #lessonView .ls-row.next .dot { width: 42px; height: 42px; background: var(--k-orange, #ea580c); color: #fff; box-shadow: 0 0 0 5px color-mix(in srgb, var(--k-orange, #ea580c) 22%, var(--k-card, #fff)); }
+  #lessonView .ls-row .tx { flex: 1; min-width: 0; padding-top: 2px; }
+  #lessonView .ls-row .tt { display: block; font-weight: 700; line-height: 1.25; }
+  #lessonView .ls-row .ss { display: block; font-size: .8rem; color: var(--k-muted, var(--ink-muted, #666)); margin-top: 2px; }
+  #lessonView .ls-row.done .ss { color: var(--k-blue, #2563eb); }
+  #lessonView .ls-row.next .tt { font-size: 1.05rem; }
+  #lessonView .ls-row .go { display: inline-block; margin-top: 10px; padding: 9px 18px; border-radius: 14px; background: var(--k-blue, #2563eb); color: #fff; font-weight: 700; font-size: .9rem; }
+  #lessonView .ls-row.lock { cursor: default; }
+  #lessonView .ls-row.lock .tt, #lessonView .ls-row.lock .ss { opacity: .55; }
   #lessonView .ls-node { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 18px; border: 1.5px solid var(--k-line, var(--line, #ccc)); background: var(--k-card, #fff); text-align: left; font: inherit; color: var(--k-text, var(--ink, #111)); cursor: pointer; width: 100%; }
   #lessonView .ls-node .no { flex: 0 0 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; background: var(--k-bg, #eef1f5); color: var(--k-muted, #666); }
   #lessonView .ls-node .tt { font-weight: 700; display: block; }
@@ -3772,23 +3791,17 @@
     var card = el("div", "ls-card");
     card.appendChild(el("h2", "", "Lektionen"));
     var ni = nextIndex();
-    if (ni === -1) {
-      card.appendChild(el("p", "ls-sub", "Alle Lektionen sind geschafft. Mit dem nächsten Update kommen neue dazu. Du kannst jede Lektion beliebig wiederholen."));
-    } else {
-      card.appendChild(el("p", "ls-sub", "Eine Lektion dauert etwa zehn Minuten, mit Wiederholungen zum Festigen. Wenn du eine abschliesst, kommt die nächste dran."));
-      var go = el("button", "ls-btn pri big", "Weiter: " + LESSONS[ni].title); go.type = "button";
-      go.addEventListener("click", function () { startLesson(ni); });
-      card.appendChild(go);
-    }
-    var path = el("div", "ls-path");
+    if (ni === -1) card.appendChild(el("p", "ls-sub", "Alle Lektionen sind geschafft. Mit dem nächsten Update kommen neue dazu. Du kannst jede Lektion beliebig wiederholen."));
+    var path = el("div", "ls-tl");
     LESSONS.forEach(function (ls, i) {
       var done = isDone(ls.id), cur = i === ni, lock = !done && !cur;
-      var n = el("button", "ls-node" + (done ? " done" : cur ? " cur" : " lock")); n.type = "button";
-      n.appendChild(el("span", "no", done ? "✓" : String(i + 1)));
-      var tx = el("span"); tx.appendChild(el("span", "tt", ls.title)); tx.appendChild(el("span", "ss", ls.sub + " · ca. 10 Min."));
+      var n = el(lock ? "div" : "button", "ls-row" + (done ? " done" : cur ? " next" : " lock")); if (!lock) n.type = "button";
+      var dw = el("span", "dw"); dw.appendChild(el("span", "dot", done ? "✓" : String(i + 1))); n.appendChild(dw);
+      var tx = el("span", "tx"); tx.appendChild(el("span", "tt", ls.title));
+      var cn = countOf(ls.id), sub = String(ls.sub || "").replace(/^Grammatik-Block\s*/, "");
+      tx.appendChild(el("span", "ss", done ? sub + " · " + cn + "× geübt" : sub + " · ca. 10 Min."));
+      if (cur) tx.appendChild(el("span", "go", "Los geht's"));
       n.appendChild(tx);
-      var cn = countOf(ls.id);
-      if (cn > 0) { var bd = el("span", "ls-cnt", cn + "×"); bd.title = "so oft geübt"; n.appendChild(bd); }
       if (!lock) n.addEventListener("click", function () { startLesson(i); });
       path.appendChild(n);
     });
