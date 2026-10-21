@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-geschlecht";
-  const APP_VERSION = "2026-10-23-a"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-b"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1452,12 +1452,12 @@
       id: "aussprache",
       title: "Aussprache",
       explain:
-        "<h3>Grundregel: c und g</h3>" +
+        "<h3>1 · Grundregel: c und g</h3>" +
         "<ul>" +
         "<li><b>hart</b> (wie k&nbsp;/&nbsp;g) vor <b>a&nbsp;/&nbsp;o&nbsp;/&nbsp;u</b><span class='ex'><span class='ep'>carota,</span> <span class='ep'>colore,</span> <span class='ep'>cuoco ·</span> <span class='ep'>Garda,</span> <span class='ep'>gonna,</span> <span class='ep'>guanto</span></span></li>" +
         "<li><b>weich</b> (wie tsch&nbsp;/&nbsp;dsch) vor <b>e&nbsp;/&nbsp;i</b><span class='ex'><span class='ep'>cinema,</span> <span class='ep'>cellulare,</span> <span class='ep'>città ·</span> <span class='ep'>gelato,</span> <span class='ep'>Gigi</span></span></li>" +
         "</ul>" +
-        "<h3>Die andere Aussprache schreiben</h3>" +
+        "<h3>2 · Die andere Aussprache schreiben</h3>" +
         "<ul>" +
         "<li>hart vor e&nbsp;/&nbsp;i → <b>ch, gh</b><span class='nt'>Ein h einfügen.</span><span class='ex'><span class='ep'>anche,</span> <span class='ep'>chitarra ·</span> <span class='ep'>lunghe,</span> <span class='ep'>ghiaccio</span></span></li>" +
         "<li>weich vor a&nbsp;/&nbsp;o&nbsp;/&nbsp;u → <b>ci, gi</b><span class='nt'>Ein i einfügen.</span><span class='ex'><span class='ep'>ciao,</span> <span class='ep'>cioccolata,</span> <span class='ep'>ciuffo ·</span> <span class='ep'>giacca,</span> <span class='ep'>giornale,</span> <span class='ep'>giusto</span></span></li>" +
@@ -1502,26 +1502,26 @@
       id: "geschlecht",
       title: "Nomen: Geschlecht",
       explain:
-        "<h3>Artikel im Singular</h3>" +
+        "<h3>1 · Artikel im Singular</h3>" +
         "<ul>" +
         "<li>männlich: <b>il</b><span class='ex'><span class='ep'>il bar</span></span></li>" +
         "<li>männlich: <b>lo</b><span class='nt'>Bei s + Konsonant, z, gn, pn, ps, x, y.</span><span class='ex'><span class='ep'>lo sport,</span> <span class='ep'>lo studente</span></span></li>" +
         "<li>weiblich: <b>la</b></li>" +
         "<li>vor Vokal: <b>l'</b> für männlich und weiblich<span class='nt'>Das Geschlecht steht dann in Klammern dahinter.</span></li>" +
         "</ul>" +
-        "<h3>Endung des Nomens</h3>" +
+        "<h3>2 · Endung des Nomens</h3>" +
         "<ul>" +
         "<li><b>-o</b> meist männlich<span class='ex'><span class='ep'>il bambino</span></span></li>" +
         "<li><b>-a</b> meist weiblich<span class='ex'><span class='ep'>la bambina</span></span></li>" +
         "<li><b>-e</b> männlich oder weiblich<span class='ex'><span class='ep'>il ponte,</span> <span class='ep'>la notte</span></span></li>" +
         "<li>Konsonant meist männlich<span class='ex'><span class='ep'>il bar,</span> <span class='ep'>lo sport</span></span></li>" +
         "</ul>" +
-        "<h3>Ausnahmen</h3>" +
+        "<h3>3 · Ausnahmen</h3>" +
         "<ul>" +
         "<li>weiblich trotz -o (Kurzformen)<span class='ex'><span class='ep'>la moto,</span> <span class='ep'>la foto,</span> <span class='ep'>l'auto (weiblich)</span></span><span class='nt'>Kurz für la motocicletta, la fotografia, l'automobile.</span></li>" +
         "<li>männlich trotz -a<span class='ex'><span class='ep'>il cinema,</span> <span class='ep'>il problema</span></span></li>" +
         "</ul>" +
-        "<h3>Personen: männlich und weiblich</h3>" +
+        "<h3>4 · Personen: männlich und weiblich</h3>" +
         "<ul>" +
         "<li>meist zwei Formen<span class='ex'><span class='ep'>il commesso / la commessa,</span> <span class='ep'>il bambino / la bambina</span></span></li>" +
         "<li>nur eine Form: der Artikel zeigt das Geschlecht<span class='ex'><span class='ep'>il / la collega,</span> <span class='ep'>il / la francese,</span> <span class='ep'>il / la cliente</span></span></li>" +
@@ -1553,28 +1553,28 @@
       id: "plural",
       title: "Nomen: Plural",
       explain:
-        "<h3>Artikel im Plural</h3>" +
+        "<h3>1 · Artikel</h3>" +
         "<ul>" +
-        "<li>männlich: <b>i</b> (Plural von il)</li>" +
-        "<li>männlich: <b>gli</b> (Plural von lo und l')</li>" +
-        "<li>weiblich: <b>le</b></li>" +
+        "<li>männlich: <b>i</b> (Plural von il)<span class='ex'><span class='ep'>il giorno → i giorni</span></span></li>" +
+        "<li>männlich: <b>gli</b> (Plural von lo und l')<span class='ex'><span class='ep'>l'amico (männlich) → gli amici,</span> <span class='ep'>l'asparago (männlich) → gli asparagi</span></span></li>" +
+        "<li>weiblich: <b>le</b><span class='ex'><span class='ep'>la settimana → le settimane</span></span></li>" +
         "</ul>" +
-        "<h3>Endung des Nomens</h3>" +
+        "<h3>2 · Endungen</h3>" +
         "<ul>" +
         "<li><b>-o → -i</b><span class='ex'><span class='ep'>il negozio → i negozi,</span> <span class='ep'>il gelato → i gelati</span></span></li>" +
         "<li><b>-e → -i</b><span class='ex'><span class='ep'>il ponte → i ponti,</span> <span class='ep'>la notte → le notti</span></span></li>" +
         "<li>weiblich <b>-a → -e</b><span class='ex'><span class='ep'>la casa → le case</span></span></li>" +
         "<li>männlich <b>-a → -i</b><span class='ex'><span class='ep'>il problema → i problemi</span></span></li>" +
-        "<li>männlich vor Vokal<span class='ex'><span class='ep'>l'amico (männlich) → gli amici,</span> <span class='ep'>l'asparago (männlich) → gli asparagi</span></span></li>" +
         "</ul>" +
-        "<h3>Nomen bleibt gleich</h3>" +
+        "<h3>3 · Ausnahmen</h3>" +
+        "<p class='sub'>Nomen bleibt gleich</p>" +
         "<p class='nt'>Nur der Artikel ändert sich.</p>" +
         "<ul>" +
         "<li>betonte Endsilbe<span class='ex'><span class='ep'>il caffè → i caffè,</span> <span class='ep'>la città → le città</span></span></li>" +
         "<li>Konsonant am Ende (meist Fremdwörter)<span class='ex'><span class='ep'>il film → i film,</span> <span class='ep'>l'hotel (männlich) → gli hotel,</span> <span class='ep'>lo yogurt → gli yogurt</span></span></li>" +
         "<li>Kurzformen<span class='ex'><span class='ep'>la bici → le bici,</span> <span class='ep'>la foto → le foto,</span> <span class='ep'>il cinema → i cinema</span></span></li>" +
         "</ul>" +
-        "<h3>Besondere Endungen</h3>" +
+        "<p class='sub'>Besondere Endungen</p>" +
         "<ul>" +
         "<li>-ca / -ga → <b>-che / -ghe</b><span class='nt'>Das h hält das c / g hart.</span><span class='ex'><span class='ep'>l'amica (weiblich) → le amiche</span></span></li>" +
         "<li>einige -co / -go → <b>-chi / -ghi</b><span class='ex'><span class='ep'>il tedesco → i tedeschi,</span> <span class='ep'>l'albergo (männlich) → gli alberghi</span></span></li>" +
@@ -1582,11 +1582,11 @@
         "<li>-io → nur <b>-i</b><span class='ex'><span class='ep'>il viaggio → i viaggi</span></span></li>" +
         "<li>betontes i bleibt<span class='ex'><span class='ep'>lo zio → gli zii</span></span></li>" +
         "</ul>" +
-        "<h3>Unregelmässig</h3>" +
+        "<p class='sub'>Unregelmässig</p>" +
         "<ul>" +
         "<li><span class='ex'><span class='ep'>l'uovo (männlich) → le uova,</span> <span class='ep'>il paio → le paia,</span> <span class='ep'>la mano → le mani</span></span></li>" +
         "</ul>" +
-        "<h3>Nomen ohne Doppelform</h3>" +
+        "<p class='sub'>Nomen ohne Doppelform</p>" +
         "<ul>" +
         "<li><span class='ex'><span class='ep'>la gente,</span> <span class='ep'>i pantaloni,</span> <span class='ep'>i dintorni</span></span></li>" +
         "</ul>",
@@ -1625,23 +1625,26 @@
       id: "unbestimmt",
       title: "Unbestimmter Artikel",
       explain:
-        "<h3>männlich</h3>" +
+        "<h3>1 · männlich</h3>" +
         "<ul>" +
         "<li><b>un</b> (Normalfall)<span class='nt'>Egal ob das Nomen mit Konsonant, Vokal oder h beginnt.</span><span class='ex'><span class='ep'>un gelato,</span> <span class='ep'>un amico,</span> <span class='ep'>un hotel</span></span></li>" +
         "</ul>" +
-        "<p>Ausnahmen: statt <b>un</b> steht <b>uno</b> vor</p>" +
+        "<p class='sub'>Ausnahme: <b>uno</b> statt <b>un</b> vor</p>" +
         "<ul>" +
         "<li><b>häufig</b> (s + Konsonant, z)<span class='ex'><span class='ep'>uno straniero,</span> <span class='ep'>uno sport,</span> <span class='ep'>uno zucchino</span></span></li>" +
         "<li><b>selten</b> (gn, pn, ps, x, y)<span class='ex'><span class='ep'>uno gnocco,</span> <span class='ep'>uno pneumatico,</span> <span class='ep'>uno psicologo,</span> <span class='ep'>uno xilofono,</span> <span class='ep'>uno yogurt</span></span></li>" +
         "</ul>" +
-        "<p style='margin-top:14px'>Wo <b>uno</b> steht, heisst der bestimmte Artikel <b>lo</b> (Plural: <b>gli</b>)<span class='ex' style='display:block;margin-top:2px'><span class='ep'>uno straniero → lo straniero,</span> <span class='ep'>uno sport → lo sport</span></span></p>" +
-        "<h3>weiblich</h3>" +
+        "<p class='sub'>Dazu der bestimmte Artikel</p>" +
+        "<ul>" +
+        "<li>Wo <b>uno</b> steht, heisst er <b>lo</b> (Plural: <b>gli</b>)<span class='ex'><span class='ep'>uno straniero → lo straniero,</span> <span class='ep'>uno sport → lo sport</span></span></li>" +
+        "</ul>" +
+        "<h3>2 · weiblich</h3>" +
         "<ul>" +
         "<li><b>una</b> vor Konsonant<span class='ex'>una camera</span></li>" +
         "<li><b>un'</b> vor Vokal<span class='ex'>un'amica</span></li>" +
         "</ul>" +
         "<p>Keine Ausnahmen.</p>" +
-        "<p class='merk'>Merkhilfe: <b>un</b> = ein, <b>una</b> = eine. Vor Vokal wird <b>una</b> zu <b>un'</b>, so wie <b>la</b> zu <b>l'</b> wird.</p>",
+        "<p class='merk'>Merkhilfe: <b>lo</b> → <b>uno</b> und <b>la</b> → <b>una</b>: Der Endvokal bleibt gleich. Vor Vokal wird <b>una</b> zu <b>un'</b>, so wie <b>la</b> zu <b>l'</b> wird.</p>",
       exercises: [
         { q: "___ gelato", hint: "un, uno, una oder un'?", a: ["un"], why: "vor Konsonant, männlich: un" },
         { q: "___ camera", hint: "un, uno, una oder un'?", a: ["una"], why: "vor Konsonant, weiblich: una" },
@@ -3264,6 +3267,7 @@
   /* Aufbau jeder Regel: Regel in einer Zeile, Hinweis (grau) darunter, Beispiele immer in einer eigenen Zeile */
   .explain li .ex { display: block; margin-top: 2px; }
   .explain li { margin-bottom: 9px; }
+  .explain p.sub { margin: 14px 0 4px; font-weight: 700; }
   .explain .nt { display: block; color: var(--k-muted, var(--ink-muted, #666)); font-size: .92em; margin-top: 1px; }
   .explain p.nt { margin: 0 0 6px; }
   .explain b { white-space: nowrap; }
