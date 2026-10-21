@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-n";
-  const APP_VERSION = "2026-10-23-y"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-z"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3862,7 +3862,7 @@
     top.appendChild(x); top.appendChild(bar);
     card.appendChild(top);
     var body = el("div"); card.appendChild(body);
-    if (t.round2 || t.retry) body.appendChild(el("span", "ls-rep", t.retry ? "Nochmals" : "Wiederholung"));
+    if (t.round2 || t.retry) body.appendChild(el("span", "ls-rep", t.retry ? (t.endAsk ? "Zum Schluss nochmals" : "Nochmals") : "Wiederholung"));
     var fb = el("div", "ls-fb"); card.appendChild(fb);
     var foot = el("div", "ls-foot"); card.appendChild(foot);
     var check = el("button", "ls-btn pri big", "Prüfen"); check.type = "button"; check.disabled = true;
@@ -3873,7 +3873,11 @@
     function finish(ok, msg, sub, spokenIt) {
       answered = true;
       if (ok) { S.done++; if (!t.retry && !t.round2) S.firstOk++; fill.style.width = Math.round(100 * S.done / S.total) + "%"; }
-      else if (t.t !== "pairs") S.queue.push(Object.assign({}, t, { retry: true }));
+      else if (t.t !== "pairs") {
+        // Falsch: dieselbe Frage sofort nochmals (bis sie stimmt) und zusaetzlich am Schluss der Lektion
+        S.queue.unshift(Object.assign({}, t, { retry: true, endAsk: false }));
+        if (!t.endQueued) { S.queue.push(Object.assign({}, t, { retry: true, endAsk: true, endQueued: true })); S.total++; }
+      }
       fb.className = "ls-fb " + (ok ? "ok" : "no"); fb.textContent = msg;
       if (sub) fb.appendChild(el("small", "", sub));
       if (spokenIt) speak(spokenIt);
