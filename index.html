@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-n";
-  const APP_VERSION = "2026-10-23-zf"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-zh"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4242,6 +4242,14 @@
     #checkBtn, #conjCheckBtn, .ls-btn.pri { background: #3b66dc !important; }
   }
 
+
+  /* Woerterbuch: Suchfeld bleibt beim Scrollen oben */
+  #dictSticky { position: sticky; top: 10px; z-index: 30; margin-bottom: 14px; padding: 8px; border-radius: 22px;
+    background: color-mix(in srgb, var(--k-card, #fff) 92%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    box-shadow: 0 8px 24px rgba(18,32,58,.14), 0 0 0 1px rgba(18,32,58,.05); }
+  #dictSticky #dictIn { margin: 0; }
+  #dictList .dw { scroll-margin-top: 84px !important; }
+  @media (prefers-color-scheme: dark) { #dictSticky { box-shadow: 0 8px 24px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.07); } }
 </style>
 <script>
 (function () {
@@ -4272,7 +4280,29 @@
     w.parentNode.insertBefore(hint, w.nextSibling);
   }
 
-  function init() { wire("quizWord", "showBtn", "nextBtn"); wire("conjVerb", "conjShowBtn", "conjNextBtn"); }
+
+  // Woerterbuch-Suchfeld in eine mitlaufende Leiste ueber den Karten setzen
+  function stickySearch() {
+    var v = document.getElementById("dictView"), inp = document.getElementById("dictIn");
+    if (!v || !inp || document.getElementById("dictSticky")) return;
+    var bar = document.createElement("div"); bar.id = "dictSticky";
+    v.insertBefore(bar, v.firstChild); bar.appendChild(inp);
+  }
+  // Kurze Vibration bei falscher Antwort und am Ende einer Lektion (nur wo der Browser es kann, z. B. Android)
+  function buzz(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+  new MutationObserver(function (ms) {
+    ms.forEach(function (m) {
+      if (m.type === "attributes") {
+        var t = m.target, c = t.classList;
+        if ((c.contains("ls-fb") && c.contains("no")) || (c.contains("feedback") && c.contains("wrong") && c.contains("show"))) buzz(70);
+      } else {
+        Array.prototype.forEach.call(m.addedNodes, function (n) {
+          if (n.nodeType === 1 && (n.classList.contains("ls-card") || n.querySelector) && n.querySelector && n.querySelector(".ls-big")) buzz([80, 60, 80, 60, 160]);
+        });
+      }
+    });
+  }).observe(document.body, { attributes: true, attributeFilter: ["class"], childList: true, subtree: true });
+  function init() { wire("quizWord", "showBtn", "nextBtn"); wire("conjVerb", "conjShowBtn", "conjNextBtn"); stickySearch(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
 </script>
