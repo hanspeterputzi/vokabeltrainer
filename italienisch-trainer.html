@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-plural";
-  const APP_VERSION = "2026-10-23-zl"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-zm"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3333,7 +3333,8 @@
   #lessonView .ls-row .tx { flex: 1; min-width: 0; padding-top: 2px; }
   #lessonView .ls-row .tt { display: block; font-weight: 700; line-height: 1.25; }
   #lessonView .ls-row .ss { display: block; font-size: .8rem; color: var(--k-muted, var(--ink-muted, #666)); margin-top: 2px; }
-  #lessonView .ls-row.done .ss { color: var(--k-blue, #2563eb); }
+  #lessonView .ls-row .ss .tag { color: var(--k-orange, #ea580c); }
+  #lessonView .ls-row.done .ss .cnt { color: var(--k-blue, #2563eb); }
   #lessonView .ls-row.next .tt { font-size: 1.05rem; }
   #lessonView .ls-row .go { display: inline-block; margin-top: 10px; padding: 9px 18px; border-radius: 14px; background: var(--k-blue, #2563eb); color: #fff; font-weight: 700; font-size: .9rem; }
   #lessonView .ls-row.lock { cursor: default; }
@@ -3785,6 +3786,13 @@
   }
   function nextIndex() { for (var i = 0; i < LESSONS.length; i++) if (!isDone(LESSONS[i].id)) return i; return -1; }
 
+  // Titel ohne «- lerne …»-Zusatz; das Thema steht darunter in Orange
+  function headOf(ls) { return String(ls.title).replace(/\s+-\s+.*$/, ""); }
+  function tagOf(ls) {
+    var m = /«(.+)»/.exec(ls.sub || ""); if (m) return m[1];
+    var t = /\s+-\s+(.*)$/.exec(ls.title || ""); return t ? t[1] : "";
+  }
+
   // ---- Uebersicht ----
   function showList() {
     view.innerHTML = "";
@@ -3797,9 +3805,10 @@
       var done = isDone(ls.id), cur = i === ni, lock = !done && !cur;
       var n = el(lock ? "div" : "button", "ls-row" + (done ? " done" : cur ? " next" : " lock")); if (!lock) n.type = "button";
       var dw = el("span", "dw"); dw.appendChild(el("span", "dot", done ? "✓" : String(i + 1))); n.appendChild(dw);
-      var tx = el("span", "tx"); tx.appendChild(el("span", "tt", ls.title));
-      var cn = countOf(ls.id), sub = String(ls.sub || "").replace(/^Grammatik-Block\s*/, "");
-      tx.appendChild(el("span", "ss", done ? sub + " · " + cn + "× geübt" : sub + " · ca. 10 Min."));
+      var tx = el("span", "tx"); tx.appendChild(el("span", "tt", headOf(ls)));
+      var ss = el("span", "ss"); ss.appendChild(el("span", "tag", tagOf(ls)));
+      if (done) ss.appendChild(el("span", "cnt", " · " + countOf(ls.id) + "× geübt"));
+      tx.appendChild(ss);
       if (cur) tx.appendChild(el("span", "go", "Los geht's"));
       n.appendChild(tx);
       if (!lock) n.addEventListener("click", function () { startLesson(i); });
@@ -3824,7 +3833,7 @@
     var card = el("div", "ls-card");
     var top = el("div", "ls-top");
     var x = el("button", "ls-x", "✕"); x.type = "button"; x.addEventListener("click", showList);
-    top.appendChild(x); top.appendChild(el("h2", "", "Lektion " + (S.i + 1) + " · " + S.ls.title));
+    top.appendChild(x); top.appendChild(el("h2", "", "Lektion " + (S.i + 1) + " · " + headOf(S.ls)));
     card.appendChild(top);
     var ul = el("ul", "ls-intro");
     S.ls.words.forEach(function (w) {
@@ -4088,7 +4097,7 @@
       box.appendChild(nl); card.appendChild(box);
     }
     if (ni !== -1) {
-      var nb = el("button", "ls-btn pri big", "Nächste Lektion: " + LESSONS[ni].title); nb.type = "button";
+      var nb = el("button", "ls-btn pri big", "Nächste Lektion: " + headOf(LESSONS[ni])); nb.type = "button";
       nb.addEventListener("click", function () { startLesson(ni); });
       card.appendChild(nb);
     } else {
