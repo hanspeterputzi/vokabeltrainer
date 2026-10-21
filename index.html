@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-bestellung";
-  const APP_VERSION = "2026-10-21-o"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-21-p"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1410,6 +1410,10 @@
     checkBtn.disabled = true;
     answerInput.disabled = true;
     micBtn.disabled = true;
+    if (isCorrect) {
+      const quizRef = currentQuiz;
+      setTimeout(() => { if (currentQuiz === quizRef && checkBtn.disabled && document.getElementById("vocabView").style.display !== "none") nextQuiz(); }, 1500);
+    }
   }
 
   // --- Events ---
@@ -1751,6 +1755,10 @@
     gEl.answer.disabled = true;
     gEl.check.disabled = true;
     lsSet(G_STATS_KEY, gStats);
+    if (ok) {
+      const gRef = gCurrent;
+      setTimeout(() => { if (gCurrent === gRef && gAnswered && gEl.view.style.display !== "none") gNext(); }, ex.why ? 2200 : 1300);
+    }
   }
 
   gEl.check.addEventListener("click", () => gCheck());
@@ -2633,6 +2641,10 @@
       conjEl.feedback.textContent = ok + " von " + total + " richtig (wird nochmals abgefragt)";
     }
     conjFinish();
+    if (ok === total) {
+      const conjRef = conjCurrent;
+      setTimeout(() => { if (conjCurrent === conjRef && conjDone && isConj(selectedCategory) && document.getElementById("vocabView").style.display !== "none") conjNext(); }, 1300);
+    }
   }
 
   function conjShow() {
@@ -3534,6 +3546,7 @@
     }
     var go = el("button", "ls-btn pri big", "Los geht's"); go.type = "button";
     go.addEventListener("click", function () {
+      unlockAudio();
       S.queue = S.ls.tasks.slice(); S.total = S.queue.length; S.done = 0; S.firstOk = 0; nextTask();
     });
     card.appendChild(go);
@@ -3567,7 +3580,12 @@
       if (sub) fb.appendChild(el("small", "", sub));
       if (spokenIt) speak(spokenIt);
       check.disabled = false; check.textContent = "Weiter";
-      check.onclick = nextTask; check.focus();
+      var moved = false;
+      function go() { if (moved) return; moved = true; clearTimeout(timer); nextTask(); }
+      var timer = null;
+      check.onclick = go; check.focus();
+      // Richtige Antwort: automatisch weiter (bei gesprochenem Italienisch etwas spaeter)
+      if (ok) timer = setTimeout(function () { if (view.contains(check)) go(); }, spokenIt ? 1700 : 1000);
     }
     function armCheck(fn) { check.onclick = function () { if (!answered) fn(); }; }
 
@@ -3658,6 +3676,15 @@
 
   // ---- Abschluss-Signal: Konfetti und Ton ----
   var audioCtx = null;
+  function unlockAudio() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+      audioCtx = audioCtx || new AC();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      var b = audioCtx.createBuffer(1, 1, 22050), src = audioCtx.createBufferSource();
+      src.buffer = b; src.connect(audioCtx.destination); src.start(0);
+    } catch (e) {}
+  }
   function fanfare() {
     try {
       var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
