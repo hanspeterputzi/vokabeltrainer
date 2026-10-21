@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-uno";
-  const APP_VERSION = "2026-10-21-x"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-21-y"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1606,10 +1606,9 @@
       explain:
         "<p>Die Form des unbestimmten Artikels hängt vom <b>Geschlecht</b> und vom <b>Anfang</b> des Nomens ab.</p>" +
         "<h3>männlich</h3>" +
+        "<p>Immer <b>un</b>, egal ob das Nomen mit Konsonant, Vokal oder h beginnt:</p>" +
         "<ul>" +
-        "<li><b>un</b> vor Konsonant: <span class='ex'>un gelato</span></li>" +
-        "<li><b>un</b> vor Vokal: <span class='ex'>un amico</span></li>" +
-        "<li><b>un</b> vor h: <span class='ex'>un hotel</span></li>" +
+        "<li><span class='ex'>un gelato, un amico, un hotel</span></li>" +
         "</ul>" +
         "<h3>weiblich</h3>" +
         "<ul>" +
@@ -1631,8 +1630,6 @@
         "<ul>" +
         "<li>Wo <b>uno</b> steht, heisst der bestimmte Artikel <b>lo</b> (Plural: <b>gli</b>): <span class='ex'>uno straniero → lo straniero, uno sport → lo sport</span></li>" +
         "<li>Bei weiblichen Nomen gibt es keine Ausnahme: immer <b>una</b> oder <b>un'</b>.</li>" +
-        "<li>Der Apostroph steht nur bei weiblichen Nomen: <span class='ex'>un'amica</span>, aber männlich <span class='ex'>un amico</span>.</li>" +
-        "<li>Das <b>h</b> am Wortanfang wird nicht gesprochen: <span class='ex'>un hotel</span> verhält sich wie ein Wort mit Vokal.</li>" +
         "</ul>",
       exercises: [
         { q: "___ gelato", hint: "un, uno, una oder un'?", a: ["un"], why: "vor Konsonant, männlich: un" },
