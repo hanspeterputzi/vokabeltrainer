@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-geschlecht";
-  const APP_VERSION = "2026-10-22-m"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-22-n"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3522,6 +3522,88 @@
         Y("Übersetze: Eine Glace, bitte.", "Un gelato, per favore.", ["Un gelato."])
       ]
     }
+    ,
+    {
+      id: "vorstellen", topic: null, verbs: ["essere", "avere", "fare", "andare", "parlare", "chiamarsi"], title: "Sich vorstellen - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
+      nw: [["Come ti chiami?", "Wie heisst du?"], ["Piacere!", "Freut mich / Angenehm!"], ["Di dove sei?", "Woher kommst du?"], ["Dove abiti?", "Wo wohnst du?"], ["dare il tu", "sich duzen"], ["dare il Lei", "sich siezen"]],
+      words: [
+        W("Come ti chiami?", "Wie heisst du?"),
+        W("Lei come si chiama?", "Wie heissen Sie?"),
+        W("Piacere!", "Freut mich / Angenehm!"),
+        W("Ti presento Katia.", "Ich stelle dir Katia vor."),
+        W("Sono di Coira.", "Ich bin aus Chur."),
+        W("Di dove sei?", "Woher kommst du?"),
+        W("Dove abiti?", "Wo wohnst du?"),
+        W("dare il tu · dare il Lei", "sich duzen · sich siezen")
+      ],
+      tasks: [
+        C("Wie fragst du «Wie heisst du?»", "Come ti chiami?", ["Come stai?", "Dove abiti?", "Quanti anni hai?"]),
+        C("Wie fragst du «Wie heissen Sie?»", "Lei come si chiama?", ["Come ti chiami?", "Come sta?", "Di dov'è?"]),
+        C("Was bedeutet «Piacere!»?", "Freut mich / Angenehm!", ["Auf Wiedersehen", "Es tut mir leid", "Gute Besserung"]),
+        Y("Übersetze: Ich bin aus Chur.", "Sono di Coira.", ["Io sono di Coira."]),
+        Y("Übersetze: Woher kommst du?", "Di dove sei?"),
+        O("Ich stelle dir Katia vor.", "Ti presento Katia."),
+        O("Wo wohnst du?", "Dove abiti?"),
+        L("Come ti chiami?"),
+        P([["Piacere!", "Freut mich / Angenehm!"], ["Come ti chiami?", "Wie heisst du?"], ["Di dove sei?", "Woher kommst du?"], ["Dove abiti?", "Wo wohnst du?"]]),
+        C("Was heisst «dare il tu»?", "sich duzen", ["sich siezen", "sich vorstellen", "sich begrüssen"]),
+        Y("Übersetze: Woher kommen Sie?", "Di dov'è?"),
+        C("Wie sagst du höflich «Ich stelle Ihnen … vor»?", "le presento …", ["ti presento …", "vorrei …", "prenda …"])
+      ]
+    },
+    {
+      id: "wohnen", topic: null, verbs: ["essere", "avere", "fare", "andare", "parlare", "chiamarsi", "abitare"], title: "Wohnen und Orte - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
+      nw: [["la città", "die Stadt"], ["la casa", "das Haus"], ["l'appartamento (männlich)", "die Wohnung"], ["l'ufficio (männlich)", "das Büro"], ["Dov'è …?", "Wo ist …?"]],
+      words: [
+        W("Dove abiti?", "Wo wohnst du?"),
+        W("Abito a Coira.", "Ich wohne in Chur."),
+        W("Abito in un appartamento.", "Ich wohne in einer Wohnung."),
+        W("Lavoro in un ufficio.", "Ich arbeite in einem Büro."),
+        W("Dov'è la stazione?", "Wo ist der Bahnhof?"),
+        W("la città · la casa · l'appartamento (männlich)", "Stadt · Haus · Wohnung"),
+        W("Milano · Berlino · Roma · Parigi", "Mailand · Berlin · Rom · Paris")
+      ],
+      tasks: [
+        C("Was heisst «la casa»?", "Haus", ["Wohnung", "Stadt", "Büro"]),
+        C("Was heisst «l'ufficio (männlich)»?", "Büro", ["Wohnung", "Haus", "Hotel"]),
+        C("Was heisst «l'appartamento (männlich)»?", "Wohnung", ["Haus", "Büro", "Hotel"]),
+        C("Was heisst «la città»?", "Stadt", ["Haus", "Bahnhof", "Büro"]),
+        P([["Coira", "Chur"], ["Milano", "Mailand"], ["Berlino", "Berlin"], ["Parigi", "Paris"], ["Roma", "Rom"]]),
+        Y("Übersetze: Wo wohnst du?", "Dove abiti?", ["Dove abiti tu?", "Tu dove abiti?"]),
+        Y("Übersetze: Ich wohne in Chur.", "Abito a Coira.", ["Io abito a Coira."]),
+        Y("Übersetze: Wo ist der Bahnhof?", "Dov'è la stazione?", ["Dove è la stazione?"]),
+        O("Ich arbeite in einem Büro.", "Lavoro in un ufficio."),
+        O("Ich wohne in einer Wohnung.", "Abito in un appartamento."),
+        L("Dove abiti?"),
+        C("Wie fragst du «Wo ist …?»", "Dov'è …?", ["Dove lavori?", "Di dov'è?", "Dove abiti?"])
+      ]
+    },
+    {
+      id: "orte", topic: null, verbs: ["essere", "avere", "fare", "andare", "parlare", "chiamarsi", "abitare", "esserci"], title: "Was gibt es? - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
+      nw: [["la farmacia", "die Apotheke"], ["la banca", "die Bank"], ["la stazione", "der Bahnhof"], ["l'ospedale (männlich)", "das Krankenhaus"], ["la piscina", "das Schwimmbad"], ["la fermata", "die Haltestelle"], ["C'è …?", "Gibt es …?"]],
+      words: [
+        W("C'è una farmacia?", "Gibt es eine Apotheke?"),
+        W("Sì, c'è una banca.", "Ja, es gibt eine Bank."),
+        W("Ci sono due ospedali.", "Es gibt zwei Krankenhäuser."),
+        W("Ma cosa c'è?", "Was ist los?"),
+        W("la farmacia · la banca · la stazione", "Apotheke · Bank · Bahnhof"),
+        W("l'ospedale (männlich) · la piscina · la fermata", "Krankenhaus · Schwimmbad · Haltestelle")
+      ],
+      tasks: [
+        C("Was heisst «la farmacia»?", "Apotheke", ["Bank", "Bahnhof", "Schwimmbad"]),
+        C("Was heisst «la banca»?", "Bank", ["Apotheke", "Bahnhof", "Haltestelle"]),
+        C("Was heisst «la stazione»?", "Bahnhof", ["Haltestelle", "Bank", "Apotheke"]),
+        C("Was heisst «la piscina»?", "Schwimmbad", ["Krankenhaus", "Bahnhof", "Apotheke"]),
+        P([["la farmacia", "Apotheke"], ["la banca", "Bank"], ["la stazione", "Bahnhof"], ["la piscina", "Schwimmbad"], ["la fermata", "Haltestelle"]]),
+        Y("Übersetze: Gibt es eine Apotheke?", "C'è una farmacia?"),
+        Y("Übersetze: Es gibt eine Bank.", "C'è una banca."),
+        Y("Übersetze: Was ist los?", "Ma cosa c'è?"),
+        O("Es gibt zwei Krankenhäuser.", "Ci sono due ospedali."),
+        L("C'è una farmacia?"),
+        C("Wie fragst du «Gibt es …?» (eine Sache)?", "C'è …?", ["Ci sono …?", "Dov'è …?", "Che cos'è?"]),
+        C("Wie sagst du «Es gibt …» (mehrere Sachen)?", "Ci sono …", ["C'è …", "Dov'è …", "Che cos'è …"])
+      ]
+    }
   ];
 
   // ---- Hilfen ----
@@ -3705,8 +3787,9 @@
       unlockAudio();
       // Runde 1: die Aufgaben der Reihe nach. Runde 2: alle nochmals gemischt (Wiederholung zum Festigen)
       // Ziel ca. 10 Min.: normale Aufgabe ~12 s, ganze Konjugation ~35 s. Runde 2 = alle Konjugationen + so viele andere Aufgaben, wie in die Zeit passen
-      var conjT = S.tasks.filter(function (t) { return t.t === "conj"; }), others = S.tasks.filter(function (t) { return t.t !== "conj"; });
-      var rem = 600 - others.length * 12 - conjT.length * 35 * 2;
+      var conjAll = S.tasks.filter(function (t) { return t.t === "conj"; }), others = S.tasks.filter(function (t) { return t.t !== "conj"; });
+      var conjT = conjAll.slice(-3); // Runde 2: die drei neuesten Verben nochmals komplett
+      var rem = 600 - others.length * 12 - conjAll.length * 35 - conjT.length * 35;
       var nOther = Math.max(0, Math.min(others.length, Math.round(rem / 12)));
       var round2 = shuffle(conjT.concat(shuffle(others).slice(0, nOther))).map(function (t) { return Object.assign({}, t, { round2: true }); });
       S.queue = S.tasks.slice().concat(round2); S.total = S.queue.length; S.done = 0; S.firstOk = 0; nextTask();
