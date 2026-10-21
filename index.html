@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-plural";
-  const APP_VERSION = "2026-10-23-zt"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-zv"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -2231,7 +2231,9 @@
     function loadScores() { try { return JSON.parse(localStorage.getItem(SCORE_KEY) || "{}"); } catch (e) { return {}; } }
     function saveScore(id, pct) {
       try { const s = loadScores(); if (!(s[id] >= pct)) s[id] = pct; localStorage.setItem(SCORE_KEY, JSON.stringify(s)); } catch (e) {}
+      try { const c = loadCounts(); c[id] = (c[id] || 0) + 1; localStorage.setItem("italienisch_talk_count", JSON.stringify(c)); } catch (e) {}
     }
+    function loadCounts() { try { return JSON.parse(localStorage.getItem("italienisch_talk_count") || "{}") || {}; } catch (e) { return {}; } }
 
     // Zahlen als Ziffern (Spracherkennung) -> italienische Woerter
     const U = ["zero","uno","due","tre","quattro","cinque","sei","sette","otto","nove","dieci","undici","dodici","tredici","quattordici","quindici","sedici","diciassette","diciotto","diciannove"];
@@ -2350,6 +2352,7 @@
 
     function renderList() {
       const sc = loadScores();
+      const cnt = loadCounts();
       listBox.innerHTML = "";
       listBox.appendChild($("h2", "", "Sprechen – Dialoge"));
       if (!SR) listBox.appendChild($("p", "tk-sub", "Hinweis: Dieser Browser kann dein Sprechen nicht erkennen (z. B. im Artifact oder Home-Bildschirm-Icon). Du kannst die Antworten eintippen. Zum Sprechen: die Seite als normalen Safari-/Chrome-Tab öffnen."));
@@ -2367,6 +2370,7 @@
         G.items.forEach(d => {
           const b = $("button", "tk-topic" + (sc[d.id] >= 80 ? " done" : ""), "<span>" + esc(d.title) + "<span class='sc'>" + (sc[d.id] != null ? "Bestes Ergebnis: " + sc[d.id] + " %" : d.turns.length + " Zeilen") + "</span></span>");
           b.type = "button";
+          b.setAttribute("data-n", String(cnt[d.id] || 0));
           b.addEventListener("click", () => start(d));
           grid.appendChild(b);
         });
@@ -4236,7 +4240,6 @@
     .tabs #tabDict::after { display: none !important; }
     .tabs .tab-btn.active, .tabs #tabDict.active { background: var(--k-blue, #2563eb) !important; color: #fff !important; box-shadow: 0 6px 14px rgba(37,99,235,.35) !important; }
     .wrap { padding-bottom: 120px !important; }
-    .tabs + * { margin-top: 46px !important; }
     #dictIdx { bottom: 104px !important; }
     #lessonView, .ls-top { scroll-margin-bottom: 100px; }
     .toast { top: 14px; }
@@ -4326,6 +4329,12 @@
   .streakbar .gb { height: 8px !important; margin-top: 8px !important; background: var(--k-bg, #eef2fa) !important; }
   .streakbar .gb i, .streakbar .goal.done .gb i { background: var(--k-blue, #2563eb) !important; }
   .streakbar .goal.done .gb i { background: var(--k-orange, #ea580c) !important; }
+
+  /* Streak ganz oben, darunter die Ciao-Sprechblase; das Orange umfasst beides */
+  body::before { height: var(--band, 230px) !important; }
+  .wrap { padding-top: 18px !important; }
+  .wrap > .streakbar { margin: 0 !important; position: relative; z-index: 2; }
+  .wrap > h1 { margin-top: 18px !important; margin-bottom: 44px !important; }
 </style>
 <script>
 (function () {
@@ -4419,7 +4428,9 @@
         var sc = b.querySelector(".sc"), m = sc && /(\d+)\s*%/.exec(sc.textContent);
         b.innerHTML = ""; b.setAttribute("data-r", "1");
         b.appendChild(el("span", "mi")); b.appendChild(el("span", "tt", title.trim()));
-        if (m) b.appendChild(el("span", "pc", m[1] + " %"));
+        var n = parseInt(b.getAttribute("data-n") || "0", 10) || 0; if (m && n < 1) n = 1;
+        var pcs = (n > 0 ? n + "×" : "") + (m ? (n > 0 ? " · " : "") + m[1] + " %" : "");
+        if (pcs) b.appendChild(el("span", "pc", pcs));
       });
       var pv = g.previousElementSibling, gh = null, bar = null;
       if (pv && pv.classList.contains("tk-gb")) { bar = pv; gh = pv.previousElementSibling; }
@@ -4436,6 +4447,18 @@
   }
   var tq = 0;
   (function () { var tv = document.getElementById("talkView"); if (tv) { restyleTalk(); new MutationObserver(function () { clearTimeout(tq); tq = setTimeout(restyleTalk, 30); }).observe(tv, { childList: true, subtree: true }); } })();
+
+  // Streak an den Kopf der Seite, Ciao-Sprechblase darunter; Hoehe des orangen Bandes folgt
+  function moveStreak() {
+    var w = document.querySelector(".wrap"), sb = w && w.querySelector(".streakbar"), h = w && w.querySelector("h1");
+    if (sb && h && sb.nextElementSibling !== h) w.insertBefore(sb, h);
+    var hh = document.querySelector(".wrap > h1");
+    if (hh) document.documentElement.style.setProperty("--band", Math.round(hh.getBoundingClientRect().bottom + window.scrollY + 20) + "px");
+  }
+  moveStreak();
+  window.addEventListener("resize", moveStreak); window.addEventListener("load", moveStreak);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(moveStreak);
+  try { var sbe = document.querySelector(".streakbar"); if (sbe && window.ResizeObserver) new ResizeObserver(moveStreak).observe(sbe); } catch (e) {}
   function init() { wire("quizWord", "showBtn", "nextBtn"); wire("conjVerb", "conjShowBtn", "conjNextBtn"); stickySearch(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
