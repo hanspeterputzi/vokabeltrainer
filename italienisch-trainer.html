@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-bestellung";
-  const APP_VERSION = "2026-10-21-n"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-21-o"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1597,6 +1597,7 @@
       ],
     },
   ];
+  window.italoGrammar = GRAMMAR_TOPICS;
 
   const G_STATS_KEY = "italienisch_grammar_stats";   // { topicId: {correct, wrong} }
   const G_PROGRESS_KEY = "italienisch_grammar_progress";
@@ -3228,6 +3229,7 @@
   #lessonView .ls-fb.no { display: block; background: color-mix(in srgb, var(--k-orange, #ea580c) 13%, var(--k-card, #fff)); color: var(--k-orange, #ea580c); }
   #lessonView .ls-fb small { display: block; font-weight: 500; opacity: .85; margin-top: 3px; }
   #lessonView .ls-foot { margin-top: 16px; }
+  #lessonView .ls-gram { margin: 0 0 16px; }
   #lessonView .ls-gt { font-weight: 700; margin: 8px 0 6px; }
   #lessonView .ls-gp { margin: 0 0 6px; font-size: .92rem; line-height: 1.45; color: var(--k-text, #111); }
   #lessonView .ls-nw { text-align: left; margin-top: 18px; }
@@ -3257,10 +3259,12 @@
   function L(a, alts) { return { t: "listen", a: a, alts: alts || [] }; }
   function W(it, de) { return { it: it, de: de }; }
 
-  // ---- Lektionen: neue Lektionen einfach hier anhaengen ----
+  // ---- Lektionen: neue Lektion nur, wenn der Nutzer einen neuen Grammatik-Block erfasst hat ----
+  // Jede Lektion gehoert zu genau einem Block aus dem Tab «Grammatik» (topic = id dort).
+  // Der Grammatik-Block wird 1:1 aus dem Tab uebernommen (window.italoGrammar).
   var LESSONS = [
     {
-      id: "bestellen", title: "Im Café bestellen", sub: "Getränke, Früchte, Bestellung",
+      id: "aussprache", topic: "aussprache", title: "Aussprache im Café", sub: "hartes und weiches c, Bestellen",
       words: [
         W("Vorrei un caffè, per favore.", "Ich hätte gern einen Kaffee, bitte."),
         W("Per me un succo d'arancia.", "Für mich einen Orangensaft."),
@@ -3271,67 +3275,27 @@
         W("il succo · la mela · la pera · la banana", "Saft · Apfel · Birne · Banane"),
         W("il burro · il miele · la senape · l'olio", "Butter · Honig · Senf · Öl")
       ],
-      grammar: {
-        title: "Nomen: Geschlecht (aus dem Tab Grammatik)",
-        text: ["il / lo = männlich, la = weiblich (vor Vokal: l')", "meist -o = männlich, meist -a = weiblich"],
-        ex: [["il succo", "der Saft (männlich, -o)"], ["il limone", "die Zitrone (männlich, -e)"], ["la mela", "der Apfel (weiblich, -a)"], ["la banana", "die Banane (weiblich, -a)"], ["l'olio", "das Öl (vor Vokal: l')"]]
-      },
       tasks: [
-        C("Was heisst «il succo»?", "Saft", ["Essig", "Senf", "Honig"]),
-        C("Was heisst «la mela»?", "Apfel", ["Birne", "Zitrone", "Banane"]),
+        C("caffè – Wie wird das «c» gesprochen?", "hart", ["weich"]),
+        C("arancia – Wie wird das «c» gesprochen?", "weich", ["hart"]),
+        C("succo – Wie wird das «c» gesprochen?", "hart", ["weich"]),
+        C("cena – Wie wird das «c» gesprochen?", "weich", ["hart"]),
+        C("che – Wie wird das «ch» gesprochen?", "hart", ["weich"]),
+        C("cioccolata – Wie wird das erste «c» gesprochen?", "weich", ["hart"]),
+        Y("Ergänze: ___ao (weiches tsch vor a) – c oder ci?", "ci"),
+        Y("Ergänze: ___e cosa prendi? (hartes k vor e) – c oder ch?", "ch"),
         P([["il burro", "Butter"], ["il miele", "Honig"], ["la senape", "Senf"], ["l'aceto", "Essig"], ["l'olio", "Öl"]]),
-        C("Wie sagst du «Ich hätte gern»?", "Vorrei", ["Prendo", "Desidera", "Per me"]),
         Y("Übersetze: Ich nehme einen Kaffee.", "Prendo un caffè.", ["Io prendo un caffè.", "Prendo un caffè, per favore."]),
         O("Für mich einen Orangensaft.", "Per me un succo d'arancia.", ["Un succo d'arancia per me."]),
         L("Vorrei una limonata, per favore."),
-        C("Der Kellner fragt: «Desidera?»", "Sie wünschen?", ["Wie heissen Sie?", "Wo ist …?", "Wie viel kostet es?"]),
+        C("Wie sagst du «Ich hätte gern»?", "Vorrei", ["Prendo", "Desidera", "Per me"]),
         Y("Übersetze: Und was nimmst du?", "E tu che cosa prendi?", ["Che cosa prendi?", "E tu cosa prendi?", "Cosa prendi?", "E tu che prendi?", "Che cosa prendi tu?"]),
-        O("Ich hätte gern ein Glas Wein, bitte.", "Vorrei un bicchiere di vino, per favore.", ["Per favore, vorrei un bicchiere di vino."]),
-        P([["la verdura", "Gemüse"], ["il frutto", "Frucht"], ["la bevanda", "Getränk"], ["la pera", "Birne"], ["la banana", "Banane"]]),
-        C("Welcher Artikel passt: «___ ananas»?", "l'", ["il", "la", "lo"]),
-        C("Welcher Artikel passt: «___ limonata»?", "la", ["il", "lo", "l'"]),
-        C("Welcher Artikel passt: «___ succo»?", "il", ["la", "l'", "una"]),
         Y("Übersetze: Die Rechnung, bitte.", "Il conto, per favore.", ["Il conto, per piacere.", "Il conto per cortesia."])
       ]
     },
     {
-      id: "zeit", title: "Zeit & Tage", sub: "gestern, heute, morgen, Tageszeiten",
-      words: [
-        W("Oggi è martedì.", "Heute ist Dienstag."),
-        W("Domani lavoro.", "Morgen arbeite ich."),
-        W("Che bella giornata oggi!", "Was für ein schöner Tag heute!"),
-        W("Ci vediamo domani.", "Wir sehen uns morgen."),
-        W("A domani!", "Bis morgen!"),
-        W("Una settimana ha sette giorni.", "Eine Woche hat sieben Tage."),
-        W("ieri · oggi · domani", "gestern · heute · morgen"),
-        W("il giorno · la giornata", "der Tag (Zeiteinheit) · der Tag (Verlauf)")
-      ],
-      nw: [["ieri", "gestern"], ["domani", "morgen"], ["il giorno", "der Tag"], ["la giornata", "der Verlauf des Tages"], ["la settimana", "die Woche"], ["il mese", "der Monat"]],
-      grammar: {
-        title: "Nomen: Plural (aus dem Tab Grammatik)",
-        text: ["männlich: i, weiblich: le", "männlich auf -a / -e / -o wird -i", "weiblich auf -a wird -e, weiblich auf -e wird -i"],
-        ex: [["il giorno → i giorni", "der Tag → die Tage"], ["il mese → i mesi", "der Monat → die Monate"], ["la settimana → le settimane", "die Woche → die Wochen"], ["la sera → le sere", "der Abend → die Abende"]]
-      },
-      tasks: [
-        C("Was heisst «ieri»?", "gestern", ["morgen", "heute", "jetzt"]),
-        C("Was heisst «domani»?", "morgen", ["gestern", "heute", "später"]),
-        C("«Der Tag» als Zeiteinheit (24 Stunden):", "il giorno", ["la giornata", "la sera", "il mese"]),
-        C("«Verlauf des Tages» (Wie war dein Tag?):", "la giornata", ["il giorno", "la mattina", "la settimana"]),
-        P([["la settimana", "Woche"], ["il mese", "Monat"], ["il giorno", "Tag"], ["la sera", "Abend"], ["il pomeriggio", "Nachmittag"]]),
-        Y("Übersetze: Morgen (der nächste Tag)", "domani"),
-        Y("Übersetze: Gestern", "ieri"),
-        O("Bis morgen!", "A domani!"),
-        O("Was für ein schöner Tag heute!", "Che bella giornata oggi!", ["Oggi che bella giornata!"]),
-        L("Buon pomeriggio."),
-        Y("Übersetze: Guten Abend (formell, nach 18 Uhr)", "Buona sera.", ["Buonasera."]),
-        O("Wir sehen uns morgen.", "Ci vediamo domani.", ["Domani ci vediamo."]),
-        C("Plural von «la settimana»:", "le settimane", ["i settimane", "le settimani", "la settimane"]),
-        C("Plural von «il mese»:", "i mesi", ["le mesi", "i mese", "gli mesi"]),
-        C("Wann sagst du «Buona serata»?", "am Abend", ["am Morgen", "am Nachmittag", "in der Nacht"])
-      ]
-    },
-    {
-      id: "alter", title: "Alter & Familie", sub: "Wie alt bist du? Sohn, Tochter",
+      id: "satzbau", topic: "satzbau", title: "Satzbau: Alter & Familie", sub: "Frage und Aussage, Wie alt bist du?",
+      nw: [["il figlio", "der Sohn"], ["la figlia", "die Tochter"], ["otto", "8"], ["dodici", "12"], ["venti", "20"], ["trenta", "30"], ["quaranta", "40"]],
       words: [
         W("Quanti anni hai?", "Wie alt bist du?"),
         W("Ho 56 anni.", "Ich bin 56 Jahre alt."),
@@ -3342,32 +3306,27 @@
         W("il figlio · la figlia", "der Sohn · die Tochter"),
         W("otto · dodici · venti · trenta · quaranta", "8 · 12 · 20 · 30 · 40")
       ],
-      nw: [["il figlio", "der Sohn"], ["la figlia", "die Tochter"], ["otto", "8"], ["dodici", "12"], ["venti", "20"], ["trenta", "30"], ["quaranta", "40"]],
-      grammar: {
-        title: "Satzbau: Frage und Aussage (aus dem Tab Grammatik)",
-        text: ["Im Italienischen gibt es keinen Unterschied zwischen Frage- und Aussagesatz.", "Der Unterschied liegt nur in der Melodie. Geschrieben setzt man ein Fragezeichen."],
-        ex: [["Il figlio di Rita ha otto anni.", "Der Sohn von Rita ist acht Jahre alt. (Aussage)"], ["Il figlio di Rita ha otto anni?", "Ist der Sohn von Rita acht Jahre alt? (Frage)"]]
-      },
       tasks: [
+        C("Woran erkennt man im Italienischen eine Frage (ohne Fragewort)?", "An der Melodie", ["An der Wortstellung", "An einer besonderen Endung", "An einem Hilfswort"]),
+        C("Muss man im Italienischen für eine Frage die Wörter umstellen?", "Nein", ["Ja"]),
+        Y("Mach aus der Aussage eine Frage: «Il figlio di Rita ha otto anni.»", "Il figlio di Rita ha otto anni?"),
+        Y("Mach aus der Frage eine Aussage: «La figlia di Paolo ha dodici anni?»", "La figlia di Paolo ha dodici anni."),
         C("Wie fragst du «Wie alt bist du?»", "Quanti anni hai?", ["Quanti anni ha?", "Come ti chiami?", "Quanto costa?"]),
         C("Was heisst «il figlio»?", "der Sohn", ["die Tochter", "das Kind", "der Bruder"]),
         C("Was heisst «la figlia»?", "die Tochter", ["der Sohn", "die Mutter", "die Schwester"]),
         P([["otto", "8"], ["dodici", "12"], ["venti", "20"], ["trenta", "30"], ["quaranta", "40"]]),
-        C("Ich bin dreissig Jahre alt.", "Ho trenta anni.", ["Ha trenta anni.", "Hai trenta anni.", "Sono trenta anni."]),
+        C("Ich bin dreissig Jahre alt.", "Ho trenta anni.", ["Quanti anni hai?", "Ho trenta franchi.", "Sono di Coira."]),
         Y("Übersetze: Ich bin 56 Jahre alt.", "Ho cinquantasei anni.", ["Ho 56 anni.", "Io ho cinquantasei anni."]),
-        C("Quanti anni ___ (tu)?", "hai", ["ha", "ho", "hanno"]),
         Y("Übersetze: Wie alt ist er?", "Quanti anni ha?", ["Quanti anni ha lui?", "Quanti anni ha lei?"]),
         O("Wie alt ist der Sohn von Rita?", "Quanti anni ha il figlio di Rita?", ["Il figlio di Rita quanti anni ha?"]),
         L("Quanti anni hai?"),
         O("Der Sohn von Rita ist acht Jahre alt.", "Il figlio di Rita ha otto anni."),
-        Y("Übersetze: Die Tochter von Paolo ist zwölf Jahre alt.", "La figlia di Paolo ha dodici anni."),
-        Y("Mach aus der Aussage eine Frage: «Il figlio di Rita ha otto anni.»", "Il figlio di Rita ha otto anni?"),
-        C("Quanti anni ___ il figlio di Rita?", "ha", ["hai", "ho", "hanno"])
+        Y("Übersetze: Die Tochter von Paolo ist zwölf Jahre alt.", "La figlia di Paolo ha dodici anni.")
       ]
-    }
-    ,
+    },
     {
-      id: "beruf", title: "Beruf & Arbeit", sub: "Was machst du beruflich? Berufe m/w",
+      id: "geschlecht", topic: "geschlecht", title: "Nomen: Geschlecht – Beruf & Arbeit", sub: "il, lo, la, Berufe männlich und weiblich",
+      nw: [["il cameriere", "der Kellner"], ["il cuoco / la cuoca", "Koch / Köchin"], ["l'infermiere / l'infermiera", "Krankenpfleger / Krankenschwester"], ["lo studente / la studentessa", "Student / Studentin"], ["il commesso / la commessa", "Verkäufer / Verkäuferin"], ["la fabbrica", "die Fabrik"]],
       words: [
         W("Che lavoro fai?", "Was machst du beruflich?"),
         W("Faccio il cameriere.", "Ich bin Kellner."),
@@ -3376,29 +3335,57 @@
         W("Lavoro in una fabbrica a Milano.", "Ich arbeite in einer Fabrik in Mailand."),
         W("Buon lavoro!", "Viel Erfolg bei der Arbeit!"),
         W("il cuoco / la cuoca", "Koch / Köchin"),
-        W("l'infermiere / l'infermiera", "Krankenpfleger / Krankenschwester")
+        W("lo studente / la studentessa", "Student / Studentin")
       ],
-      nw: [["il cameriere", "der Kellner"], ["il cuoco / la cuoca", "Koch / Köchin"], ["l'infermiere / l'infermiera", "Krankenpfleger / Krankenschwester"], ["lo studente / la studentessa", "Student / Studentin"], ["il commesso / la commessa", "Verkäufer / Verkäuferin"], ["la fabbrica", "die Fabrik"]],
-      grammar: {
-        title: "Nomen: Geschlecht, Personenbezeichnungen (aus dem Tab Grammatik)",
-        text: ["meist beide Formen: il commesso / la commessa", "nur eine Form, der Artikel zeigt das Geschlecht: il / la collega, il / la cliente", "-e wird -essa: lo studente / la studentessa", "-ore wird -trice: il traduttore / la traduttrice"],
-        ex: [["il cuoco / la cuoca", "der Koch / die Köchin"], ["lo studente / la studentessa", "der Student / die Studentin"], ["il traduttore / la traduttrice", "der Übersetzer / die Übersetzerin"]]
-      },
       tasks: [
-        C("Was heisst «il cameriere»?", "Kellner", ["Koch", "Lehrer", "Arzt"]),
-        C("Was heisst «il cuoco»?", "Koch", ["Kellner", "Arzt", "Student"]),
-        P([["l'infermiere", "Krankenpfleger"], ["il commesso", "Verkäufer"], ["l'insegnante", "Lehrer / Lehrerin"], ["il medico", "Arzt"], ["l'autista", "Chauffeur"]]),
+        C("«___ cuoco» – welcher Artikel?", "il", ["la", "lo", "l'"]),
+        C("«___ cuoca» – welcher Artikel?", "la", ["il", "lo", "l'"]),
+        C("«___ studente» – welcher Artikel?", "lo", ["il", "la", "l'"]),
+        C("«___ cameriere» – welcher Artikel?", "il", ["la", "lo", "l'"]),
+        Y("Weibliche Form von «il commesso»?", "la commessa"),
+        Y("Weibliche Form von «lo studente»?", "la studentessa"),
+        Y("Weibliche Form von «il traduttore»?", "la traduttrice"),
+        Y("Weibliche Form von «il collega»?", "la collega"),
+        Y("Weibliche Form von «il cliente»?", "la cliente"),
+        P([["il cameriere", "Kellner"], ["il commesso", "Verkäufer"], ["l'infermiere", "Krankenpfleger"], ["il medico", "Arzt"], ["la cuoca", "Köchin"]]),
         C("Wie fragst du «Was machst du beruflich?»", "Che lavoro fai?", ["Dove lavori?", "Come ti chiami?", "Quanti anni hai?"]),
-        C("Die Köchin heisst:", "la cuoca", ["il cuoco", "la cuoco", "lo cuoca"]),
         Y("Übersetze: Wo arbeitest du?", "Dove lavori?", ["Dove lavori tu?", "Tu dove lavori?"]),
         O("Ich arbeite in einer Fabrik in Mailand.", "Lavoro in una fabbrica a Milano.", ["A Milano lavoro in una fabbrica."]),
-        C("Die Studentin heisst:", "la studentessa", ["lo studente", "la studente", "il studentessa"]),
         L("Che lavoro fai?"),
-        Y("Übersetze: Ich bin Bankangestellter.", "Lavoro in banca.", ["Io lavoro in banca.", "Lavoro in una banca.", "Lavoro presso una banca."]),
-        O("Was macht er beruflich?", "Che lavoro fa?"),
-        C("Die Übersetzerin heisst:", "la traduttrice", ["la traduttora", "la traduttessa", "il traduttrice"]),
-        C("Die Lehrerin heisst:", "l'insegnante", ["l'insegnanta", "l'insegnantessa", "la insegnante"]),
-        Y("Übersetze: Viel Erfolg bei der Arbeit!", "Buon lavoro!", ["Buon lavoro a te!", "Buon lavoro."])
+        Y("Übersetze: Ich bin Bankangestellter.", "Lavoro in banca.", ["Io lavoro in banca.", "Lavoro in una banca.", "Lavoro presso una banca."])
+      ]
+    },
+    {
+      id: "plural", topic: "plural", title: "Nomen: Plural – Zeit & Tage", sub: "i, gli, le, gestern, heute, morgen",
+      nw: [["ieri", "gestern"], ["domani", "morgen"], ["il giorno", "der Tag"], ["la giornata", "der Verlauf des Tages"], ["la settimana", "die Woche"], ["il mese", "der Monat"]],
+      words: [
+        W("Oggi è martedì.", "Heute ist Dienstag."),
+        W("Domani lavoro.", "Morgen arbeite ich."),
+        W("Che bella giornata oggi!", "Was für ein schöner Tag heute!"),
+        W("Ci vediamo domani.", "Wir sehen uns morgen."),
+        W("A domani!", "Bis morgen!"),
+        W("Una settimana ha sette giorni.", "Eine Woche hat sieben Tage."),
+        W("ieri · oggi · domani", "gestern · heute · morgen"),
+        W("il giorno · la giornata", "der Tag (Zeiteinheit) · der Tag (Verlauf)")
+      ],
+      tasks: [
+        Y("il giorno → ?  (Plural mit Artikel)", "i giorni"),
+        Y("il mese → ?", "i mesi"),
+        Y("la settimana → ?", "le settimane"),
+        Y("la sera → ?", "le sere"),
+        Y("la mattina → ?", "le mattine"),
+        Y("l'ora → ?", "le ore"),
+        Y("il pomeriggio → ?", "i pomeriggi"),
+        Y("il caffè → ?", "i caffè"),
+        Y("la città → ?", "le città"),
+        C("Plural von «la giornata»:", "le giornate", ["i giornate", "le giornati", "la giornate"]),
+        C("Was heisst «ieri»?", "gestern", ["morgen", "heute", "jetzt"]),
+        C("Was heisst «domani»?", "morgen", ["gestern", "heute", "später"]),
+        P([["la settimana", "Woche"], ["il mese", "Monat"], ["il giorno", "Tag"], ["la sera", "Abend"], ["il pomeriggio", "Nachmittag"]]),
+        O("Bis morgen!", "A domani!"),
+        O("Wir sehen uns morgen.", "Ci vediamo domani.", ["Domani ci vediamo."]),
+        L("Buon pomeriggio."),
+        Y("Übersetze: Guten Abend (formell, nach 18 Uhr)", "Buona sera.", ["Buonasera."])
       ]
     }
   ];
@@ -3538,20 +3525,12 @@
       ul.appendChild(li);
     });
     card.appendChild(ul);
-    if (S.ls.grammar) {
-      var g = S.ls.grammar;
+    var topic = (window.italoGrammar || []).filter(function (t) { return t.id === S.ls.topic; })[0];
+    if (topic) {
       card.appendChild(el("h2", "", "Grammatik"));
-      card.appendChild(el("div", "ls-gt", g.title));
-      g.text.forEach(function (t) { card.appendChild(el("p", "ls-gp", t)); });
-      var gl = el("ul", "ls-intro");
-      g.ex.forEach(function (w) {
-        var li = el("li"); var tx = el("span");
-        tx.appendChild(el("span", "it", w[0])); tx.appendChild(el("span", "de", w[1]));
-        li.appendChild(tx);
-        if (canSpeak) { var b = el("button", "ls-spk", "Hören"); b.type = "button"; b.addEventListener("click", function () { speak(w[0]); }); li.appendChild(b); }
-        gl.appendChild(li);
-      });
-      card.appendChild(gl);
+      card.appendChild(el("div", "ls-gt", topic.title));
+      var gbox = el("div", "explain ls-gram"); gbox.innerHTML = topic.explain;
+      card.appendChild(gbox);
     }
     var go = el("button", "ls-btn pri big", "Los geht's"); go.type = "button";
     go.addEventListener("click", function () {
