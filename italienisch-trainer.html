@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-plural";
-  const APP_VERSION = "2026-10-23-zq"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-zs"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4305,6 +4305,27 @@
   #talkView .tk-gh .n { font-size: .78rem; color: var(--k-muted, #5d6b85); white-space: nowrap; margin-left: 10px; }
   #talkView .tk-gb { height: 5px; border-radius: 99px; background: var(--k-bg, #eef2fa); overflow: hidden; margin: 14px 0 4px; }
   #talkView .tk-gb i { display: block; height: 100%; background: var(--k-blue, #2563eb); border-radius: 99px; }
+
+  /* Streak-Karte: zwei Etiketten (Tage, in Folge) und Tagesziel mit Balken */
+  .streakbar { display: flex !important; flex-wrap: wrap !important; align-items: center; justify-content: flex-start !important; gap: 8px !important; padding: 14px 16px 16px !important;
+    border-radius: 22px !important; background: var(--k-card, #fff) !important; box-shadow: 0 1px 2px rgba(18,32,58,.05), 0 10px 24px rgba(18,32,58,.08) !important; }
+  .streakbar .sb { display: inline-flex !important; flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; flex: 0 0 auto !important; gap: 6px !important;
+    background: var(--k-bg, #f3f6fc) !important; border-radius: 99px !important; padding: 7px 13px !important; box-shadow: none !important; }
+  .streakbar .sb::after { display: none !important; }
+  .streakbar .sb.f::before, .streakbar .sb.z::before, .streakbar .sb + .sb::before { content: "" !important; display: block !important; position: static !important; left: auto !important; top: auto !important; bottom: auto !important; width: 17px !important; height: 17px !important; flex: none; border-radius: 0 !important; margin: 0 !important;
+    -webkit-mask: var(--ic) center / contain no-repeat; mask: var(--ic) center / contain no-repeat; }
+  .streakbar .sb.f::before { background: var(--k-orange, #ea580c) !important; --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 12c2-2.96 0-7-1-8 0 3.038-1.773 4.741-3 6-1.226 1.26-2 3.24-2 5a6 6 0 1 0 12 0c0-1.532-1.056-3.94-2-5-1.786 3-2.791 3-4 2z'/%3E%3C/svg%3E"); }
+  .streakbar .sb.z::before { background: var(--k-blue, #2563eb) !important; --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 3v7h6l-8 11v-7H5z'/%3E%3C/svg%3E"); }
+  .streakbar .sb svg { width: 17px !important; height: 17px !important; margin: 0 !important; }
+  .streakbar .sb b { font-size: .95rem !important; font-weight: 700 !important; letter-spacing: 0 !important; color: var(--k-text, #12203a) !important; line-height: 1 !important; }
+  .streakbar .sb span { margin: 0 !important; font-size: .85rem !important; font-weight: 600 !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--k-text, #12203a) !important; }
+  .streakbar .goal { flex: 0 0 100% !important; margin: 6px 0 0 !important; padding: 0 !important; border: 0 !important; }
+  .streakbar .gl { display: flex !important; justify-content: space-between !important; align-items: baseline !important; }
+  .streakbar .gl span { font-size: .68rem !important; font-weight: 600 !important; letter-spacing: .1em !important; text-transform: uppercase !important; color: var(--k-muted, #5d6b85) !important; }
+  .streakbar .gl b { font-size: .85rem !important; font-weight: 700 !important; color: var(--k-text, #12203a) !important; }
+  .streakbar .gb { height: 8px !important; margin-top: 8px !important; background: var(--k-bg, #eef2fa) !important; }
+  .streakbar .gb i, .streakbar .goal.done .gb i { background: var(--k-blue, #2563eb) !important; }
+  .streakbar .goal.done .gb i { background: var(--k-orange, #ea580c) !important; }
 </style>
 <script>
 (function () {
