@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-bestellung";
-  const APP_VERSION = "2026-10-21-f"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-21-g"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3400,7 +3400,6 @@
     var x = el("button", "ls-x", "✕"); x.type = "button"; x.addEventListener("click", showList);
     top.appendChild(x); top.appendChild(el("h2", "", "Lektion " + (S.i + 1) + " · " + S.ls.title));
     card.appendChild(top);
-    card.appendChild(el("p", "ls-sub", "Das kommt gleich dran. Tippe auf «Hören», um die Aussprache zu üben."));
     var ul = el("ul", "ls-intro");
     S.ls.words.forEach(function (w) {
       var li = el("li"); var tx = el("span");
