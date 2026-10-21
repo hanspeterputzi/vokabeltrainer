@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-n";
-  const APP_VERSION = "2026-10-23-z"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-zb"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4181,5 +4181,84 @@
 })();
 </script>
 <!-- WOERTERBUCH END -->
+<!-- NAVMODERN START -->
+<style>
+  /* Navigation: schwebende Leiste unten (Handy) mit Icons ueber der Beschriftung */
+  .tabs .tab-btn::before { content: ""; display: block; width: 22px; height: 22px; background: currentColor; -webkit-mask: var(--ic) center / contain no-repeat; mask: var(--ic) center / contain no-repeat; }
+  #tabLessons { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z'/%3E%3Cpath d='M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z'/%3E%3C/svg%3E"); }
+  #tabTalk { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='2' width='6' height='12' rx='3'/%3E%3Cpath d='M5 11a7 7 0 0 0 14 0M12 18v4'/%3E%3C/svg%3E"); }
+  #tabVocab { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7l9-4 9 4-9 4z'/%3E%3Cpath d='M3 12l9 4 9-4M3 17l9 4 9-4'/%3E%3C/svg%3E"); }
+  #tabGrammar { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7V5h16v2M9 19h6M12 5v14'/%3E%3C/svg%3E"); }
+  #tabDict { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.3-4.3'/%3E%3C/svg%3E"); }
+
+  @media (max-width: 700px) {
+    .tabs { position: fixed !important; left: 12px !important; right: 12px !important; top: auto !important; margin: 0 !important; z-index: 90;
+      bottom: calc(10px + env(safe-area-inset-bottom)) !important; padding: 6px !important; gap: 2px !important; display: flex !important;
+      background: color-mix(in srgb, var(--k-card, #fff) 90%, transparent) !important; -webkit-backdrop-filter: blur(16px) !important; backdrop-filter: blur(16px) !important;
+      border-radius: 28px !important; box-shadow: 0 12px 32px rgba(18,32,58,.24), 0 0 0 1px rgba(18,32,58,.05) !important; }
+    .tabs::before { display: none !important; }
+    .tabs .tab-btn, .tabs #tabDict, .tabs #tabLessons, .tabs #tabGrammar { flex: 1 1 0 !important; min-width: 0; margin: 0 !important; padding: 9px 0 8px !important; display: flex !important; flex-direction: column !important;
+      align-items: center; justify-content: center; gap: 4px; font-size: min(.64rem, 2.9vw) !important; font-weight: 700 !important; letter-spacing: -.01em !important; line-height: 1.1;
+      white-space: nowrap; overflow: hidden; border-radius: 22px !important; background: transparent !important; box-shadow: none !important; color: var(--k-muted, #5d6b85) !important; position: relative; transition: background .2s, color .2s; }
+    .tabs #tabDict::before { position: static !important; margin: 0 !important; top: auto; left: auto; width: 22px; height: 22px; }
+    .tabs #tabDict::after { display: none !important; }
+    .tabs .tab-btn.active, .tabs #tabDict.active { background: var(--k-blue, #2563eb) !important; color: #fff !important; box-shadow: 0 6px 14px rgba(37,99,235,.35) !important; }
+    .wrap { padding-bottom: 120px !important; }
+    .tabs + * { margin-top: 46px !important; }
+    #dictIdx { bottom: 104px !important; }
+    #lessonView, .ls-top { scroll-margin-bottom: 100px; }
+    .toast { top: 14px; }
+
+    /* weichere, tiefere Karten */
+    .card, .quiz, .g-box, #lessonView .ls-card, #talkView .tk-card { border-radius: 28px !important; border: none !important;
+      box-shadow: 0 1px 2px rgba(18,32,58,.04), 0 14px 34px rgba(18,32,58,.08) !important; padding: 20px !important; margin-bottom: 16px !important; }
+  }
+
+  /* Karteikarte: Wort gross in der Mitte, wischbar */
+  .quiz-word, #conjVerb { touch-action: pan-y; user-select: none; -webkit-user-select: none; will-change: transform; }
+  .quiz-word { min-height: 132px; display: flex !important; align-items: center; justify-content: center; border-radius: 28px !important;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--k-blue, #2563eb) 7%, var(--k-card, #fff)), color-mix(in srgb, var(--k-blue, #2563eb) 15%, var(--k-card, #fff))) !important;
+    box-shadow: 0 8px 22px rgba(37,99,235,.12) !important; }
+  .quiz-word.snap { transition: transform .22s cubic-bezier(.2,.8,.3,1), opacity .22s; }
+  .quiz-word.flip { animation: cardflip .5s cubic-bezier(.3,.9,.4,1); }
+  .quiz-word.enterL { animation: cardinL .28s cubic-bezier(.2,.8,.3,1); }
+  @keyframes cardflip { 0% { transform: perspective(700px) rotateX(0); } 50% { transform: perspective(700px) rotateX(90deg); } 100% { transform: perspective(700px) rotateX(0); } }
+  @keyframes cardinL { from { transform: translateX(60%) rotate(5deg); opacity: 0; } to { transform: none; opacity: 1; } }
+  .swipe-hint { text-align: center; font-size: .72rem; color: var(--k-muted, #5d6b85); margin: -14px 0 14px; display: none; }
+  @media (hover: none) { .swipe-hint { display: block; } }
+</style>
+<script>
+(function () {
+  // Wischen: nach links = naechste Vokabel, nach rechts = Loesung zeigen (Tasten bleiben)
+  function wire(wordId, showId, nextId) {
+    var w = document.getElementById(wordId), sh = document.getElementById(showId), nx = document.getElementById(nextId);
+    if (!w || !sh || !nx || w._sw) return; w._sw = true;
+    var x0 = 0, y0 = 0, dx = 0, on = false, lock = false;
+    w.addEventListener("touchstart", function (e) { var t = e.touches[0]; x0 = t.clientX; y0 = t.clientY; dx = 0; on = true; lock = false; w.classList.remove("snap"); }, { passive: true });
+    w.addEventListener("touchmove", function (e) {
+      if (!on) return; var t = e.touches[0]; dx = t.clientX - x0; var dy = t.clientY - y0;
+      if (!lock && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) lock = true;
+      if (lock) w.style.transform = "translateX(" + dx + "px) rotate(" + (dx / 25) + "deg)";
+    }, { passive: true });
+    w.addEventListener("touchend", function () {
+      if (!on) return; on = false;
+      w.classList.add("snap");
+      if (lock && dx < -80) {
+        w.style.transform = "translateX(-120%) rotate(-12deg)"; w.style.opacity = "0";
+        setTimeout(function () { w.classList.remove("snap"); w.style.transform = ""; w.style.opacity = ""; nx.click(); w.classList.remove("enterL"); void w.offsetWidth; w.classList.add("enterL"); }, 200);
+      } else {
+        w.style.transform = "";
+        if (lock && dx > 80) sh.click();
+      }
+    });
+    sh.addEventListener("click", function () { w.classList.remove("flip"); void w.offsetWidth; w.classList.add("flip"); });
+    var hint = document.createElement("div"); hint.className = "swipe-hint"; hint.textContent = "← wischen: weiter · wischen →: zeigen";
+    w.parentNode.insertBefore(hint, w.nextSibling);
+  }
+  function init() { wire("quizWord", "showBtn", "nextBtn"); wire("conjVerb", "conjShowBtn", "conjNextBtn"); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();
+</script>
+<!-- NAVMODERN END -->
 </body>
 </html>
