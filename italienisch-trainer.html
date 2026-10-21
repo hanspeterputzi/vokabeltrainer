@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-bestellung";
-  const APP_VERSION = "2026-10-21-g"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-21-h"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3187,6 +3187,10 @@
   #lessonView .ls-fb small { display: block; font-weight: 500; opacity: .85; margin-top: 3px; }
   #lessonView .ls-foot { margin-top: 16px; }
   #lessonView .ls-big { font-size: 2rem; font-weight: 800; color: var(--k-blue, #2563eb); margin: 6px 0; }
+  .ls-confetti { position: fixed; inset: 0; pointer-events: none; z-index: 300; overflow: hidden; }
+  .ls-confetti i { position: absolute; top: -14px; width: 9px; height: 14px; border-radius: 2px; animation: lsfall linear forwards; }
+  @keyframes lsfall { to { transform: translateY(110vh) rotate(720deg); opacity: .9; } }
+  @media (prefers-reduced-motion: reduce) { .ls-confetti { display: none; } }
 </style>
 <script>
 (function () {
@@ -3533,8 +3537,37 @@
     }
   }
 
+  // ---- Abschluss-Signal: Konfetti und Ton ----
+  var audioCtx = null;
+  function fanfare() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+      audioCtx = audioCtx || new AC();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      var t0 = audioCtx.currentTime + 0.02;
+      [523.25, 659.25, 783.99, 1046.5].forEach(function (f, i) {
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = "triangle"; o.frequency.value = f;
+        var t = t0 + i * 0.13, d = i === 3 ? 0.55 : 0.2;
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+        o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t + d + 0.05);
+      });
+    } catch (e) {}
+  }
+  function confetti() {
+    var layer = el("div", "ls-confetti"), cols = ["#2563eb", "#ea580c", "#f59e0b", "#5b8cff", "#ff8a3d"];
+    for (var i = 0; i < 70; i++) {
+      var p = el("i"); p.style.left = Math.random() * 100 + "%"; p.style.background = cols[i % cols.length];
+      p.style.animationDuration = (1.6 + Math.random() * 1.6) + "s"; p.style.animationDelay = (Math.random() * 0.5) + "s";
+      layer.appendChild(p);
+    }
+    document.body.appendChild(layer);
+    setTimeout(function () { if (layer.parentNode) layer.parentNode.removeChild(layer); }, 4000);
+  }
+
   function showSummary() {
     markDone(S.ls.id);
+    fanfare(); confetti();
     view.innerHTML = "";
     var card = el("div", "ls-card"); card.style.textAlign = "center";
     card.appendChild(el("h2", "", "Lektion " + (S.i + 1) + " geschafft"));
