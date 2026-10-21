@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-bestellung";
-  const APP_VERSION = "2026-10-21-e"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-21-f"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3136,5 +3136,426 @@
   });
 })();
 </script>
+<!-- LEKTIONEN START -->
+<style>
+  @media (max-width: 480px) { .tabs { gap: 2px !important; padding: 5px !important; } .tabs .tab-btn { font-size: .68rem !important; padding: 12px 1px !important; min-width: 0; flex: 1 1 0 !important; } }
+  #lessonView .ls-card { background: var(--k-card, var(--surface, #fff)); border-radius: 22px; padding: 22px; margin-bottom: 14px; box-shadow: 0 4px 18px rgba(18,32,58,.07); }
+  #lessonView h2 { margin: 0 0 6px; font-size: .68rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--k-orange, var(--orange, #ea580c)); }
+  #lessonView .ls-sub { color: var(--k-muted, var(--ink-muted, #666)); font-size: .9rem; line-height: 1.45; margin: 0 0 14px; }
+  #lessonView .ls-btn { font: inherit; font-weight: 700; padding: 13px 20px; border-radius: 14px; border: 1.5px solid var(--k-line, var(--line, #ccc)); background: transparent; color: var(--k-text, var(--ink, #111)); cursor: pointer; }
+  #lessonView .ls-btn.pri { background: var(--k-blue, var(--blue, #2563eb)); border-color: transparent; color: #fff; box-shadow: 0 8px 18px rgba(37,99,235,.28); }
+  #lessonView .ls-btn.big { width: 100%; font-size: 1.05rem; padding: 15px 20px; }
+  #lessonView .ls-btn:disabled { opacity: .45; cursor: default; box-shadow: none; }
+  #lessonView .ls-btn.sec { font-weight: 500; color: var(--k-muted, var(--ink-muted, #666)); }
+  #lessonView .ls-path { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+  #lessonView .ls-node { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 18px; border: 1.5px solid var(--k-line, var(--line, #ccc)); background: var(--k-card, #fff); text-align: left; font: inherit; color: var(--k-text, var(--ink, #111)); cursor: pointer; width: 100%; }
+  #lessonView .ls-node .no { flex: 0 0 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; background: var(--k-bg, #eef1f5); color: var(--k-muted, #666); }
+  #lessonView .ls-node .tt { font-weight: 700; display: block; }
+  #lessonView .ls-node .ss { font-size: .8rem; color: var(--k-muted, var(--ink-muted, #666)); }
+  #lessonView .ls-node.cur { border-color: var(--k-orange, #ea580c); background: color-mix(in srgb, var(--k-orange, #ea580c) 10%, var(--k-card, #fff)); }
+  #lessonView .ls-node.cur .no { background: var(--k-orange, #ea580c); color: #fff; }
+  #lessonView .ls-node.done { border-color: var(--k-blue, #2563eb); background: color-mix(in srgb, var(--k-blue, #2563eb) 8%, var(--k-card, #fff)); }
+  #lessonView .ls-node.done .no { background: var(--k-blue, #2563eb); color: #fff; }
+  #lessonView .ls-node.lock { opacity: .5; cursor: default; }
+  #lessonView .ls-top { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  #lessonView .ls-x { flex: 0 0 auto; background: none; border: none; font-size: 1.4rem; line-height: 1; color: var(--k-muted, #666); cursor: pointer; padding: 4px 8px; }
+  #lessonView .ls-bar { flex: 1; height: 10px; border-radius: 999px; background: var(--k-bg, #eef1f5); overflow: hidden; }
+  #lessonView .ls-bar i { display: block; height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, var(--k-blue, #2563eb), #5b8cff); transition: width .4s; }
+  #lessonView .ls-intro li { list-style: none; padding: 10px 0; border-bottom: 1px solid var(--k-line, #e3e6ea); display: flex; align-items: center; gap: 10px; }
+  #lessonView .ls-intro { margin: 0 0 16px; padding: 0; }
+  #lessonView .ls-intro li:last-child { border-bottom: none; }
+  #lessonView .ls-intro .it { font-weight: 700; display: block; }
+  #lessonView .ls-intro .de { color: var(--k-muted, #666); font-size: .88rem; }
+  #lessonView .ls-spk { flex: 0 0 auto; margin-left: auto; font: inherit; font-size: .78rem; padding: 6px 12px; border-radius: 999px; border: 1.5px solid var(--k-line, #ccc); background: transparent; color: var(--k-blue, #2563eb); cursor: pointer; font-weight: 600; }
+  #lessonView .ls-q { font-size: 1.35rem; font-weight: 800; line-height: 1.3; margin: 4px 0 18px; letter-spacing: -.02em; }
+  #lessonView .ls-hint { color: var(--k-muted, #666); font-size: .8rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .1em; font-weight: 600; }
+  #lessonView .ls-opts { display: flex; flex-direction: column; gap: 10px; }
+  #lessonView .ls-opt { font: inherit; font-weight: 600; text-align: left; padding: 14px 16px; border-radius: 16px; border: 1.5px solid var(--k-line, #ccc); background: var(--k-card, #fff); color: var(--k-text, #111); cursor: pointer; }
+  #lessonView .ls-opt.sel { border-color: var(--k-blue, #2563eb); background: color-mix(in srgb, var(--k-blue, #2563eb) 10%, var(--k-card, #fff)); }
+  #lessonView .ls-opt.right { border-color: var(--k-blue, #2563eb); background: color-mix(in srgb, var(--k-blue, #2563eb) 16%, var(--k-card, #fff)); }
+  #lessonView .ls-opt.bad { border-color: var(--k-orange, #ea580c); background: color-mix(in srgb, var(--k-orange, #ea580c) 14%, var(--k-card, #fff)); }
+  #lessonView input.ls-in { width: 100%; font: inherit; font-size: 16px; padding: 13px 14px; border: 1.5px solid var(--k-line, #ccc); border-radius: 14px; background: var(--k-bg, #f5f7fa); color: var(--k-text, #111); box-sizing: border-box; }
+  #lessonView .ls-ans { min-height: 56px; border-bottom: 2px solid var(--k-line, #ccc); display: flex; flex-wrap: wrap; gap: 8px; padding: 6px 0 10px; margin-bottom: 14px; }
+  #lessonView .ls-bank { display: flex; flex-wrap: wrap; gap: 8px; min-height: 48px; }
+  #lessonView .ls-chip { font: inherit; font-weight: 600; padding: 10px 14px; border-radius: 12px; border: 1.5px solid var(--k-line, #ccc); background: var(--k-card, #fff); color: var(--k-text, #111); cursor: pointer; }
+  #lessonView .ls-pairs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
+  #lessonView .ls-pairs .ls-opt { text-align: center; padding: 12px 8px; font-size: .92rem; }
+  #lessonView .ls-opt.gone { opacity: .35; border-color: var(--k-blue, #2563eb); pointer-events: none; }
+  #lessonView .ls-fb { margin-top: 20px; padding: 14px 16px; border-radius: 16px; font-weight: 600; display: none; line-height: 1.4; }
+  #lessonView .ls-fb.ok { display: block; background: color-mix(in srgb, var(--k-blue, #2563eb) 12%, var(--k-card, #fff)); color: var(--k-blue, #2563eb); }
+  #lessonView .ls-fb.no { display: block; background: color-mix(in srgb, var(--k-orange, #ea580c) 13%, var(--k-card, #fff)); color: var(--k-orange, #ea580c); }
+  #lessonView .ls-fb small { display: block; font-weight: 500; opacity: .85; margin-top: 3px; }
+  #lessonView .ls-foot { margin-top: 16px; }
+  #lessonView .ls-big { font-size: 2rem; font-weight: 800; color: var(--k-blue, #2563eb); margin: 6px 0; }
+</style>
+<script>
+(function () {
+  "use strict";
+  var DONE_KEY = "italienisch_lessons_done";
+  function lsGet(k, f) { try { var r = localStorage.getItem(k); return r === null ? f : JSON.parse(r); } catch (e) { return f; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+  // ---- Aufgaben-Kurzformen ----
+  // C: Auswahl (Frage, richtige Antwort, falsche Antworten)
+  // Y: Tippen (Frage, Antwort, weitere erlaubte Antworten)
+  // O: Satz aus Wortkacheln bauen (deutscher Satz, italienischer Satz)
+  // P: Paare zuordnen ([[italienisch, deutsch], ...])
+  // L: Hoeren und aufschreiben (italienischer Satz)
+  function C(q, a, w) { return { t: "choose", q: q, a: a, w: w }; }
+  function Y(q, a, alts) { return { t: "type", q: q, a: a, alts: alts || [] }; }
+  function O(q, a) { return { t: "order", q: q, a: a }; }
+  function P(pairs) { return { t: "pairs", pairs: pairs }; }
+  function L(a, alts) { return { t: "listen", a: a, alts: alts || [] }; }
+  function W(it, de) { return { it: it, de: de }; }
+
+  // ---- Lektionen: neue Lektionen einfach hier anhaengen ----
+  var LESSONS = [
+    {
+      id: "bestellen", title: "Im Café bestellen", sub: "Getränke, Früchte, Bestellung",
+      words: [
+        W("Vorrei un caffè, per favore.", "Ich hätte gern einen Kaffee, bitte."),
+        W("Per me un succo d'arancia.", "Für mich einen Orangensaft."),
+        W("Prendo una limonata.", "Ich nehme eine Limonade."),
+        W("E tu che cosa prendi?", "Und was nimmst du?"),
+        W("Desidera?", "Sie wünschen?"),
+        W("Il conto, per favore.", "Die Rechnung, bitte."),
+        W("il succo · la mela · la pera · la banana", "Saft · Apfel · Birne · Banane"),
+        W("il burro · il miele · la senape · l'olio", "Butter · Honig · Senf · Öl")
+      ],
+      tasks: [
+        C("Was heisst «il succo»?", "Saft", ["Essig", "Senf", "Honig"]),
+        C("Was heisst «la mela»?", "Apfel", ["Birne", "Zitrone", "Banane"]),
+        P([["il burro", "Butter"], ["il miele", "Honig"], ["la senape", "Senf"], ["l'aceto", "Essig"], ["l'olio", "Öl"]]),
+        C("Wie sagst du «Ich hätte gern»?", "Vorrei", ["Prendo", "Desidera", "Per me"]),
+        Y("Übersetze: Ich nehme einen Kaffee.", "Prendo un caffè.", ["Io prendo un caffè."]),
+        O("Für mich einen Orangensaft.", "Per me un succo d'arancia."),
+        L("Vorrei una limonata, per favore."),
+        C("Der Kellner fragt: «Desidera?»", "Sie wünschen?", ["Wie heissen Sie?", "Wo ist …?", "Wie viel kostet es?"]),
+        Y("Übersetze: Und was nimmst du?", "E tu che cosa prendi?"),
+        O("Ich hätte gern ein Glas Wein, bitte.", "Vorrei un bicchiere di vino, per favore."),
+        P([["la verdura", "Gemüse"], ["il frutto", "Frucht"], ["la bevanda", "Getränk"], ["la pera", "Birne"], ["la banana", "Banane"]]),
+        C("Welcher Artikel passt: «___ ananas»?", "l'", ["il", "la", "lo"]),
+        Y("Übersetze: Die Rechnung, bitte.", "Il conto, per favore.")
+      ]
+    },
+    {
+      id: "zeit", title: "Zeit & Tage", sub: "gestern, heute, morgen, Tageszeiten",
+      words: [
+        W("Oggi è martedì.", "Heute ist Dienstag."),
+        W("Domani lavoro.", "Morgen arbeite ich."),
+        W("Che bella giornata oggi!", "Was für ein schöner Tag heute!"),
+        W("Ci vediamo domani.", "Wir sehen uns morgen."),
+        W("A domani!", "Bis morgen!"),
+        W("Una settimana ha sette giorni.", "Eine Woche hat sieben Tage."),
+        W("ieri · oggi · domani", "gestern · heute · morgen"),
+        W("il giorno · la giornata", "der Tag (Zeiteinheit) · der Tag (Verlauf)")
+      ],
+      tasks: [
+        C("Was heisst «ieri»?", "gestern", ["morgen", "heute", "jetzt"]),
+        C("Was heisst «domani»?", "morgen", ["gestern", "heute", "später"]),
+        C("«Der Tag» als Zeiteinheit (24 Stunden):", "il giorno", ["la giornata", "la sera", "il mese"]),
+        C("«Verlauf des Tages» (Wie war dein Tag?):", "la giornata", ["il giorno", "la mattina", "la settimana"]),
+        P([["la settimana", "Woche"], ["il mese", "Monat"], ["il giorno", "Tag"], ["la sera", "Abend"], ["il pomeriggio", "Nachmittag"]]),
+        Y("Übersetze: Morgen (der nächste Tag)", "domani"),
+        Y("Übersetze: Gestern", "ieri"),
+        O("Bis morgen!", "A domani!"),
+        O("Was für ein schöner Tag heute!", "Che bella giornata oggi!"),
+        L("Buon pomeriggio."),
+        Y("Übersetze: Guten Abend (formell, nach 18 Uhr)", "Buona sera.", ["Buonasera."]),
+        O("Wir sehen uns morgen.", "Ci vediamo domani."),
+        C("Wann sagst du «Buona serata»?", "am Abend", ["am Morgen", "am Nachmittag", "in der Nacht"])
+      ]
+    },
+    {
+      id: "alter", title: "Alter & Familie", sub: "Wie alt bist du? Sohn, Tochter",
+      words: [
+        W("Quanti anni hai?", "Wie alt bist du?"),
+        W("Ho 56 anni.", "Ich bin 56 Jahre alt."),
+        W("Quanti anni ha?", "Wie alt ist er/sie?"),
+        W("Quanti anni ha il figlio di Rita?", "Wie alt ist der Sohn von Rita?"),
+        W("Il figlio di Rita ha otto anni.", "Der Sohn von Rita ist acht Jahre alt."),
+        W("La figlia di Paolo ha dodici anni.", "Die Tochter von Paolo ist zwölf Jahre alt."),
+        W("il figlio · la figlia", "der Sohn · die Tochter"),
+        W("otto · dodici · venti · trenta · quaranta", "8 · 12 · 20 · 30 · 40")
+      ],
+      tasks: [
+        C("Wie fragst du «Wie alt bist du?»", "Quanti anni hai?", ["Quanti anni ha?", "Come ti chiami?", "Quanto costa?"]),
+        C("Was heisst «il figlio»?", "der Sohn", ["die Tochter", "das Kind", "der Bruder"]),
+        C("Was heisst «la figlia»?", "die Tochter", ["der Sohn", "die Mutter", "die Schwester"]),
+        P([["otto", "8"], ["dodici", "12"], ["venti", "20"], ["trenta", "30"], ["quaranta", "40"]]),
+        C("Ich bin dreissig Jahre alt.", "Ho trenta anni.", ["Ha trenta anni.", "Hai trenta anni.", "Sono trenta anni."]),
+        Y("Übersetze: Ich bin 56 Jahre alt.", "Ho cinquantasei anni.", ["Ho 56 anni."]),
+        C("Quanti anni ___ (tu)?", "hai", ["ha", "ho", "hanno"]),
+        Y("Übersetze: Wie alt ist er?", "Quanti anni ha?"),
+        O("Wie alt ist der Sohn von Rita?", "Quanti anni ha il figlio di Rita?"),
+        L("Quanti anni hai?"),
+        O("Der Sohn von Rita ist acht Jahre alt.", "Il figlio di Rita ha otto anni."),
+        Y("Übersetze: Die Tochter von Paolo ist zwölf Jahre alt.", "La figlia di Paolo ha dodici anni."),
+        C("Quanti anni ___ il figlio di Rita?", "ha", ["hai", "ho", "hanno"])
+      ]
+    }
+  ];
+
+  // ---- Hilfen ----
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function norm(s) {
+    return String(s).toLowerCase().replace(/[’‘`]/g, "'").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "");
+  }
+  function dist(a, b) {
+    var p = [], i, j;
+    for (j = 0; j <= b.length; j++) p[j] = j;
+    for (i = 1; i <= a.length; i++) {
+      var diag = p[0]; p[0] = i;
+      for (j = 1; j <= b.length; j++) { var t = p[j]; p[j] = Math.min(p[j] + 1, p[j - 1] + 1, diag + (a[i - 1] === b[j - 1] ? 0 : 1)); diag = t; }
+    }
+    return p[b.length];
+  }
+  function speak(text) {
+    if (!text || !("speechSynthesis" in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text); u.lang = "it-IT";
+      var v = window.speechSynthesis.getVoices().find(function (x) { return x.lang && x.lang.toLowerCase().indexOf("it") === 0; });
+      if (v) u.voice = v;
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  var canSpeak = "speechSynthesis" in window;
+
+  // ---- Ansicht und Tab ----
+  var wrap = document.querySelector(".wrap");
+  var tabs = document.querySelector(".tabs");
+  if (!wrap || !tabs) return;
+  var view = el("div"); view.id = "lessonView"; view.style.display = "none";
+  wrap.appendChild(view);
+  var btn = el("button", "tab-btn", "Lektionen"); btn.type = "button"; btn.id = "tabLessons";
+  var tv = document.getElementById("tabVocab");
+  if (tv && tv.nextSibling) tabs.insertBefore(btn, tv.nextSibling); else tabs.appendChild(btn);
+
+  var OTHER_VIEWS = ["vocabView", "grammarView", "talkView", "dictView"];
+  function open() {
+    OTHER_VIEWS.forEach(function (id) { var e = document.getElementById(id); if (e) e.style.display = "none"; });
+    Array.prototype.forEach.call(tabs.querySelectorAll(".tab-btn"), function (b) { b.classList.toggle("active", b === btn); });
+    view.style.display = "";
+    showList();
+  }
+  function close() { view.style.display = "none"; btn.classList.remove("active"); }
+  btn.addEventListener("click", open);
+  Array.prototype.forEach.call(tabs.querySelectorAll(".tab-btn"), function (b) {
+    if (b !== btn) b.addEventListener("click", close);
+  });
+  // Tabs, die spaeter hinzukommen (z. B. Woerterbuch), ebenfalls beruecksichtigen
+  new MutationObserver(function () {
+    Array.prototype.forEach.call(tabs.querySelectorAll(".tab-btn"), function (b) {
+      if (b !== btn && !b._lsHook) { b._lsHook = true; b.addEventListener("click", close); }
+    });
+  }).observe(tabs, { childList: true });
+  Array.prototype.forEach.call(tabs.querySelectorAll(".tab-btn"), function (b) { b._lsHook = true; });
+
+  // ---- Fortschritt ----
+  function doneList() { var d = lsGet(DONE_KEY, []); return Array.isArray(d) ? d : []; }
+  function isDone(id) { return doneList().indexOf(id) !== -1; }
+  function markDone(id) { var d = doneList(); if (d.indexOf(id) === -1) { d.push(id); lsSet(DONE_KEY, d); } }
+  function nextIndex() { for (var i = 0; i < LESSONS.length; i++) if (!isDone(LESSONS[i].id)) return i; return -1; }
+
+  // ---- Uebersicht ----
+  function showList() {
+    view.innerHTML = "";
+    var card = el("div", "ls-card");
+    card.appendChild(el("h2", "", "Lektionen"));
+    var ni = nextIndex();
+    if (ni === -1) {
+      card.appendChild(el("p", "ls-sub", "Alle Lektionen sind geschafft. Mit dem nächsten Update kommen neue dazu. Du kannst jede Lektion beliebig wiederholen."));
+    } else {
+      card.appendChild(el("p", "ls-sub", "Eine Lektion dauert etwa fünf Minuten. Wenn du eine abschliesst, kommt die nächste dran."));
+      var go = el("button", "ls-btn pri big", "Weiter: " + LESSONS[ni].title); go.type = "button";
+      go.addEventListener("click", function () { startLesson(ni); });
+      card.appendChild(go);
+    }
+    var path = el("div", "ls-path");
+    LESSONS.forEach(function (ls, i) {
+      var done = isDone(ls.id), cur = i === ni, lock = !done && !cur;
+      var n = el("button", "ls-node" + (done ? " done" : cur ? " cur" : " lock")); n.type = "button";
+      n.appendChild(el("span", "no", done ? "✓" : String(i + 1)));
+      var tx = el("span"); tx.appendChild(el("span", "tt", ls.title)); tx.appendChild(el("span", "ss", ls.sub + " · " + ls.tasks.length + " Aufgaben"));
+      n.appendChild(tx);
+      if (!lock) n.addEventListener("click", function () { startLesson(i); });
+      path.appendChild(n);
+    });
+    card.appendChild(path);
+    view.appendChild(card);
+  }
+
+  // ---- Lektion ----
+  var S = null;
+  function startLesson(i) {
+    S = { i: i, ls: LESSONS[i], queue: [], total: 0, done: 0, firstOk: 0 };
+    showIntro();
+  }
+  function showIntro() {
+    view.innerHTML = "";
+    var card = el("div", "ls-card");
+    var top = el("div", "ls-top");
+    var x = el("button", "ls-x", "✕"); x.type = "button"; x.addEventListener("click", showList);
+    top.appendChild(x); top.appendChild(el("h2", "", "Lektion " + (S.i + 1) + " · " + S.ls.title));
+    card.appendChild(top);
+    card.appendChild(el("p", "ls-sub", "Das kommt gleich dran. Tippe auf «Hören», um die Aussprache zu üben."));
+    var ul = el("ul", "ls-intro");
+    S.ls.words.forEach(function (w) {
+      var li = el("li"); var tx = el("span");
+      tx.appendChild(el("span", "it", w.it)); tx.appendChild(el("span", "de", w.de));
+      li.appendChild(tx);
+      if (canSpeak) { var b = el("button", "ls-spk", "Hören"); b.type = "button"; b.addEventListener("click", function () { speak(w.it); }); li.appendChild(b); }
+      ul.appendChild(li);
+    });
+    card.appendChild(ul);
+    var go = el("button", "ls-btn pri big", "Los geht's"); go.type = "button";
+    go.addEventListener("click", function () {
+      S.queue = S.ls.tasks.slice(); S.total = S.queue.length; S.done = 0; S.firstOk = 0; nextTask();
+    });
+    card.appendChild(go);
+    view.appendChild(card);
+  }
+
+  function nextTask() {
+    if (!S.queue.length) return showSummary();
+    var t = S.queue.shift(); S.cur = t;
+    view.innerHTML = "";
+    var card = el("div", "ls-card");
+    var top = el("div", "ls-top");
+    var x = el("button", "ls-x", "✕"); x.type = "button";
+    x.addEventListener("click", function () { if (confirm("Lektion abbrechen? Dein Fortschritt in dieser Lektion geht verloren.")) showList(); });
+    var bar = el("div", "ls-bar"); var fill = el("i"); fill.style.width = Math.round(100 * S.done / S.total) + "%"; bar.appendChild(fill);
+    top.appendChild(x); top.appendChild(bar);
+    card.appendChild(top);
+    var body = el("div"); card.appendChild(body);
+    var fb = el("div", "ls-fb"); card.appendChild(fb);
+    var foot = el("div", "ls-foot"); card.appendChild(foot);
+    var check = el("button", "ls-btn pri big", "Prüfen"); check.type = "button"; check.disabled = true;
+    foot.appendChild(check);
+    view.appendChild(card);
+
+    var answered = false;
+    function finish(ok, msg, sub, spokenIt) {
+      answered = true;
+      if (ok) { S.done++; if (!t.retry) S.firstOk++; fill.style.width = Math.round(100 * S.done / S.total) + "%"; }
+      else if (t.t !== "pairs") S.queue.push(Object.assign({}, t, { retry: true }));
+      fb.className = "ls-fb " + (ok ? "ok" : "no"); fb.textContent = msg;
+      if (sub) fb.appendChild(el("small", "", sub));
+      if (spokenIt) speak(spokenIt);
+      check.disabled = false; check.textContent = "Weiter";
+      check.onclick = nextTask; check.focus();
+    }
+    function armCheck(fn) { check.onclick = function () { if (!answered) fn(); }; }
+
+    if (t.t === "choose") {
+      body.appendChild(el("div", "ls-q", t.q));
+      var opts = el("div", "ls-opts"), sel = null, bs = [];
+      shuffle([t.a].concat(t.w)).forEach(function (o) {
+        var b = el("button", "ls-opt", o); b.type = "button";
+        b.addEventListener("click", function () { if (answered) return; sel = o; bs.forEach(function (x) { x.classList.toggle("sel", x === b); }); check.disabled = false; });
+        bs.push(b); opts.appendChild(b);
+      });
+      body.appendChild(opts);
+      armCheck(function () {
+        bs.forEach(function (b) { b.classList.remove("sel"); if (b.textContent === t.a) b.classList.add("right"); else if (b.textContent === sel) b.classList.add("bad"); });
+        if (sel === t.a) finish(true, "Richtig!"); else finish(false, "Nicht ganz.", "Richtig ist: " + t.a);
+      });
+    } else if (t.t === "type" || t.t === "listen") {
+      if (t.t === "listen") {
+        body.appendChild(el("div", "ls-hint", canSpeak ? "Hör zu und schreibe, was du hörst" : "Schreibe den Satz ab"));
+        var q = el("div", "ls-q", canSpeak ? "" : t.a);
+        if (canSpeak) { var sb = el("button", "ls-btn", "Anhören"); sb.type = "button"; sb.addEventListener("click", function () { speak(t.a); }); q.appendChild(sb); setTimeout(function () { speak(t.a); }, 250); }
+        body.appendChild(q);
+      } else body.appendChild(el("div", "ls-q", t.q));
+      var inp = el("input", "ls-in"); inp.type = "text"; inp.autocomplete = "off"; inp.setAttribute("autocapitalize", "off"); inp.spellcheck = false;
+      inp.placeholder = "Italienisch …"; body.appendChild(inp);
+      inp.addEventListener("input", function () { if (!answered) check.disabled = !inp.value.trim(); });
+      inp.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); if (!check.disabled) check.click(); } });
+      setTimeout(function () { try { inp.focus(); } catch (e) {} }, 50);
+      armCheck(function () {
+        var v = norm(inp.value), all = [t.a].concat(t.alts);
+        var exact = all.some(function (a) { return norm(a) === v; });
+        var near = !exact && all.some(function (a) { var n = norm(a); return n.length >= 10 && dist(v, n) <= 1; });
+        inp.disabled = true;
+        if (exact) finish(true, "Richtig!", null, t.a);
+        else if (near) finish(true, "Fast richtig!", "Genau: " + t.a, t.a);
+        else finish(false, "Nicht ganz.", "Richtig ist: " + t.a, t.a);
+      });
+    } else if (t.t === "order") {
+      body.appendChild(el("div", "ls-hint", "Setze den Satz zusammen"));
+      body.appendChild(el("div", "ls-q", t.q));
+      var ans = el("div", "ls-ans"), bank = el("div", "ls-bank");
+      var toks = t.a.replace(/[.?!]+$/, "").split(/\s+/).map(function (w, i) { return { w: w, id: i }; });
+      var chips = shuffle(toks).map(function (tk) {
+        var c = el("button", "ls-chip", tk.w); c.type = "button"; c._id = tk.id;
+        c.addEventListener("click", function () {
+          if (answered) return;
+          if (c.parentNode === bank) ans.appendChild(c); else bank.appendChild(c);
+          check.disabled = bank.children.length > 0;
+        });
+        bank.appendChild(c); return c;
+      });
+      body.appendChild(ans); body.appendChild(bank);
+      armCheck(function () {
+        var got = Array.prototype.map.call(ans.children, function (c) { return c.textContent; }).join(" ");
+        if (norm(got) === norm(t.a)) finish(true, "Richtig!", null, t.a);
+        else finish(false, "Nicht ganz.", "Richtig ist: " + t.a, t.a);
+      });
+    } else if (t.t === "pairs") {
+      body.appendChild(el("div", "ls-hint", "Tippe zusammengehörige Paare an"));
+      body.appendChild(el("div", "ls-q", "Welches passt zusammen?"));
+      var grid = el("div", "ls-pairs"), left = null, remaining = t.pairs.length, miss = 0;
+      var L1 = shuffle(t.pairs.map(function (p, i) { return { s: p[0], i: i, side: 0 }; }));
+      var R1 = shuffle(t.pairs.map(function (p, i) { return { s: p[1], i: i, side: 1 }; }));
+      var cols = [el("div", "ls-opts"), el("div", "ls-opts")];
+      function mk(o, col) {
+        var b = el("button", "ls-opt", o.s); b.type = "button"; b._o = o;
+        b.addEventListener("click", function () {
+          if (answered || b.classList.contains("gone")) return;
+          if (!left || left._o.side === o.side) { if (left) left.classList.remove("sel"); left = b; b.classList.add("sel"); if (o.side === 0) speak(o.s); return; }
+          var a = left, c = b; left.classList.remove("sel"); left = null;
+          if (a._o.i === c._o.i) {
+            a.classList.add("gone"); c.classList.add("gone"); remaining--;
+            if (remaining === 0) finish(true, miss ? "Geschafft!" : "Richtig!");
+          } else {
+            miss++; a.classList.add("bad"); c.classList.add("bad");
+            setTimeout(function () { a.classList.remove("bad"); c.classList.remove("bad"); }, 450);
+          }
+        });
+        col.appendChild(b);
+      }
+      L1.forEach(function (o) { mk(o, cols[0]); }); R1.forEach(function (o) { mk(o, cols[1]); });
+      grid.appendChild(cols[0]); grid.appendChild(cols[1]); body.appendChild(grid);
+      foot.style.display = "none";
+      var origFinish = finish;
+      finish = function (ok, msg, sub) { origFinish(ok, msg, sub); if (miss) { S.firstOk -= 1; } foot.style.display = ""; check.disabled = false; };
+    }
+  }
+
+  function showSummary() {
+    markDone(S.ls.id);
+    view.innerHTML = "";
+    var card = el("div", "ls-card"); card.style.textAlign = "center";
+    card.appendChild(el("h2", "", "Lektion " + (S.i + 1) + " geschafft"));
+    card.appendChild(el("div", "ls-big", "Gut gemacht!"));
+    card.appendChild(el("p", "ls-sub", S.firstOk + " von " + S.total + " Aufgaben gleich beim ersten Mal richtig."));
+    var ni = nextIndex();
+    if (ni !== -1) {
+      var nb = el("button", "ls-btn pri big", "Nächste Lektion: " + LESSONS[ni].title); nb.type = "button";
+      nb.addEventListener("click", function () { startLesson(ni); });
+      card.appendChild(nb);
+    } else {
+      card.appendChild(el("p", "ls-sub", "Das war die letzte Lektion. Neue kommen mit dem nächsten Update."));
+    }
+    var back = el("button", "ls-btn sec big", "Zur Übersicht"); back.type = "button"; back.style.marginTop = "10px";
+    back.addEventListener("click", showList);
+    card.appendChild(back);
+    view.appendChild(card);
+  }
+})();
+</script>
+<!-- LEKTIONEN END -->
 </body>
 </html>
