@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-unregelmaessige";
-  const APP_VERSION = "2026-10-21-c"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-21-d"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3071,8 +3071,7 @@
   function render(bump) {
     var s = load(), days = (s.last === today() || s.last === yest()) ? (s.days || 0) : 0;
     sbar.innerHTML = '<div class="sb f">' + svg("flame") + '<b>' + days + '</b><span>Tage</span></div>' +
-      '<div class="sb z' + (bump ? " bump" : "") + '">' + svg("bolt") + '<b>' + (s.run || 0) + '</b><span>in Folge</span></div>' +
-      '<div class="sb t">' + svg("trophy") + '<b>' + (s.best || 0) + '</b><span>Rekord</span></div>';
+      '<div class="sb z' + (bump ? " bump" : "") + '">' + svg("bolt") + '<b>' + (s.run || 0) + '</b><span>in Folge</span></div>';
     sbar.appendChild(goalEl); paintGoal();
   }
   render();
