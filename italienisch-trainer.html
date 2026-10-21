@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-n";
-  const APP_VERSION = "2026-10-23-n"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-o"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1240,8 +1240,8 @@
     if (!a.length) return false;
     var na = a.some(function (w) { return LOOSE_NEG[w]; }), nb = b.some(function (w) { return LOOSE_NEG[w]; });
     if (na !== nb) return false;
-    // Der Name muss genau stimmen: Hans Peter, nicht nur Hans oder nur Peter
-    var nameOk = ["hans", "peter"].every(function (n) { return (a.indexOf(n) >= 0) === (b.indexOf(n) >= 0); });
+    // Der Name muss genau stimmen
+    var nameOk = ["luca"].every(function (n) { return (a.indexOf(n) >= 0) === (b.indexOf(n) >= 0); });
     if (!nameOk) return false;
     if (b.length < 3) return a.length === b.length && a.every(function (w, i) { return w === b[i]; });
     var used = [], m = 0;
@@ -1861,12 +1861,12 @@
           N("Ecco il biglietto. Va bene?", "Hier ist das Ticket. Ist es in Ordnung?"),
           M("Sag: Ja, alles in Ordnung. Danke und gute Fahrt!", "Sì, è tutto a posto. Grazie e buon viaggio!", ["Sì, va bene. Grazie e buon viaggio!"])
         ] },
-      { id: "pa_ungueltig", group: "Postauto: Ticketkontrolle", icon: "🚌", title: "Ticket nicht gültig (falsche Strecke)", setting: "Das Ticket des Fahrgastes gilt nur bis Thusis (Lei-Form).",
+      { id: "pa_ungueltig", group: "Postauto: Ticketkontrolle", icon: "🚌", title: "Ticket nicht gültig (falsche Strecke)", setting: "Das Ticket des Fahrgastes gilt nur bis Coira (Lei-Form).",
         turns: [
           N("Buongiorno. Ecco il mio biglietto.", "Guten Tag. Hier ist mein Ticket."),
           M("Sag: Es tut mir leid, dieses Ticket ist für diese Strecke nicht gültig.", "Mi dispiace, questo biglietto non è valido per questa tratta.", ["Questo biglietto non è valido per questa tratta.", "Mi dispiace, questo biglietto non è valido."]),
           N("Davvero? Ho comprato il biglietto ieri a Coira.", "Wirklich? Ich habe das Ticket gestern in Chur gekauft."),
-          M("Erkläre: Das Ticket gilt nur bis Thusis.", "Il suo biglietto è valido solo fino a Thusis.", ["Il biglietto vale solo fino a Thusis.", "È valido solo fino a Thusis."]),
+          M("Erkläre: Das Ticket gilt nur bis Coira.", "Il suo biglietto è valido solo fino a Coira.", ["Il biglietto vale solo fino a Coira.", "È valido solo fino a Coira."]),
           N("Che cosa devo fare?", "Was muss ich tun?"),
           M("Sag: Sie müssen einen Zuschlag bezahlen. Ich mache eine Meldung.", "Deve pagare un supplemento. Faccio una segnalazione.", ["Faccio una segnalazione. Deve pagare un supplemento.", "Deve pagare un supplemento."]),
           N("Posso pagare con la carta?", "Kann ich mit Karte zahlen?"),
@@ -1908,7 +1908,7 @@
           N("Quando arriviamo?", "Wann kommen wir an?"),
           M("Sag: Wir kommen in zwanzig Minuten an.", "Arriviamo tra venti minuti.", ["Tra venti minuti.", "Siamo a Coira tra venti minuti."]),
           N("Qual è la prossima fermata?", "Welches ist die nächste Haltestelle?"),
-          M("Sag: Die nächste Haltestelle ist Thusis.", "La prossima fermata è Thusis.", ["La prossima è Thusis.", "Thusis."]),
+          M("Sag: Die nächste Haltestelle ist Coira.", "La prossima fermata è Coira.", ["La prossima è Coira.", "Coira."]),
           N("Grazie mille!", "Vielen Dank!"),
           M("Sag: Gern geschehen! Gute Fahrt!", "Prego! Buon viaggio!", ["Prego, buon viaggio!"])
         ] },
@@ -1983,8 +1983,8 @@
       { id: "vorstellen", icon: "👋", title: "Sich vorstellen", setting: "Du lernst Giulia auf einer Party kennen (du-Form).",
         turns: [
           N("Ciao! Come ti chiami?", "Hallo! Wie heisst du?"),
-          M("Sag, dass du Hans Peter heisst.", "Mi chiamo Hans Peter.", ["Sono Hans Peter.", "Il mio nome è Hans Peter.", "Mi chiamo Hans Peter, piacere.", "Sono Hans Peter, piacere."]),
-          N("Piacere, Hans Peter! Io sono Giulia. Di dove sei?", "Freut mich, Hans Peter! Ich bin Giulia. Woher kommst du?"),
+          M("Sag, dass du Luca heisst.", "Mi chiamo Luca.", ["Sono Luca.", "Il mio nome è Luca.", "Mi chiamo Luca, piacere.", "Sono Luca, piacere."]),
+          N("Piacere, Luca! Io sono Giulia. Di dove sei?", "Freut mich, Luca! Ich bin Giulia. Woher kommst du?"),
           M("Sag, dass du aus Chur in der Schweiz bist.", "Sono di Coira, in Svizzera.", ["Sono di Coira.", "Sono svizzero."]),
           N("Che bello! Dove abiti?", "Wie schön! Wo wohnst du?"),
           M("Sag, dass du in Chur wohnst, und frag zurück.", "Abito a Coira. E tu?", ["Abito a Coira, e tu?"]),
@@ -1993,7 +1993,7 @@
         ] },
       { id: "smalltalk", icon: "☀️", title: "Smalltalk", setting: "Du triffst einen Bekannten auf der Strasse (du-Form).",
         turns: [
-          N("Ciao Hans Peter! Come stai?", "Hallo Hans Peter! Wie geht es dir?"),
+          N("Ciao Luca! Come stai?", "Hallo Luca! Wie geht es dir?"),
           M("Sag, dass es dir gut geht, und frag zurück.", "Sto bene, grazie. E tu?", ["Bene, grazie. E tu?"]),
           N("Bene, grazie. Che bella giornata oggi!", "Gut, danke. Was für ein schöner Tag heute!"),
           M("Sag: Ja, die Sonne scheint, aber es ist etwas kalt.", "Sì, c'è il sole, ma fa un po' freddo.", ["Sì, ma fa un po' freddo."]),
@@ -2084,7 +2084,7 @@
       { id: "hotel", icon: "🏨", title: "Im Hotel einchecken", setting: "Du kommst im Hotel an (Lei-Form).",
         turns: [
           N("Buonasera! Posso aiutarla?", "Guten Abend! Kann ich Ihnen helfen?"),
-          M("Sag, dass du eine Reservierung auf den Namen Hans Peter hast.", "Buonasera, ho una prenotazione a nome Hans Peter.", ["Ho prenotato una camera a nome Hans Peter.", "Ho una prenotazione. Mi chiamo Hans Peter.", "Ho una prenotazione a nome di Hans Peter.", "Buonasera, mi chiamo Hans Peter. Ho una prenotazione.", "Ho una prenotazione a nome Hans Peter."]),
+          M("Sag, dass du eine Reservierung auf den Namen Luca hast.", "Buonasera, ho una prenotazione a nome Luca.", ["Ho prenotato una camera a nome Luca.", "Ho una prenotazione. Mi chiamo Luca.", "Ho una prenotazione a nome di Luca.", "Buonasera, mi chiamo Luca. Ho una prenotazione.", "Ho una prenotazione a nome Luca."]),
           N("Un momento... Sì, una camera singola per due notti.", "Einen Moment... Ja, ein Einzelzimmer für zwei Nächte."),
           M("Bestätige und frag, wann das Frühstück ist.", "Esatto. A che ora è la colazione?", ["A che ora è la colazione?", "Esatto. Quando è la colazione?"]),
           N("La colazione è dalle sette alle dieci.", "Das Frühstück ist von sieben bis zehn Uhr."),
@@ -2110,8 +2110,8 @@
           N("A che ora preferisce?", "Um wie viel Uhr bevorzugen Sie?"),
           M("Sag: Nachmittags, nach drei Uhr.", "Nel pomeriggio, dopo le tre.", ["Nel pomeriggio, per favore.", "Dopo le tre."]),
           N("Va bene, alle tre e mezza. Come si chiama?", "Gut, um halb vier. Wie heissen Sie?"),
-          M("Nenne deinen Namen.", "Mi chiamo Hans Peter.", ["Hans Peter.", "Sono Hans Peter.", "Il mio nome è Hans Peter.", "Mi chiamo Hans Peter, grazie.", "Mi chiamo Hans Peter, arrivederci."]),
-          N("Perfetto, Hans Peter. A domani!", "Perfekt, Hans Peter. Bis morgen!"),
+          M("Nenne deinen Namen.", "Mi chiamo Luca.", ["Luca.", "Sono Luca.", "Il mio nome è Luca.", "Mi chiamo Luca, grazie.", "Mi chiamo Luca, arrivederci."]),
+          N("Perfetto, Luca. A domani!", "Perfekt, Luca. Bis morgen!"),
           M("Bedanke dich und sag: Bis morgen.", "A domani, grazie!", ["Grazie, a domani!", "Grazie, arrivederci!"])
         ] },
       { id: "kleidung", icon: "🧥", title: "Kleidung kaufen", setting: "Du suchst in einem Geschäft eine Jacke (Lei-Form).",
@@ -2200,7 +2200,7 @@
         ] },
       { id: "hobby", icon: "⚽", title: "Sport und Hobbys", setting: "Du sprichst mit Giulia über die Freizeit (du-Form).",
         turns: [
-          N("Ciao Hans Peter! Che cosa fai nel tempo libero?", "Hallo Hans Peter! Was machst du in deiner Freizeit?"),
+          N("Ciao Luca! Che cosa fai nel tempo libero?", "Hallo Luca! Was machst du in deiner Freizeit?"),
           M("Sag: Ich spiele Fussball und fahre Velo.", "Gioco a calcio e vado in bicicletta.", ["Gioco a calcio e vado in bici."]),
           N("Che bello! Quante volte alla settimana?", "Wie schön! Wie oft pro Woche?"),
           M("Sag: Zweimal pro Woche.", "Due volte alla settimana.", ["Due volte a settimana."]),
