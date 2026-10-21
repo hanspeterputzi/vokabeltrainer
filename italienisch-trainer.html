@@ -775,7 +775,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-plural";
-  const APP_VERSION = "2026-10-24-m"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-o"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -895,7 +895,7 @@
           const low = x => String(x).trim().toLowerCase();
           const seedIt = new Set(SEED_WORDS.map(w => low(w.it)));
           const seedDe = new Set(SEED_WORDS.map(w => low(w.de)));
-          keep = old.filter(w => w && w.it && w.de && (w.user || (!seedIt.has(low(w.it)) && !seedDe.has(low(w.de)))))
+          keep = old.filter(w => w && w.it && w.de && ((w.user && !(seedIt.has(low(w.it)) && seedDe.has(low(w.de)))) || (!w.user && !seedIt.has(low(w.it)) && !seedDe.has(low(w.de)))))
             .map(w => ({ de: w.de, it: w.it, cat: CATEGORIES.indexOf(w.cat) !== -1 ? w.cat : (w.cat === "Verben" ? "Übrige Verben" : "Nomen"), user: true }));
         } catch (e) {}
         const merged = SEED_WORDS.concat(keep);
@@ -2784,6 +2784,7 @@
     } catch (e) {}
   }
   checkForUpdate();
+  try { if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) navigator.serviceWorker.register("sw.js").catch(() => {}); } catch (e) {}
   document.addEventListener("visibilitychange", () => { if (!document.hidden) checkForUpdate(); });
 
   // --- Init ---
@@ -4616,5 +4617,147 @@
 })();
 </script>
 <!-- NAVMODERN END -->
+<!-- WORTADD START -->
+<style>
+  #dictView .wa-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+  #dictView .wa-bar button { padding: 8px 14px; border: 0; border-radius: 99px; font-size: .82rem; font-weight: 700; box-shadow: none; background: color-mix(in srgb, var(--k-orange, #ea580c) 14%, var(--k-card, #fff)); color: var(--k-orange, #ea580c); }
+  #dictView .wa-bar button.send { background: var(--ink, #16181d); color: var(--on-ink, #fff); }
+  #waOv { position: fixed; inset: 0; z-index: 300; display: none; align-items: flex-end; justify-content: center; background: rgba(0,0,0,.45); }
+  #waOv.on { display: flex; }
+  #waOv .wa-card { width: 100%; max-width: 560px; max-height: 92vh; overflow: auto; background: var(--k-card, #fff); color: var(--k-text, #16181d); border-radius: 26px 26px 0 0; padding: 20px 18px calc(22px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 40px rgba(0,0,0,.25); }
+  #waOv h3 { margin: 0 0 14px; font-size: 1.15rem; font-weight: 800; }
+  #waOv label { display: block; margin: 12px 0 5px; font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--k-muted, #6a6e78); }
+  #waOv input[type="text"], #waOv select { width: 100%; height: 48px; padding: 0 14px; font-size: 1rem; border: 1.5px solid var(--k-line, #e7e7e9); border-radius: 14px; background: var(--k-bg, #f3f3f4); color: inherit; }
+  #waOv .wa-g { display: flex; gap: 8px; margin-top: 10px; }
+  #waOv .wa-g button { flex: 1; height: 42px; border-radius: 12px; border: 1.5px solid var(--k-line, #e7e7e9); background: transparent; color: inherit; font-weight: 600; font-size: .9rem; box-shadow: none; }
+  #waOv .wa-g button.on { background: var(--ink, #16181d); color: var(--on-ink, #fff); border-color: var(--ink, #16181d); }
+  #waOv .wa-sug { width: 100%; margin-top: 8px; height: 42px; border-radius: 12px; border: 0; background: color-mix(in srgb, var(--k-orange, #ea580c) 14%, var(--k-card, #fff)); color: var(--k-orange, #ea580c); font-weight: 700; font-size: .9rem; box-shadow: none; }
+  #waOv .wa-msg { min-height: 1.2em; margin: 12px 0 0; font-size: .85rem; color: var(--k-orange, #ea580c); }
+  #waOv .wa-act { display: flex; gap: 10px; margin-top: 14px; }
+  #waOv .wa-act button { flex: 1; height: 48px; border-radius: 14px; font-size: 1rem; font-weight: 700; box-shadow: none; }
+  #waOv .wa-save { background: #ea580c; color: #fff; border: 0; }
+  #waOv .wa-cancel { background: transparent; color: inherit; border: 1.5px solid var(--k-line, #e7e7e9); font-weight: 500; }
+</style>
+<script>
+(function () {
+  var KQ = "italienisch_new_words";
+  var CATS = ["Nomen", "Feste Wendungen", "Hauptverben", "Übrige Verben", "Adjektive", "Adverbien", "Präpositionen", "Pronomen", "Konjunktionen", "Interjektionen", "Zahlen", "ABC"];
+  function lsGet(k, f) { try { var r = localStorage.getItem(k); return r === null ? f : JSON.parse(r); } catch (e) { return f; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function wordsKey() { return localStorage.getItem("vokabeltrainer_words") !== null ? "vokabeltrainer_words" : "italoVokabeln_v1"; }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+  // ---- Italienische Regeln: Artikel und Plural (Vorschlag, wird vom Nutzer bestaetigt) ----
+  function nounPl(n, fem) {
+    if (/[àùèìò]$/.test(n)) return n;
+    if (/ca$/.test(n)) return n.slice(0, -2) + "che";
+    if (/ga$/.test(n)) return n.slice(0, -2) + "ghe";
+    if (/(cia|gia)$/.test(n)) return /[aeiouàèìòù]/.test(n.charAt(n.length - 4)) ? n.slice(0, -1) + "e" : n.slice(0, -2) + "e";
+    if (/glia$/.test(n)) return n.slice(0, -1) + "e";
+    if (/co$/.test(n)) return n.slice(0, -2) + (/[aeiou]/.test(n.charAt(n.length - 3)) ? "ci" : "chi");
+    if (/go$/.test(n)) return n.slice(0, -2) + "ghi";
+    if (/io$/.test(n)) return n.slice(0, -1);
+    if (/o$/.test(n)) return n.slice(0, -1) + "i";
+    if (/a$/.test(n)) return (!fem && (/(ma|ista|ta)$/.test(n))) ? n.slice(0, -1) + "i" : n.slice(0, -1) + "e";
+    if (/e$/.test(n)) return n.slice(0, -1) + "i";
+    return n;
+  }
+  function article(n, fem) {
+    var vow = /^[aeiouàèéìòù]/i.test(n);
+    if (fem) return vow ? "l'" : "la";
+    if (vow) return "l'";
+    if (/^(s[bcdfghjklmnpqrstvwxyz]|z|gn|ps|pn|x|y)/i.test(n)) return "lo";
+    return "il";
+  }
+  function suggest(raw, fem) {
+    var t = raw.trim().replace(/^(il|lo|la|un|uno|una)\s+|^l'\s*/i, "").replace(/\s*\((männlich|weiblich)[^)]*\)\s*$/i, "").split(" / ")[0].trim();
+    if (!t) return "";
+    var ws = t.split(/\s+/), head = ws[0], rest = ws.slice(1).join(" ");
+    var art = article(head, fem), pa = fem ? "le" : (art === "il" ? "i" : "gli");
+    var sing = art + (art === "l'" ? "" : " ") + t + (art === "l'" ? " (" + (fem ? "weiblich" : "männlich") + ")" : "");
+    return sing + " / " + pa + " " + nounPl(head, fem) + (rest ? " " + rest : "");
+  }
+
+  // ---- Formular ----
+  var ov = null, inDe, inIt, selCat, msg, gender = null, nounBox;
+  function build() {
+    if (ov) return;
+    ov = el("div"); ov.id = "waOv";
+    var card = el("div", "wa-card"); ov.appendChild(card);
+    card.appendChild(el("h3", "", "Wort hinzufügen"));
+    card.appendChild(el("label", "", "Deutsch")); inDe = el("input"); inDe.type = "text"; inDe.setAttribute("autocapitalize", "off"); inDe.autocomplete = "off"; card.appendChild(inDe);
+    card.appendChild(el("label", "", "Wortart")); selCat = el("select"); CATS.forEach(function (c) { var o = el("option", "", c); o.value = c; selCat.appendChild(o); }); card.appendChild(selCat);
+    card.appendChild(el("label", "", "Italienisch")); inIt = el("input"); inIt.type = "text"; inIt.setAttribute("autocapitalize", "off"); inIt.autocomplete = "off"; inIt.spellcheck = false; inIt.placeholder = "z. B. treno"; card.appendChild(inIt);
+    nounBox = el("div"); var g = el("div", "wa-g");
+    ["männlich", "weiblich"].forEach(function (n, i) { var b = el("button", "", n); b.type = "button"; b.addEventListener("click", function () { gender = i === 1; Array.prototype.forEach.call(g.children, function (x) { x.classList.remove("on"); }); b.classList.add("on"); }); g.appendChild(b); });
+    nounBox.appendChild(g);
+    var sg = el("button", "wa-sug", "Artikel + Plural ergänzen"); sg.type = "button";
+    sg.addEventListener("click", function () {
+      if (!inIt.value.trim()) { msg.textContent = "Zuerst das italienische Wort eingeben."; return; }
+      if (gender === null) { var m = /^(il|lo)\s/i.test(inIt.value.trim()) ? false : /^la\s/i.test(inIt.value.trim()) ? true : null; if (m === null) { msg.textContent = "Bitte zuerst männlich oder weiblich wählen."; return; } gender = m; }
+      inIt.value = suggest(inIt.value, gender); msg.textContent = "Vorschlag prüfen und bei Bedarf anpassen.";
+    });
+    nounBox.appendChild(sg); card.appendChild(nounBox);
+    msg = el("p", "wa-msg"); card.appendChild(msg);
+    var act = el("div", "wa-act");
+    var sv = el("button", "wa-save", "Speichern"); sv.type = "button"; sv.addEventListener("click", save);
+    var cn = el("button", "wa-cancel", "Abbrechen"); cn.type = "button"; cn.addEventListener("click", function () { ov.classList.remove("on"); });
+    act.appendChild(sv); act.appendChild(cn); card.appendChild(act);
+    ov.addEventListener("click", function (e) { if (e.target === ov) ov.classList.remove("on"); });
+    selCat.addEventListener("change", function () { nounBox.style.display = selCat.value === "Nomen" ? "" : "none"; });
+    document.body.appendChild(ov);
+  }
+  function openForm() {
+    build(); gender = null; msg.textContent = "";
+    Array.prototype.forEach.call(nounBox.querySelectorAll(".wa-g button"), function (b) { b.classList.remove("on"); });
+    var q = document.getElementById("dictIn"); inDe.value = q ? q.value.trim() : ""; inIt.value = ""; selCat.value = "Nomen"; nounBox.style.display = "";
+    ov.classList.add("on"); setTimeout(function () { try { (inDe.value ? inIt : inDe).focus(); } catch (e) {} }, 60);
+  }
+  function save() {
+    var de = inDe.value.trim(), it = inIt.value.trim(), cat = selCat.value;
+    if (!de || !it) { msg.textContent = "Deutsch und Italienisch ausfüllen."; return; }
+    var k = wordsKey(), arr = lsGet(k, []), low = function (s) { return String(s).trim().toLowerCase(); };
+    var dup = arr.filter(function (w) { return low(w.de) === low(de) && low(w.it) === low(it); })[0];
+    if (dup) { msg.textContent = "Gibt es schon: " + dup.it; return; }
+    var same = arr.filter(function (w) { return low(w.de) === low(de); })[0];
+    if (same && !inDe._warned) { inDe._warned = true; msg.textContent = "Zu «" + de + "» gibt es schon «" + same.it + "». Nochmals Speichern fügt es trotzdem hinzu."; return; }
+    inDe._warned = false;
+    arr.push({ de: de, it: it, cat: cat, user: true }); lsSet(k, arr);
+    var q = lsGet(KQ, []); q.push({ cat: cat, de: de, it: it, ts: Date.now() }); lsSet(KQ, q);
+    location.reload();
+  }
+
+  // ---- Senden: Textdatei ueber das Teilen-Menue (iCloud Drive) ----
+  function stamp() { var d = new Date(), p = function (n) { return (n < 10 ? "0" : "") + n; }; return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + "_" + p(d.getHours()) + p(d.getMinutes()); }
+  function sendQueue() {
+    var q = lsGet(KQ, []); if (!q.length) return;
+    var text = q.map(function (x) { return [x.cat, x.de, x.it].join("|"); }).join("\n") + "\n";
+    var name = "neue_woerter_" + stamp() + ".txt", file;
+    function done() { lsSet(KQ, []); refreshBar(); }
+    function download() { var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type: "text/plain" })); a.download = name; document.body.appendChild(a); a.click(); setTimeout(function () { a.remove(); }, 500); done(); }
+    try { file = new File([text], name, { type: "text/plain" }); } catch (e) { download(); return; }
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: "Neue Wörter" }).then(done).catch(function (e) { if (!e || e.name !== "AbortError") download(); });
+    } else download();
+  }
+
+  // ---- Knoepfe im Woerterbuch ----
+  var bar = null;
+  function refreshBar() {
+    if (!bar) return;
+    bar.innerHTML = "";
+    var a = el("button", "", "+ Wort hinzufügen"); a.type = "button"; a.addEventListener("click", openForm); bar.appendChild(a);
+    var n = lsGet(KQ, []).length;
+    if (n) { var s = el("button", "send", n + (n === 1 ? " neues Wort senden" : " neue Wörter senden")); s.type = "button"; s.addEventListener("click", sendQueue); bar.appendChild(s); }
+  }
+  function init() {
+    var v = document.getElementById("dictView"), h = v && v.querySelector(".card h2");
+    if (!v || !h || v.querySelector(".wa-bar")) return;
+    bar = el("div", "wa-bar"); h.parentNode.insertBefore(bar, h.nextSibling); refreshBar();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();
+</script>
+<!-- WORTADD END -->
 </body>
 </html>
