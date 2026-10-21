@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-geschlecht";
-  const APP_VERSION = "2026-10-22-r"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-22-s"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3254,6 +3254,8 @@
 <style>
   /* Beispiele in Grammatik-Bloecken: ein Beispiel (z. B. «il ponte → i ponti») bricht nie mitten im Beispiel um */
   .explain .ep { white-space: nowrap; }
+  /* Beispiele als Einheit: passen sie nicht mehr hinter die Regel, stehen alle Beispiele zusammen in der naechsten Zeile */
+  .explain li .ex { display: inline-block; vertical-align: top; }
   .explain b { white-space: nowrap; }
   /* Merkhilfe in Grammatik-Bloecken (Tab Grammatik und Lektions-Intro): nur orange und mit mehr Abstand; gleiche Schriftgroesse, nicht fett, keine Trennlinie */
   .explain p.merk { margin: 18px 0 4px; color: var(--k-orange, var(--orange, #ea580c)); font-weight: 400; }
