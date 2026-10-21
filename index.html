@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-geschlecht";
-  const APP_VERSION = "2026-10-23-d"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-f"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1488,7 +1488,10 @@
         "<p>Frage und Aussage haben <b>dieselben Wörter in derselben Reihenfolge</b>. " +
         "Nur die <b>Melodie</b> ändert sich: Bei der Frage geht die Stimme am Ende hoch. " +
         "Geschrieben steht ein Fragezeichen.</p>" +
-        "<p class='ex'><b>Sei di Zurigo.</b> (Aussage) – <b>Sei di Zurigo?</b> (Frage)</p>" +
+        "<ul>" +
+        "<li><b>Aussage</b><span class='ex'><span class='ep'>Sei di Zurigo.</span> <span class='ep'>Lui è italiano.</span></span></li>" +
+        "<li><b>Frage</b><span class='ex'><span class='ep'>Sei di Zurigo?</span> <span class='ep'>Lui è italiano?</span></span></li>" +
+        "</ul>" +
         "<p class='merk'>Merkhilfe: Wie im Deutschen bei «Du bist aus Zürich?» – nur die Stimme geht hoch.</p>",
       exercises: [
         { q: "Woran erkennt man im Italienischen eine Frage (ohne Fragewort)?", options: ["An der Wortstellung", "An der Melodie", "An einer besonderen Endung", "An einem Hilfswort"], a: ["An der Melodie"], why: "Kein Unterschied im Satzbau, nur die Melodie" },
