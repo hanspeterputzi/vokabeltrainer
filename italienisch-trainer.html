@@ -2865,8 +2865,7 @@
       const btn = document.createElement("button");
       btn.type = "button"; btn.className = "tab-btn"; btn.id = "tabDict"; btn.textContent = "Wörterbuch";
       const tabsEl = document.querySelector(".tabs");
-      const talkBtn = document.getElementById("tabTalk");
-      tabsEl.insertBefore(btn, talkBtn ? talkBtn : null);
+      tabsEl.appendChild(btn);
       const inp = view.querySelector("#dictIn"), catsEl = view.querySelector("#dictCats"), listEl = view.querySelector("#dictList");
       let dcat = "Alle";
       const stripArt = s => s.replace(/^(?:(?:il|lo|la|i|gli|le|un|uno|una)\s+|l'|un')/i, "");
