@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-uno";
-  const APP_VERSION = "2026-10-21-w"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-21-x"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1629,6 +1629,7 @@
         "</ul>" +
         "<h3>Merke</h3>" +
         "<ul>" +
+        "<li>Wo <b>uno</b> steht, heisst der bestimmte Artikel <b>lo</b> (Plural: <b>gli</b>): <span class='ex'>uno straniero → lo straniero, uno sport → lo sport</span></li>" +
         "<li>Bei weiblichen Nomen gibt es keine Ausnahme: immer <b>una</b> oder <b>un'</b>.</li>" +
         "<li>Der Apostroph steht nur bei weiblichen Nomen: <span class='ex'>un'amica</span>, aber männlich <span class='ex'>un amico</span>.</li>" +
         "<li>Das <b>h</b> am Wortanfang wird nicht gesprochen: <span class='ex'>un hotel</span> verhält sich wie ein Wort mit Vokal.</li>" +
@@ -1651,6 +1652,8 @@
         { q: "Welcher Artikel steht vor einem weiblichen Nomen mit Konsonant?", options: ["un", "uno", "una"], a: ["una"], why: "una camera" },
         { q: "Welcher Artikel steht vor einem weiblichen Nomen mit Vokal?", options: ["una", "un'", "uno"], a: ["un'"], why: "un'amica" },
         { q: "Welcher Artikel steht vor einem männlichen Nomen mit h?", options: ["un", "uno", "una"], a: ["un"], why: "un hotel" },
+        { q: "Welcher bestimmte Artikel gehört zu «uno zucchino»?", options: ["il", "lo", "la"], a: ["lo"], why: "Wo uno steht, heisst der bestimmte Artikel lo" },
+        { q: "uno psicologo → ___ psicologo", hint: "il, lo oder la?", a: ["lo"], why: "Wo uno steht, heisst der bestimmte Artikel lo" },
         { q: "Gibt es bei weiblichen Nomen Ausnahmen mit uno?", options: ["Ja", "Nein"], a: ["Nein"], why: "uno gibt es nur bei männlichen Nomen" },
         { q: "Steht bei «un amico» ein Apostroph?", options: ["Ja", "Nein"], a: ["Nein"], why: "Der Apostroph steht nur bei weiblichen Nomen: un'amica" },
       ],
