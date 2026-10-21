@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-n";
-  const APP_VERSION = "2026-10-23-zh"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-zi"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4250,6 +4250,9 @@
   #dictSticky #dictIn { margin: 0; }
   #dictList .dw { scroll-margin-top: 84px !important; }
   @media (prefers-color-scheme: dark) { #dictSticky { box-shadow: 0 8px 24px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.07); } }
+
+  /* Woerterbuch: Wortart-Etikett nur dort, wo es etwas klaert (ABC, Zahlen) */
+  #dictList .dtag:not(.keep) { display: none !important; }
 </style>
 <script>
 (function () {
@@ -4302,6 +4305,14 @@
       }
     });
   }).observe(document.body, { attributes: true, attributeFilter: ["class"], childList: true, subtree: true });
+
+  function keepTags() {
+    Array.prototype.forEach.call(document.querySelectorAll("#dictList .dtag"), function (t) {
+      var k = /^(ABC|Zahlen)$/.test(t.textContent.trim()); if (t.classList.contains("keep") !== k) t.classList.toggle("keep", k);
+    });
+  }
+  var dl = document.getElementById("dictList");
+  if (dl) { keepTags(); new MutationObserver(keepTags).observe(dl, { childList: true, subtree: true }); }
   function init() { wire("quizWord", "showBtn", "nextBtn"); wire("conjVerb", "conjShowBtn", "conjNextBtn"); stickySearch(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
