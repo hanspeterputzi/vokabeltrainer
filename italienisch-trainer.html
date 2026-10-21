@@ -7,6 +7,9 @@
 <meta name="theme-color" content="#EA580C">
 <meta name="apple-mobile-web-app-title" content="Italienisch">
 <meta charset="UTF-8">
+<style>html.chk{background:#ea580c}html.chk body{visibility:hidden}</style>
+<script>if(location.protocol!=="file:"){document.documentElement.className+=" chk";setTimeout(function(){document.documentElement.classList.remove("chk")},1500);}</script>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Italienisch-Trainer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -772,7 +775,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-plural";
-  const APP_VERSION = "2026-10-24-l"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-m"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -2765,7 +2768,7 @@
   // --- Auto-Update: veraltete Kopie (Home-Bildschirm-Cache) erkennen und neu laden ---
   function checkForUpdate() {
     try {
-      if (location.protocol === "file:") return;
+      if (location.protocol === "file:") { document.documentElement.classList.remove("chk"); return; }
       fetch(location.pathname + "?chk=" + Date.now(), { cache: "no-store" })
         .then(r => r.text())
         .then(t => {
@@ -2773,9 +2776,11 @@
           if (m && m[1] !== APP_VERSION && sessionStorage.getItem("upd_try") !== m[1]) {
             sessionStorage.setItem("upd_try", m[1]);
             location.replace(location.pathname + "?v=" + encodeURIComponent(m[1]));
+            return;
           }
+          document.documentElement.classList.remove("chk");
         })
-        .catch(() => {});
+        .catch(() => { document.documentElement.classList.remove("chk"); });
     } catch (e) {}
   }
   checkForUpdate();
