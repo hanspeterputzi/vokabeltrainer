@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-plural";
-  const APP_VERSION = "2026-10-23-zv"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-b"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3242,7 +3242,7 @@
   document.body.appendChild(layer);
   function burst(el, n) {
     var r = el.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-    var cols = ["#ea580c", "#2563eb", "#ff8a3d", "#5b8cff", "#ffffff"];
+    var cols = ["#ea580c", "#16181d", "#ff8a3d", "#ffb27a", "#ffffff"];
     for (var i = 0; i < n; i++) {
       var p = document.createElement("i");
       p.style.left = cx + "px"; p.style.top = cy + "px";
@@ -4067,7 +4067,7 @@
     } catch (e) {}
   }
   function confetti() {
-    var layer = el("div", "ls-confetti"), cols = ["#2563eb", "#ea580c", "#f59e0b", "#5b8cff", "#ff8a3d"];
+    var layer = el("div", "ls-confetti"), cols = ["#16181d", "#ea580c", "#f59e0b", "#ffb27a", "#ff8a3d"];
     for (var i = 0; i < 70; i++) {
       var p = el("i"); p.style.left = Math.random() * 100 + "%"; p.style.background = cols[i % cols.length];
       p.style.animationDuration = (1.6 + Math.random() * 1.6) + "s"; p.style.animationDelay = (Math.random() * 0.5) + "s";
@@ -4304,29 +4304,29 @@
   #talkView .tk-topic .pc { font-size: .78rem; font-weight: 600; color: var(--k-muted, #5d6b85); }
   #talkView .tk-topic.done .pc { color: var(--k-blue, #2563eb); }
   #talkView .tk-gh { display: flex; align-items: baseline; justify-content: space-between; margin-top: 18px; }
-  #talkView .tk-gh h2 { margin: 0 !important; font-size: .72rem !important; letter-spacing: .1em; flex: 1; min-width: 0; }
+  #talkView .tk-gh h2 { text-transform: uppercase; color: var(--k-orange, #ea580c); font-weight: 700; margin: 0 !important; font-size: .72rem !important; letter-spacing: .1em; flex: 1; min-width: 0; }
   #talkView .tk-gh .n { font-size: .78rem; color: var(--k-muted, #5d6b85); white-space: nowrap; margin-left: 10px; }
   #talkView .tk-gb { height: 5px; border-radius: 99px; background: var(--k-bg, #eef2fa); overflow: hidden; margin: 18px 0 4px; }
   #talkView .tk-gb i { display: block; height: 100%; background: var(--k-blue, #2563eb); border-radius: 99px; }
 
   /* Streak-Karte: zwei Etiketten (Tage, in Folge) und Tagesziel mit Balken */
-  .streakbar { display: flex !important; flex-wrap: wrap !important; align-items: center; justify-content: flex-start !important; gap: 8px !important; padding: 14px 16px 16px !important;
-    border-radius: 22px !important; background: var(--k-card, #fff) !important; box-shadow: 0 1px 2px rgba(18,32,58,.05), 0 10px 24px rgba(18,32,58,.08) !important; }
-  .streakbar .sb { display: inline-flex !important; flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; flex: 0 0 auto !important; gap: 6px !important;
-    background: var(--k-bg, #f3f6fc) !important; border-radius: 99px !important; padding: 7px 13px !important; box-shadow: none !important; }
+  .streakbar { display: flex !important; flex-wrap: wrap !important; align-items: center; justify-content: flex-start !important; gap: 7px !important; padding: 12px 14px 14px !important;
+    border-radius: 20px !important; background: var(--k-card, #fff) !important; box-shadow: 0 1px 2px rgba(18,32,58,.05), 0 10px 24px rgba(18,32,58,.08) !important; }
+  .streakbar .sb { display: inline-flex !important; flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; flex: 0 0 auto !important; gap: 5px !important;
+    background: var(--k-bg, #f3f6fc) !important; border-radius: 99px !important; padding: 6px 12px !important; box-shadow: none !important; }
   .streakbar .sb::after { display: none !important; }
-  .streakbar .sb.f::before, .streakbar .sb.z::before, .streakbar .sb + .sb::before { content: "" !important; display: block !important; position: static !important; left: auto !important; top: auto !important; bottom: auto !important; width: 17px !important; height: 17px !important; flex: none; border-radius: 0 !important; margin: 0 !important;
+  .streakbar .sb.f::before, .streakbar .sb.z::before, .streakbar .sb + .sb::before { content: "" !important; display: block !important; position: static !important; left: auto !important; top: auto !important; bottom: auto !important; width: 15px !important; height: 15px !important; flex: none; border-radius: 0 !important; margin: 0 !important;
     -webkit-mask: var(--ic) center / contain no-repeat; mask: var(--ic) center / contain no-repeat; }
   .streakbar .sb.f::before { background: var(--k-orange, #ea580c) !important; --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 12c2-2.96 0-7-1-8 0 3.038-1.773 4.741-3 6-1.226 1.26-2 3.24-2 5a6 6 0 1 0 12 0c0-1.532-1.056-3.94-2-5-1.786 3-2.791 3-4 2z'/%3E%3C/svg%3E"); }
   .streakbar .sb.z::before { background: var(--k-blue, #2563eb) !important; --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 3v7h6l-8 11v-7H5z'/%3E%3C/svg%3E"); }
   .streakbar .sb svg { width: 17px !important; height: 17px !important; margin: 0 !important; }
-  .streakbar .sb b { font-size: .95rem !important; font-weight: 700 !important; letter-spacing: 0 !important; color: var(--k-text, #12203a) !important; line-height: 1 !important; }
-  .streakbar .sb span { margin: 0 !important; font-size: .85rem !important; font-weight: 600 !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--k-text, #12203a) !important; }
-  .streakbar .goal { flex: 0 0 100% !important; margin: 6px 0 0 !important; padding: 0 !important; border: 0 !important; }
+  .streakbar .sb b { font-size: .86rem !important; font-weight: 700 !important; letter-spacing: 0 !important; color: var(--k-text, #12203a) !important; line-height: 1 !important; }
+  .streakbar .sb span { margin: 0 !important; font-size: .77rem !important; font-weight: 600 !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--k-text, #12203a) !important; }
+  .streakbar .goal { flex: 0 0 100% !important; margin: 5px 0 0 !important; padding: 0 !important; border: 0 !important; }
   .streakbar .gl { display: flex !important; justify-content: space-between !important; align-items: baseline !important; }
-  .streakbar .gl span { font-size: .68rem !important; font-weight: 600 !important; letter-spacing: .1em !important; text-transform: uppercase !important; color: var(--k-muted, #5d6b85) !important; }
-  .streakbar .gl b { font-size: .85rem !important; font-weight: 700 !important; color: var(--k-text, #12203a) !important; }
-  .streakbar .gb { height: 8px !important; margin-top: 8px !important; background: var(--k-bg, #eef2fa) !important; }
+  .streakbar .gl span { font-size: .62rem !important; font-weight: 600 !important; letter-spacing: .1em !important; text-transform: uppercase !important; color: var(--k-muted, #5d6b85) !important; }
+  .streakbar .gl b { font-size: .77rem !important; font-weight: 700 !important; color: var(--k-text, #12203a) !important; }
+  .streakbar .gb { height: 7px !important; margin-top: 7px !important; background: var(--k-bg, #eef2fa) !important; }
   .streakbar .gb i, .streakbar .goal.done .gb i { background: var(--k-blue, #2563eb) !important; }
   .streakbar .goal.done .gb i { background: var(--k-orange, #ea580c) !important; }
 
@@ -4334,7 +4334,54 @@
   body::before { height: var(--band, 230px) !important; }
   .wrap { padding-top: 18px !important; }
   .wrap > .streakbar { margin: 0 !important; position: relative; z-index: 2; }
-  .wrap > h1 { margin-top: 18px !important; margin-bottom: 44px !important; }
+  .wrap h1 { margin-top: 16px !important; margin-bottom: 54px !important; }
+
+  /* ===== Palette: Weiss, Orange, Schwarz. Orange = Aktion/Fortschritt, Schwarz = erledigt/aktiver Reiter ===== */
+  :root { --accent: #ea580c; --accent-hover: #c2410c; --k-blue: #ea580c; --correct: #16181d; --correct-bg: #eceef1; --ink: #16181d; --on-ink: #ffffff; --text: #16181d;
+    --bg: #f3f3f4; --page-bg: #f8f8f9; --card-bg: #ffffff; --border: #e7e7e9; --muted: #6a6e78; }
+  @media (prefers-color-scheme: dark) {
+    :root { --accent: #f26a1b; --accent-hover: #ff8a4c; --k-blue: #f26a1b; --correct: #f2f2f3; --correct-bg: #2a2d34; --ink: #f2f2f3; --on-ink: #16181d; --text: #edeef0;
+      --bg: #25262c; --page-bg: #101114; --card-bg: #1d1e23; --border: #2c2e35; --muted: #9b9fa9; }
+  }
+  .quiz-word, .prompt, .g-q { color: var(--ink) !important; }
+  .quiz-word { background: color-mix(in srgb, var(--ink) 5%, var(--k-card, #fff)) !important; box-shadow: none !important; }
+  .prompt, .g-q, .prompt::after, .g-q::after, .quiz-word::after { background: color-mix(in srgb, var(--ink) 5%, var(--k-card, #fff)) !important; }
+  h1 { color: var(--k-orange, #ea580c) !important; }
+  .gb i, .pbar i, .ls-bar i, #lessonView .ls-bar i { background: var(--k-orange, #ea580c) !important; }
+  input[type="text"]:focus { box-shadow: 0 0 0 4px rgba(234,88,12,.18) !important; }
+  #checkBtn, #conjCheckBtn, .ls-btn.pri, #talkView .tk-mic, #lessonView .ls-btn.pri, #lessonView .ls-row .go { background: #ea580c !important; box-shadow: 0 8px 18px rgba(234,88,12,.28) !important; color: #fff !important; }
+  #micBtn { color: var(--k-orange, #ea580c) !important; }
+  /* aktiver Reiter und erledigte Eintraege: Schwarz */
+  .tabs .tab-btn.active, .tabs #tabDict.active { background: var(--ink) !important; color: var(--on-ink) !important; box-shadow: 0 6px 14px rgba(0,0,0,.25) !important; }
+  #lessonView .ls-row.done .dot, #lessonView .ls-cnt, #lessonView .ls-node.done .no, #talkView .tk-topic.done .mi { background: var(--ink) !important; color: var(--on-ink) !important; }
+  #lessonView .ls-row.done::before { background: var(--ink) !important; }
+  #lessonView .ls-row.done .ss .cnt, #lessonView .ls-times, #talkView .tk-topic.done .pc, #talkView .tk-sum .big, #lessonView .ls-big { color: var(--ink) !important; }
+  #lessonView .ls-fb.ok { background: var(--correct-bg) !important; color: var(--correct) !important; }
+  #lessonView .ls-opt.right, #lessonView input.ls-in.ok { border-color: var(--ink) !important; background: var(--correct-bg) !important; }
+  #lessonView .ls-opt.gone { border-color: var(--ink) !important; }
+  .streakbar .sb.z::before { background: var(--ink) !important; }
+  #talkView .tk-gb i { background: var(--k-orange, #ea580c) !important; }
+  #talkView .tk-topic .pc.zero { color: var(--k-muted, #8a93a5); font-weight: 500; }
+  #talkView .tk-b.m { background: #ea580c !important; color: #fff !important; }
+  #talkView .tk-b .sp { color: var(--k-orange, #ea580c) !important; }
+
+  /* ===== Sprechen, Seite 2: ruhiger, Zurueck gut sichtbar ===== */
+  #talkView .tk-top { display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; margin-bottom: 6px; }
+  #talkView .tk-top strong { font-size: 1.3rem; font-weight: 800; line-height: 1.25; color: var(--ink); }
+  #talkView .tk-back { display: inline-flex !important; align-items: center; gap: 4px; padding: 8px 15px 8px 11px !important; border: 0 !important; border-radius: 99px !important; background: color-mix(in srgb, var(--k-orange, #ea580c) 14%, var(--k-card, #fff)) !important; color: var(--k-orange, #ea580c) !important; font-size: .85rem; font-weight: 700; box-shadow: none !important; }
+  #talkView .tk-sub { margin: 0 0 18px !important; font-size: .88rem !important; line-height: 1.45; }
+  #talkView .tk-log { gap: 10px !important; }
+  #talkView .tk-b.n { background: color-mix(in srgb, var(--ink) 6%, var(--k-card, #fff)) !important; border: 0 !important; border-radius: 18px 18px 18px 5px !important; padding: 12px 14px !important; color: var(--ink); }
+  #talkView .tk-b .de { display: block; margin-top: 5px; font-size: .8rem; color: var(--k-muted, #5d6b85); }
+  #talkView .tk-b.m .de { color: rgba(255,255,255,.88) !important; }
+  #talkView .tk-panel { border-top: 0 !important; margin-top: 18px !important; padding-top: 0 !important; }
+  #talkView .tk-lbl { color: var(--k-orange, #ea580c) !important; margin: 0 0 6px !important; }
+  #talkView .tk-task { margin: 0 0 16px !important; font-size: 1.05rem; line-height: 1.4; font-weight: 700; color: var(--ink); }
+  #talkView .tk-actions { display: grid !important; grid-template-columns: 1fr 1fr; gap: 10px !important; }
+  #talkView .tk-actions .tk-mic { grid-column: 1 / -1; width: 100%; padding: 15px !important; border-radius: 16px !important; }
+  #talkView .tk-actions .tk-sec { width: 100%; padding: 12px !important; border: 0 !important; border-radius: 14px !important; background: color-mix(in srgb, var(--ink) 6%, var(--k-card, #fff)) !important; color: var(--ink) !important; font-weight: 600; box-shadow: none !important; }
+  #talkView details { margin-top: 14px; }
+  #talkView details summary { color: var(--k-muted, #5d6b85); font-size: .85rem; cursor: pointer; }
 </style>
 <script>
 (function () {
@@ -4429,8 +4476,8 @@
         b.innerHTML = ""; b.setAttribute("data-r", "1");
         b.appendChild(el("span", "mi")); b.appendChild(el("span", "tt", title.trim()));
         var n = parseInt(b.getAttribute("data-n") || "0", 10) || 0; if (m && n < 1) n = 1;
-        var pcs = (n > 0 ? n + "×" : "") + (m ? (n > 0 ? " · " : "") + m[1] + " %" : "");
-        if (pcs) b.appendChild(el("span", "pc", pcs));
+        var pcs = n + "×" + (m ? " · " + m[1] + " %" : "");
+        var pe = el("span", "pc" + (n === 0 ? " zero" : ""), pcs); b.appendChild(pe);
       });
       var pv = g.previousElementSibling, gh = null, bar = null;
       if (pv && pv.classList.contains("tk-gb")) { bar = pv; gh = pv.previousElementSibling; }
@@ -4450,10 +4497,12 @@
 
   // Streak an den Kopf der Seite, Ciao-Sprechblase darunter; Hoehe des orangen Bandes folgt
   function moveStreak() {
-    var w = document.querySelector(".wrap"), sb = w && w.querySelector(".streakbar"), h = w && w.querySelector("h1");
-    if (sb && h && sb.nextElementSibling !== h) w.insertBefore(sb, h);
-    var hh = document.querySelector(".wrap > h1");
-    if (hh) document.documentElement.style.setProperty("--band", Math.round(hh.getBoundingClientRect().bottom + window.scrollY + 20) + "px");
+    try {
+      var w = document.querySelector(".wrap"), sb = w && w.querySelector(".streakbar"), h = w && w.querySelector("h1");
+      var top = h && (h.parentNode === w ? h : h.closest("header") || h);
+      if (sb && top && top.parentNode === w && sb.nextElementSibling !== top) w.insertBefore(sb, top);
+      if (h) document.documentElement.style.setProperty("--band", Math.round(h.getBoundingClientRect().bottom + window.scrollY + 34) + "px");
+    } catch (e) {}
   }
   moveStreak();
   window.addEventListener("resize", moveStreak); window.addEventListener("load", moveStreak);
