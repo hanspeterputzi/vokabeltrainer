@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-plural";
-  const APP_VERSION = "2026-10-24-h"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-j"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4337,7 +4337,7 @@
   .wrap h1 { margin-top: 16px !important; margin-bottom: 54px !important; }
 
   /* ===== Palette: Weiss, Orange, Schwarz. Orange = Aktion/Fortschritt, Schwarz = erledigt/aktiver Reiter ===== */
-  :root { --accent: #ea580c; --accent-hover: #c2410c; --k-blue: #ea580c; --correct: #16181d; --correct-bg: #eceef1; --ink: #16181d; --on-ink: #ffffff; --text: #16181d;
+  :root { --accent: #ea580c; --accent-hover: #c2410c; --k-blue: #ea580c; --blue: #ea580c; --correct: #16181d; --correct-bg: #eceef1; --ink: #16181d; --on-ink: #ffffff; --text: #16181d;
     --bg: #f3f3f4; --page-bg: #f8f8f9; --card-bg: #ffffff; --border: #e7e7e9; --muted: #6a6e78; }
   @media (prefers-color-scheme: dark) {
     :root { --accent: #f26a1b; --accent-hover: #ff8a4c; --k-blue: #f26a1b; --correct: #f2f2f3; --correct-bg: #2a2d34; --ink: #f2f2f3; --on-ink: #16181d; --text: #edeef0;
@@ -4349,7 +4349,7 @@
   h1 { color: var(--ink, #16181d) !important; }
   .gb i, .pbar i, .ls-bar i, #lessonView .ls-bar i { background: var(--k-orange, #ea580c) !important; }
   input[type="text"]:focus { box-shadow: 0 0 0 4px rgba(234,88,12,.18) !important; }
-  #checkBtn, #conjCheckBtn, .ls-btn.pri, #talkView .tk-mic, #lessonView .ls-btn.pri, #lessonView .ls-row .go { background: #ea580c !important; box-shadow: 0 8px 18px rgba(234,88,12,.28) !important; color: #fff !important; }
+  #checkBtn, #gCheckBtn, #conjCheckBtn, .ls-btn.pri, #talkView .tk-mic, #lessonView .ls-btn.pri, #lessonView .ls-row .go { background: #ea580c !important; box-shadow: 0 8px 18px rgba(234,88,12,.28) !important; color: #fff !important; }
   #micBtn { color: var(--k-orange, #ea580c) !important; }
   /* aktiver Reiter und erledigte Eintraege: Schwarz */
   .tabs .tab-btn.active, .tabs #tabDict.active { background: var(--ink) !important; color: var(--on-ink) !important; box-shadow: 0 6px 14px rgba(0,0,0,.25) !important; }
@@ -4398,16 +4398,30 @@
   .tabs #tabVocab.active, .tabs #tabGrammar.active, .tabs #tabLessons.active, .tabs #tabTalk.active, .tabs #tabDict.active { background: var(--ink) !important; color: var(--on-ink) !important; box-shadow: 0 6px 14px rgba(0,0,0,.25) !important; }
 
   /* Wortkarte Vokabeln: Wort ohne Kasten, nur zwischen zwei feinen Linien */
-  #quizWord, #prompt, #conjVerb { background: none !important; box-shadow: none !important; border-radius: 0 !important; min-height: 0 !important; display: block !important;
+  #quizWord, #prompt, #conjVerb, #gQuestion { background: none !important; box-shadow: none !important; border-radius: 0 !important; min-height: 0 !important; display: block !important;
     border-top: 1px solid var(--k-line, #e7e7e9); border-bottom: 1px solid var(--k-line, #e7e7e9); padding: 20px 0 !important; margin: 6px 0 18px !important;
     font-size: 1.6rem !important; font-weight: 700 !important; color: var(--ink) !important; text-align: center; }
-  #quizWord::after, #prompt::after, #conjVerb::after { display: none !important; }
+  #quizWord::after, #prompt::after, #conjVerb::after, #gQuestion::after { display: none !important; }
   .swipe-hint { display: none !important; }
 
   /* DeepL-Knoepfe im Woerterbuch */
   #dictDeepl { display: none; gap: 8px; margin-top: 8px; }
   #dictDeepl.on { display: flex; }
   #dictDeepl button { flex: 1; padding: 8px 6px; border: 0; border-radius: 12px; background: color-mix(in srgb, var(--k-orange, #ea580c) 14%, var(--k-card, #fff)); color: var(--k-orange, #ea580c); font-size: .8rem; font-weight: 700; box-shadow: none; }
+
+  /* Pruefkasten, Pruefwort und Knoepfe bei Vokabeln und Grammatik gleich */
+  #answerInput, #gAnswer { height: 48px; font-size: 1rem !important; font-weight: 500 !important; padding: 0 14px !important; border: 1.5px solid var(--k-line, #e7e7e9) !important; border-radius: 14px !important; }
+  #checkBtn, #gCheckBtn { flex: 1 1 100% !important; width: 100%; height: 48px; padding: 0 14px !important; font-size: 1rem !important; font-weight: 700 !important; border-radius: 14px !important; }
+  #showBtn, #nextBtn, #gNextBtn { height: 46px; padding: 0 8px !important; font-size: .88rem !important; font-weight: 500 !important; border-radius: 14px !important; white-space: nowrap; }
+  #showBtn, #nextBtn { flex: 1 1 calc(50% - 4px) !important; }
+  #gNextBtn { flex: 1 1 100% !important; width: 100%; }
+  #gQuestion, #quizWord { margin-top: 6px !important; }
+
+  /* Vokabeln: alles auf der Startseite ohne Scrollen */
+  body.vfit .wrap { padding-bottom: 0 !important; }
+  body.vfit #vocabView > .card:last-of-type { margin-bottom: 0 !important; }
+  #vocabView > .card:first-of-type > h2 { display: none !important; }
+  #vocabView > .card:first-of-type { padding: 14px 16px !important; }
 </style>
 <script>
 (function () {
@@ -4569,7 +4583,17 @@
     var gv = document.getElementById("grammarView"), ex = gv && Array.prototype.filter.call(gv.children, function (c) { return c.classList.contains("explain"); })[0];
     if (gv && ex && gv.lastElementChild !== ex) gv.appendChild(ex);
   }
-  function init() { wire("quizWord", "showBtn", "nextBtn"); wire("conjVerb", "conjShowBtn", "conjNextBtn"); stickySearch(); dictExtras(); tabExtras(); }
+
+  // Wortliste entfernen (die Woerter selbst bleiben unveraendert gespeichert); Vokabeln-Startseite ohne Scrollen
+  function trimVocab() {
+    var wl = document.getElementById("wordList"), c = wl && wl.closest(".card"); if (c) c.style.display = "none";
+    var md = document.getElementById("manageDetails"); if (md) md.style.display = "none";
+  }
+  function fitFlag() {
+    var v = document.getElementById("vocabView");
+    document.body.classList.toggle("vfit", !!v && v.style.display !== "none");
+  }
+  function init() { wire("quizWord", "showBtn", "nextBtn"); wire("conjVerb", "conjShowBtn", "conjNextBtn"); stickySearch(); dictExtras(); tabExtras(); trimVocab(); fitFlag(); var tb = document.querySelector(".tabs"); if (tb) tb.addEventListener("click", function () { setTimeout(fitFlag, 60); }); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
 </script>
