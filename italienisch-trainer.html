@@ -1047,6 +1047,7 @@
       li.appendChild(delBtn);
       wordList.appendChild(li);
     });
+    if (window.italoLinkWordList) window.italoLinkWordList();
   }
 
   function escapeHtml(str) {
@@ -2391,13 +2392,19 @@
   function showTab(name) {
     const g = name === "grammar";
     const t = name === "talk";
-    vocabViewEl.style.display = (g || t) ? "none" : "";
+    const d = name === "dict" && !!window.italoDict;
+    vocabViewEl.style.display = (g || t || d) ? "none" : "";
+    if (window.italoDict) {
+      window.italoDict.view.style.display = d ? "" : "none";
+      window.italoDict.btn.classList.toggle("active", d);
+      if (d) window.italoDict.show();
+    }
     gEl.view.style.display = g ? "" : "none";
     talkUI.view.style.display = t ? "" : "none";
-    tabVocab.classList.toggle("active", !g && !t);
+    tabVocab.classList.toggle("active", !g && !t && !d);
     tabGrammar.classList.toggle("active", g);
     talkUI.btn.classList.toggle("active", t);
-    lsSet(TAB_KEY, t ? "talk" : g ? "grammar" : "vocab");
+    lsSet(TAB_KEY, t ? "talk" : g ? "grammar" : d ? "dict" : "vocab");
     if (g && !gCurrent) gNext();
     if (t) talkUI.onShow();
   }
@@ -2647,7 +2654,7 @@
       if (idx && idxSize === words.length) return;
       idx = {}; idxSize = words.length;
       words.forEach(w => {
-        const entry = { it: w.it, de: w.de, note: "" };
+        const entry = { it: w.it, de: w.de, note: "", cat: w.cat };
         String(w.it).split(/\s*\/\s*|\s+–\s+/).forEach(v => {
           const k = norm(v);
           add(k, entry);
@@ -2658,7 +2665,7 @@
       CONJ_VERBS.forEach(v => {
         v.f.forEach((f, i) => {
           if (f === null) return;
-          const entry = { it: f, de: v.de, note: "Form von " + v.inf };
+          const entry = { it: f, de: v.de, note: "Form von " + v.inf, cat: "Verbform" };
           f.split(/\s*\/\s*/).forEach(x => {
             const k = norm(x);
             add(k, entry);
@@ -2679,32 +2686,32 @@
         if (k.length > suf.length + 1 && k.endsWith(suf)) {
           for (const r of reps) {
             const base = k.slice(0, -suf.length) + r;
-            if (idx[base]) return idx[base].map(h => ({ it: h.it, de: h.de, note: h.note || ("Mehrzahl/Form von " + base) }));
+            if (idx[base]) return idx[base].map(h => ({ cat: h.cat, it: h.it, de: h.de, note: h.note || ("Mehrzahl/Form von " + base) }));
           }
         }
       }
       if (ARTINFO[k]) return [{ it: k, de: ARTINFO[k], note: "Artikel" }];
-      if (idx["un " + k]) return idx["un " + k].map(h => ({ it: h.it, de: h.de, note: h.note || "" }));
-      if (idx["un " + k + "'"]) return idx["un " + k + "'"].map(h => ({ it: h.it, de: h.de, note: h.note || "" }));
+      if (idx["un " + k]) return idx["un " + k].map(h => ({ cat: h.cat, it: h.it, de: h.de, note: h.note || "" }));
+      if (idx["un " + k + "'"]) return idx["un " + k + "'"].map(h => ({ cat: h.cat, it: h.it, de: h.de, note: h.note || "" }));
       if (k.indexOf("'") > 0) {
         const parts = k.split("'");
-        if (idx[parts[0] + "e"]) return idx[parts[0] + "e"].map(h => ({ it: h.it, de: h.de, note: h.note || "" }));
-        if (parts[1] && idx[parts[1]]) return idx[parts[1]].map(h => ({ it: h.it, de: h.de, note: parts[0] + "' = " + (parts[0] === "d" ? "di" : parts[0]) }));
+        if (idx[parts[0] + "e"]) return idx[parts[0] + "e"].map(h => ({ cat: h.cat, it: h.it, de: h.de, note: h.note || "" }));
+        if (parts[1] && idx[parts[1]]) return idx[parts[1]].map(h => ({ cat: h.cat, it: h.it, de: h.de, note: parts[0] + "' = " + (parts[0] === "d" ? "di" : parts[0]) }));
       }
       // Partizip (-ato/-uto/-ito) und Infinitiv + Pronomen (provarla, aiutarla)
       const PART = [["ato", "are", "Partizip von "], ["uto", "ere", "Partizip von "], ["ito", "ire", "Partizip von "]];
       const pm = k.match(/^(.{3,})(at|ut|it)[oaie]$/);
       if (pm) {
         const base = pm[1] + ({ at: "are", ut: "ere", it: "ire" })[pm[2]];
-        if (idx[base]) return idx[base].map(h => ({ it: h.it, de: h.de, note: "Partizip von " + base }));
+        if (idx[base]) return idx[base].map(h => ({ cat: h.cat, it: h.it, de: h.de, note: "Partizip von " + base }));
       }
       if (/(er|ir)à$/.test(k)) {
         for (const base of [k.slice(0, -1) + "e", k.slice(0, -3) + "are"]) {
-          if (idx[base]) return idx[base].map(h => ({ it: h.it, de: h.de, note: "Futur von " + base }));
+          if (idx[base]) return idx[base].map(h => ({ cat: h.cat, it: h.it, de: h.de, note: "Futur von " + base }));
         }
       }
       const m = k.match(/^(.*[aei]r)(la|lo|li|le|mi|ti|ci|vi|ne)$/);
-      if (m && idx[m[1] + "e"]) return idx[m[1] + "e"].map(h => ({ it: h.it, de: h.de, note: "Infinitiv + Pronomen (" + m[1] + "e)" }));
+      if (m && idx[m[1] + "e"]) return idx[m[1] + "e"].map(h => ({ cat: h.cat, it: h.it, de: h.de, note: "Infinitiv + Pronomen (" + m[1] + "e)" }));
       return null;
     }
     const WORD = /[A-Za-zÀ-ÿ]+(?:'[A-Za-zÀ-ÿ]+)?/g;
@@ -2717,7 +2724,7 @@
       const nodes = [];
       let n;
       while ((n = walker.nextNode())) {
-        if (n.parentNode.closest && n.parentNode.closest(".lw")) continue;
+        if (n.parentNode.closest && n.parentNode.closest(".lw, button, input, textarea, select, option, script, style, #lwBar, #dictView, #gSearch")) continue;
         nodes.push(n);
       }
       nodes.forEach(t => {
@@ -2760,7 +2767,8 @@
     document.body.appendChild(bar);
     function line(h) {
       return "<span class='it'>" + escapeHtml(h.it) + "</span> = " + escapeHtml(h.de) +
-        (h.note ? " <span class='note'>(" + escapeHtml(h.note) + ")</span>" : "");
+        (h.note ? " <span class='note'>(" + escapeHtml(h.note) + ")</span>" : "") +
+        (h.cat ? " <span class='note'>· " + escapeHtml(h.cat) + "</span>" : "");
     }
     function show(tok) {
       const hits = lookupWord(tok) || [];
@@ -2808,6 +2816,119 @@
     [gEl.explainBody, gEl.question, gEl.hint, gEl.feedback, gEl.expl].forEach(el => {
       obs.observe(el, { childList: true, characterData: true, subtree: true });
     });
+
+    // --- Link-Hilfen: Wortliste, Sprechen, Loesungs-Feedback ---
+    window.italoLinkWordList = function () {
+      document.querySelectorAll("#wordList .pair > div > span:nth-child(3)").forEach(linkNode);
+    };
+    window.italoLinkWordList();
+    (function () {
+      let busy2 = false;
+      const obs2 = new MutationObserver(recs => {
+        if (busy2) return;
+        busy2 = true;
+        const targets = new Set();
+        recs.forEach(r => { const el = r.target.nodeType === 1 ? r.target : r.target.parentNode; if (el) targets.add(el); });
+        targets.forEach(el => { if (el.isConnected) linkNode(el); });
+        obs2.takeRecords();
+        busy2 = false;
+      });
+      [talkUI.view, document.getElementById("feedback"), document.getElementById("conjFeedback")].forEach(el => {
+        if (el) obs2.observe(el, { childList: true, characterData: true, subtree: true });
+      });
+      linkNode(talkUI.view);
+    })();
+
+    // --- Woerterbuch: alle erfassten Woerter, Suche in beide Richtungen ---
+    (function () {
+      const fold = s => String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ß/g, "ss").replace(/[’‘`]/g, "'");
+      const view = document.createElement("div");
+      view.id = "dictView";
+      view.style.display = "none";
+      view.innerHTML =
+        "<div class='card'><h2>Wörterbuch</h2>" +
+        "<input type='text' id='dictIn' placeholder='Italienisch oder Deutsch suchen …' autocomplete='off' autocapitalize='off' spellcheck='false'>" +
+        "<div class='category-bar' id='dictCats' style='margin-top:10px;'></div></div>" +
+        "<div class='card'><h2><span id='dictTitle'>Alle Wörter</span> (<span id='dictCount'>0</span>)</h2><div id='dictList'></div></div>";
+      document.querySelector(".wrap").appendChild(view);
+      const st2 = document.createElement("style");
+      st2.textContent =
+        "#dictIn{width:100%;font-size:16px;padding:10px 12px;border:1px solid var(--border,var(--line,#ccc));border-radius:8px;background:var(--bg,#f5f7fa);color:var(--text,var(--ink,#1b2430))}" +
+        "#dictList .dw{padding:9px 0;border-bottom:1px solid var(--border,var(--line,#e3e6ea))}" +
+        "#dictList .dw:last-child{border-bottom:none}" +
+        "#dictList .dit{font-weight:700}#dictList .dde{margin-left:4px}" +
+        "#dictList .dtag{display:inline-block;margin-left:6px;font-size:12px;padding:1px 7px;border-radius:9px;background:var(--bg,#eef1f5);color:var(--muted,var(--ink-muted,#666))}" +
+        "#dictList .dnote{display:block;font-size:13px;color:var(--muted,var(--ink-muted,#666))}" +
+        "#dictList details{margin-top:4px;font-size:14px}#dictList summary{cursor:pointer;color:var(--accent,var(--orange,#ea580c))}" +
+        "#dictList .dform{padding:2px 0}#dictList .dform b{display:inline-block;min-width:52px;font-weight:600;color:var(--muted,var(--ink-muted,#666))}";
+      document.head.appendChild(st2);
+      const btn = document.createElement("button");
+      btn.type = "button"; btn.className = "tab-btn"; btn.id = "tabDict"; btn.textContent = "Wörterbuch";
+      const tabsEl = document.querySelector(".tabs");
+      const talkBtn = document.getElementById("tabTalk");
+      tabsEl.insertBefore(btn, talkBtn ? talkBtn : null);
+      const inp = view.querySelector("#dictIn"), catsEl = view.querySelector("#dictCats"), listEl = view.querySelector("#dictList");
+      let dcat = "Alle";
+      const stripArt = s => s.replace(/^(?:(?:il|lo|la|i|gli|le|un|uno|una)\s+|l'|un')/i, "");
+      const sortKey = w => fold(stripArt(String(w.it)));
+      function renderCats() {
+        catsEl.innerHTML = "";
+        ["Alle"].concat(CATEGORIES).forEach(name => {
+          const n = name === "Alle" ? words.length : words.filter(w => w.cat === name).length;
+          const b = document.createElement("button");
+          b.type = "button"; b.className = "cat-btn" + (name === dcat ? " active" : "");
+          b.textContent = name + " (" + n + ")";
+          b.addEventListener("click", () => { dcat = name; renderCats(); render(); });
+          catsEl.appendChild(b);
+        });
+      }
+      function formsHtml(w) {
+        const v = CONJ_VERBS.find(x => x.inf === w.it);
+        if (!v) return "";
+        const rows = v.f.map((f, i) => f === null ? "" : "<div class='dform'><b>" + CONJ_PRON[i] + "</b> " + escapeHtml(f) + "</div>").join("");
+        return "<details><summary>Formen (Präsens)</summary>" + rows + "</details>";
+      }
+      function entryHtml(w, note) {
+        return "<div class='dw'><span class='dit'>" + escapeHtml(w.it) + "</span> = <span class='dde'>" + escapeHtml(w.de) + "</span>" +
+          (w.cat ? "<span class='dtag'>" + escapeHtml(w.cat) + "</span>" : "") +
+          (note ? "<span class='dnote'>" + escapeHtml(note) + "</span>" : "") + formsHtml(w) + "</div>";
+      }
+      function render() {
+        const q = fold(inp.value.trim());
+        let out = [];
+        const base = words.filter(w => dcat === "Alle" || w.cat === dcat);
+        if (!q) {
+          out = base.slice().sort((a, b) => sortKey(a).localeCompare(sortKey(b), "it")).map(w => ({ w, note: "" }));
+          view.querySelector("#dictTitle").textContent = dcat === "Alle" ? "Alle Wörter" : dcat;
+        } else {
+          view.querySelector("#dictTitle").textContent = "Treffer";
+          const scored = [];
+          base.forEach(w => {
+            const it = sortKey(w), de = fold(w.de), full = fold(w.it);
+            let s = 99;
+            if (it === q || full === q || de === q) s = 0;
+            else if (it.indexOf(q) === 0 || de.indexOf(q) === 0) s = 1;
+            else if (full.indexOf(q) !== -1 || de.indexOf(q) !== -1) s = 2;
+            if (s < 99) scored.push({ w, s, note: "" });
+          });
+          scored.sort((a, b) => a.s - b.s || sortKey(a.w).localeCompare(sortKey(b.w), "it"));
+          out = scored;
+          // gebeugte Formen (vengo, bambini, provarla ...) auf Grundform zurueckfuehren
+          const have = new Set(out.map(o => o.w.it));
+          ((window.italoLookupWord && window.italoLookupWord(inp.value.trim())) || []).forEach(h => {
+            const m = (h.note || "").match(/ von (\S+)$/);
+            const baseIt = m ? m[1] : h.it;
+            const w = words.find(x => x.it === baseIt || x.it === h.it);
+            if (w && !have.has(w.it) && (dcat === "Alle" || w.cat === dcat)) { have.add(w.it); out.unshift({ w, note: inp.value.trim() + ": " + (h.note || "Form") }); }
+          });
+        }
+        view.querySelector("#dictCount").textContent = out.length;
+        listEl.innerHTML = out.length ? out.map(o => entryHtml(o.w, o.note)).join("") : "<div class='dnote'>Nichts gefunden. Das Wort ist noch nicht in deiner Vokabelliste.</div>";
+      }
+      inp.addEventListener("input", render);
+      btn.addEventListener("click", () => showTab("dict"));
+      window.italoDict = { view, btn, show: function () { renderCats(); render(); } };
+    })();
   })();
 
   gRenderTopics();
@@ -2833,6 +2954,7 @@
     link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
     alert: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
     cycle: '<path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>',
+    search: '<circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>',
     mic: '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v4"/><path d="M8 23h8"/>',
     layers: '<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>',
     users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
@@ -2887,7 +3009,7 @@
   P.vol = '<path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>';
   var mb = document.getElementById("micBtn");
     var sp = document.getElementById("speakBtn");
-    var TI = { "Vokabeln": "book", "Grammatik": "cap", "Sprechen": "mic" };
+    var TI = { "Vokabeln": "book", "Grammatik": "cap", "Wörterbuch": "search", "Sprechen": "mic" };
   $$(".tab-btn").forEach(function (b) {
     if (b.querySelector(".ti")) return;
     var t = b.textContent.trim();
