@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-uno";
-  const APP_VERSION = "2026-10-21-v"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-21-w"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -2978,7 +2978,7 @@
       const inp = view.querySelector("#dictIn"), catsEl = view.querySelector("#dictCats"), listEl = view.querySelector("#dictList");
       let dcat = "Alle";
       const stripArt = s => s.replace(/^(?:(?:il|lo|la|i|gli|le|un|uno|una)\s+|l'|un')/i, "");
-      const sortKey = w => fold(stripArt(String(w.it)));
+      const sortKey = w => fold(stripArt(String(w.it).replace(/^\s*\([^)]*\)\s*/, "").replace(/^[^A-Za-zÀ-ÿ]+/, "")));
       function renderCats() {
         catsEl.innerHTML = "";
         ["Alle"].concat(CATEGORIES).forEach(name => {
