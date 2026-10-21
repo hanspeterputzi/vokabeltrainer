@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-n";
-  const APP_VERSION = "2026-10-23-s"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-t"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4100,6 +4100,13 @@
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.3-4.3'/%3E%3C/svg%3E") center / contain no-repeat; }
   .tabs #tabDict::after { content: "A–Z"; position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; font-size: 11px; font-weight: 600; letter-spacing: 0; }
   @media (max-width: 480px) { .tabs .tab-btn { font-size: min(.78rem, 3.4vw) !important; } .tabs #tabDict { font-size: 0 !important; } }
+  /* Streak-Karte kompakter */
+  .streakbar { padding: 10px 4px 10px !important; border-radius: 20px !important; margin-bottom: 12px !important; }
+  .streakbar .sb b { font-size: 1.5rem !important; }
+  .streakbar .sb span { margin-top: 3px !important; font-size: .58rem !important; }
+  .streakbar .goal { margin: 8px 14px 0 !important; padding-top: 8px !important; }
+  .streakbar .gl b { font-size: .8rem !important; }
+  .streakbar .gb { height: 6px !important; margin-top: 6px !important; }
 </style>
 <script>
 (function () {
