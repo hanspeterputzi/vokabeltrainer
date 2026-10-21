@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-n";
-  const APP_VERSION = "2026-10-23-ze"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-zf"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4242,25 +4242,6 @@
     #checkBtn, #conjCheckBtn, .ls-btn.pri { background: #3b66dc !important; }
   }
 
-  /* Kategorie-Farben: sechs gedaempfte Toene, nur auf Icon-Feld, aktiver Karte und Badge */
-  [data-h] { --ch: #ea580c; }
-  [data-h="b"] { --ch: #2f64d8; } [data-h="t"] { --ch: #0f8a7e; } [data-h="v"] { --ch: #7a4fd6; }
-  [data-h="g"] { --ch: #b7791f; } [data-h="s"] { --ch: #52627d; }
-  @media (prefers-color-scheme: dark) {
-    [data-h] { --ch: #ff8a4c; }
-    [data-h="b"] { --ch: #7aa2ff; } [data-h="t"] { --ch: #4fd1c0; } [data-h="v"] { --ch: #b08cff; }
-    [data-h="g"] { --ch: #f0b84a; } [data-h="s"] { --ch: #9db0cf; }
-  }
-  .cat-btn[data-h] .ico, .cat-chip[data-h] .ico { background: color-mix(in srgb, var(--ch) 15%, var(--k-card, #fff)) !important; color: var(--ch) !important; }
-  .cat-btn[data-h].active, .cat-chip[data-h].active { background: linear-gradient(145deg, var(--ch), color-mix(in srgb, var(--ch) 78%, #fff)) !important; border-color: var(--ch) !important;
-    box-shadow: 0 6px 16px color-mix(in srgb, var(--ch) 38%, transparent) !important; color: #fff !important; }
-  .cat-btn[data-h].active .ico, .cat-chip[data-h].active .ico { background: rgba(255,255,255,.24) !important; color: #fff !important; }
-  .cat-btn[data-h].active .nm, .cat-chip[data-h].active .nm { color: #fff !important; }
-  .cat-btn[data-h]:not(.active), .cat-chip[data-h]:not(.active) { box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--ch) 55%, transparent) !important; }
-  @media (prefers-color-scheme: dark) {
-    .cat-btn[data-h].active, .cat-chip[data-h].active { background: linear-gradient(145deg, color-mix(in srgb, var(--ch) 58%, #0c1220), color-mix(in srgb, var(--ch) 42%, #0c1220)) !important; }
-  }
-  .cat-badge[data-h] { background: color-mix(in srgb, var(--ch) 14%, var(--k-card, #fff)) !important; color: var(--ch) !important; }
 </style>
 <script>
 (function () {
@@ -4291,19 +4272,6 @@
     w.parentNode.insertBefore(hint, w.nextSibling);
   }
 
-  // Kategorie-Farbton je Name (Alle bleibt orange)
-  var HUE = { "Nomen": "b", "Hauptverben": "t", "Übrige Verben": "t", "Konjugation Hauptverben": "t", "Konjugation Übrige Verben": "t", "Konjugation unregelmässige Verben": "t",
-    "Adjektive": "v", "Adverbien": "v", "ABC": "g", "Zahlen": "g", "Präpositionen": "s", "Pronomen": "s", "Konjunktionen": "s" };
-  function tagHues() {
-    Array.prototype.forEach.call(document.querySelectorAll(".cat-btn, .cat-chip, .cat-badge"), function (e) {
-      var n = e.classList.contains("cat-badge") ? e : e.querySelector(".nm");
-      var name = (n ? n.textContent : e.textContent).trim();
-      var h = HUE[name] || "o";
-      if (e.getAttribute("data-h") !== h) e.setAttribute("data-h", h);
-    });
-  }
-  tagHues(); var hq = 0;
-  new MutationObserver(function () { clearTimeout(hq); hq = setTimeout(tagHues, 60); }).observe(document.body, { childList: true, subtree: true });
   function init() { wire("quizWord", "showBtn", "nextBtn"); wire("conjVerb", "conjShowBtn", "conjNextBtn"); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
