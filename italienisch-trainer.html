@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-uno";
-  const APP_VERSION = "2026-10-21-u"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-21-v"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3298,6 +3298,7 @@
   #lessonView .ls-foot { margin-top: 16px; }
   #lessonView .ls-cnt { margin-left: auto; flex: 0 0 auto; font-weight: 800; font-size: .85rem; padding: 4px 11px; border-radius: 999px; background: var(--k-blue, #2563eb); color: #fff; }
   #lessonView .ls-times { font-weight: 700; color: var(--k-blue, #2563eb); margin: 0 0 14px; }
+  #lessonView .ls-rep { display: inline-block; font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px; background: color-mix(in srgb, var(--k-orange, #ea580c) 14%, var(--k-card, #fff)); color: var(--k-orange, #ea580c); }
   #lessonView .ls-gram { margin: 0 0 16px; }
   #lessonView .ls-gt { font-weight: 700; margin: 8px 0 6px; }
   #lessonView .ls-gp { margin: 0 0 6px; font-size: .92rem; line-height: 1.45; color: var(--k-text, #111); }
@@ -3346,6 +3347,9 @@
       ],
       tasks: [
         C("caffè – Wie wird das «c» gesprochen?", "hart", ["weich"]),
+        C("colore – Wie wird das «c» gesprochen?", "hart", ["weich"]),
+        C("ciao – Wie wird das «c» gesprochen?", "weich", ["hart"]),
+        C("gelato – Wie wird das «g» gesprochen?", "weich", ["hart"]),
         C("arancia – Wie wird das «c» gesprochen?", "weich", ["hart"]),
         C("succo – Wie wird das «c» gesprochen?", "hart", ["weich"]),
         C("cena – Wie wird das «c» gesprochen?", "weich", ["hart"]),
@@ -3378,6 +3382,9 @@
       tasks: [
         C("Woran erkennt man im Italienischen eine Frage (ohne Fragewort)?", "An der Melodie", ["An der Wortstellung", "An einer besonderen Endung", "An einem Hilfswort"]),
         C("Muss man im Italienischen für eine Frage die Wörter umstellen?", "Nein", ["Ja"]),
+        C("Was passiert mit der Stimme bei einer Frage?", "Sie geht am Ende hoch", ["Sie geht am Ende runter", "Sie bleibt gleich"]),
+        Y("Mach aus der Aussage eine Frage: «Sei di Zurigo.»", "Sei di Zurigo?"),
+        Y("Mach aus der Frage eine Aussage: «Parli italiano?»", "Parli italiano."),
         Y("Mach aus der Aussage eine Frage: «Il figlio di Rita ha otto anni.»", "Il figlio di Rita ha otto anni?"),
         Y("Mach aus der Frage eine Aussage: «La figlia di Paolo ha dodici anni?»", "La figlia di Paolo ha dodici anni."),
         C("Wie fragst du «Wie alt bist du?»", "Quanti anni hai?", ["Quanti anni ha?", "Come ti chiami?", "Quanto costa?"]),
@@ -3408,6 +3415,9 @@
       ],
       tasks: [
         C("«___ cuoco» – welcher Artikel?", "il", ["la", "lo", "l'"]),
+        C("«___ bambina» – welcher Artikel?", "la", ["il", "lo", "l'"]),
+        C("«___ sport» – welcher Artikel?", "lo", ["il", "la", "l'"]),
+        Y("Weibliche Form von «il bambino»?", "la bambina"),
         C("«___ cuoca» – welcher Artikel?", "la", ["il", "lo", "l'"]),
         C("«___ studente» – welcher Artikel?", "lo", ["il", "la", "l'"]),
         C("«___ cameriere» – welcher Artikel?", "il", ["la", "lo", "l'"]),
@@ -3439,6 +3449,9 @@
       ],
       tasks: [
         Y("il giorno → ?  (Plural mit Artikel)", "i giorni"),
+        Y("il negozio → ?", "i negozi"),
+        Y("la casa → ?", "le case"),
+        Y("l'amico → ?", "gli amici"),
         Y("il mese → ?", "i mesi"),
         Y("la settimana → ?", "le settimane"),
         Y("la sera → ?", "le sere"),
@@ -3603,7 +3616,7 @@
     if (ni === -1) {
       card.appendChild(el("p", "ls-sub", "Alle Lektionen sind geschafft. Mit dem nächsten Update kommen neue dazu. Du kannst jede Lektion beliebig wiederholen."));
     } else {
-      card.appendChild(el("p", "ls-sub", "Eine Lektion dauert etwa fünf Minuten. Wenn du eine abschliesst, kommt die nächste dran."));
+      card.appendChild(el("p", "ls-sub", "Eine Lektion dauert etwa zehn Minuten, mit Wiederholungen zum Festigen. Wenn du eine abschliesst, kommt die nächste dran."));
       var go = el("button", "ls-btn pri big", "Weiter: " + LESSONS[ni].title); go.type = "button";
       go.addEventListener("click", function () { startLesson(ni); });
       card.appendChild(go);
@@ -3613,7 +3626,7 @@
       var done = isDone(ls.id), cur = i === ni, lock = !done && !cur;
       var n = el("button", "ls-node" + (done ? " done" : cur ? " cur" : " lock")); n.type = "button";
       n.appendChild(el("span", "no", done ? "✓" : String(i + 1)));
-      var tx = el("span"); tx.appendChild(el("span", "tt", ls.title)); tx.appendChild(el("span", "ss", ls.sub + " · " + ls.tasks.length + " Aufgaben"));
+      var tx = el("span"); tx.appendChild(el("span", "tt", ls.title)); tx.appendChild(el("span", "ss", ls.sub + " · ca. 10 Min."));
       n.appendChild(tx);
       var cn = countOf(ls.id);
       if (cn > 0) { var bd = el("span", "ls-cnt", cn + "×"); bd.title = "so oft geübt"; n.appendChild(bd); }
@@ -3656,7 +3669,9 @@
     var go = el("button", "ls-btn pri big", "Los geht's"); go.type = "button";
     go.addEventListener("click", function () {
       unlockAudio();
-      S.queue = S.ls.tasks.slice(); S.total = S.queue.length; S.done = 0; S.firstOk = 0; nextTask();
+      // Runde 1: die Aufgaben der Reihe nach. Runde 2: alle nochmals gemischt (Wiederholung zum Festigen)
+      var round2 = shuffle(S.ls.tasks).map(function (t) { return Object.assign({}, t, { round2: true }); });
+      S.queue = S.ls.tasks.slice().concat(round2); S.total = S.queue.length; S.done = 0; S.firstOk = 0; nextTask();
     });
     card.appendChild(go);
     view.appendChild(card);
@@ -3674,6 +3689,7 @@
     top.appendChild(x); top.appendChild(bar);
     card.appendChild(top);
     var body = el("div"); card.appendChild(body);
+    if (t.round2 || t.retry) body.appendChild(el("span", "ls-rep", t.retry ? "Nochmals" : "Wiederholung"));
     var fb = el("div", "ls-fb"); card.appendChild(fb);
     var foot = el("div", "ls-foot"); card.appendChild(foot);
     var check = el("button", "ls-btn pri big", "Prüfen"); check.type = "button"; check.disabled = true;
@@ -3683,7 +3699,7 @@
     var answered = false;
     function finish(ok, msg, sub, spokenIt) {
       answered = true;
-      if (ok) { S.done++; if (!t.retry) S.firstOk++; fill.style.width = Math.round(100 * S.done / S.total) + "%"; }
+      if (ok) { S.done++; if (!t.retry && !t.round2) S.firstOk++; fill.style.width = Math.round(100 * S.done / S.total) + "%"; }
       else if (t.t !== "pairs") S.queue.push(Object.assign({}, t, { retry: true }));
       fb.className = "ls-fb " + (ok ? "ok" : "no"); fb.textContent = msg;
       if (sub) fb.appendChild(el("small", "", sub));
@@ -3779,7 +3795,7 @@
       grid.appendChild(cols[0]); grid.appendChild(cols[1]); body.appendChild(grid);
       foot.style.display = "none";
       var origFinish = finish;
-      finish = function (ok, msg, sub) { origFinish(ok, msg, sub); if (miss) { S.firstOk -= 1; } foot.style.display = ""; check.disabled = false; };
+      finish = function (ok, msg, sub) { origFinish(ok, msg, sub); if (miss && !t.retry && !t.round2) { S.firstOk -= 1; } foot.style.display = ""; check.disabled = false; };
     }
   }
 
@@ -3827,7 +3843,7 @@
     var card = el("div", "ls-card"); card.style.textAlign = "center";
     card.appendChild(el("h2", "", "Lektion " + (S.i + 1) + " geschafft"));
     card.appendChild(el("div", "ls-big", "Gut gemacht!"));
-    card.appendChild(el("p", "ls-sub", S.firstOk + " von " + S.total + " Aufgaben gleich beim ersten Mal richtig."));
+    card.appendChild(el("p", "ls-sub", S.firstOk + " von " + S.ls.tasks.length + " Aufgaben der ersten Runde gleich beim ersten Mal richtig. Danach hast du alles nochmals wiederholt."));
     card.appendChild(el("div", "ls-times", "Diese Lektion hast du " + times + (times === 1 ? " Mal" : " Mal") + " geübt."));
     var ni = nextIndex();
     if (ni !== -1 && LESSONS[ni].nw) {
