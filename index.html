@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-bestellung";
-  const APP_VERSION = "2026-10-21-j"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-21-k"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3187,6 +3187,9 @@
   #lessonView .ls-fb.no { display: block; background: color-mix(in srgb, var(--k-orange, #ea580c) 13%, var(--k-card, #fff)); color: var(--k-orange, #ea580c); }
   #lessonView .ls-fb small { display: block; font-weight: 500; opacity: .85; margin-top: 3px; }
   #lessonView .ls-foot { margin-top: 16px; }
+  #lessonView .ls-gt { font-weight: 700; margin: 8px 0 6px; }
+  #lessonView .ls-gp { margin: 0 0 6px; font-size: .92rem; line-height: 1.45; color: var(--k-text, #111); }
+  #lessonView .ls-nw { text-align: left; margin-top: 18px; }
   #lessonView .ls-big { font-size: 2rem; font-weight: 800; color: var(--k-blue, #2563eb); margin: 6px 0; }
   .ls-confetti { position: fixed; inset: 0; pointer-events: none; z-index: 300; overflow: hidden; }
   .ls-confetti i { position: absolute; top: -14px; width: 9px; height: 14px; border-radius: 2px; animation: lsfall linear forwards; }
@@ -3227,6 +3230,11 @@
         W("il succo · la mela · la pera · la banana", "Saft · Apfel · Birne · Banane"),
         W("il burro · il miele · la senape · l'olio", "Butter · Honig · Senf · Öl")
       ],
+      grammar: {
+        title: "Der unbestimmte Artikel (ein / eine)",
+        text: ["männlich: un, vor s + Konsonant oder z: uno", "weiblich: una, vor Vokal: un'", "«Vorrei» heisst «ich möchte» und klingt beim Bestellen höflich."],
+        ex: [["un caffè", "ein Kaffee"], ["uno spumante", "ein Sekt"], ["una limonata", "eine Limonade"], ["un'arancia", "eine Orange"]]
+      },
       tasks: [
         C("Was heisst «il succo»?", "Saft", ["Essig", "Senf", "Honig"]),
         C("Was heisst «la mela»?", "Apfel", ["Birne", "Zitrone", "Banane"]),
@@ -3240,6 +3248,7 @@
         O("Ich hätte gern ein Glas Wein, bitte.", "Vorrei un bicchiere di vino, per favore."),
         P([["la verdura", "Gemüse"], ["il frutto", "Frucht"], ["la bevanda", "Getränk"], ["la pera", "Birne"], ["la banana", "Banane"]]),
         C("Welcher Artikel passt: «___ ananas»?", "l'", ["il", "la", "lo"]),
+        C("Welcher Artikel passt: «___ limonata»?", "una", ["un", "uno", "un'"]),
         Y("Übersetze: Die Rechnung, bitte.", "Il conto, per favore.")
       ]
     },
@@ -3255,6 +3264,12 @@
         W("ieri · oggi · domani", "gestern · heute · morgen"),
         W("il giorno · la giornata", "der Tag (Zeiteinheit) · der Tag (Verlauf)")
       ],
+      nw: [["ieri", "gestern"], ["domani", "morgen"], ["il giorno", "der Tag"], ["la giornata", "der Verlauf des Tages"], ["la settimana", "die Woche"], ["il mese", "der Monat"]],
+      grammar: {
+        title: "Wochentage mit und ohne Artikel",
+        text: ["Ohne Artikel: ein bestimmter Tag, martedì = am Dienstag.", "Mit Artikel: jede Woche am gleichen Tag, il martedì = dienstags."],
+        ex: [["Martedì lavoro.", "Am Dienstag arbeite ich."], ["Il martedì lavoro.", "Dienstags arbeite ich."]]
+      },
       tasks: [
         C("Was heisst «ieri»?", "gestern", ["morgen", "heute", "jetzt"]),
         C("Was heisst «domani»?", "morgen", ["gestern", "heute", "später"]),
@@ -3268,6 +3283,7 @@
         L("Buon pomeriggio."),
         Y("Übersetze: Guten Abend (formell, nach 18 Uhr)", "Buona sera.", ["Buonasera."]),
         O("Wir sehen uns morgen.", "Ci vediamo domani."),
+        C("Was bedeutet «Il martedì lavoro.»?", "Dienstags arbeite ich.", ["Am Dienstag arbeite ich (einmal).", "Morgen ist Dienstag.", "Ich arbeite nicht am Dienstag."]),
         C("Wann sagst du «Buona serata»?", "am Abend", ["am Morgen", "am Nachmittag", "in der Nacht"])
       ]
     },
@@ -3283,6 +3299,12 @@
         W("il figlio · la figlia", "der Sohn · die Tochter"),
         W("otto · dodici · venti · trenta · quaranta", "8 · 12 · 20 · 30 · 40")
       ],
+      nw: [["il figlio", "der Sohn"], ["la figlia", "die Tochter"], ["otto", "8"], ["dodici", "12"], ["venti", "20"], ["trenta", "30"], ["quaranta", "40"]],
+      grammar: {
+        title: "Das Alter mit «avere» (haben)",
+        text: ["Im Italienischen hat man Jahre, man ist nicht alt.", "ho · hai · ha (ich · du · er/sie hat)", "abbiamo · avete · hanno (wir · ihr · sie haben)"],
+        ex: [["Ho trenta anni.", "Ich bin dreissig Jahre alt."], ["Quanti anni hai?", "Wie alt bist du?"], ["Il figlio di Rita ha otto anni.", "Der Sohn von Rita ist acht."]]
+      },
       tasks: [
         C("Wie fragst du «Wie alt bist du?»", "Quanti anni hai?", ["Quanti anni ha?", "Come ti chiami?", "Quanto costa?"]),
         C("Was heisst «il figlio»?", "der Sohn", ["die Tochter", "das Kind", "der Bruder"]),
@@ -3297,6 +3319,42 @@
         O("Der Sohn von Rita ist acht Jahre alt.", "Il figlio di Rita ha otto anni."),
         Y("Übersetze: Die Tochter von Paolo ist zwölf Jahre alt.", "La figlia di Paolo ha dodici anni."),
         C("Quanti anni ___ il figlio di Rita?", "ha", ["hai", "ho", "hanno"])
+      ]
+    }
+    ,
+    {
+      id: "beruf", title: "Beruf & Arbeit", sub: "Was machst du beruflich? Berufe m/w",
+      words: [
+        W("Che lavoro fai?", "Was machst du beruflich?"),
+        W("Faccio il cameriere.", "Ich bin Kellner."),
+        W("Lavoro in banca.", "Ich bin Bankangestellter."),
+        W("Dove lavori?", "Wo arbeitest du?"),
+        W("Lavoro in una fabbrica a Milano.", "Ich arbeite in einer Fabrik in Mailand."),
+        W("Buon lavoro!", "Viel Erfolg bei der Arbeit!"),
+        W("il cuoco / la cuoca", "Koch / Köchin"),
+        W("l'infermiere / l'infermiera", "Krankenpfleger / Krankenschwester")
+      ],
+      nw: [["il cameriere", "der Kellner"], ["il cuoco / la cuoca", "Koch / Köchin"], ["l'infermiere / l'infermiera", "Krankenpfleger / Krankenschwester"], ["lo studente / la studentessa", "Student / Studentin"], ["il commesso / la commessa", "Verkäufer / Verkäuferin"], ["la fabbrica", "die Fabrik"]],
+      grammar: {
+        title: "Berufe: männlich und weiblich",
+        text: ["-o wird -a: il cuoco, la cuoca", "-e wird -a: l'infermiere, l'infermiera", "-tore wird -trice: il traduttore, la traduttrice", "-nte wird -ntessa: lo studente, la studentessa", "Manche bleiben gleich: l'insegnante, l'autista, il / la giornalista"],
+        ex: [["Faccio il cuoco.", "Ich bin Koch."], ["Faccio la cuoca.", "Ich bin Köchin."]]
+      },
+      tasks: [
+        C("Was heisst «il cameriere»?", "Kellner", ["Koch", "Lehrer", "Arzt"]),
+        C("Was heisst «il cuoco»?", "Koch", ["Kellner", "Arzt", "Student"]),
+        P([["l'infermiere", "Krankenpfleger"], ["il commesso", "Verkäufer"], ["l'insegnante", "Lehrer / Lehrerin"], ["il medico", "Arzt"], ["l'autista", "Chauffeur"]]),
+        C("Wie fragst du «Was machst du beruflich?»", "Che lavoro fai?", ["Dove lavori?", "Come ti chiami?", "Quanti anni hai?"]),
+        C("Die Köchin heisst:", "la cuoca", ["il cuoco", "la cuoco", "lo cuoca"]),
+        Y("Übersetze: Wo arbeitest du?", "Dove lavori?"),
+        O("Ich arbeite in einer Fabrik in Mailand.", "Lavoro in una fabbrica a Milano."),
+        C("Die Studentin heisst:", "la studentessa", ["lo studente", "la studente", "il studentessa"]),
+        L("Che lavoro fai?"),
+        Y("Übersetze: Ich bin Bankangestellter.", "Lavoro in banca."),
+        O("Was macht er beruflich?", "Che lavoro fa?"),
+        C("Die Übersetzerin heisst:", "la traduttrice", ["la traduttora", "la traduttessa", "il traduttrice"]),
+        C("Die Lehrerin heisst:", "l'insegnante", ["l'insegnanta", "l'insegnantessa", "la insegnante"]),
+        Y("Übersetze: Viel Erfolg bei der Arbeit!", "Buon lavoro!")
       ]
     }
   ];
@@ -3338,6 +3396,17 @@
   var tv = document.getElementById("tabVocab");
   if (tv && tv.nextSibling) tabs.insertBefore(btn, tv.nextSibling); else tabs.appendChild(btn);
 
+  var ORDER = ["Lektionen", "Sprechen", "Vokabeln", "Grammatik", "Wörterbuch"];
+  function orderTabs() {
+    var cur = Array.prototype.slice.call(tabs.querySelectorAll(".tab-btn"));
+    var want = ORDER.map(function (n) { return cur.filter(function (b) { return b.textContent.trim() === n; })[0]; }).filter(Boolean);
+    var rest = cur.filter(function (b) { return want.indexOf(b) === -1; });
+    var all = want.concat(rest);
+    if (all.every(function (b, i) { return b === cur[i]; })) return;
+    all.forEach(function (b) { tabs.appendChild(b); });
+  }
+  orderTabs();
+
   var OTHER_VIEWS = ["vocabView", "grammarView", "talkView", "dictView"];
   function open() {
     OTHER_VIEWS.forEach(function (id) { var e = document.getElementById(id); if (e) e.style.display = "none"; });
@@ -3355,6 +3424,7 @@
     Array.prototype.forEach.call(tabs.querySelectorAll(".tab-btn"), function (b) {
       if (b !== btn && !b._lsHook) { b._lsHook = true; b.addEventListener("click", close); }
     });
+    orderTabs();
   }).observe(tabs, { childList: true });
   Array.prototype.forEach.call(tabs.querySelectorAll(".tab-btn"), function (b) { b._lsHook = true; });
 
@@ -3414,6 +3484,21 @@
       ul.appendChild(li);
     });
     card.appendChild(ul);
+    if (S.ls.grammar) {
+      var g = S.ls.grammar;
+      card.appendChild(el("h2", "", "Grammatik"));
+      card.appendChild(el("div", "ls-gt", g.title));
+      g.text.forEach(function (t) { card.appendChild(el("p", "ls-gp", t)); });
+      var gl = el("ul", "ls-intro");
+      g.ex.forEach(function (w) {
+        var li = el("li"); var tx = el("span");
+        tx.appendChild(el("span", "it", w[0])); tx.appendChild(el("span", "de", w[1]));
+        li.appendChild(tx);
+        if (canSpeak) { var b = el("button", "ls-spk", "Hören"); b.type = "button"; b.addEventListener("click", function () { speak(w[0]); }); li.appendChild(b); }
+        gl.appendChild(li);
+      });
+      card.appendChild(gl);
+    }
     var go = el("button", "ls-btn pri big", "Los geht's"); go.type = "button";
     go.addEventListener("click", function () {
       S.queue = S.ls.tasks.slice(); S.total = S.queue.length; S.done = 0; S.firstOk = 0; nextTask();
@@ -3575,6 +3660,19 @@
     card.appendChild(el("div", "ls-big", "Gut gemacht!"));
     card.appendChild(el("p", "ls-sub", S.firstOk + " von " + S.total + " Aufgaben gleich beim ersten Mal richtig."));
     var ni = nextIndex();
+    if (ni !== -1 && LESSONS[ni].nw) {
+      var box = el("div", "ls-nw");
+      box.appendChild(el("h2", "", "Neue Wörter in der nächsten Lektion"));
+      var nl = el("ul", "ls-intro");
+      LESSONS[ni].nw.forEach(function (w) {
+        var li = el("li"); var tx = el("span");
+        tx.appendChild(el("span", "it", w[0])); tx.appendChild(el("span", "de", w[1]));
+        li.appendChild(tx);
+        if (canSpeak) { var b = el("button", "ls-spk", "Hören"); b.type = "button"; b.addEventListener("click", function () { speak(w[0]); }); li.appendChild(b); }
+        nl.appendChild(li);
+      });
+      box.appendChild(nl); card.appendChild(box);
+    }
     if (ni !== -1) {
       var nb = el("button", "ls-btn pri big", "Nächste Lektion: " + LESSONS[ni].title); nb.type = "button";
       nb.addEventListener("click", function () { startLesson(ni); });
