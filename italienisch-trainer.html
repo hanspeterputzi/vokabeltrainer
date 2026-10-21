@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-plural";
-  const APP_VERSION = "2026-10-24-b"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-c"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4310,23 +4310,23 @@
   #talkView .tk-gb i { display: block; height: 100%; background: var(--k-blue, #2563eb); border-radius: 99px; }
 
   /* Streak-Karte: zwei Etiketten (Tage, in Folge) und Tagesziel mit Balken */
-  .streakbar { display: flex !important; flex-wrap: wrap !important; align-items: center; justify-content: flex-start !important; gap: 7px !important; padding: 12px 14px 14px !important;
-    border-radius: 20px !important; background: var(--k-card, #fff) !important; box-shadow: 0 1px 2px rgba(18,32,58,.05), 0 10px 24px rgba(18,32,58,.08) !important; }
-  .streakbar .sb { display: inline-flex !important; flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; flex: 0 0 auto !important; gap: 5px !important;
-    background: var(--k-bg, #f3f6fc) !important; border-radius: 99px !important; padding: 6px 12px !important; box-shadow: none !important; }
+  .streakbar { display: flex !important; flex-wrap: wrap !important; align-items: center; justify-content: flex-start !important; gap: 6px !important; padding: 11px 13px 12px !important;
+    border-radius: 18px !important; background: var(--k-card, #fff) !important; box-shadow: 0 1px 2px rgba(18,32,58,.05), 0 10px 24px rgba(18,32,58,.08) !important; }
+  .streakbar .sb { display: inline-flex !important; flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; flex: 0 0 auto !important; gap: 4px !important;
+    background: var(--k-bg, #f3f6fc) !important; border-radius: 99px !important; padding: 5px 11px !important; box-shadow: none !important; }
   .streakbar .sb::after { display: none !important; }
-  .streakbar .sb.f::before, .streakbar .sb.z::before, .streakbar .sb + .sb::before { content: "" !important; display: block !important; position: static !important; left: auto !important; top: auto !important; bottom: auto !important; width: 15px !important; height: 15px !important; flex: none; border-radius: 0 !important; margin: 0 !important;
+  .streakbar .sb.f::before, .streakbar .sb.z::before, .streakbar .sb + .sb::before { content: "" !important; display: block !important; position: static !important; left: auto !important; top: auto !important; bottom: auto !important; width: 13px !important; height: 13px !important; flex: none; border-radius: 0 !important; margin: 0 !important;
     -webkit-mask: var(--ic) center / contain no-repeat; mask: var(--ic) center / contain no-repeat; }
   .streakbar .sb.f::before { background: var(--k-orange, #ea580c) !important; --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 12c2-2.96 0-7-1-8 0 3.038-1.773 4.741-3 6-1.226 1.26-2 3.24-2 5a6 6 0 1 0 12 0c0-1.532-1.056-3.94-2-5-1.786 3-2.791 3-4 2z'/%3E%3C/svg%3E"); }
   .streakbar .sb.z::before { background: var(--k-blue, #2563eb) !important; --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 3v7h6l-8 11v-7H5z'/%3E%3C/svg%3E"); }
   .streakbar .sb svg { width: 17px !important; height: 17px !important; margin: 0 !important; }
-  .streakbar .sb b { font-size: .86rem !important; font-weight: 700 !important; letter-spacing: 0 !important; color: var(--k-text, #12203a) !important; line-height: 1 !important; }
-  .streakbar .sb span { margin: 0 !important; font-size: .77rem !important; font-weight: 600 !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--k-text, #12203a) !important; }
-  .streakbar .goal { flex: 0 0 100% !important; margin: 5px 0 0 !important; padding: 0 !important; border: 0 !important; }
+  .streakbar .sb b { font-size: .77rem !important; font-weight: 700 !important; letter-spacing: 0 !important; color: var(--k-text, #12203a) !important; line-height: 1 !important; }
+  .streakbar .sb span { margin: 0 !important; font-size: .69rem !important; font-weight: 600 !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--k-text, #12203a) !important; }
+  .streakbar .goal { flex: 0 0 100% !important; margin: 4px 0 0 !important; padding: 0 !important; border: 0 !important; }
   .streakbar .gl { display: flex !important; justify-content: space-between !important; align-items: baseline !important; }
-  .streakbar .gl span { font-size: .62rem !important; font-weight: 600 !important; letter-spacing: .1em !important; text-transform: uppercase !important; color: var(--k-muted, #5d6b85) !important; }
-  .streakbar .gl b { font-size: .77rem !important; font-weight: 700 !important; color: var(--k-text, #12203a) !important; }
-  .streakbar .gb { height: 7px !important; margin-top: 7px !important; background: var(--k-bg, #eef2fa) !important; }
+  .streakbar .gl span { font-size: .56rem !important; font-weight: 600 !important; letter-spacing: .1em !important; text-transform: uppercase !important; color: var(--k-muted, #5d6b85) !important; }
+  .streakbar .gl b { font-size: .69rem !important; font-weight: 700 !important; color: var(--k-text, #12203a) !important; }
+  .streakbar .gb { height: 6px !important; margin-top: 6px !important; background: var(--k-bg, #eef2fa) !important; }
   .streakbar .gb i, .streakbar .goal.done .gb i { background: var(--k-blue, #2563eb) !important; }
   .streakbar .goal.done .gb i { background: var(--k-orange, #ea580c) !important; }
 
@@ -4346,7 +4346,7 @@
   .quiz-word, .prompt, .g-q { color: var(--ink) !important; }
   .quiz-word { background: color-mix(in srgb, var(--ink) 5%, var(--k-card, #fff)) !important; box-shadow: none !important; }
   .prompt, .g-q, .prompt::after, .g-q::after, .quiz-word::after { background: color-mix(in srgb, var(--ink) 5%, var(--k-card, #fff)) !important; }
-  h1 { color: var(--k-orange, #ea580c) !important; }
+  h1 { color: var(--ink, #16181d) !important; }
   .gb i, .pbar i, .ls-bar i, #lessonView .ls-bar i { background: var(--k-orange, #ea580c) !important; }
   input[type="text"]:focus { box-shadow: 0 0 0 4px rgba(234,88,12,.18) !important; }
   #checkBtn, #conjCheckBtn, .ls-btn.pri, #talkView .tk-mic, #lessonView .ls-btn.pri, #lessonView .ls-row .go { background: #ea580c !important; box-shadow: 0 8px 18px rgba(234,88,12,.28) !important; color: #fff !important; }
@@ -4366,7 +4366,7 @@
   #talkView .tk-b .sp { color: var(--k-orange, #ea580c) !important; }
 
   /* ===== Sprechen, Seite 2: ruhiger, Zurueck gut sichtbar ===== */
-  #talkView .tk-top { display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; margin-bottom: 6px; }
+  #talkView .tk-top { display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 24px !important; margin-bottom: 6px; }
   #talkView .tk-top strong { font-size: 1.3rem; font-weight: 800; line-height: 1.25; color: var(--ink); }
   #talkView .tk-back { display: inline-flex !important; align-items: center; gap: 4px; padding: 8px 15px 8px 11px !important; border: 0 !important; border-radius: 99px !important; background: color-mix(in srgb, var(--k-orange, #ea580c) 14%, var(--k-card, #fff)) !important; color: var(--k-orange, #ea580c) !important; font-size: .85rem; font-weight: 700; box-shadow: none !important; }
   #talkView .tk-sub { margin: 0 0 18px !important; font-size: .88rem !important; line-height: 1.45; }
@@ -4382,6 +4382,17 @@
   #talkView .tk-actions .tk-sec { width: 100%; padding: 12px !important; border: 0 !important; border-radius: 14px !important; background: color-mix(in srgb, var(--ink) 6%, var(--k-card, #fff)) !important; color: var(--ink) !important; font-weight: 600; box-shadow: none !important; }
   #talkView details { margin-top: 14px; }
   #talkView details summary { color: var(--k-muted, #5d6b85); font-size: .85rem; cursor: pointer; }
+
+  /* Kategorie-Chips: schlanke Pillen, ohne Zahlen; Grammatik ohne Nachschlagefeld */
+  #gSearch { display: none !important; }
+  .category-bar { flex-wrap: nowrap !important; overflow-x: auto; gap: 8px !important; padding: 2px 2px 6px; margin: 0 -2px; scrollbar-width: none; }
+  .category-bar::-webkit-scrollbar { display: none; }
+  .category-bar .cat-btn, .category-bar .cat-chip { flex: 0 0 auto !important; width: auto !important; min-height: 0 !important; height: auto !important; padding: 8px 15px !important; border-radius: 99px !important;
+    flex-direction: row !important; gap: 0 !important; box-shadow: none !important; background: var(--k-card, #fff) !important; border: 1.5px solid var(--k-line, #e7e7e9) !important; color: var(--k-text, #16181d) !important; transform: none !important; }
+  .category-bar .cat-btn .nm, .category-bar .cat-chip .nm { font-size: .85rem !important; font-weight: 600 !important; white-space: nowrap !important; max-width: none !important; }
+  .category-bar .cat-btn .ct, .category-bar .cat-chip .ct, .category-bar .cat-btn .ico, .category-bar .cat-chip .ico { display: none !important; }
+  .category-bar .cat-btn.active, .category-bar .cat-chip.active { background: var(--k-orange, #ea580c) !important; border-color: var(--k-orange, #ea580c) !important; color: #fff !important; box-shadow: none !important; }
+  .category-bar .cat-btn.active .nm, .category-bar .cat-chip.active .nm { color: #fff !important; }
 </style>
 <script>
 (function () {
@@ -4508,6 +4519,12 @@
   window.addEventListener("resize", moveStreak); window.addEventListener("load", moveStreak);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(moveStreak);
   try { var sbe = document.querySelector(".streakbar"); if (sbe && window.ResizeObserver) new ResizeObserver(moveStreak).observe(sbe); } catch (e) {}
+
+  // «Wortliste (942)» ohne Anzahl
+  (function () {
+    var wc = document.getElementById("wordCount"), h = wc && wc.parentNode;
+    if (h && h.tagName === "H2") { var up = function () { if (h.textContent !== "Wortliste") h.textContent = "Wortliste"; }; up(); }
+  })();
   function init() { wire("quizWord", "showBtn", "nextBtn"); wire("conjVerb", "conjShowBtn", "conjNextBtn"); stickySearch(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
