@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-geschlecht";
-  const APP_VERSION = "2026-10-22-n"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-22-o"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1559,7 +1559,7 @@
         "</ul>" +
         "<h3>Endung des Nomens</h3>" +
         "<ul>" +
-        "<li><b>-o → -i</b>: <span class='ex'>il negozio → i negozi</span></li>" +
+        "<li><b>-o → -i</b>: <span class='ex'>il negozio → i negozi, il gelato → i gelati</span></li>" +
         "<li><b>-e → -i</b>: <span class='ex'>il ponte → i ponti, la notte → le notti</span></li>" +
         "<li>weiblich <b>-a → -e</b>: <span class='ex'>la casa → le case</span></li>" +
         "<li>männlich <b>-a → -i</b>: <span class='ex'>il problema → i problemi</span></li>" +
@@ -1567,7 +1567,8 @@
         "</ul>" +
         "<h3>Nomen bleibt gleich (nur der Artikel ändert sich)</h3>" +
         "<ul>" +
-        "<li>betonte Endsilbe oder Konsonant am Ende: <span class='ex'>il caffè → i caffè, la città → le città, il film → i film</span></li>" +
+        "<li>betonte Endsilbe: <span class='ex'>il caffè → i caffè, la città → le città</span></li>" +
+        "<li>Konsonant am Ende: <span class='ex'>il film → i film, l'hotel (männlich) → gli hotel, lo yogurt → gli yogurt</span></li>" +
         "<li>Kurzformen: <span class='ex'>la bici → le bici, la foto → le foto, il cinema → i cinema</span></li>" +
         "</ul>" +
         "<h3>Besondere Endungen</h3>" +
@@ -1592,6 +1593,9 @@
         { q: "il caffè → ?", a: ["i caffè"], why: "Betonte Endsilbe: nur der Artikel ändert sich" },
         { q: "la città → ?", a: ["le città"], why: "Betonte Endsilbe: nur der Artikel ändert sich" },
         { q: "il film → ?", a: ["i film"], why: "Konsonant am Ende: nur der Artikel ändert sich" },
+        { q: "l'hotel (männlich) → ?", a: ["gli hotel"], why: "Konsonant am Ende: nur der Artikel ändert sich; männlich vor Vokal (das h wird nicht gesprochen): gli" },
+        { q: "lo yogurt → ?", a: ["gli yogurt"], why: "Konsonant am Ende: nur der Artikel ändert sich; lo-Wort: gli" },
+        { q: "il gelato → ?", a: ["i gelati"], why: "-o → -i" },
         { q: "la bici → ?", a: ["le bici"], why: "Kurzform: bleibt gleich" },
         { q: "la foto → ?", a: ["le foto"], why: "Kurzform: bleibt gleich" },
         { q: "il cinema → ?", a: ["i cinema"], why: "Kurzform: bleibt gleich" },
@@ -3466,6 +3470,9 @@
         Y("il negozio → ?", "i negozi"),
         Y("la casa → ?", "le case"),
         Y("l'amico (männlich) → ?", "gli amici"),
+        Y("il gelato → ?", "i gelati"),
+        Y("l'hotel (männlich) → ?", "gli hotel"),
+        Y("lo yogurt → ?", "gli yogurt"),
         Y("il mese → ?", "i mesi"),
         Y("la settimana → ?", "le settimane"),
         Y("la sera → ?", "le sere"),
