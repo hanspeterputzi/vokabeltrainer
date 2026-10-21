@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-plural";
-  const APP_VERSION = "2026-10-23-zm"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-zp"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4285,6 +4285,26 @@
 
   /* Woerterbuch: Wortart-Etikett nur dort, wo es etwas klaert (ABC, Zahlen) */
   #dictList .dtag:not(.keep) { display: none !important; }
+
+  /* Sprechen: schlichte Dialogliste mit Symbol links und Fortschritt je Gruppe */
+  #talkView .tk-grid { display: block !important; }
+  #talkView .tk-grid .tk-topic { display: flex !important; align-items: center; gap: 12px; width: 100%; padding: 12px 0 !important; border: 0 !important; border-top: 1px solid var(--k-line, #e9eef7) !important;
+    border-radius: 0 !important; background: none !important; box-shadow: none !important; transform: none !important; text-align: left; font-weight: 600; color: var(--k-text, #12203a) !important; }
+  #talkView .tk-grid .tk-topic:first-child { border-top: 0 !important; }
+  #talkView .tk-grid .tk-topic:hover { background: none !important; }
+  #talkView .tk-topic .mi { flex: 0 0 30px; height: 30px; border-radius: 50%; background: var(--k-bg, #eef2fa); color: var(--k-muted, #5d6b85); position: relative; }
+  #talkView .tk-topic.done .mi { background: var(--k-blue, #2563eb); color: #fff; }
+  #talkView .tk-topic .mi::before { content: ""; position: absolute; inset: 7px; background: currentColor; -webkit-mask: var(--ic) center / contain no-repeat; mask: var(--ic) center / contain no-repeat; }
+  #talkView .tk-topic .mi { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='2' width='6' height='12' rx='3'/%3E%3Cpath d='M5 11a7 7 0 0 0 14 0M12 18v4'/%3E%3C/svg%3E"); }
+  #talkView .tk-topic.done .mi { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E"); }
+  #talkView .tk-topic .tt { flex: 1; min-width: 0; line-height: 1.3; }
+  #talkView .tk-topic .pc { font-size: .78rem; font-weight: 600; color: var(--k-muted, #5d6b85); }
+  #talkView .tk-topic.done .pc { color: var(--k-blue, #2563eb); }
+  #talkView .tk-gh { display: flex; align-items: baseline; justify-content: space-between; margin-top: 22px; }
+  #talkView .tk-gh h2 { margin: 0 !important; font-size: .72rem !important; letter-spacing: .1em; flex: 1; min-width: 0; }
+  #talkView .tk-gh .n { font-size: .78rem; color: var(--k-muted, #5d6b85); white-space: nowrap; margin-left: 10px; }
+  #talkView .tk-gb { height: 5px; border-radius: 99px; background: var(--k-bg, #eef2fa); overflow: hidden; margin: 8px 0 4px; }
+  #talkView .tk-gb i { display: block; height: 100%; background: var(--k-blue, #2563eb); border-radius: 99px; }
 </style>
 <script>
 (function () {
@@ -4363,6 +4383,37 @@
     var e = document.getElementById(id);
     if (e) new MutationObserver(function () { clearTimeout(hq2); hq2 = setTimeout(holdAll, 40); }).observe(e, { childList: true, subtree: true });
   });
+
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  // Sprechen-Liste umbauen: Symbol links, Ergebnis rechts, Fortschritt je Gruppe
+  function restyleTalk() {
+    var tv = document.getElementById("talkView"); if (!tv) return;
+    Array.prototype.forEach.call(tv.querySelectorAll(".tk-grid"), function (g) {
+      var tops = g.querySelectorAll(".tk-topic"), nd = 0;
+      Array.prototype.forEach.call(tops, function (b) {
+        if (b.classList.contains("done")) nd++;
+        if (b.getAttribute("data-r")) return;
+        var inner = b.querySelector("span:not(.ic):not(.sc)") || b.firstElementChild;
+        var title = ""; if (inner) Array.prototype.forEach.call(inner.childNodes, function (n) { if (n.nodeType === 3) title += n.nodeValue; });
+        var sc = b.querySelector(".sc"), m = sc && /(\d+)\s*%/.exec(sc.textContent);
+        b.innerHTML = ""; b.setAttribute("data-r", "1");
+        b.appendChild(el("span", "mi")); b.appendChild(el("span", "tt", title.trim()));
+        if (m) b.appendChild(el("span", "pc", m[1] + " %"));
+      });
+      var pv = g.previousElementSibling, gh = null, bar = null;
+      if (pv && pv.classList.contains("tk-gb")) { bar = pv; gh = pv.previousElementSibling; }
+      else if (pv && pv.tagName === "H2") {
+        gh = el("div", "tk-gh"); pv.parentNode.insertBefore(gh, pv); gh.appendChild(pv); gh.appendChild(el("span", "n"));
+        bar = el("div", "tk-gb"); bar.appendChild(document.createElement("i")); g.parentNode.insertBefore(bar, g);
+      }
+      if (gh && bar) {
+        gh.querySelector(".n").textContent = nd + " von " + tops.length;
+        bar.firstChild.style.width = Math.round(100 * nd / Math.max(1, tops.length)) + "%";
+      }
+    });
+  }
+  var tq = 0;
+  (function () { var tv = document.getElementById("talkView"); if (tv) { restyleTalk(); new MutationObserver(function () { clearTimeout(tq); tq = setTimeout(restyleTalk, 30); }).observe(tv, { childList: true, subtree: true }); } })();
   function init() { wire("quizWord", "showBtn", "nextBtn"); wire("conjVerb", "conjShowBtn", "conjNextBtn"); stickySearch(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
