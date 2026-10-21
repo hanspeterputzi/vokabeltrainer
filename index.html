@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-geschlecht";
-  const APP_VERSION = "2026-10-22-c"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-22-d"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1488,7 +1488,8 @@
         "<p>Frage und Aussage haben <b>dieselben Wörter in derselben Reihenfolge</b>. " +
         "Nur die <b>Melodie</b> ändert sich: Bei der Frage geht die Stimme am Ende hoch. " +
         "Geschrieben steht ein Fragezeichen.</p>" +
-        "<p class='ex'><b>Sei di Zurigo.</b> (Aussage) – <b>Sei di Zurigo?</b> (Frage)</p>",
+        "<p class='ex'><b>Sei di Zurigo.</b> (Aussage) – <b>Sei di Zurigo?</b> (Frage)</p>" +
+        "<p>Merkhilfe: Wie im Deutschen bei «Du bist aus Zürich?» – nur die Stimme geht hoch.</p>",
       exercises: [
         { q: "Woran erkennt man im Italienischen eine Frage (ohne Fragewort)?", options: ["An der Wortstellung", "An der Melodie", "An einer besonderen Endung", "An einem Hilfswort"], a: ["An der Melodie"], why: "Kein Unterschied im Satzbau, nur die Melodie" },
         { q: "Mach aus der Aussage eine Frage: «Sei di Zurigo.»", hint: "Nur das Satzzeichen ändert sich", a: ["Sei di Zurigo?"], why: "Gleicher Satz, am Ende ein Fragezeichen" },
@@ -1507,6 +1508,7 @@
         "<li>weiblich: <b>la</b></li>" +
         "<li>vor Vokal: <b>l'</b> für männlich und weiblich (darum steht das Geschlecht dahinter in Klammern)</li>" +
         "</ul>" +
+        "<p>Merkhilfe: <b>lo</b> steht dort, wo <b>il</b> schwer auszusprechen wäre: <span class='ex'>lo sport, lo zio, lo studente</span></p>" +
         "<h3>Endung des Nomens</h3>" +
         "<ul>" +
         "<li><b>-o</b> meist männlich: <span class='ex'>il bambino</span></li>" +
@@ -1514,6 +1516,7 @@
         "<li><b>-e</b> männlich oder weiblich: <span class='ex'>il ponte, la notte</span></li>" +
         "<li>Konsonant meist männlich: <span class='ex'>il bar, lo sport</span></li>" +
         "</ul>" +
+        "<p>Merkhilfe: <b>-o</b> wie Opa (männlich), <b>-a</b> wie Oma (weiblich).</p>" +
         "<h3>Ausnahmen</h3>" +
         "<ul>" +
         "<li>weiblich trotz -o (Kurzformen): <span class='ex'>la moto, la foto, l'auto (weiblich)</span> (aus la motocicletta, la fotografia, l'automobile)</li>" +
@@ -1564,6 +1567,7 @@
         "<li>männlich <b>-a → -i</b>: <span class='ex'>il problema → i problemi</span></li>" +
         "<li>männlich vor Vokal: <span class='ex'>l'amico (männlich) → gli amici, l'asparago (männlich) → gli asparagi</span></li>" +
         "</ul>" +
+        "<p>Merkhilfe: Aus <b>o</b> wird <b>i</b>, aus <b>a</b> wird <b>e</b>: <span class='ex'>un gelato → due gelati, una pizza → due pizze</span></p>" +
         "<h3>Nomen bleibt gleich (nur der Artikel ändert sich)</h3>" +
         "<ul>" +
         "<li>betonte Endsilbe oder Konsonant am Ende: <span class='ex'>il caffè → i caffè, la città → le città, il film → i film</span></li>" +
@@ -1629,7 +1633,8 @@
         "<li><b>una</b> vor Konsonant: <span class='ex'>una camera</span></li>" +
         "<li><b>un'</b> vor Vokal: <span class='ex'>un'amica</span></li>" +
         "</ul>" +
-        "<p>Keine Ausnahmen.</p>",
+        "<p>Keine Ausnahmen.</p>" +
+        "<p>Merkhilfe: <b>un</b> = ein, <b>una</b> = eine. Vor Vokal wird <b>una</b> zu <b>un'</b>, so wie <b>la</b> zu <b>l'</b> wird.</p>",
       exercises: [
         { q: "___ gelato", hint: "un, uno, una oder un'?", a: ["un"], why: "vor Konsonant, männlich: un" },
         { q: "___ camera", hint: "un, uno, una oder un'?", a: ["una"], why: "vor Konsonant, weiblich: una" },
