@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-geschlecht";
-  const APP_VERSION = "2026-10-22-e"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-22-f"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1462,7 +1462,7 @@
         "<li>hart vor e / i: ein <b>h</b> einfügen, also <b>ch</b> und <b>gh</b>: <span class='ex'>anche, chitarra · lunghe, ghiaccio</span></li>" +
         "<li>weich vor a / o / u: ein <b>i</b> einfügen, also <b>ci</b> und <b>gi</b>: <span class='ex'>ciao, cioccolata, ciuffo · giacca, giornale, giusto</span></li>" +
         "</ul>" +
-        "<p>Merkhilfe: Das <b>h</b> macht hart, das <b>i</b> macht weich.</p>",
+        "<p class='merk'>Merkhilfe: Das <b>h</b> macht hart, das <b>i</b> macht weich.</p>",
       exercises: [
         { q: "carota – Wie wird das «c» gesprochen?", options: HC, a: ["hart"], why: "c vor a/o/u = hart" },
         { q: "cinema – Wie wird das «c» gesprochen?", options: HC, a: ["weich"], why: "c vor e/i = weich" },
@@ -1489,7 +1489,7 @@
         "Nur die <b>Melodie</b> ändert sich: Bei der Frage geht die Stimme am Ende hoch. " +
         "Geschrieben steht ein Fragezeichen.</p>" +
         "<p class='ex'><b>Sei di Zurigo.</b> (Aussage) – <b>Sei di Zurigo?</b> (Frage)</p>" +
-        "<p>Merkhilfe: Wie im Deutschen bei «Du bist aus Zürich?» – nur die Stimme geht hoch.</p>",
+        "<p class='merk'>Merkhilfe: Wie im Deutschen bei «Du bist aus Zürich?» – nur die Stimme geht hoch.</p>",
       exercises: [
         { q: "Woran erkennt man im Italienischen eine Frage (ohne Fragewort)?", options: ["An der Wortstellung", "An der Melodie", "An einer besonderen Endung", "An einem Hilfswort"], a: ["An der Melodie"], why: "Kein Unterschied im Satzbau, nur die Melodie" },
         { q: "Mach aus der Aussage eine Frage: «Sei di Zurigo.»", hint: "Nur das Satzzeichen ändert sich", a: ["Sei di Zurigo?"], why: "Gleicher Satz, am Ende ein Fragezeichen" },
@@ -1613,7 +1613,6 @@
       id: "unbestimmt",
       title: "Unbestimmter Artikel",
       explain:
-        "<p>Die Form des unbestimmten Artikels hängt vom <b>Geschlecht</b> und vom <b>Anfang</b> des Nomens ab.</p>" +
         "<h3>männlich</h3>" +
         "<p>Normalfall: <b>un</b>, egal ob das Nomen mit Konsonant, Vokal oder h beginnt:</p>" +
         "<ul>" +
@@ -1631,7 +1630,7 @@
         "<li><b>un'</b> vor Vokal: <span class='ex'>un'amica</span></li>" +
         "</ul>" +
         "<p>Keine Ausnahmen.</p>" +
-        "<p>Merkhilfe: <b>un</b> = ein, <b>una</b> = eine. Vor Vokal wird <b>una</b> zu <b>un'</b>, so wie <b>la</b> zu <b>l'</b> wird.</p>",
+        "<p class='merk'>Merkhilfe: <b>un</b> = ein, <b>una</b> = eine. Vor Vokal wird <b>una</b> zu <b>un'</b>, so wie <b>la</b> zu <b>l'</b> wird.</p>",
       exercises: [
         { q: "___ gelato", hint: "un, uno, una oder un'?", a: ["un"], why: "vor Konsonant, männlich: un" },
         { q: "___ camera", hint: "un, uno, una oder un'?", a: ["una"], why: "vor Konsonant, weiblich: una" },
@@ -3248,6 +3247,9 @@
 </script>
 <!-- LEKTIONEN START -->
 <style>
+  /* Merkhilfe in Grammatik-Bloecken (Tab Grammatik und Lektions-Intro): auffaellig in Orange mit Abstand */
+  .explain p.merk { margin: 20px 0 6px; padding-top: 12px; border-top: 1px dashed var(--k-line, var(--line, #ccc)); color: var(--k-orange, var(--orange, #ea580c)); font-weight: 600; font-size: 1rem; }
+  .explain p.merk b { font-weight: 800; }
   @media (min-width: 481px) { .tabs { gap: 2px !important; } .tabs .tab-btn { font-size: .85rem !important; padding: 13px 4px !important; min-width: 0; overflow: hidden; white-space: nowrap; flex: 1 1 0 !important; } }
   @media (max-width: 480px) { .tabs { gap: 2px !important; padding: 5px !important; } .tabs .tab-btn { font-size: min(.68rem, 2.8vw) !important; letter-spacing: -.02em; padding: 12px 0 !important; min-width: 0; overflow: hidden; white-space: nowrap; flex: 1 1 0 !important; } }
   #lessonView .ls-card { background: var(--k-card, var(--surface, #fff)); border-radius: 22px; padding: 22px; margin-bottom: 14px; box-shadow: 0 4px 18px rgba(18,32,58,.07); }
