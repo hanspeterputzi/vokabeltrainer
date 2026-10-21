@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-plural";
-  const APP_VERSION = "2026-10-24-e"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-h"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4251,7 +4251,7 @@
 
   /* Karteikarte: Wort gross in der Mitte, wischbar */
   .quiz-word, #conjVerb { touch-action: pan-y; user-select: none; -webkit-user-select: none; will-change: transform; }
-  .quiz-word { min-height: 132px; display: flex !important; align-items: center; justify-content: center; border-radius: 28px !important;
+  .quiz-word { display: block !important; padding: 44px 16px !important; text-align: center; border-radius: 28px !important;
     background: linear-gradient(160deg, color-mix(in srgb, var(--k-blue, #2563eb) 7%, var(--k-card, #fff)), color-mix(in srgb, var(--k-blue, #2563eb) 15%, var(--k-card, #fff))) !important;
     box-shadow: 0 8px 22px rgba(37,99,235,.12) !important; }
   .quiz-word.snap { transition: transform .22s cubic-bezier(.2,.8,.3,1), opacity .22s; }
@@ -4399,8 +4399,8 @@
 
   /* Wortkarte Vokabeln: Wort ohne Kasten, nur zwischen zwei feinen Linien */
   #quizWord, #prompt, #conjVerb { background: none !important; box-shadow: none !important; border-radius: 0 !important; min-height: 0 !important; display: block !important;
-    border-top: 1px solid var(--k-line, #e7e7e9); border-bottom: 1px solid var(--k-line, #e7e7e9); padding: 24px 0 !important; margin: 6px 0 18px !important;
-    font-size: 2rem !important; font-weight: 700 !important; color: var(--ink) !important; text-align: center; }
+    border-top: 1px solid var(--k-line, #e7e7e9); border-bottom: 1px solid var(--k-line, #e7e7e9); padding: 20px 0 !important; margin: 6px 0 18px !important;
+    font-size: 1.6rem !important; font-weight: 700 !important; color: var(--ink) !important; text-align: center; }
   #quizWord::after, #prompt::after, #conjVerb::after { display: none !important; }
   .swipe-hint { display: none !important; }
 
@@ -4561,7 +4561,15 @@
     function sync() { row.classList.toggle("on", !!inp.value.trim()); }
     inp.addEventListener("input", sync); sync();
   }
-  function init() { wire("quizWord", "showBtn", "nextBtn"); wire("conjVerb", "conjShowBtn", "conjNextBtn"); stickySearch(); dictExtras(); }
+
+  // Neuer Reiter: Seite springt nach oben (orange Kopf mit Streak sichtbar); Grammatik: Uebung vor der Erklaerung
+  function tabExtras() {
+    var tabs = document.querySelector(".tabs");
+    if (tabs && !tabs._top) { tabs._top = 1; tabs.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".tab-btn")) setTimeout(function () { window.scrollTo(0, 0); }, 30); }); }
+    var gv = document.getElementById("grammarView"), ex = gv && Array.prototype.filter.call(gv.children, function (c) { return c.classList.contains("explain"); })[0];
+    if (gv && ex && gv.lastElementChild !== ex) gv.appendChild(ex);
+  }
+  function init() { wire("quizWord", "showBtn", "nextBtn"); wire("conjVerb", "conjShowBtn", "conjNextBtn"); stickySearch(); dictExtras(); tabExtras(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
 </script>
