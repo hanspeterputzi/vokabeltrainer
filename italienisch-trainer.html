@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-n";
-  const APP_VERSION = "2026-10-23-v"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-23-w"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4111,6 +4111,10 @@
   .streakbar .gl b { font-size: .75rem !important; color: #b34a17 !important; }
   .streakbar .gb { height: 4px !important; margin-top: 4px !important; background: #fff !important; }
   .streakbar .gb i, .streakbar .goal.done .gb i { background: #d9622b !important; }
+  /* Sprechen: Haupttitel klar von den Gruppentiteln getrennt */
+  #talkView .tk-card > h2:first-child { text-transform: none !important; letter-spacing: 0 !important; font-size: 1.2rem !important; color: var(--k-text, #1b2430) !important; margin: 0 0 4px !important; }
+  #talkView .tk-card > h2:not(:first-child) { font-size: .68rem !important; letter-spacing: .14em !important; margin: 24px 0 10px !important; }
+  #talkView .tk-card > h2 .lw { border-bottom: none !important; pointer-events: none; }
 </style>
 <script>
 (function () {
