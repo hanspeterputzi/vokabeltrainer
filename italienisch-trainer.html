@@ -772,7 +772,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-21-geschlecht";
-  const APP_VERSION = "2026-10-22-f"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-22-i"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3247,9 +3247,9 @@
 </script>
 <!-- LEKTIONEN START -->
 <style>
-  /* Merkhilfe in Grammatik-Bloecken (Tab Grammatik und Lektions-Intro): auffaellig in Orange mit Abstand */
-  .explain p.merk { margin: 20px 0 6px; padding-top: 12px; border-top: 1px dashed var(--k-line, var(--line, #ccc)); color: var(--k-orange, var(--orange, #ea580c)); font-weight: 600; font-size: 1rem; }
-  .explain p.merk b { font-weight: 800; }
+  /* Merkhilfe in Grammatik-Bloecken (Tab Grammatik und Lektions-Intro): nur orange und mit mehr Abstand; gleiche Schriftgroesse, nicht fett, keine Trennlinie */
+  .explain p.merk { margin: 18px 0 4px; color: var(--k-orange, var(--orange, #ea580c)); font-weight: 400; }
+  .explain p.merk b, .explain p.merk .lw { color: inherit; font-weight: inherit; }
   @media (min-width: 481px) { .tabs { gap: 2px !important; } .tabs .tab-btn { font-size: .85rem !important; padding: 13px 4px !important; min-width: 0; overflow: hidden; white-space: nowrap; flex: 1 1 0 !important; } }
   @media (max-width: 480px) { .tabs { gap: 2px !important; padding: 5px !important; } .tabs .tab-btn { font-size: min(.68rem, 2.8vw) !important; letter-spacing: -.02em; padding: 12px 0 !important; min-width: 0; overflow: hidden; white-space: nowrap; flex: 1 1 0 !important; } }
   #lessonView .ls-card { background: var(--k-card, var(--surface, #fff)); border-radius: 22px; padding: 22px; margin-bottom: 14px; box-shadow: 0 4px 18px rgba(18,32,58,.07); }
