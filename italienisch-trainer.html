@@ -661,10 +661,11 @@
   #talkView .tk-topic:hover { background: #ffe6d4; background: color-mix(in srgb, var(--k-orange) 18%, var(--k-card)); border-color: var(--k-orange); }
   #talkView .tk-topic.done { background: #e6eeff; background: color-mix(in srgb, var(--k-blue) 10%, var(--k-card)); border-color: var(--k-blue); }
   /* ---- Heute faellig (Wiederholungsplan) ---- */
-  .today-nums { display: flex; margin: 2px 0 14px; }
-  .today-nums > div { flex: 1; text-align: center; position: relative; }
+  .today-row { display: flex; align-items: center; gap: 12px; }
+  .today-nums { display: flex; flex: none; margin: 0; }
+  .today-nums > div { padding: 0 14px; text-align: center; position: relative; }
   .today-nums > div + div::before { content: ""; position: absolute; left: 0; top: 10%; bottom: 10%; width: 1px; background: var(--k-line); }
-  .today-nums b { display: block; font-size: 2.1rem; font-weight: 800; letter-spacing: -.04em; line-height: 1; color: var(--k-text); }
+  .today-nums b { display: block; font-size: 1.7rem; font-weight: 800; letter-spacing: -.04em; line-height: 1; color: var(--k-text); }
   .today-nums span { display: block; margin-top: 8px; font-size: .62rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--k-muted); }
   #quizContent.td-done .row, #quizContent.td-done .mic-status, #quizContent.td-done .feedback, #quizContent.td-done .quiz-buttons, #quizContent.td-done #speakBtn { display: none !important; }
   .ex-box { display: flex; align-items: center; gap: 12px; margin: 4px 0 14px; padding: 12px 14px; border-radius: 14px; background: color-mix(in srgb, var(--k-orange) 8%, var(--k-card)); }
@@ -675,9 +676,15 @@
   .ex-box .ex-sp { flex: none; width: 40px; height: 40px; padding: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--k-card); color: var(--k-orange); border: 1px solid var(--k-line); box-shadow: none; }
   .ex-box .ex-sp svg { width: 20px; height: 20px; }
   #quizContent.td-done .ex-box { display: none !important; }
-  #todayGo { width: 100%; }
+  /* Rueckmeldung: Kopf (klein), Antwort (gross), Hinweis (klein) */
+  .feedback .fb-h { font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+  .feedback .fb-h:only-child { font-size: 1rem; letter-spacing: 0; text-transform: none; }
+  .feedback .fb-a { margin: 6px 0 4px; font-size: 1.35rem; font-weight: 700; line-height: 1.25; color: var(--k-text); }
+  .feedback .fb-n { font-size: .8rem; font-weight: 500; line-height: 1.35; opacity: .9; }
+  #todayGo { flex: 1; min-width: 0; }
   #todayGo:disabled { opacity: .55; cursor: default; }
-  .today-sub { margin-top: 12px; text-align: center; font-size: .82rem; color: var(--k-muted); }
+  .today-sub:empty { display: none; }
+  .today-sub { margin-top: 10px; text-align: center; font-size: .82rem; color: var(--k-muted); }
 </style>
 </head>
 <body>
@@ -693,11 +700,13 @@
 
   <div class="card" id="todayCard">
     <h2>Heute</h2>
-    <div class="today-nums">
-      <div><b id="tdDue">0</b><span>fällig</span></div>
-      <div><b id="tdNew">0</b><span>neu</span></div>
+    <div class="today-row">
+      <div class="today-nums">
+        <div><b id="tdDue">0</b><span>fällig</span></div>
+        <div><b id="tdNew">0</b><span>neu</span></div>
+      </div>
+      <button id="todayGo" type="button">Los</button>
     </div>
-    <button id="todayGo" type="button">Los</button>
     <div class="today-sub" id="todaySub"></div>
   </div>
 
@@ -806,7 +815,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-plural";
-  const APP_VERSION = "2026-10-24-v"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-w"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1059,7 +1068,7 @@
     go.textContent = due + nw === 0 ? "Für heute erledigt" : (selectedCategory === TODAY_CAT && todayList.length ? "Weiter" : "Los");
     const sub = [];
     if (due + nw === 0 && tomorrow) sub.push("Morgen fällig: " + tomorrow);
-    if (known) sub.push("Gelernt: " + known + " · sicher: " + sure);
+    if (known && due + nw === 0) sub.push("Gelernt: " + known + " · sicher: " + sure);
     g("todaySub").textContent = sub.join(" · ");
   }
   // --- Beispielsatz zum Wort (Daten: beispiele_block.html, window.italoExamples) ---
@@ -1069,6 +1078,17 @@
     return t.trim();
   }
   function exFor(w) { const E = window.italoExamples; return E && w ? E[exKey(w.it)] || null : null; }
+  // Rueckmeldung in drei Zeilen: Kopf, Antwort, Hinweis
+  function fbSet(el, head, ans, note) {
+    el.textContent = "";
+    [["fb-h", head], ["fb-a", ans], ["fb-n", note]].forEach(p => {
+      if (!p[1]) return;
+      const d = document.createElement("div");
+      d.className = p[0];
+      d.textContent = p[1];
+      el.appendChild(d);
+    });
+  }
   let exCurrent = null;
   function showExample(w) {
     const e = exFor(w), box = document.getElementById("exBox");
@@ -1566,14 +1586,16 @@
       srsMark(currentQuiz.word, true);
       if (currentFromReview) removeReview(selectedCategory, currentQuiz.word);
       feedback.className = "feedback show correct";
-      feedback.textContent = loose ? "Richtig! Auch eine gute Formulierung. Musterlösung: " + correctAnswer : fuzzy ? "Richtig! (erkannt: \u201e" + userAnswer + "\u201c, richtig: " + correctAnswer + ")" : "Richtig!";
+      if (loose) fbSet(feedback, "Richtig!", correctAnswer, "Auch eine gute Formulierung");
+      else if (fuzzy) fbSet(feedback, "Richtig!", correctAnswer, "Erkannt: \u201e" + userAnswer + "\u201c");
+      else fbSet(feedback, "Richtig!");
     } else {
       stats.wrong++;
       srsPrev = srsMark(currentQuiz.word, false);
       repeatQueued = !currentFromReview; // in der Wiederholungsrunde zaehlt nur der erste Versuch
       addReview(selectedCategory, { de: currentQuiz.word.de, it: currentQuiz.word.it });
       feedback.className = "feedback show wrong";
-      feedback.textContent = "Falsch (erkannt: \u201e" + answerInput.value.trim() + "\u201c). Richtige Antwort: " + correctAnswer + " (wird nochmals abgefragt)";
+      fbSet(feedback, "Falsch", correctAnswer, "Deine Antwort: \u201e" + answerInput.value.trim() + "\u201c \u00b7 kommt nochmals");
       if (currentQuiz.direction === "de-it") {
         const altBtn = document.createElement("button");
         altBtn.type = "button";
@@ -1592,7 +1614,7 @@
           repeatQueued = false;
           removeReview(selectedCategory, quizWordNow);
           feedback.className = "feedback show correct";
-          feedback.textContent = "Gespeichert: \u201e" + givenNow + "\u201c gilt jetzt auch als richtig. Musterl\u00f6sung: " + correctAnswer;
+          fbSet(feedback, "Gespeichert", correctAnswer, "\u201e" + givenNow + "\u201c gilt jetzt auch als richtig");
         });
         feedback.appendChild(altBtn);
       }
@@ -2009,7 +2031,7 @@
       st.wrong++;
       gRepeat = true;
       gEl.feedback.className = "feedback show wrong";
-      gEl.feedback.textContent = "Falsch. Richtige Antwort: " + ex.a[0] + " (wird nochmals abgefragt)";
+      fbSet(gEl.feedback, "Falsch", ex.a[0], "kommt nochmals");
     }
     if (ex.why) {
       gEl.expl.textContent = ex.why;
@@ -2746,7 +2768,7 @@
     repeatQueued = !currentFromReview;
     addReview(selectedCategory, { de: currentQuiz.word.de, it: currentQuiz.word.it });
     feedback.className = "feedback show wrong";
-    feedback.textContent = "Lösung: " + ans + " (wird nochmals abgefragt)";
+    fbSet(feedback, "Lösung", ans, "kommt nochmals");
     showExample(currentQuiz.word);
     checkBtn.disabled = true;
     answerInput.disabled = true;
@@ -4437,6 +4459,16 @@
 </script>
 <!-- WOERTERBUCH END -->
 <!-- NAVMODERN START -->
+<style>
+  /* Typografie: «Erklaerung» wie die anderen Kartenueberschriften (klein, orange, Grossbuchstaben), ein Eingabefeld-Radius, ein Haupt-Knopf */
+  #gExplain > summary { font-size: .68rem !important; font-weight: 600 !important; letter-spacing: .14em !important; text-transform: uppercase !important; color: var(--k-orange) !important; }
+  #gExplain > summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+  #gExplain > summary::-webkit-details-marker { display: none; }
+  #gExplain > summary::after { content: ""; width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); margin: -3px 4px 0 0; }
+  #gExplain[open] > summary::after { transform: rotate(-135deg); margin-top: 3px; }
+  #gSearchIn { border-radius: 14px !important; }
+  #todayGo { font-size: 1rem !important; }
+</style>
 <style>
   /* Navigation: schwebende Leiste unten (Handy) mit Icons ueber der Beschriftung */
   .tabs .tab-btn::before { content: ""; display: block; width: 22px; height: 22px; background: currentColor; -webkit-mask: var(--ic) center / contain no-repeat; mask: var(--ic) center / contain no-repeat; }
