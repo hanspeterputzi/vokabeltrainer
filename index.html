@@ -815,7 +815,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-fragen3";
-  const APP_VERSION = "2026-10-24-zv"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-zw"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1710,6 +1710,83 @@
         { q: "Mach aus der Aussage eine Frage: «Lui è italiano.»", a: ["Lui è italiano?"], why: "Wortstellung bleibt gleich" },
         { q: "Mach aus der Frage eine Aussage: «Parli italiano?»", a: ["Parli italiano."], why: "Wortstellung bleibt gleich" },
         { q: "Muss man im Italienischen für eine Frage die Wörter umstellen?", options: ["Ja", "Nein"], a: ["Nein"], why: "Die Wortstellung bleibt, nur die Melodie ändert sich" },
+      ],
+    },
+    {
+      id: "regelmaessig",
+      title: "Regelmässige Verben",
+      explain:
+        "<h3>1 · Die drei Gruppen</h3>" +
+        "<ul>" +
+        "<li><b>-are</b>-Verben" + "<span class='ex'><span class='ep'>abitare,</span> <span class='ep'>lavorare</span></span>" + "</li>" +
+        "<li><b>-ere</b>-Verben" + "<span class='ex'><span class='ep'>prendere,</span> <span class='ep'>scrivere</span></span>" + "</li>" +
+        "<li><b>-ire</b>-Verben" + "<span class='ex'><span class='ep'>dormire,</span> <span class='ep'>partire</span></span>" + "</li>" +
+        "</ul>" +
+        "<h3>2 · Die Endungen im Präsens</h3>" +
+        "<p class='sub'>Singular</p>" +
+        "<ul>" +
+        "<li><b>-are</b>: -o / -i / -a" + "<span class='ex'><span class='ep'>abito,</span> <span class='ep'>abiti,</span> <span class='ep'>abita</span></span>" + "</li>" +
+        "<li><b>-ere</b>: -o / -i / -e" + "<span class='ex'><span class='ep'>prendo,</span> <span class='ep'>prendi,</span> <span class='ep'>prende</span></span>" + "</li>" +
+        "<li><b>-ire</b>: -o / -i / -e" + "<span class='ex'><span class='ep'>dormo,</span> <span class='ep'>dormi,</span> <span class='ep'>dorme</span></span>" + "</li>" +
+        "</ul>" +
+        "<p class='sub'>Plural</p>" +
+        "<ul>" +
+        "<li><b>noi</b>: -iamo<span class='nt'>Bei allen drei Gruppen.</span>" + "<span class='ex'><span class='ep'>abitiamo,</span> <span class='ep'>prendiamo,</span> <span class='ep'>dormiamo</span></span>" + "</li>" +
+        "<li><b>voi</b>: -ate / -ete / -ite<span class='nt'>Je nach Gruppe: -are / -ere / -ire.</span>" + "<span class='ex'><span class='ep'>abitate,</span> <span class='ep'>prendete,</span> <span class='ep'>dormite</span></span>" + "</li>" +
+        "<li><b>loro</b>: -ano / -ono<span class='nt'>-ano bei -are, -ono bei -ere und -ire.</span>" + "<span class='ex'><span class='ep'>abitano,</span> <span class='ep'>prendono,</span> <span class='ep'>dormono</span></span>" + "</li>" +
+        "</ul>" +
+        "<p class='merk'>Merkhilfe: Singular -are = OIA, -ere / -ire = OIE. Plural = OEO (letzte Buchstaben).</p>" +
+        "<h3>3 · Alle Formen</h3>" +
+        "<table class='vt'><tr><th></th><th>abitare</th><th>prendere</th><th>dormire</th></tr><tr><td>io</td><td>abito</td><td>prendo</td><td>dormo</td></tr><tr><td>tu</td><td>abiti</td><td>prendi</td><td>dormi</td></tr><tr><td>lui / lei</td><td>abita</td><td>prende</td><td>dorme</td></tr><tr><td>noi</td><td>abitiamo</td><td>prendiamo</td><td>dormiamo</td></tr><tr><td>voi</td><td>abitate</td><td>prendete</td><td>dormite</td></tr><tr><td>loro</td><td>abitano</td><td>prendono</td><td>dormono</td></tr></table>" +
+        "<h3>4 · Verben mit -isc-</h3>" +
+        "<ul>" +
+        "<li><b>-isc-</b> bei manchen -ire-Verben<span class='nt'>Nur bei io / tu / lui / loro.</span>" + "<span class='ex'><span class='ep'>preferisco,</span> <span class='ep'>preferisci,</span> <span class='ep'>preferisce,</span> <span class='ep'>preferiscono</span></span>" + "</li>" +
+        "<li><b>noi / voi</b> ohne -isc-" + "<span class='ex'><span class='ep'>preferiamo,</span> <span class='ep'>preferite</span></span>" + "</li>" +
+        "<li><b>ohne -isc-</b> bei anderen -ire-Verben<span class='nt'>Welche Verben, muss man lernen.</span>" + "<span class='ex'><span class='ep'>dormo,</span> <span class='ep'>dormi,</span> <span class='ep'>dorme,</span> <span class='ep'>dormono</span></span>" + "</li>" +
+        "</ul>" +
+        "<table class='vt'><tr><th></th><th>preferire</th><th>capire</th></tr><tr><td>io</td><td>preferisco</td><td>capisco</td></tr><tr><td>tu</td><td>preferisci</td><td>capisci</td></tr><tr><td>lui / lei</td><td>preferisce</td><td>capisce</td></tr><tr><td>noi</td><td>preferiamo</td><td>capiamo</td></tr><tr><td>voi</td><td>preferite</td><td>capite</td></tr><tr><td>loro</td><td>preferiscono</td><td>capiscono</td></tr></table>" +
+        "<h3>5 · Betonung</h3>" +
+        "<p class='nt'>Betonte Silbe fett.</p>" +
+        "<ul>" +
+        "<li><b>io / tu / lui / loro</b>: Stamm betont<span class='nt'>Stamm = Verb ohne Endung.</span>" + "<span class='ex'><span class='ep'><span class='sy'><b>a</b>bito</span>,</span> <span class='ep'><span class='sy'><b>a</b>biti</span>,</span> <span class='ep'><span class='sy'><b>a</b>bita</span>,</span> <span class='ep'><span class='sy'><b>a</b>bitano</span></span></span><span class='ex'><span class='ep'><span class='sy'><b>pren</b>do</span>,</span> <span class='ep'><span class='sy'><b>pren</b>dono</span></span></span><span class='ex'><span class='ep'><span class='sy'><b>dor</b>mo</span>,</span> <span class='ep'><span class='sy'><b>dor</b>mono</span></span></span>" + "</li>" +
+        "<li><b>noi / voi</b>: Endung betont" + "<span class='ex'><span class='ep'><span class='sy'>abi<b>tia</b>mo</span>,</span> <span class='ep'><span class='sy'>abi<b>ta</b>te</span></span></span><span class='ex'><span class='ep'><span class='sy'>pren<b>dia</b>mo</span>,</span> <span class='ep'><span class='sy'>pren<b>de</b>te</span></span></span><span class='ex'><span class='ep'><span class='sy'>dor<b>mia</b>mo</span>,</span> <span class='ep'><span class='sy'>dor<b>mi</b>te</span></span></span>" + "</li>" +
+        "<li><b>-isc-</b>: immer dieselbe Silbe<span class='nt'>Auch bei noi / voi.</span>" + "<span class='ex'><span class='ep'><span class='sy'>prefe<b>ri</b>sco</span>,</span> <span class='ep'><span class='sy'>prefe<b>ri</b>scono</span></span></span><span class='ex'><span class='ep'><span class='sy'>prefe<b>ria</b>mo</span>,</span> <span class='ep'><span class='sy'>prefe<b>ri</b>te</span></span></span>" + "</li>" +
+        "</ul>",
+      exercises: [
+        { q: "Zu welcher Gruppe gehört «prendere»?", options: ["-are", "-ere", "-ire"], a: ["-ere"], why: "prendere endet auf -ere" },
+        { q: "Zu welcher Gruppe gehört «dormire»?", options: ["-are", "-ere", "-ire"], a: ["-ire"], why: "dormire endet auf -ire" },
+        { q: "Welche Endungen haben -are-Verben im Singular?", options: ["-o / -i / -a", "-o / -i / -e", "-o / -e / -a"], a: ["-o / -i / -a"], why: "-are: OIA" },
+        { q: "Welche Endungen haben -ere- und -ire-Verben im Singular?", options: ["-o / -i / -e", "-o / -i / -a", "-i / -e / -o"], a: ["-o / -i / -e"], why: "-ere / -ire: OIE" },
+        { q: "Mit welchen Buchstaben enden noi / voi / loro?", options: ["O – E – O", "O – I – E", "I – E – O"], a: ["O – E – O"], why: "Plural: OEO (-iamo / -ate, -ete, -ite / -ano, -ono)" },
+        { q: "abitare – io:", hint: "ich", a: ["abito"], why: "-are: -o" },
+        { q: "abitare – tu:", hint: "du", a: ["abiti"], why: "-are: -i" },
+        { q: "abitare – lui / lei:", hint: "er / sie", a: ["abita"], why: "-are: -a" },
+        { q: "abitare – noi:", hint: "wir", a: ["abitiamo"], why: "noi: -iamo" },
+        { q: "abitare – voi:", hint: "ihr", a: ["abitate"], why: "-are: voi -ate" },
+        { q: "abitare – loro:", hint: "sie (Plural)", a: ["abitano"], why: "-are: loro -ano" },
+        { q: "prendere – io:", hint: "ich", a: ["prendo"], why: "-ere: -o" },
+        { q: "prendere – lui / lei:", hint: "er / sie", a: ["prende"], why: "-ere: -e" },
+        { q: "prendere – noi:", hint: "wir", a: ["prendiamo"], why: "noi: -iamo" },
+        { q: "prendere – voi:", hint: "ihr", a: ["prendete"], why: "-ere: voi -ete" },
+        { q: "prendere – loro:", hint: "sie (Plural)", a: ["prendono"], why: "-ere: loro -ono" },
+        { q: "dormire – tu:", hint: "du", a: ["dormi"], why: "-ire: -i" },
+        { q: "dormire – lui / lei:", hint: "er / sie", a: ["dorme"], why: "-ire: -e" },
+        { q: "dormire – voi:", hint: "ihr", a: ["dormite"], why: "-ire: voi -ite" },
+        { q: "dormire – loro:", hint: "sie (Plural)", a: ["dormono"], why: "-ire: loro -ono" },
+        { q: "preferire – io:", hint: "ich", a: ["preferisco"], why: "preferire hat -isc-" },
+        { q: "preferire – tu:", hint: "du", a: ["preferisci"], why: "preferire hat -isc-" },
+        { q: "preferire – noi:", hint: "wir", a: ["preferiamo"], why: "noi / voi ohne -isc-" },
+        { q: "preferire – loro:", hint: "sie (Plural)", a: ["preferiscono"], why: "loro mit -isc-" },
+        { q: "capire – lui / lei:", hint: "er / sie", a: ["capisce"], why: "capire hat -isc-" },
+        { q: "capire – voi:", hint: "ihr", a: ["capite"], why: "voi ohne -isc-" },
+        { q: "Io ___ a Coira. (abitare)", hint: "Form von abitare", a: ["abito"], why: "io + -are: -o" },
+        { q: "Lui ___ un caffè. (prendere)", hint: "Form von prendere", a: ["prende"], why: "lui + -ere: -e" },
+        { q: "Noi ___ otto ore. (dormire)", hint: "Form von dormire", a: ["dormiamo"], why: "noi: -iamo" },
+        { q: "Loro ___ il caffè. (preferire)", hint: "Form von preferire", a: ["preferiscono"], why: "loro + -isc-: -iscono" },
+        { q: "Tu ___ l'italiano? (capire)", hint: "Form von capire", a: ["capisci"], why: "tu + -isc-: -isci" },
+        { q: "Wo liegt die Betonung bei «io abito»?", options: ["ABito", "aBIto", "abiTO"], a: ["ABito"], why: "Singular: Stamm betont" },
+        { q: "Wo liegt die Betonung bei «noi abitiamo»?", options: ["abiTIAmo", "ABitiamo", "abitiaMO"], a: ["abiTIAmo"], why: "noi / voi: Endung betont" },
+        { q: "Bei welchen Formen ist die Endung betont?", options: ["noi / voi", "io / tu / lui / loro"], a: ["noi / voi"], why: "noi / voi: Endung betont" },
       ],
     },
     {
@@ -3423,7 +3500,7 @@
       const nodes = [];
       let n;
       while ((n = walker.nextNode())) {
-        if (n.parentNode.closest && n.parentNode.closest(".lw, button, input, textarea, select, option, script, style, #lwBar, #dictView, #gSearch")) continue;
+        if (n.parentNode.closest && n.parentNode.closest(".lw, .sy, button, input, textarea, select, option, script, style, #lwBar, #dictView, #gSearch")) continue;
         nodes.push(n);
       }
       nodes.forEach(t => {
@@ -3841,6 +3918,11 @@
 <style>
   /* Beispiele in Grammatik-Bloecken: ein Beispiel (z. B. «il ponte → i ponti») bricht nie mitten im Beispiel um */
   .explain .ep { white-space: nowrap; }
+  /* Verbtabellen (Regelmaessige Verben) */
+  .explain table.vt { width: 100%; border-collapse: collapse; margin: 4px 0 14px; font-size: .95em; }
+  .explain table.vt th { text-align: left; font-weight: 700; padding: 4px 6px 6px 0; border-bottom: 1px solid var(--k-line, #e7e7e9); }
+  .explain table.vt td { padding: 5px 6px 5px 0; color: var(--k-muted, var(--ink-muted, #666)); }
+  .explain table.vt td:first-child { font-size: .86em; }
   /* Aufbau jeder Regel: Regel in einer Zeile, Hinweis (grau) darunter, Beispiele immer in einer eigenen Zeile */
   .explain li .ex { display: block; margin-top: 2px; }
   .explain li { margin-bottom: 9px; }
@@ -4033,6 +4115,46 @@
         L("Quanti anni hai?"),
         O("Der Sohn von Rita ist acht Jahre alt.", "Il figlio di Rita ha otto anni."),
         Y("Übersetze: Die Tochter von Paolo ist zwölf Jahre alt.", "La figlia di Paolo ha dodici anni.")
+      ]
+    },
+    {
+      id: "regelmaessig", topic: "regelmaessig", verbs: ["essere", "avere"], noNew: true, title: "Tagesablauf - lerne die regelmässigen Verben", sub: "Grammatik-Block «Regelmässige Verben»",
+      nw: [["prendere", "nehmen"], ["dormire", "schlafen"], ["preferire", "bevorzugen"], ["capire", "verstehen"], ["abitare", "wohnen"]],
+      words: [
+        W("Abito a Coira.", "Ich wohne in Chur."),
+        W("Che cosa prendi?", "Was nimmst du?"),
+        W("Prendo un caffè.", "Ich nehme einen Kaffee."),
+        W("Dormo otto ore.", "Ich schlafe acht Stunden."),
+        W("Preferisco il caffè.", "Ich bevorzuge Kaffee."),
+        W("Capisco l'italiano.", "Ich verstehe Italienisch."),
+        W("Non capisco.", "Ich verstehe nicht."),
+        W("Abitiamo a Coira.", "Wir wohnen in Chur."),
+        W("prendere · dormire · capire", "nehmen · schlafen · verstehen")
+      ],
+      tasks: [
+        C("Zu welcher Gruppe gehört «prendere»?", "-ere", ["-are", "-ire"]),
+        C("Zu welcher Gruppe gehört «dormire»?", "-ire", ["-are", "-ere"]),
+        C("Welche Endungen haben -are-Verben im Singular?", "-o / -i / -a", ["-o / -i / -e", "-o / -e / -a"]),
+        C("Welche Endungen haben -ere- und -ire-Verben im Singular?", "-o / -i / -e", ["-o / -i / -a", "-i / -e / -o"]),
+        C("Mit welchen Buchstaben enden noi / voi / loro?", "O – E – O", ["O – I – E", "I – E – O"]),
+        Y("abitare – tu:", "abiti"),
+        Y("prendere – io:", "prendo"),
+        Y("dormire – lui / lei:", "dorme"),
+        Y("preferire – io:", "preferisco"),
+        Y("capire – tu:", "capisci"),
+        C("«Noi ___ a Coira.» (abitare)", "abitiamo", ["abitate", "abitano", "abito"]),
+        C("«Voi ___ un caffè.» (prendere)", "prendete", ["prendiamo", "prendono", "prendi"]),
+        C("«Loro ___ otto ore.» (dormire)", "dormono", ["dormite", "dormiamo", "dormo"]),
+        C("Wo liegt die Betonung bei «noi abitiamo»?", "abiTIAmo", ["ABitiamo", "abitiaMO"]),
+        P([["abitare", "wohnen"], ["prendere", "nehmen"], ["dormire", "schlafen"], ["preferire", "bevorzugen"], ["capire", "verstehen"]]),
+        Y("Übersetze: Ich nehme einen Kaffee.", "Prendo un caffè.", ["Io prendo un caffè."]),
+        Y("Übersetze: Ich verstehe nicht.", "Non capisco.", ["Io non capisco."]),
+        O("Ich schlafe acht Stunden.", "Dormo otto ore.", ["Io dormo otto ore."]),
+        O("Wir wohnen in Chur.", "Abitiamo a Coira.", ["Noi abitiamo a Coira."]),
+        K("prendere"),
+        K("dormire"),
+        K("preferire"),
+        L("Che cosa prendi?")
       ]
     },
     {
