@@ -815,7 +815,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-questo";
-  const APP_VERSION = "2026-10-24-zj"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-zk"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3191,6 +3191,14 @@
             if (k2 !== k) add(k2, entry);
           });
         });
+      });
+      addEssereParticiple();
+    }
+    // Partizip von essere: «stato» ist sonst nur als Nomen (lo stato = Staat) bekannt, steht aber in «sono stato» = ich bin gewesen
+    function addEssereParticiple() {
+      [["stato", "m, Sg."], ["stata", "w, Sg."], ["stati", "m, Pl."], ["state", "w, Pl."]].forEach(([f, g]) => {
+        const e = { it: f, de: "gewesen", note: "Partizip von essere (" + g + "): sono stato = ich bin gewesen", cat: "Verbform" };
+        (idx[f] || (idx[f] = [])).unshift(e);
       });
     }
     const ARTINFO = { il: "der (männlich)", lo: "der (männlich, vor s+Konsonant / z)", la: "die (weiblich)", "l'": "der / die (vor Vokal)", i: "die (männlich, Mehrzahl)", gli: "die (männlich, Mehrzahl, vor Vokal / s+Konsonant)", le: "die (weiblich, Mehrzahl)", un: "ein (männlich)", uno: "ein (männlich, vor s+Konsonant / z)", una: "eine (weiblich)", "un'": "eine (weiblich, vor Vokal)" };
