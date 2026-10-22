@@ -815,7 +815,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-23-plural";
-  const APP_VERSION = "2026-10-24-y"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-z"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4468,6 +4468,9 @@
   #gExplain[open] > summary::after { transform: rotate(-135deg); margin-top: 3px; }
   #gSearchIn { border-radius: 14px !important; }
   #todayGo { font-size: 1rem !important; }
+  /* Kopf = gleiche Grafik wie das Icon: Orange-Verlauf, Sprechblase mit grossem «Ciao» und Schatten */
+  body::before { background: linear-gradient(180deg, #fb8030 0%, #ea580c 50%, #c83e02 100%) !important; }
+  @media (prefers-color-scheme: light) { .wrap h1 { box-shadow: 0 7px 16px rgba(110, 35, 0, .28) !important; } }
 </style>
 <style>
   /* Navigation: schwebende Leiste unten (Handy) mit Icons ueber der Beschriftung */
@@ -4515,7 +4518,7 @@
 
   /* Dunkelmodus: Luecken schliessen (Streak-Karte, Kopf) */
   @media (prefers-color-scheme: dark) {
-    body::before { background: #b84a0c !important; }
+    body::before { background: linear-gradient(180deg, #d4682c 0%, #b84a0c 50%, #8e3004 100%) !important; }
     .streakbar { background: color-mix(in srgb, var(--k-orange, #f2650f) 16%, var(--k-card, #16203a)) !important; }
     .streakbar .sb b { color: #ffb27a !important; }
     .streakbar .sb span, .streakbar .gl span { color: var(--k-muted) !important; }
@@ -4685,7 +4688,7 @@
   .streakbar .gl b { grid-column: 3; grid-row: 1; justify-self: end; color: #fff !important; font-size: .78rem !important; font-weight: 600 !important; }
   .streakbar .gb { grid-column: 1 / -1; grid-row: 2; height: 3px !important; margin: 0 !important; background: rgba(255,255,255,.35) !important; }
   .streakbar .gb i, .streakbar .goal.done .gb i { background: #fff !important; }
-  .wrap h1 { margin-top: 14px !important; font-size: 3.4rem !important; line-height: 1.1 !important; padding: 4px 24.5px 6px !important; border-radius: 26px !important; }
+  .wrap h1 { margin-top: 14px !important; font-size: 3.6rem !important; line-height: 1.1 !important; padding: 3px 21px 4px !important; border-radius: 26px !important; }
   .wrap h1::after { left: 30px !important; bottom: -22px !important; border-top-width: 24px !important; border-right-width: 24px !important; }
 </style>
 <script>
