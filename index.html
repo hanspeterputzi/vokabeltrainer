@@ -820,7 +820,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-piacere";
-  const APP_VERSION = "2026-10-24-zzk"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-zzl"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1976,7 +1976,17 @@
         "<li><b>piace</b> + Verb (Infinitiv)<span class='nt'>Man tut etwas gern.</span><span class='ex'>Mi piace leggere.</span></li>" +
         "</ul>" +
         "<p class='merk'>Merkhilfe: mir <b>gefällt</b> = mi <b>piace</b>, mir <b>gefallen</b> = mi <b>piacciono</b>.</p>" +
-        "<h3>2 · Wem gefällt es?</h3>" +
+        "<h3>2 · Wer gefällt?</h3>" +
+        "<p class='nt'>Auch Menschen gefallen: Dann richtet sich «piacere» nach der Person.</p>" +
+        "<ul>" +
+        "<li><b>piaccio</b> = ich gefalle<span class='ex'>Ti piaccio?</span></li>" +
+        "<li><b>piaci</b> = du gefällst<span class='ex'>Tu mi piaci.</span></li>" +
+        "<li><b>piace</b> = er / sie gefällt<span class='ex'>Lui mi piace.</span></li>" +
+        "<li><b>piacciamo</b> = wir gefallen<span class='ex'>Ti piacciamo?</span></li>" +
+        "<li><b>piacete</b> = ihr gefallt<span class='ex'>Mi piacete.</span></li>" +
+        "<li><b>piacciono</b> = sie gefallen<span class='ex'>Mi piacciono i tuoi amici.</span></li>" +
+        "</ul>" +
+        "<h3>3 · Wem gefällt es?</h3>" +
         "<p class='nt'>Die Person steht vor «piace».</p>" +
         "<ul>" +
         "<li><b>mi / ti</b> = mir / dir<span class='ex'><span class='ep'>Mi piace il caffè.</span> <span class='ep'>Ti piace il vino?</span></span></li>" +
@@ -1985,14 +1995,14 @@
         "<li><b>Le</b> = Ihnen<span class='nt'>Höflichkeitsform, gross geschrieben.</span><span class='ex'>Le piace il caffè?</span></li>" +
         "<li><b>non</b> steht vor dem Pronomen<span class='ex'>Non mi piace il vino.</span></li>" +
         "</ul>" +
-        "<h3>3 · esserci</h3>" +
+        "<h3>4 · esserci</h3>" +
         "<p class='nt'>Nur in der 3. Person: Singular und Plural.</p>" +
         "<ul>" +
         "<li><b>c'è</b> + Singular = es gibt<span class='ex'><span class='ep'>C'è un parcheggio qui vicino?</span> <span class='ep'>C'è una banca.</span></span></li>" +
         "<li><b>ci sono</b> + Plural = es gibt<span class='ex'><span class='ep'>Ci sono due camere libere per domani?</span> <span class='ep'>Ci sono due ospedali.</span></span></li>" +
         "</ul>" +
         "<p class='merk'>Merkhilfe: <b>ci</b> heisst «da», dazu <b>è</b> «ist» und <b>sono</b> «sind»: c'è = da ist, ci sono = da sind.</p>" +
-        "<h3>4 · c'è oder dov'è?</h3>" +
+        "<h3>5 · c'è oder dov'è?</h3>" +
         "<ul>" +
         "<li><b>C'è un / una …?</b> = Gibt es …?<span class='nt'>Ob etwas vorhanden ist (irgendein).</span><span class='ex'><span class='ep'>C'è un ristorante qui vicino?</span> <span class='ep'>C'è una farmacia?</span></span></li>" +
         "<li><b>Dov'è il / la …?</b> = Wo ist …?<span class='nt'>Wo etwas Bestimmtes ist.</span><span class='ex'><span class='ep'>Dov'è il ristorante «Al sole»?</span> <span class='ep'>Dov'è la farmacia?</span></span></li>" +
@@ -2007,6 +2017,10 @@
         { q: "Mi ___ cucinare.", options: ["piace", "piacciono"], a: ["piace"], why: "Verb danach (Infinitiv) → piace" },
         { q: "Mi ___ il vino. (piacere)", hint: "piace oder piacciono?", a: ["piace"], why: "il vino: Singular → piace" },
         { q: "Mi ___ le pizze. (piacere)", hint: "piace oder piacciono?", a: ["piacciono"], why: "le pizze: Plural → piacciono" },
+        { q: "Was bedeutet «Tu mi piaci»?", options: ["Du gefällst mir","Ich gefalle dir","Du magst mich"], a: ["Du gefällst mir"], why: "piaci = du gefällst (die Person gefällt)" },
+        { q: "Mi ___ i tuoi amici.", options: ["piace","piacciono","piacete"], a: ["piacciono"], why: "i tuoi amici: Plural → piacciono" },
+        { q: "Mi ___. (Ihr gefallt mir.)", options: ["piaci","piacete","piacciono"], a: ["piacete"], why: "ihr gefallt = piacete" },
+        { q: "Ti ___? (Wir gefallen dir?)", options: ["piaccio","piacciamo","piacciono"], a: ["piacciamo"], why: "wir gefallen = piacciamo" },
         { q: "___ piace il caffè. (mir)", options: ["Mi", "Ti", "Gli", "Le"], a: ["Mi"], why: "mir = mi" },
         { q: "___ piace il vino? (dir)", options: ["Mi", "Ti", "Gli", "Ci"], a: ["Ti"], why: "dir = ti" },
         { q: "___ piace la pizza. (ihm)", options: ["Mi", "Gli", "Le", "Ci"], a: ["Gli"], why: "ihm = gli" },
@@ -4536,6 +4550,9 @@
         C("«___ piace la musica.» (ihr)", "Le", ["Gli", "Ti", "Vi"]),
         C("«___ piace il mare.» (uns)", "Ci", ["Vi", "Mi", "Gli"]),
         Y("Mi ___ gli spaghetti. (piacere)", "piacciono"),
+        C("«Tu mi piaci.» heisst …", "Du gefällst mir", ["Ich gefalle dir", "Du magst mich"]),
+        C("«Mi ___.» (Ihr gefallt mir.)", "piacete", ["piaci", "piacciono"]),
+        Y("Ti ___? (Wir gefallen dir? – piacere)", "piacciamo"),
         Y("Übersetze: Mir schmeckt die Pizza.", "Mi piace la pizza."),
         Y("Übersetze: Ich lese gern.", "Mi piace leggere."),
         O("Magst du diese Musik?", "Ti piace questa musica?"),
