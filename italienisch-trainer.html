@@ -814,11 +814,13 @@
   const PROGRESS_KEY = "vokabeltrainer_progress";
   const ROUNDS_KEY = "vokabeltrainer_rounds"; // Anzahl vollstaendiger Durchgaenge je Rubrik
   let rounds = (function () { try { return JSON.parse(localStorage.getItem(ROUNDS_KEY)) || {}; } catch (e) { return {}; } })();
+  // Einmalig: bisherige Durchgaenge von Hand eintragen (je Geraet)
+  if (!rounds._start1) { rounds._start1 = 1; rounds["Hauptverben"] = (rounds["Hauptverben"] || 0) + 2; try { localStorage.setItem(ROUNDS_KEY, JSON.stringify(rounds)); } catch (e) {} }
   const CATEGORY_KEY = "vokabeltrainer_selected_category";
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-fragen3";
-  const APP_VERSION = "2026-10-24-zza"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-zzb"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
