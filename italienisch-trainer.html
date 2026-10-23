@@ -815,7 +815,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-fragen3";
-  const APP_VERSION = "2026-10-24-zx"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-zy"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1518,7 +1518,7 @@
         const entry = q.shift();
         word = pool.find(w => sameWord(w, entry));
         currentFromReview = true;
-        label = selectedCategory + " · Wiederholung (noch " + (q.length + 1) + ")";
+        label = (selectedCategory === TODAY_CAT ? "Heute" : selectedCategory) + " · nochmals falsche Wörter (noch " + (q.length + 1) + ")";
         saveReview();
       } else {
         if (selectedCategory === TODAY_CAT) { todayDone(); return; }
@@ -1529,7 +1529,7 @@
       word = pool[idx];
       progress[selectedCategory] = idx + 1;
       saveProgress();
-      label = selectedCategory + " · Vokabel " + (idx + 1) + " / " + pool.length;
+      label = selectedCategory === TODAY_CAT ? "Heute: Wort " + (idx + 1) + " von " + pool.length : selectedCategory + " · Vokabel " + (idx + 1) + " / " + pool.length;
     }
 
     currentQuiz = { word, direction: "de-it" };
