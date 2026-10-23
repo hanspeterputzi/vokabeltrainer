@@ -820,7 +820,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-fragen3";
-  const APP_VERSION = "2026-10-24-zzb"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-zzc"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1794,6 +1794,56 @@
         { q: "Wo liegt die Betonung bei «io abito»?", options: ["ABito", "aBIto", "abiTO"], a: ["ABito"], why: "Singular: Stamm betont" },
         { q: "Wo liegt die Betonung bei «noi abitiamo»?", options: ["abiTIAmo", "ABitiamo", "abitiaMO"], a: ["abiTIAmo"], why: "noi / voi: Endung betont" },
         { q: "Bei welchen Formen ist die Endung betont?", options: ["noi / voi", "io / tu / lui / loro"], a: ["noi / voi"], why: "noi / voi: Endung betont" },
+      ],
+    },
+    {
+      id: "unregelmaessig",
+      title: "Unregelmässige Verben",
+      explain:
+        "<h3>1 · Sein und haben</h3><ul><li><b>essere</b>: io und loro gleich<span class='ex'><span class='ep'>io sono,</span> <span class='ep'>loro sono</span></span></li></ul>" +
+        "<table class='vt'><tr><th></th><th>essere</th><th>avere</th></tr><tr><td></td><td>sein</td><td>haben</td></tr><tr><td>io</td><td>sono</td><td>ho</td></tr><tr><td>tu</td><td>sei</td><td>hai</td></tr><tr><td>lui / lei</td><td>è</td><td>ha</td></tr><tr><td>noi</td><td>siamo</td><td>abbiamo</td></tr><tr><td>voi</td><td>siete</td><td>avete</td></tr><tr><td>loro</td><td>sono</td><td>hanno</td></tr></table>" +
+        "<h3>2 · Kurze Formen</h3><ul><li><b>lui / lei</b>: nur eine Silbe<span class='nt'>Wie «ha» und «è».</span><span class='ex'><span class='ep'>va,</span> <span class='ep'>fa,</span> <span class='ep'>sa,</span> <span class='ep'>sta</span></span></li></ul>" +
+        "<table class='vt'><tr><th></th><th>andare</th><th>fare</th></tr><tr><td></td><td>gehen / fahren</td><td>machen / tun</td></tr><tr><td>io</td><td>vado</td><td>faccio</td></tr><tr><td>tu</td><td>vai</td><td>fai</td></tr><tr><td>lui / lei</td><td>va</td><td>fa</td></tr><tr><td>noi</td><td>andiamo</td><td>facciamo</td></tr><tr><td>voi</td><td>andate</td><td>fate</td></tr><tr><td>loro</td><td>vanno</td><td>fanno</td></tr></table>" +
+        "<table class='vt'><tr><th></th><th>sapere</th><th>stare</th></tr><tr><td></td><td>wissen</td><td>bleiben / sich fühlen</td></tr><tr><td>io</td><td>so</td><td>sto</td></tr><tr><td>tu</td><td>sai</td><td>stai</td></tr><tr><td>lui / lei</td><td>sa</td><td>sta</td></tr><tr><td>noi</td><td>sappiamo</td><td>stiamo</td></tr><tr><td>voi</td><td>sapete</td><td>state</td></tr><tr><td>loro</td><td>sanno</td><td>stanno</td></tr></table>" +
+        "<p class='merk'>Merkhilfe: loro = lui + nno, z. B. va → vanno (auch ha → hanno).</p>" +
+        "<h3>3 · Gleicher Stamm bei io und loro</h3><ul><li><b>io / loro</b>: gleicher Stamm<span class='ex'><span class='ep'>dico&nbsp;/&nbsp;dicono,</span> <span class='ep'>devo&nbsp;/&nbsp;devono,</span> <span class='ep'>posso&nbsp;/&nbsp;possono,</span> <span class='ep'>rimango&nbsp;/&nbsp;rimangono,</span> <span class='ep'>voglio&nbsp;/&nbsp;vogliono</span></span></li><li><b>voi</b>: Infinitiv-Stamm + -ete<span class='nt'>Ausnahme: dite (nicht «dicete»).</span><span class='ex'><span class='ep'>dovete,</span> <span class='ep'>potete,</span> <span class='ep'>rimanete,</span> <span class='ep'>volete</span></span></li><li><b>noi</b>: Stamm ändert sich<span class='nt'>Jedes Verb für sich lernen.</span><span class='ex'><span class='ep'>diciamo,</span> <span class='ep'>dobbiamo,</span> <span class='ep'>possiamo,</span> <span class='ep'>rimaniamo,</span> <span class='ep'>vogliamo</span></span></li></ul>" +
+        "<table class='vt'><tr><th></th><th>dire</th><th>dovere</th><th>potere</th></tr><tr><td></td><td>sagen</td><td>müssen / sollen</td><td>können / dürfen</td></tr><tr><td>io</td><td>dico</td><td>devo</td><td>posso</td></tr><tr><td>tu</td><td>dici</td><td>devi</td><td>puoi</td></tr><tr><td>lui / lei</td><td>dice</td><td>deve</td><td>può</td></tr><tr><td>noi</td><td>diciamo</td><td>dobbiamo</td><td>possiamo</td></tr><tr><td>voi</td><td>dite</td><td>dovete</td><td>potete</td></tr><tr><td>loro</td><td>dicono</td><td>devono</td><td>possono</td></tr></table>" +
+        "<table class='vt'><tr><th></th><th>rimanere</th><th>volere</th></tr><tr><td></td><td>bleiben</td><td>wollen</td></tr><tr><td>io</td><td>rimango</td><td>voglio</td></tr><tr><td>tu</td><td>rimani</td><td>vuoi</td></tr><tr><td>lui / lei</td><td>rimane</td><td>vuole</td></tr><tr><td>noi</td><td>rimaniamo</td><td>vogliamo</td></tr><tr><td>voi</td><td>rimanete</td><td>volete</td></tr><tr><td>loro</td><td>rimangono</td><td>vogliono</td></tr></table>",
+      exercises: [
+        { q: "essere – io:", hint: "ich", a: ["sono"], why: "io und loro: beide «sono»" },
+        { q: "essere – loro:", hint: "sie (Plural)", a: ["sono"], why: "io und loro: beide «sono»" },
+        { q: "essere – lui / lei:", options: ["è", "sono", "sei"], a: ["è"], why: "lui / lei: è" },
+        { q: "avere – loro:", hint: "sie (Plural)", a: ["hanno"], why: "ha + nno" },
+        { q: "andare – io:", hint: "ich", a: ["vado"], why: "io vado" },
+        { q: "andare – loro:", hint: "sie (Plural)", a: ["vanno"], why: "va + nno" },
+        { q: "fare – loro:", hint: "sie (Plural)", a: ["fanno"], why: "fa + nno" },
+        { q: "fare – io:", hint: "ich", a: ["faccio"], why: "io faccio" },
+        { q: "sapere – io:", hint: "ich", a: ["so"], why: "io so" },
+        { q: "sapere – loro:", hint: "sie (Plural)", a: ["sanno"], why: "sa + nno" },
+        { q: "stare – tu:", hint: "du", a: ["stai"], why: "tu stai" },
+        { q: "stare – loro:", hint: "sie (Plural)", a: ["stanno"], why: "sta + nno" },
+        { q: "dire – io:", hint: "ich", a: ["dico"], why: "io dico" },
+        { q: "dire – loro:", hint: "sie (Plural)", a: ["dicono"], why: "io und loro: gleicher Stamm" },
+        { q: "dire – voi:", hint: "ihr", a: ["dite"], why: "voi: Ausnahme dite" },
+        { q: "dovere – io:", hint: "ich", a: ["devo"], why: "io devo" },
+        { q: "dovere – noi:", hint: "wir", a: ["dobbiamo"], why: "noi: Stamm ändert sich (dobb-)" },
+        { q: "dovere – voi:", hint: "ihr", a: ["dovete"], why: "voi: Infinitiv-Stamm + -ete" },
+        { q: "dovere – loro:", hint: "sie (Plural)", a: ["devono"], why: "io und loro: gleicher Stamm" },
+        { q: "potere – io:", hint: "ich", a: ["posso"], why: "io posso" },
+        { q: "potere – tu:", hint: "du", a: ["puoi"], why: "tu puoi" },
+        { q: "potere – loro:", hint: "sie (Plural)", a: ["possono"], why: "io und loro: gleicher Stamm" },
+        { q: "rimanere – io:", hint: "ich", a: ["rimango"], why: "io rimango" },
+        { q: "rimanere – loro:", hint: "sie (Plural)", a: ["rimangono"], why: "io und loro: gleicher Stamm" },
+        { q: "volere – tu:", hint: "du", a: ["vuoi"], why: "tu vuoi" },
+        { q: "volere – loro:", hint: "sie (Plural)", a: ["vogliono"], why: "io und loro: gleicher Stamm" },
+        { q: "Wie ist «loro» bei «andare»?", options: ["vanno", "vano", "vadono"], a: ["vanno"], why: "lui va + nno" },
+        { q: "Bei welchem Verb sind io und loro gleich?", options: ["essere", "avere", "fare"], a: ["essere"], why: "io sono, loro sono" },
+        { q: "Io ___ a Coira. (andare)", hint: "Form von andare", a: ["vado"], why: "io vado" },
+        { q: "Noi ___ lavorare. (dovere)", hint: "Form von dovere", a: ["dobbiamo"], why: "noi dobbiamo" },
+        { q: "Loro ___ parlare italiano. (potere)", hint: "Form von potere", a: ["possono"], why: "loro possono" },
+        { q: "Tu ___ un caffè? (volere)", hint: "Form von volere", a: ["vuoi"], why: "tu vuoi" },
+        { q: "Che cosa ___ loro? (fare)", hint: "Form von fare", a: ["fanno"], why: "loro fanno" },
+        { q: "Io non ___. (sapere)", hint: "Form von sapere", a: ["so"], why: "io so" },
       ],
     },
     {
@@ -4162,6 +4212,48 @@
         K("dormire"),
         K("preferire"),
         L("Che cosa prendi?")
+      ]
+    },
+    {
+      id: "unregelmaessig", topic: "unregelmaessig", verbs: ["essere", "avere"], noNew: true, title: "Alltag + Pläne - lerne die unregelmässigen Verben", sub: "Grammatik-Block «Unregelmässige Verben»",
+      nw: [["andare", "gehen / fahren"], ["dire", "sagen"], ["dovere", "müssen / sollen"], ["potere", "können / dürfen"], ["sapere", "wissen"], ["stare", "bleiben / sich fühlen"], ["volere", "wollen"], ["rimanere", "bleiben"]],
+      words: [
+        W("Vado a Coira.", "Ich gehe nach Chur."),
+        W("Che cosa dici?", "Was sagst du?"),
+        W("Devo lavorare.", "Ich muss arbeiten."),
+        W("Posso prendere un caffè?", "Darf ich einen Kaffee nehmen?"),
+        W("Non so.", "Ich weiss nicht."),
+        W("Come stai?", "Wie geht es dir?"),
+        W("Voglio un caffè.", "Ich will einen Kaffee."),
+        W("Rimango a Coira.", "Ich bleibe in Chur."),
+        W("andare · dovere · potere · volere", "gehen · müssen · können · wollen")
+      ],
+      tasks: [
+        C("Welche Form ist «io» bei «andare»?", "vado", ["vai", "va"]),
+        C("Welche Form ist «lui / lei» bei «fare»?", "fa", ["fai", "faccio"]),
+        C("Loro = lui + «nno»: «sta» wird zu …", "stanno", ["stano", "stiamo"]),
+        C("Welche Form ist «lui / lei» bei «sapere»?", "sa", ["sai", "so"]),
+        C("Bei welchem Verb sind io und loro gleich?", "essere", ["avere", "fare"]),
+        Y("dire – io:", "dico"),
+        Y("dovere – noi:", "dobbiamo"),
+        Y("potere – tu:", "puoi"),
+        Y("volere – loro:", "vogliono"),
+        Y("rimanere – io:", "rimango"),
+        C("«Io ___ a Coira.» (andare)", "vado", ["vai", "va", "vanno"]),
+        C("«Noi ___ lavorare.» (dovere)", "dobbiamo", ["dovete", "devono", "devo"]),
+        C("«Loro ___ parlare italiano.» (potere)", "possono", ["possiamo", "posso", "potete"]),
+        C("«Tu ___ un caffè?» (volere)", "vuoi", ["voglio", "vuole", "volete"]),
+        P([["andare", "gehen / fahren"], ["dire", "sagen"], ["dovere", "müssen / sollen"], ["potere", "können / dürfen"], ["sapere", "wissen"]]),
+        Y("Übersetze: Ich weiss nicht.", "Non so.", ["Io non so."]),
+        Y("Übersetze: Ich muss arbeiten.", "Devo lavorare.", ["Io devo lavorare."]),
+        O("Ich will einen Kaffee.", "Voglio un caffè.", ["Io voglio un caffè."]),
+        O("Ich bleibe in Chur.", "Rimango a Coira.", ["Io rimango a Coira."]),
+        K("andare"),
+        K("sapere"),
+        K("dovere"),
+        K("potere"),
+        K("volere"),
+        L("Che cosa dici?")
       ]
     },
     {
