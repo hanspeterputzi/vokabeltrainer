@@ -660,6 +660,7 @@
   #talkView .tk-topic { background: #fff0e6; background: color-mix(in srgb, var(--k-orange) 11%, var(--k-card)); border-color: #fbd5bb; border-color: color-mix(in srgb, var(--k-orange) 28%, var(--k-card)); box-shadow: none; }
   #talkView .tk-topic:hover { background: #ffe6d4; background: color-mix(in srgb, var(--k-orange) 18%, var(--k-card)); border-color: var(--k-orange); }
   #talkView .tk-topic.done { background: #e6eeff; background: color-mix(in srgb, var(--k-blue) 10%, var(--k-card)); border-color: var(--k-blue); }
+  #todayCard { display: none !important; }
   /* ---- Heute faellig (Wiederholungsplan) ---- */
   .today-row { display: flex; align-items: center; gap: 12px; }
   .today-nums { display: flex; flex: none; margin: 0; }
@@ -811,11 +812,13 @@
   const STATS_KEY = "vokabeltrainer_stats";
   const SEED_VERSION_KEY = "vokabeltrainer_seed_version";
   const PROGRESS_KEY = "vokabeltrainer_progress";
+  const ROUNDS_KEY = "vokabeltrainer_rounds"; // Anzahl vollstaendiger Durchgaenge je Rubrik
+  let rounds = (function () { try { return JSON.parse(localStorage.getItem(ROUNDS_KEY)) || {}; } catch (e) { return {}; } })();
   const CATEGORY_KEY = "vokabeltrainer_selected_category";
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-fragen3";
-  const APP_VERSION = "2026-10-24-zz"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-zza"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1523,13 +1526,15 @@
       } else {
         if (selectedCategory === TODAY_CAT) { todayDone(); return; }
         idx = 0;
+        rounds[selectedCategory] = (rounds[selectedCategory] || 0) + 1;
+        try { localStorage.setItem(ROUNDS_KEY, JSON.stringify(rounds)); } catch (e) {}
       }
     }
     if (!word) {
       word = pool[idx];
       progress[selectedCategory] = idx + 1;
       saveProgress();
-      label = selectedCategory === TODAY_CAT ? "Heute: Wort " + (idx + 1) + " von " + pool.length : selectedCategory + " · Vokabel " + (idx + 1) + " / " + pool.length;
+      label = selectedCategory === TODAY_CAT ? "Heute: Wort " + (idx + 1) + " von " + pool.length : selectedCategory + " · Vokabel " + (idx + 1) + " / " + pool.length + " · " + (rounds[selectedCategory] || 0) + "× komplett geübt";
     }
 
     currentQuiz = { word, direction: "de-it" };
@@ -3343,7 +3348,7 @@
   });
 
   // --- Init ---
-  if (selectedCategory !== "Alle" && selectedCategory !== TODAY_CAT && CATEGORIES.indexOf(selectedCategory) === -1 && !isConj(selectedCategory)) selectedCategory = "Alle";
+  if (selectedCategory !== "Alle" && CATEGORIES.indexOf(selectedCategory) === -1 && !isConj(selectedCategory)) selectedCategory = "Alle";
   srsMigrate();
   if (selectedCategory === TODAY_CAT) { buildToday(); progress[TODAY_CAT] = 0; reviewQueue[TODAY_CAT] = []; }
   document.getElementById("todayGo").addEventListener("click", startToday);
