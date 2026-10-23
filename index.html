@@ -820,7 +820,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-fragen3";
-  const APP_VERSION = "2026-10-24-zzc"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-zzd"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1720,6 +1720,64 @@
       ],
     },
     {
+      id: "subjekt",
+      title: "Subjektpronomen",
+      explain:
+        "<h3>1 · Die Pronomen</h3>" +
+        "<p class='sub'>Singular</p>" +
+        "<ul>" +
+        "<li><b>io</b> = ich<span class='ex'>Io sono di Coira.</span></li>" +
+        "<li><b>tu</b> = du<span class='ex'>Tu sei di Berna.</span></li>" +
+        "<li><b>lui</b> = er<span class='ex'>Lui è di Roma.</span></li>" +
+        "<li><b>lei</b> = sie<span class='ex'>Lei è di Milano.</span></li>" +
+        "<li><b>Lei</b> = Sie (höflich)<span class='nt'>Immer gross geschrieben.</span><span class='ex'>Di dov'è Lei?</span></li>" +
+        "</ul>" +
+        "<p class='sub'>Plural</p>" +
+        "<ul>" +
+        "<li><b>noi</b> = wir<span class='ex'>Noi siamo di Coira.</span></li>" +
+        "<li><b>voi</b> = ihr<span class='ex'>Voi siete di Berna.</span></li>" +
+        "<li><b>loro</b> = sie<span class='ex'>Loro sono di Roma.</span></li>" +
+        "<li><b>Loro</b> = Sie (höflich)<span class='nt'>Immer gross geschrieben.</span><span class='ex'>Di dove sono Loro?</span></li>" +
+        "</ul>" +
+        "<h3>2 · Pronomen weglassen oder setzen</h3>" +
+        "<ul>" +
+        "<li><b>weglassen</b> (Normalfall)<span class='nt'>Die Verbform zeigt die Person.</span><span class='ex'>Sono di Coira.</span><span class='ex'>Abito a Berna.</span></li>" +
+        "</ul>" +
+        "<p class='sub'>Ausnahmen: Pronomen setzen</p>" +
+        "<ul>" +
+        "<li><b>setzen</b> zum Betonen<span class='nt'>Gegensatz zwischen Personen.</span><span class='ex'>Io sono di Coira, tu sei di Berna.</span></li>" +
+        "<li><b>setzen</b> wenn das Verb fehlt<span class='ex'>Sono di Coira. E tu?</span><span class='ex'>Sono di Coira. – Anch'io.</span></li>" +
+        "</ul>" +
+        "<h3>3 · Die höfliche Form</h3>" +
+        "<ul>" +
+        "<li><b>Lei</b> = Sie (Singular)<span class='nt'>Verb wie bei «lei».</span><span class='ex'>Anche Lei è di qui?</span></li>" +
+        "<li><b>Loro</b> = Sie (Plural)<span class='nt'>Verb wie bei «loro».</span><span class='ex'>Anche Loro sono di qui?</span></li>" +
+        "<li><b>Voi</b> statt «Loro»<span class='nt'>Verb wie bei «voi». Sehr häufig.</span><span class='ex'>Anche Voi siete di qui?</span></li>" +
+        "</ul>",
+      exercises: [
+        { q: "Wie heisst «ich»?", options: ["io", "tu", "lui"], a: ["io"], why: "io = ich" },
+        { q: "Wie heisst «du»?", options: ["io", "tu", "lei"], a: ["tu"], why: "tu = du" },
+        { q: "Wie heisst «wir»?", options: ["noi", "voi", "loro"], a: ["noi"], why: "noi = wir" },
+        { q: "Wie heisst «ihr»?", options: ["noi", "voi", "loro"], a: ["voi"], why: "voi = ihr" },
+        { q: "Wie heisst «er»?", options: ["lui", "lei", "loro"], a: ["lui"], why: "lui = er" },
+        { q: "Was heisst «Lei» (gross geschrieben)?", options: ["Sie (höflich)", "sie", "ihr"], a: ["Sie (höflich)"], why: "Lei = Sie (höflich); lei = sie" },
+        { q: "Was heisst «Loro» (gross geschrieben)?", options: ["Sie (höflich, Plural)", "wir", "ihr"], a: ["Sie (höflich, Plural)"], why: "Loro = Sie (höflich, Plural); loro = sie" },
+        { q: "___ sei di Berna. (Du bist aus Bern.)", options: ["Tu", "Io", "Lui"], a: ["Tu"], why: "tu = du" },
+        { q: "___ siamo di Coira. (Wir sind aus Chur.)", options: ["Noi", "Voi", "Loro"], a: ["Noi"], why: "noi = wir" },
+        { q: "___ siete di Berna. (Ihr seid aus Bern.)", options: ["Noi", "Voi", "Loro"], a: ["Voi"], why: "voi = ihr" },
+        { q: "Di dove sei? – ___ di Coira.", options: ["Sono", "Io", "Sei"], a: ["Sono"], why: "Normalfall: ohne Pronomen, die Verbform genügt" },
+        { q: "Sono di Coira. E ___? (Und du?)", options: ["tu", "sei", "io"], a: ["tu"], why: "Ohne Verb muss das Pronomen stehen" },
+        { q: "___ sono di Coira, tu sei di Berna. (Ich bin aus Chur, du aus Bern.)", options: ["Io", "kein Pronomen"], a: ["Io"], why: "Gegensatz zwischen Personen: Pronomen setzen" },
+        { q: "Sono di Coira. – ___. (Ich auch.)", options: ["Anch'io", "Anche sono", "Anch'sei"], a: ["Anch'io"], why: "Ohne Verb: Pronomen (anch'io = ich auch)" },
+        { q: "Di dov'è ___? (Woher kommen Sie?)", options: ["Lei", "lei", "tu"], a: ["Lei"], why: "Lei = Sie (höflich), gross geschrieben" },
+        { q: "Anche ___ sono di qui? (Sind auch Sie von hier?)", options: ["Loro", "Lei", "Noi"], a: ["Loro"], why: "Loro = Sie (Plural), Verb wie bei «loro»" },
+        { q: "Anche ___ siete di qui? (Sind auch Sie von hier?)", options: ["Voi", "Loro", "Lei"], a: ["Voi"], why: "Sie-Form Plural oft mit «voi»" },
+        { q: "Wie schreibt man die höfliche Form?", options: ["gross: Lei, Loro", "klein: lei, loro"], a: ["gross: Lei, Loro"], why: "Höflich: immer gross geschrieben" },
+        { q: "Wann lässt man das Pronomen normalerweise weg?", options: ["Wenn das Verb da ist", "Wenn das Verb fehlt"], a: ["Wenn das Verb da ist"], why: "Die Verbform zeigt die Person" },
+        { q: "Wann setzt man das Pronomen?", options: ["Zum Betonen und wenn das Verb fehlt", "Immer"], a: ["Zum Betonen und wenn das Verb fehlt"], why: "Nur dann; sonst weglassen" },
+      ],
+    },
+    {
       id: "regelmaessig",
       title: "Regelmässige Verben",
       explain:
@@ -2212,64 +2270,6 @@
         { q: "Was heisst «di dove»?", options: ["woher", "wo", "wann"], a: ["woher"], why: "di dove = woher" },
         { q: "Was fragt «che cos'è?»", options: ["nach einer Erklärung", "nach einer Auswahl"], a: ["nach einer Erklärung"], why: "che cos'è = was ist das?" },
         { q: "Ändert sich «che» nach Singular und Plural?", options: ["Ja", "Nein"], a: ["Nein"], why: "che ändert sich nie; quale wird zu quali" },
-      ],
-    },
-    {
-      id: "subjekt",
-      title: "Subjektpronomen",
-      explain:
-        "<h3>1 · Die Pronomen</h3>" +
-        "<p class='sub'>Singular</p>" +
-        "<ul>" +
-        "<li><b>io</b> = ich<span class='ex'>Io sono di Coira.</span></li>" +
-        "<li><b>tu</b> = du<span class='ex'>Tu sei di Berna.</span></li>" +
-        "<li><b>lui</b> = er<span class='ex'>Lui è di Roma.</span></li>" +
-        "<li><b>lei</b> = sie<span class='ex'>Lei è di Milano.</span></li>" +
-        "<li><b>Lei</b> = Sie (höflich)<span class='nt'>Immer gross geschrieben.</span><span class='ex'>Di dov'è Lei?</span></li>" +
-        "</ul>" +
-        "<p class='sub'>Plural</p>" +
-        "<ul>" +
-        "<li><b>noi</b> = wir<span class='ex'>Noi siamo di Coira.</span></li>" +
-        "<li><b>voi</b> = ihr<span class='ex'>Voi siete di Berna.</span></li>" +
-        "<li><b>loro</b> = sie<span class='ex'>Loro sono di Roma.</span></li>" +
-        "<li><b>Loro</b> = Sie (höflich)<span class='nt'>Immer gross geschrieben.</span><span class='ex'>Di dove sono Loro?</span></li>" +
-        "</ul>" +
-        "<h3>2 · Pronomen weglassen oder setzen</h3>" +
-        "<ul>" +
-        "<li><b>weglassen</b> (Normalfall)<span class='nt'>Die Verbform zeigt die Person.</span><span class='ex'>Sono di Coira.</span><span class='ex'>Abito a Berna.</span></li>" +
-        "</ul>" +
-        "<p class='sub'>Ausnahmen: Pronomen setzen</p>" +
-        "<ul>" +
-        "<li><b>setzen</b> zum Betonen<span class='nt'>Gegensatz zwischen Personen.</span><span class='ex'>Io sono di Coira, tu sei di Berna.</span></li>" +
-        "<li><b>setzen</b> wenn das Verb fehlt<span class='ex'>Sono di Coira. E tu?</span><span class='ex'>Sono di Coira. – Anch'io.</span></li>" +
-        "</ul>" +
-        "<h3>3 · Die höfliche Form</h3>" +
-        "<ul>" +
-        "<li><b>Lei</b> = Sie (Singular)<span class='nt'>Verb wie bei «lei».</span><span class='ex'>Anche Lei è di qui?</span></li>" +
-        "<li><b>Loro</b> = Sie (Plural)<span class='nt'>Verb wie bei «loro».</span><span class='ex'>Anche Loro sono di qui?</span></li>" +
-        "<li><b>Voi</b> statt «Loro»<span class='nt'>Verb wie bei «voi». Sehr häufig.</span><span class='ex'>Anche Voi siete di qui?</span></li>" +
-        "</ul>",
-      exercises: [
-        { q: "Wie heisst «ich»?", options: ["io", "tu", "lui"], a: ["io"], why: "io = ich" },
-        { q: "Wie heisst «du»?", options: ["io", "tu", "lei"], a: ["tu"], why: "tu = du" },
-        { q: "Wie heisst «wir»?", options: ["noi", "voi", "loro"], a: ["noi"], why: "noi = wir" },
-        { q: "Wie heisst «ihr»?", options: ["noi", "voi", "loro"], a: ["voi"], why: "voi = ihr" },
-        { q: "Wie heisst «er»?", options: ["lui", "lei", "loro"], a: ["lui"], why: "lui = er" },
-        { q: "Was heisst «Lei» (gross geschrieben)?", options: ["Sie (höflich)", "sie", "ihr"], a: ["Sie (höflich)"], why: "Lei = Sie (höflich); lei = sie" },
-        { q: "Was heisst «Loro» (gross geschrieben)?", options: ["Sie (höflich, Plural)", "wir", "ihr"], a: ["Sie (höflich, Plural)"], why: "Loro = Sie (höflich, Plural); loro = sie" },
-        { q: "___ sei di Berna. (Du bist aus Bern.)", options: ["Tu", "Io", "Lui"], a: ["Tu"], why: "tu = du" },
-        { q: "___ siamo di Coira. (Wir sind aus Chur.)", options: ["Noi", "Voi", "Loro"], a: ["Noi"], why: "noi = wir" },
-        { q: "___ siete di Berna. (Ihr seid aus Bern.)", options: ["Noi", "Voi", "Loro"], a: ["Voi"], why: "voi = ihr" },
-        { q: "Di dove sei? – ___ di Coira.", options: ["Sono", "Io", "Sei"], a: ["Sono"], why: "Normalfall: ohne Pronomen, die Verbform genügt" },
-        { q: "Sono di Coira. E ___? (Und du?)", options: ["tu", "sei", "io"], a: ["tu"], why: "Ohne Verb muss das Pronomen stehen" },
-        { q: "___ sono di Coira, tu sei di Berna. (Ich bin aus Chur, du aus Bern.)", options: ["Io", "kein Pronomen"], a: ["Io"], why: "Gegensatz zwischen Personen: Pronomen setzen" },
-        { q: "Sono di Coira. – ___. (Ich auch.)", options: ["Anch'io", "Anche sono", "Anch'sei"], a: ["Anch'io"], why: "Ohne Verb: Pronomen (anch'io = ich auch)" },
-        { q: "Di dov'è ___? (Woher kommen Sie?)", options: ["Lei", "lei", "tu"], a: ["Lei"], why: "Lei = Sie (höflich), gross geschrieben" },
-        { q: "Anche ___ sono di qui? (Sind auch Sie von hier?)", options: ["Loro", "Lei", "Noi"], a: ["Loro"], why: "Loro = Sie (Plural), Verb wie bei «loro»" },
-        { q: "Anche ___ siete di qui? (Sind auch Sie von hier?)", options: ["Voi", "Loro", "Lei"], a: ["Voi"], why: "Sie-Form Plural oft mit «voi»" },
-        { q: "Wie schreibt man die höfliche Form?", options: ["gross: Lei, Loro", "klein: lei, loro"], a: ["gross: Lei, Loro"], why: "Höflich: immer gross geschrieben" },
-        { q: "Wann lässt man das Pronomen normalerweise weg?", options: ["Wenn das Verb da ist", "Wenn das Verb fehlt"], a: ["Wenn das Verb da ist"], why: "Die Verbform zeigt die Person" },
-        { q: "Wann setzt man das Pronomen?", options: ["Zum Betonen und wenn das Verb fehlt", "Immer"], a: ["Zum Betonen und wenn das Verb fehlt"], why: "Nur dann; sonst weglassen" },
       ],
     },
   ];
@@ -4175,6 +4175,41 @@
       ]
     },
     {
+      id: "vorstellen", topic: "subjekt", verbs: ["essere", "avere", "chiamarsi"], title: "Sich vorstellen - lerne die Subjektpronomen", sub: "Grammatik-Block «Subjektpronomen»",
+      nw: [["Come ti chiami?", "Wie heisst du?"], ["Piacere!", "Freut mich / Angenehm!"], ["Di dove sei?", "Woher kommst du?"], ["Dove abiti?", "Wo wohnst du?"], ["dare il tu", "sich duzen"], ["dare il Lei", "sich siezen"], ["noi", "wir"], ["voi", "ihr"], ["loro / Loro", "sie / Sie (Plural)"]],
+      words: [
+        W("Come ti chiami?", "Wie heisst du?"),
+        W("Lei come si chiama?", "Wie heissen Sie?"),
+        W("Piacere!", "Freut mich / Angenehm!"),
+        W("Ti presento Katia.", "Ich stelle dir Katia vor."),
+        W("Sono di Coira.", "Ich bin aus Chur."),
+        W("Di dove sei?", "Woher kommst du?"),
+        W("Dove abiti?", "Wo wohnst du?"),
+        W("Io sono di Coira, e tu?", "Ich bin aus Chur, und du?"),
+        W("Anche Lei è di qui?", "Sind auch Sie von hier?"),
+        W("dare il tu · dare il Lei", "sich duzen · sich siezen")
+      ],
+      tasks: [
+        C("Wie fragst du «Wie heisst du?»", "Come ti chiami?", ["Come stai?", "Dove abiti?", "Quanti anni hai?"]),
+        C("Wie fragst du «Wie heissen Sie?»", "Lei come si chiama?", ["Come ti chiami?", "Come sta?", "Di dov'è?"]),
+        C("Was bedeutet «Piacere!»?", "Freut mich / Angenehm!", ["Auf Wiedersehen", "Es tut mir leid", "Gute Besserung"]),
+        Y("Übersetze: Ich bin aus Chur.", "Sono di Coira.", ["Io sono di Coira."]),
+        Y("Übersetze: Woher kommst du?", "Di dove sei?"),
+        O("Ich stelle dir Katia vor.", "Ti presento Katia."),
+        O("Wo wohnst du?", "Dove abiti?"),
+        L("Come ti chiami?"),
+        P([["Piacere!", "Freut mich / Angenehm!"], ["Come ti chiami?", "Wie heisst du?"], ["Di dove sei?", "Woher kommst du?"], ["Dove abiti?", "Wo wohnst du?"]]),
+        C("Was heisst «dare il tu»?", "sich duzen", ["sich siezen", "sich vorstellen", "sich begrüssen"]),
+        Y("Übersetze: Woher kommen Sie?", "Di dov'è?"),
+        C("Wie sagst du höflich «Ich stelle Ihnen … vor»?", "le presento …", ["ti presento …", "vorrei …", "prenda …"]),
+        C("Wie heisst «wir»?", "noi", ["voi", "loro", "io"]),
+        C("Wie heisst «ihr»?", "voi", ["noi", "loro", "tu"]),
+        C("«Sono di Coira. E ___?» (Und du?)", "tu", ["io", "sei", "lui"]),
+        C("«Di dov'è ___?» (Woher kommen Sie?) – wie schreibt man «Sie»?", "Lei", ["lei", "tu", "noi"]),
+        Y("Übersetze: Ich bin aus Chur, und du?", "Sono di Coira. E tu?", ["Io sono di Coira, e tu?", "Io sono di Coira. E tu?", "Sono di Coira, e tu?"])
+      ]
+    },
+    {
       id: "regelmaessig", topic: "regelmaessig", verbs: ["essere", "avere"], noNew: true, title: "Tagesablauf - lerne die regelmässigen Verben", sub: "Grammatik-Block «Regelmässige Verben»",
       nw: [["prendere", "nehmen"], ["dormire", "schlafen"], ["preferire", "bevorzugen"], ["capire", "verstehen"], ["abitare", "wohnen"]],
       words: [
@@ -4490,41 +4525,6 @@
       ]
     }
     ,
-    {
-      id: "vorstellen", topic: "subjekt", verbs: ["essere", "avere", "fare", "andare", "parlare", "chiamarsi"], title: "Sich vorstellen - lerne die Subjektpronomen", sub: "Grammatik-Block «Subjektpronomen»",
-      nw: [["Come ti chiami?", "Wie heisst du?"], ["Piacere!", "Freut mich / Angenehm!"], ["Di dove sei?", "Woher kommst du?"], ["Dove abiti?", "Wo wohnst du?"], ["dare il tu", "sich duzen"], ["dare il Lei", "sich siezen"], ["noi", "wir"], ["voi", "ihr"], ["loro / Loro", "sie / Sie (Plural)"]],
-      words: [
-        W("Come ti chiami?", "Wie heisst du?"),
-        W("Lei come si chiama?", "Wie heissen Sie?"),
-        W("Piacere!", "Freut mich / Angenehm!"),
-        W("Ti presento Katia.", "Ich stelle dir Katia vor."),
-        W("Sono di Coira.", "Ich bin aus Chur."),
-        W("Di dove sei?", "Woher kommst du?"),
-        W("Dove abiti?", "Wo wohnst du?"),
-        W("Io sono di Coira, e tu?", "Ich bin aus Chur, und du?"),
-        W("Anche Lei è di qui?", "Sind auch Sie von hier?"),
-        W("dare il tu · dare il Lei", "sich duzen · sich siezen")
-      ],
-      tasks: [
-        C("Wie fragst du «Wie heisst du?»", "Come ti chiami?", ["Come stai?", "Dove abiti?", "Quanti anni hai?"]),
-        C("Wie fragst du «Wie heissen Sie?»", "Lei come si chiama?", ["Come ti chiami?", "Come sta?", "Di dov'è?"]),
-        C("Was bedeutet «Piacere!»?", "Freut mich / Angenehm!", ["Auf Wiedersehen", "Es tut mir leid", "Gute Besserung"]),
-        Y("Übersetze: Ich bin aus Chur.", "Sono di Coira.", ["Io sono di Coira."]),
-        Y("Übersetze: Woher kommst du?", "Di dove sei?"),
-        O("Ich stelle dir Katia vor.", "Ti presento Katia."),
-        O("Wo wohnst du?", "Dove abiti?"),
-        L("Come ti chiami?"),
-        P([["Piacere!", "Freut mich / Angenehm!"], ["Come ti chiami?", "Wie heisst du?"], ["Di dove sei?", "Woher kommst du?"], ["Dove abiti?", "Wo wohnst du?"]]),
-        C("Was heisst «dare il tu»?", "sich duzen", ["sich siezen", "sich vorstellen", "sich begrüssen"]),
-        Y("Übersetze: Woher kommen Sie?", "Di dov'è?"),
-        C("Wie sagst du höflich «Ich stelle Ihnen … vor»?", "le presento …", ["ti presento …", "vorrei …", "prenda …"]),
-        C("Wie heisst «wir»?", "noi", ["voi", "loro", "io"]),
-        C("Wie heisst «ihr»?", "voi", ["noi", "loro", "tu"]),
-        C("«Sono di Coira. E ___?» (Und du?)", "tu", ["io", "sei", "lui"]),
-        C("«Di dov'è ___?» (Woher kommen Sie?) – wie schreibt man «Sie»?", "Lei", ["lei", "tu", "noi"]),
-        Y("Übersetze: Ich bin aus Chur, und du?", "Sono di Coira. E tu?", ["Io sono di Coira, e tu?", "Io sono di Coira. E tu?", "Sono di Coira, e tu?"])
-      ]
-    },
     {
       id: "wohnen", topic: null, verbs: ["essere", "avere", "fare", "andare", "parlare", "chiamarsi", "abitare"], title: "Wohnen und Orte - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
       nw: [["la città", "die Stadt"], ["la casa", "das Haus"], ["l'appartamento (männlich)", "die Wohnung"], ["l'ufficio (männlich)", "das Büro"], ["Dov'è …?", "Wo ist …?"]],
