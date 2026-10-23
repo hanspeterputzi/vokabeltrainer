@@ -820,7 +820,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-fragen3";
-  const APP_VERSION = "2026-10-24-zzd"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-zzg"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1852,6 +1852,66 @@
         { q: "Wo liegt die Betonung bei «io abito»?", options: ["ABito", "aBIto", "abiTO"], a: ["ABito"], why: "Singular: Stamm betont" },
         { q: "Wo liegt die Betonung bei «noi abitiamo»?", options: ["abiTIAmo", "ABitiamo", "abitiaMO"], a: ["abiTIAmo"], why: "noi / voi: Endung betont" },
         { q: "Bei welchen Formen ist die Endung betont?", options: ["noi / voi", "io / tu / lui / loro"], a: ["noi / voi"], why: "noi / voi: Endung betont" },
+      ],
+    },
+    {
+      id: "reg_unreg",
+      title: "Regelmässig unregelmässige Verben",
+      explain:
+        "<h3>1 · Verben auf -care / -gare</h3>" +
+        "<ul><li><b>tu / noi</b>: mit h<span class='nt'>Das c / g bleibt hart.</span><span class='ex'><span class='ep'>paghi,</span> <span class='ep'>paghiamo</span></span><span class='ex'><span class='ep'>giochi,</span> <span class='ep'>giochiamo</span></span><span class='ex'><span class='ep'>cerchi,</span> <span class='ep'>cerchiamo</span></span></li><li><b>io / lui / voi / loro</b>: ohne h<span class='ex'><span class='ep'>pago,</span> <span class='ep'>gioca,</span> <span class='ep'>cercate,</span> <span class='ep'>pagano</span></span></li></ul>" +
+        "<table class='vt'><tr><th></th><th>pagare</th><th>giocare</th><th>cercare</th></tr><tr><td></td><td>bezahlen</td><td>spielen</td><td>suchen</td></tr><tr><td>io</td><td>pago</td><td>gioco</td><td>cerco</td></tr><tr><td>tu</td><td>paghi</td><td>giochi</td><td>cerchi</td></tr><tr><td>lui / lei</td><td>paga</td><td>gioca</td><td>cerca</td></tr><tr><td>noi</td><td>paghiamo</td><td>giochiamo</td><td>cerchiamo</td></tr><tr><td>voi</td><td>pagate</td><td>giocate</td><td>cercate</td></tr><tr><td>loro</td><td>pagano</td><td>giocano</td><td>cercano</td></tr></table>" +
+        "<p class='merk'>Merkhilfe: Das <b>h</b> macht hart – wie in «che» und «ghi».</p>" +
+        "<h3>2 · Verben auf -ciare / -giare</h3>" +
+        "<ul><li><b>tu / noi</b>: nur ein -i-<span class='nt'>Stamm-i und Endungs-i verschmelzen.</span><span class='ex'><span class='ep'>mangi,</span> <span class='ep'>mangiamo</span></span></li><li><b>io / lui / voi / loro</b>: das i bleibt<span class='nt'>Stumm, macht das g weich.</span><span class='ex'><span class='ep'>mangio,</span> <span class='ep'>mangia,</span> <span class='ep'>mangiate,</span> <span class='ep'>mangiano</span></span></li><li><b>Ausnahme</b>: sciare<span class='nt'>Bei tu zwei i (das i ist betont).</span><span class='ex'><span class='ep'>scii</span></span></li></ul>" +
+        "<table class='vt'><tr><th></th><th>mangiare</th></tr><tr><td></td><td>essen</td></tr><tr><td>io</td><td>mangio</td></tr><tr><td>tu</td><td>mangi</td></tr><tr><td>lui / lei</td><td>mangia</td></tr><tr><td>noi</td><td>mangiamo</td></tr><tr><td>voi</td><td>mangiate</td></tr><tr><td>loro</td><td>mangiano</td></tr></table>" +
+        "<p class='merk'>Merkhilfe: Das <b>i</b> macht weich – darum bleibt es in mangio und mangia.</p>" +
+        "<h3>3 · Verben auf -gere / -scere</h3>" +
+        "<ul><li><b>io / loro</b>: hart<span class='nt'>Vor -o: g wie in «Garda», sc wie «sk».</span><span class='ex'><span class='ep'>leggo,</span> <span class='ep'>leggono</span></span><span class='ex'><span class='ep'>conosco,</span> <span class='ep'>conoscono</span></span></li><li><b>tu / lui / noi / voi</b>: weich<span class='nt'>Vor e / i: g wie «dsch», sc wie «sch».</span><span class='ex'><span class='ep'>leggi,</span> <span class='ep'>legge,</span> <span class='ep'>leggiamo,</span> <span class='ep'>leggete</span></span><span class='ex'><span class='ep'>conosci,</span> <span class='ep'>conosce,</span> <span class='ep'>conosciamo,</span> <span class='ep'>conoscete</span></span></li></ul>" +
+        "<table class='vt'><tr><th></th><th>leggere</th><th>conoscere</th></tr><tr><td></td><td>lesen</td><td>kennen</td></tr><tr><td>io</td><td>leggo</td><td>conosco</td></tr><tr><td>tu</td><td>leggi</td><td>conosci</td></tr><tr><td>lui / lei</td><td>legge</td><td>conosce</td></tr><tr><td>noi</td><td>leggiamo</td><td>conosciamo</td></tr><tr><td>voi</td><td>leggete</td><td>conoscete</td></tr><tr><td>loro</td><td>leggono</td><td>conoscono</td></tr></table>" +
+        "<h3>4 · Weitere Verben</h3>" +
+        "<ul><li><b>-ere / -ire</b>: regelmässig<span class='nt'>Wie in «Regelmässige Verben».</span><span class='ex'><span class='ep'>vedere&nbsp;→&nbsp;vedo,</span> <span class='ep'>scrivere&nbsp;→&nbsp;scrivo,</span> <span class='ep'>mettere&nbsp;→&nbsp;metto,</span> <span class='ep'>chiudere&nbsp;→&nbsp;chiudo,</span> <span class='ep'>aprire&nbsp;→&nbsp;apro</span></span></li><li><b>-ire mit -isc-</b><span class='ex'><span class='ep'>finire&nbsp;→&nbsp;finisco,</span> <span class='ep'>capire&nbsp;→&nbsp;capisco</span></span></li><li><b>Unregelmässig</b><span class='nt'>Formen einzeln lernen.</span><span class='ex'><span class='ep'>venire&nbsp;→&nbsp;vengo,</span> <span class='ep'>bere&nbsp;→&nbsp;bevo,</span> <span class='ep'>uscire&nbsp;→&nbsp;esco,</span> <span class='ep'>scegliere&nbsp;→&nbsp;scelgo</span></span></li></ul>" +
+        "<table class='vt'><tr><th></th><th>venire</th><th>bere</th></tr><tr><td></td><td>kommen</td><td>trinken</td></tr><tr><td>io</td><td>vengo</td><td>bevo</td></tr><tr><td>tu</td><td>vieni</td><td>bevi</td></tr><tr><td>lui / lei</td><td>viene</td><td>beve</td></tr><tr><td>noi</td><td>veniamo</td><td>beviamo</td></tr><tr><td>voi</td><td>venite</td><td>bevete</td></tr><tr><td>loro</td><td>vengono</td><td>bevono</td></tr></table>" +
+        "<table class='vt'><tr><th></th><th>uscire</th><th>scegliere</th></tr><tr><td></td><td>ausgehen</td><td>wählen</td></tr><tr><td>io</td><td>esco</td><td>scelgo</td></tr><tr><td>tu</td><td>esci</td><td>scegli</td></tr><tr><td>lui / lei</td><td>esce</td><td>sceglie</td></tr><tr><td>noi</td><td>usciamo</td><td>scegliamo</td></tr><tr><td>voi</td><td>uscite</td><td>scegliete</td></tr><tr><td>loro</td><td>escono</td><td>scelgono</td></tr></table>",
+      exercises: [
+        { q: "pagare – tu:", hint: "du", a: ["paghi"], why: "tu: mit h" },
+        { q: "pagare – io:", hint: "ich", a: ["pago"], why: "io: ohne h" },
+        { q: "giocare – noi:", hint: "wir", a: ["giochiamo"], why: "noi: mit h" },
+        { q: "giocare – loro:", hint: "sie (Plural)", a: ["giocano"], why: "loro: ohne h" },
+        { q: "cercare – tu:", hint: "du", a: ["cerchi"], why: "tu: mit h" },
+        { q: "cercare – voi:", hint: "ihr", a: ["cercate"], why: "voi: ohne h" },
+        { q: "Bei welchen Formen steht das h (-care / -gare)?", options: ["tu / noi", "io / lui", "voi / loro"], a: ["tu / noi"], why: "h bei tu und noi (Endung mit i)" },
+        { q: "Wozu dient das h in «paghi»?", options: ["Das g bleibt hart", "Das g wird weich", "Das g wird stumm"], a: ["Das g bleibt hart"], why: "h macht hart" },
+        { q: "mangiare – tu:", hint: "du", a: ["mangi"], why: "tu: nur ein i" },
+        { q: "mangiare – noi:", hint: "wir", a: ["mangiamo"], why: "noi: nur ein i" },
+        { q: "mangiare – io:", hint: "ich", a: ["mangio"], why: "io: das i bleibt" },
+        { q: "mangiare – loro:", hint: "sie (Plural)", a: ["mangiano"], why: "loro: das i bleibt" },
+        { q: "Wie viele i stehen in «mangiamo» nach dem g?", options: ["1", "2"], a: ["1"], why: "Die beiden i verschmelzen" },
+        { q: "sciare – tu:", hint: "du", a: ["scii"], why: "Ausnahme: 2 i bei tu" },
+        { q: "leggere – io:", hint: "ich", a: ["leggo"], why: "io: -o" },
+        { q: "leggere – tu:", hint: "du", a: ["leggi"], why: "tu: -i" },
+        { q: "leggere – noi:", hint: "wir", a: ["leggiamo"], why: "noi: -iamo" },
+        { q: "conoscere – io:", hint: "ich", a: ["conosco"], why: "io: -o" },
+        { q: "conoscere – tu:", hint: "du", a: ["conosci"], why: "tu: -i" },
+        { q: "conoscere – loro:", hint: "sie (Plural)", a: ["conoscono"], why: "loro: -ono" },
+        { q: "leggo – Wie wird das «gg» gesprochen?", options: ["hart", "weich"], a: ["hart"], why: "g vor o = hart" },
+        { q: "leggi – Wie wird das «gg» gesprochen?", options: ["hart", "weich"], a: ["weich"], why: "g vor i = weich" },
+        { q: "conosco – Wie wird das «sc» gesprochen?", options: ["sk", "sch"], a: ["sk"], why: "sc vor o = sk" },
+        { q: "conosci – Wie wird das «sc» gesprochen?", options: ["sk", "sch"], a: ["sch"], why: "sc vor i = sch" },
+        { q: "Bei welchen Formen sind g / sc hart (-gere / -scere)?", options: ["io / loro", "tu / noi", "lui / voi"], a: ["io / loro"], why: "Nur io und loro enden auf -o" },
+        { q: "venire – io:", hint: "ich", a: ["vengo"], why: "unregelmässig" },
+        { q: "bere – io:", hint: "ich", a: ["bevo"], why: "unregelmässig" },
+        { q: "uscire – io:", hint: "ich", a: ["esco"], why: "unregelmässig" },
+        { q: "uscire – noi:", hint: "wir", a: ["usciamo"], why: "noi: Stamm usc-" },
+        { q: "scegliere – io:", hint: "ich", a: ["scelgo"], why: "unregelmässig" },
+        { q: "finire – io:", hint: "ich", a: ["finisco"], why: "finire hat -isc-" },
+        { q: "aprire – tu:", hint: "du", a: ["apri"], why: "aprire: regelmässig" },
+        { q: "Io ___ il conto. (pagare)", hint: "Form von pagare", a: ["pago"], why: "io: ohne h" },
+        { q: "Tu ___ un hotel. (cercare)", hint: "Form von cercare", a: ["cerchi"], why: "tu: mit h" },
+        { q: "Noi ___ a calcio. (giocare)", hint: "Form von giocare", a: ["giochiamo"], why: "noi: mit h" },
+        { q: "Tu ___ una pizza. (mangiare)", hint: "Form von mangiare", a: ["mangi"], why: "tu: nur ein i" },
+        { q: "Io ___ il giornale. (leggere)", hint: "Form von leggere", a: ["leggo"], why: "io: -o" },
+        { q: "Tu ___ Gigi? (conoscere)", hint: "Form von conoscere", a: ["conosci"], why: "tu: -i" },
       ],
     },
     {
@@ -4247,6 +4307,49 @@
         K("dormire"),
         K("preferire"),
         L("Che cosa prendi?")
+      ]
+    },
+    {
+      id: "reg_unreg", topic: "reg_unreg", verbs: ["essere", "avere"], noNew: true, title: "Freizeit + Essen - lerne die regelmässig unregelmässigen Verben", sub: "Grammatik-Block «Regelmässig unregelmässige Verben»",
+      nw: [["pagare", "bezahlen"], ["giocare", "spielen"], ["cercare", "suchen"], ["mangiare", "essen"], ["leggere", "lesen"], ["conoscere", "kennen"]],
+      words: [
+        W("Pago il conto.", "Ich bezahle die Rechnung."),
+        W("Giochi a calcio?", "Spielst du Fussball?"),
+        W("Cerchiamo un hotel.", "Wir suchen ein Hotel."),
+        W("Mangio una pizza.", "Ich esse eine Pizza."),
+        W("Leggo il giornale.", "Ich lese die Zeitung."),
+        W("Conosci Gigi?", "Kennst du Gigi?"),
+        W("pagare · giocare · mangiare · leggere", "bezahlen · spielen · essen · lesen")
+      ],
+      tasks: [
+        C("Welche Form ist «tu» bei «pagare»?", "paghi", ["pagi", "pago", "paga"]),
+        C("Welche Form ist «noi» bei «giocare»?", "giochiamo", ["giociamo", "giocate", "giocano"]),
+        C("Welche Form ist «tu» bei «cercare»?", "cerchi", ["cerci", "cerco", "cerca"]),
+        C("Wozu dient das h in «paghi»?", "Das g bleibt hart", ["Das g wird weich", "Das g wird stumm"]),
+        C("Bei welchen Formen steht das h (-care / -gare)?", "tu / noi", ["io / lui", "voi / loro"]),
+        Y("giocare – io:", "gioco"),
+        Y("mangiare – tu:", "mangi"),
+        Y("mangiare – noi:", "mangiamo"),
+        C("Wie viele i stehen in «mangiamo» nach dem g?", "1", ["2"]),
+        C("leggi – Wie wird das «gg» gesprochen?", "weich", ["hart"]),
+        C("leggo – Wie wird das «gg» gesprochen?", "hart", ["weich"]),
+        C("conosco – Wie wird das «sc» gesprochen?", "sk", ["sch"]),
+        C("conosci – Wie wird das «sc» gesprochen?", "sch", ["sk"]),
+        Y("leggere – tu:", "leggi"),
+        Y("conoscere – io:", "conosco"),
+        Y("conoscere – loro:", "conoscono"),
+        C("«Io ___ il conto.» (pagare)", "pago", ["paghi", "paga", "pagano"]),
+        C("«Noi ___ un hotel.» (cercare)", "cerchiamo", ["cerciamo", "cercate", "cerco"]),
+        P([["pagare", "bezahlen"], ["giocare", "spielen"], ["mangiare", "essen"], ["leggere", "lesen"], ["conoscere", "kennen"]]),
+        Y("Übersetze: Ich bezahle die Rechnung.", "Pago il conto.", ["Io pago il conto."]),
+        Y("Übersetze: Kennst du Gigi?", "Conosci Gigi?", ["Tu conosci Gigi?"]),
+        O("Ich lese die Zeitung.", "Leggo il giornale.", ["Io leggo il giornale."]),
+        O("Wir suchen ein Hotel.", "Cerchiamo un hotel.", ["Noi cerchiamo un hotel."]),
+        K("pagare"),
+        K("giocare"),
+        K("leggere"),
+        K("conoscere"),
+        L("Giochi a calcio?")
       ]
     },
     {
