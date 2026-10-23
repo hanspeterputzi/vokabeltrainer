@@ -702,8 +702,8 @@
     <h2>Heute</h2>
     <div class="today-row">
       <div class="today-nums">
-        <div><b id="tdDue">0</b><span>fällig</span></div>
-        <div><b id="tdNew">0</b><span>neu</span></div>
+        <div><b id="tdDue">0</b><span>Wiederholen</span></div>
+        <div><b id="tdNew">0</b><span>Neue Wörter</span></div>
       </div>
       <button id="todayGo" type="button">Los</button>
     </div>
@@ -815,7 +815,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-fragen3";
-  const APP_VERSION = "2026-10-24-zy"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-zz"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1065,10 +1065,10 @@
     g("tdNew").textContent = nw;
     const go = g("todayGo");
     go.disabled = due + nw === 0;
-    go.textContent = due + nw === 0 ? "Für heute erledigt" : (selectedCategory === TODAY_CAT && todayList.length ? "Weiter" : "Los");
+    go.textContent = due + nw === 0 ? "Heute fertig ✓" : (selectedCategory === TODAY_CAT && todayList.length ? "Weiter" : "Los");
     const sub = [];
-    if (due + nw === 0 && tomorrow) sub.push("Morgen fällig: " + tomorrow);
-    if (known && due + nw === 0) sub.push("Gelernt: " + known + " · sicher: " + sure);
+    if (due + nw === 0 && tomorrow) sub.push("Morgen: " + tomorrow + (tomorrow === 1 ? " Wort zum Wiederholen" : " Wörter zum Wiederholen"));
+    if (known && due + nw === 0) sub.push("Bisher geübt: " + known + (known === 1 ? " Wort" : " Wörter"));
     g("todaySub").textContent = sub.join(" · ");
   }
   // --- Beispielsatz zum Wort (Daten: beispiele_block.html, window.italoExamples) ---
@@ -1107,8 +1107,8 @@
     const left = srsDueWords().length;
     quizDirection.textContent = "";
     quizContent.classList.add("td-done");
-    quizWord.textContent = "Für heute geschafft";
-    quizProgress.textContent = left ? "Noch " + left + " weitere fällig" : "";
+    quizWord.textContent = "Heute fertig ✓";
+    quizProgress.textContent = left ? "Noch " + left + " Wörter zum Wiederholen" : "";
     renderToday();
   }
   function startToday() {
