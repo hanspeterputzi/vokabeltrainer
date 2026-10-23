@@ -820,7 +820,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-fragen3";
-  const APP_VERSION = "2026-10-24-zzg"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-zzh"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -2330,6 +2330,64 @@
         { q: "Was heisst «di dove»?", options: ["woher", "wo", "wann"], a: ["woher"], why: "di dove = woher" },
         { q: "Was fragt «che cos'è?»", options: ["nach einer Erklärung", "nach einer Auswahl"], a: ["nach einer Erklärung"], why: "che cos'è = was ist das?" },
         { q: "Ändert sich «che» nach Singular und Plural?", options: ["Ja", "Nein"], a: ["Nein"], why: "che ändert sich nie; quale wird zu quali" },
+      ],
+    },
+    {
+      id: "teilung",
+      title: "Teilungsartikel",
+      explain:
+        "<h3>1 · Bedeutung</h3>" +
+        "<ul>" +
+        "<li><b>di + Artikel</b> = unbestimmte Menge<span class='nt'>Der bestimmte Artikel: il, lo, la, l', i, gli, le.</span><span class='nt'>Im Deutschen: etwas, einige oder nichts.</span><span class='ex'>Vorrei del formaggio.</span></li>" +
+        "<li><b>Singular</b> = etwas<span class='nt'>Nicht Zählbares: Käse, Fleisch, Wasser.</span><span class='ex'>Ho comprato della carne.</span></li>" +
+        "<li><b>Plural</b> = einige<span class='nt'>Zählbares: Freunde, Bücher.</span><span class='ex'>Ho incontrato degli amici.</span></li>" +
+        "</ul>" +
+        "<p class='merk'>Merkhilfe: <b>di</b> heisst «von». <b>del formaggio</b> = «vom Käse» → ein Teil vom Käse.</p>" +
+        "<h3>2 · männlich</h3>" +
+        "<p class='nt'>Die Form folgt dem bestimmten Artikel.</p>" +
+        "<ul>" +
+        "<li><b>del</b> = di + il<span class='ex'><span class='ep'>del formaggio,</span> <span class='ep'>del pane,</span> <span class='ep'>del vino</span></span></li>" +
+        "<li><b>dello</b> = di + lo<span class='nt'>Vor s + Konsonant, z.</span><span class='ex'><span class='ep'>dello zucchero,</span> <span class='ep'>dello yogurt</span></span></li>" +
+        "<li><b>dell'</b> = di + l'<span class='nt'>Vor Vokal.</span><span class='ex'>dell'olio (männlich)</span></li>" +
+        "<li><b>dei</b> = di + i<span class='nt'>Plural.</span><span class='ex'><span class='ep'>dei libri,</span> <span class='ep'>dei vini</span></span></li>" +
+        "<li><b>degli</b> = di + gli<span class='nt'>Plural vor Vokal, s + Konsonant, z.</span><span class='ex'><span class='ep'>degli amici,</span> <span class='ep'>degli spaghetti</span></span></li>" +
+        "</ul>" +
+        "<h3>3 · weiblich</h3>" +
+        "<ul>" +
+        "<li><b>della</b> = di + la<span class='ex'><span class='ep'>della carne,</span> <span class='ep'>della birra,</span> <span class='ep'>della verdura</span></span></li>" +
+        "<li><b>dell'</b> = di + l'<span class='nt'>Vor Vokal.</span><span class='ex'>dell'acqua (weiblich)</span></li>" +
+        "<li><b>delle</b> = di + le<span class='nt'>Plural.</span><span class='ex'><span class='ep'>delle mele,</span> <span class='ep'>delle amiche</span></span></li>" +
+        "</ul>" +
+        "<h3>4 · Wann nicht?</h3>" +
+        "<ul>" +
+        "<li><b>nach Verneinung</b> ohne Artikel<span class='nt'>Nach «non» fällt der Teilungsartikel weg.</span><span class='ex'>Non bevo vino.</span><span class='ex'>Non ho comprato carne.</span></li>" +
+        "<li><b>bei Mengenangaben</b> nur «di»<span class='nt'>Ohne Artikel.</span><span class='ex'>Un chilo di formaggio.</span><span class='ex'>Un bicchiere di latte.</span><span class='ex'>Un po' di pane.</span></li>" +
+        "<li><b>oft weglassbar</b><span class='nt'>Zum Beispiel in Aufzählungen.</span><span class='ex'>Compro pane e latte.</span></li>" +
+        "</ul>",
+      exercises: [
+        { q: "Vorrei ___ formaggio.", options: ["del", "dello", "della", "dei"], a: ["del"], why: "il formaggio: männlich, Singular → del" },
+        { q: "Ho comprato ___ carne.", options: ["del", "della", "delle", "degli"], a: ["della"], why: "la carne: weiblich, Singular → della" },
+        { q: "Beviamo ___ vino.", options: ["del", "della", "dei", "dell'"], a: ["del"], why: "il vino: männlich, Singular → del" },
+        { q: "Vorrei ___ zucchero.", options: ["del", "dello", "della", "degli"], a: ["dello"], why: "lo zucchero (z) → dello" },
+        { q: "Vorrei ___ yogurt.", options: ["del", "dello", "dell'", "dei"], a: ["dello"], why: "lo yogurt (y) → dello" },
+        { q: "Vorrei ___ olio.", options: ["del", "della", "dell'", "degli"], a: ["dell'"], why: "l'olio: Vokal → dell'" },
+        { q: "Vorrei ___ acqua.", options: ["del", "della", "dell'", "delle"], a: ["dell'"], why: "l'acqua: Vokal → dell' (auch bei weiblich)" },
+        { q: "Ho comprato ___ birra.", options: ["del", "della", "delle", "dei"], a: ["della"], why: "la birra: weiblich, Singular → della" },
+        { q: "Ho incontrato ___ amici.", options: ["dei", "degli", "delle", "dello"], a: ["degli"], why: "gli amici: männlich, Plural vor Vokal → degli" },
+        { q: "Ho incontrato ___ amiche.", options: ["dei", "degli", "delle", "della"], a: ["delle"], why: "le amiche: weiblich, Plural → delle" },
+        { q: "Ho comprato ___ libri.", options: ["dei", "degli", "delle", "del"], a: ["dei"], why: "i libri: männlich, Plural vor Konsonant → dei" },
+        { q: "Ho comprato ___ mele.", options: ["dei", "degli", "delle", "della"], a: ["delle"], why: "le mele: weiblich, Plural → delle" },
+        { q: "Abbiamo mangiato ___ spaghetti.", options: ["dei", "degli", "delle", "dello"], a: ["degli"], why: "gli spaghetti (s + Konsonant) → degli" },
+        { q: "di + il = ___", hint: "del, dello, della oder dell'?", a: ["del"], why: "di + il = del" },
+        { q: "di + la = ___", hint: "del, dello, della oder dell'?", a: ["della"], why: "di + la = della" },
+        { q: "di + l' = ___", hint: "del, della, dell' oder delle?", a: ["dell'"], why: "di + l' = dell'" },
+        { q: "di + gli = ___", hint: "dei, degli oder delle?", a: ["degli"], why: "di + gli = degli" },
+        { q: "Was bedeutet «del formaggio»?", options: ["etwas Käse", "der Käse", "den Käse"], a: ["etwas Käse"], why: "Teilungsartikel = unbestimmte Menge" },
+        { q: "Was bedeutet «degli amici» in «Ho incontrato degli amici»?", options: ["einige Freunde", "etwas Freund", "die Freunde"], a: ["einige Freunde"], why: "Plural = einige" },
+        { q: "Gibt es den Teilungsartikel im Deutschen?", options: ["Ja", "Nein"], a: ["Nein"], why: "Im Deutschen sagt man «etwas», «einige» oder gar nichts" },
+        { q: "Non ho comprato ___ carne. (Ich habe kein Fleisch gekauft.)", options: ["della", "–"], a: ["–"], why: "Nach Verneinung fällt der Teilungsartikel weg: Non ho comprato carne." },
+        { q: "Un chilo ___ formaggio.", options: ["di", "del", "dello"], a: ["di"], why: "Bei Mengenangaben steht nur «di»: un chilo di formaggio" },
+        { q: "Un po' ___ pane.", options: ["di", "del", "dello"], a: ["di"], why: "Bei Mengenangaben steht nur «di»: un po' di pane" },
       ],
     },
   ];
@@ -4629,7 +4687,7 @@
     }
     ,
     {
-      id: "wohnen", topic: null, verbs: ["essere", "avere", "fare", "andare", "parlare", "chiamarsi", "abitare"], title: "Wohnen und Orte - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
+      id: "wohnen", topic: "teilung", verbs: ["essere", "avere", "fare", "andare", "parlare", "chiamarsi", "abitare"], title: "Wohnen + Essen - lerne den Teilungsartikel", sub: "Grammatik-Block «Teilungsartikel»",
       nw: [["la città", "die Stadt"], ["la casa", "das Haus"], ["l'appartamento (männlich)", "die Wohnung"], ["l'ufficio (männlich)", "das Büro"], ["Dov'è …?", "Wo ist …?"]],
       words: [
         W("Dove abiti?", "Wo wohnst du?"),
@@ -4638,7 +4696,10 @@
         W("Lavoro in un ufficio.", "Ich arbeite in einem Büro."),
         W("Dov'è la stazione?", "Wo ist der Bahnhof?"),
         W("la città · la casa · l'appartamento (männlich)", "Stadt · Haus · Wohnung"),
-        W("Milano · Berlino · Roma · Parigi", "Mailand · Berlin · Rom · Paris")
+        W("Milano · Berlino · Roma · Parigi", "Mailand · Berlin · Rom · Paris"),
+        W("Vorrei del formaggio.", "Ich möchte (etwas) Käse."),
+        W("Ho comprato della carne.", "Ich habe (etwas) Fleisch gekauft."),
+        W("Ho incontrato degli amici.", "Ich habe (einige) Freunde getroffen.")
       ],
       tasks: [
         C("Was heisst «la casa»?", "Haus", ["Wohnung", "Stadt", "Büro"]),
@@ -4652,7 +4713,19 @@
         O("Ich arbeite in einem Büro.", "Lavoro in un ufficio."),
         O("Ich wohne in einer Wohnung.", "Abito in un appartamento."),
         L("Dove abiti?"),
-        C("Wie fragst du «Wo ist …?»", "Dov'è …?", ["Dove lavori?", "Di dov'è?", "Dove abiti?"])
+        C("Wie fragst du «Wo ist …?»", "Dov'è …?", ["Dove lavori?", "Di dov'è?", "Dove abiti?"]),
+        C("«Vorrei ___ formaggio.» – welche Form?", "del", ["dello", "della", "dei"]),
+        C("«Ho comprato ___ carne.» – welche Form?", "della", ["del", "delle", "degli"]),
+        C("«Vorrei ___ zucchero.» – welche Form?", "dello", ["del", "della", "degli"]),
+        C("«Vorrei ___ acqua.» – welche Form?", "dell'", ["del", "della", "delle"]),
+        C("«Ho incontrato ___ amici.» – welche Form?", "degli", ["dei", "delle", "dello"]),
+        C("«Ho comprato ___ mele.» – welche Form?", "delle", ["dei", "degli", "della"]),
+        C("Was bedeutet «del formaggio»?", "etwas Käse", ["der Käse", "den Käse"]),
+        C("«Non ho comprato ___ carne.» – mit oder ohne Teilungsartikel?", "ohne", ["mit «della»", "mit «delle»"]),
+        Y("Übersetze: Ich möchte (etwas) Käse.", "Vorrei del formaggio.", ["Vorrei un po' di formaggio."]),
+        O("Ich habe (etwas) Fleisch gekauft.", "Ho comprato della carne."),
+        O("Ich habe (einige) Freunde getroffen.", "Ho incontrato degli amici."),
+        L("Ho comprato della carne.")
       ]
     },
     {
