@@ -820,7 +820,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-adjektive";
-  const APP_VERSION = "2026-10-24-zzt"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-24-zzu"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -2122,12 +2122,13 @@
         "<li>Kurzformen<span class='ex'><span class='ep'>la bici → le bici,</span> <span class='ep'>la foto → le foto,</span> <span class='ep'>il cinema → i cinema</span></span></li>" +
         "</ul>" +
         "<p class='sub'>Besondere Endungen</p>" +
+        "<p class='nt'>Betonte Silbe fett.</p>" +
         "<ul>" +
         "<li>-ca / -ga → <b>-che / -ghe</b><span class='nt'>Das h hält das c / g hart.</span><span class='ex'><span class='ep'>l'amica (weiblich) → le amiche</span></span></li>" +
         "<li>einige -co / -go → <b>-chi / -ghi</b><span class='ex'><span class='ep'>il tedesco → i tedeschi,</span> <span class='ep'>l'albergo (männlich) → gli alberghi</span></span></li>" +
-        "<li>-cia / -gia → <b>-ce / -ge</b><span class='nt'>Das e macht weich, das i fällt weg. Nur wenn die letzte Silbe unbetont ist.</span><span class='ex'><span class='ep'>la mancia → le mance,</span> <span class='ep'>la spiaggia → le spiagge</span></span></li>" +
+        "<li>-cia / -gia → <b>-ce / -ge</b><span class='nt'>Das e macht weich, das i fällt weg. Nur wenn die letzte Silbe unbetont ist.</span><span class='ex'><span class='ep'>la <span class='sy'><b>man</b>cia</span> → le <span class='sy'><b>man</b>ce</span>,</span> <span class='ep'>la <span class='sy'><b>spiag</b>gia</span> → le <span class='sy'><b>spiag</b>ge</span></span></span></li>" +
         "<li>-io → nur <b>-i</b><span class='ex'><span class='ep'>il viaggio → i viaggi</span></span></li>" +
-        "<li>betontes i bleibt<span class='ex'><span class='ep'>lo zio → gli zii</span></span></li>" +
+        "<li>betontes i bleibt<span class='ex'><span class='ep'>lo <span class='sy'><b>zi</b>o</span> → gli <span class='sy'><b>zi</b>i</span></span></span></li>" +
         "</ul>" +
         "<p class='sub'>Unregelmässig</p>" +
         "<ul>" +
@@ -2467,7 +2468,7 @@
       title: "Adjektive – Grundlagen",
       explain:
         "<h3>1 · Singular</h3>" +
-        "<p class='nt'>Das Adjektiv passt zum Nomen in Geschlecht und Zahl.</p>" +
+        "<p class='nt'>Passt zum Nomen in Geschlecht + Zahl.</p>" +
         "<ul>" +
         "<li><b>-o</b> männlich · <b>-a</b> weiblich<span class='nt'>Viele Adjektive.</span><span class='ex'><span class='ep'>un museo famoso,</span> <span class='ep'>una chiesa famosa</span></span></li>" +
         "<li><b>-e</b> männlich + weiblich<span class='nt'>Wenige Adjektive.</span><span class='ex'><span class='ep'>un museo interessante,</span> <span class='ep'>una chiesa interessante</span></span></li>" +
@@ -2477,16 +2478,17 @@
         "<p class='nt'>Immer -i, ausser bei -a.</p>" +
         "<ul>" +
         "<li>männlich <b>-o → -i</b><span class='ex'><span class='ep'>i musei famosi</span></span></li>" +
-        "<li>weiblich <b>-a → -e</b><span class='ex'><span class='ep'>le chiese famose</span></span></li>" +
         "<li><b>-e → -i</b><span class='nt'>männlich + weiblich.</span><span class='ex'><span class='ep'>i musei interessanti,</span> <span class='ep'>le zone interessanti</span></span></li>" +
+        "<li>weiblich <b>-a → -e</b><span class='ex'><span class='ep'>le chiese famose</span></span></li>" +
         "</ul>" +
         "<h3>3 · Ausnahmen</h3>" +
         "<p class='nt'>-ca / -ga: weiblich. -co / -go: männlich.</p>" +
+        "<p class='nt'>Betonte Silbe fett.</p>" +
         "<ul>" +
-        "<li>-ca / -ga → <b>-che / -ghe</b><span class='nt'>Das h hält das c / g hart.</span><span class='ex'><span class='ep'>chiesa antica → chiese antiche,</span> <span class='ep'>trattoria tipica → trattorie tipiche,</span> <span class='ep'>giornata lunga → giornate lunghe</span></span></li>" +
-        "<li>-co → <b>-chi</b><span class='nt'>Vorletzte Silbe betont: hart.</span><span class='ex'><span class='ep'>palazzo antico → palazzi antichi</span></span></li>" +
-        "<li>-co → <b>-ci</b><span class='nt'>Drittletzte Silbe betont: weich.</span><span class='ex'><span class='ep'>ristorante tipico → ristoranti tipici</span></span></li>" +
-        "<li>-go → <b>-ghi</b><span class='nt'>Das h hält das g hart.</span><span class='ex'><span class='ep'>giorno lungo → giorni lunghi</span></span></li>" +
+        "<li>-ca / -ga → <b>-che / -ghe</b><span class='nt'>Das h behält die harte Aussprache.</span><span class='ex'><span class='ep'>chiesa antica → chiese antiche,</span> <span class='ep'>trattoria tipica → trattorie tipiche,</span> <span class='ep'>giornata lunga → giornate lunghe</span></span></li>" +
+        "<li>-co → <b>-chi</b><span class='nt'>Vorletzte Silbe betont.</span><span class='nt'>Harte Aussprache.</span><span class='ex'><span class='ep'>palazzo <span class='sy'>an<b>ti</b>co</span> → palazzi <span class='sy'>an<b>ti</b>chi</span></span></span></li>" +
+        "<li>-co → <b>-ci</b><span class='nt'>Drittletzte Silbe betont.</span><span class='nt'>Weiche Aussprache.</span><span class='ex'><span class='ep'>ristorante <span class='sy'><b>ti</b>pico</span> → ristoranti <span class='sy'><b>ti</b>pici</span></span></span></li>" +
+        "<li>-go → <b>-ghi</b><span class='nt'>Das h behält die harte Aussprache.</span><span class='ex'><span class='ep'>giorno lungo → giorni lunghi</span></span></li>" +
         "</ul>",
       exercises: [
         { q: "un museo ___ (berühmt)", options: ["famoso", "famosa", "famosi", "famose"], a: ["famoso"], why: "männlich Singular: -o" },
@@ -2507,11 +2509,11 @@
         { q: "una chiesa antica → Plural?", hint: "le chiese …", a: ["le chiese antiche"], why: "-ca → -che" },
         { q: "una trattoria tipica → Plural?", hint: "le trattorie …", a: ["le trattorie tipiche"], why: "-ca → -che" },
         { q: "una giornata lunga → Plural?", hint: "le giornate …", a: ["le giornate lunghe"], why: "-ga → -ghe" },
-        { q: "un palazzo antico → Plural?", hint: "i palazzi …", a: ["i palazzi antichi"], why: "-co → -chi: Betonung auf der vorletzten Silbe (anTIco)" },
-        { q: "un ristorante tipico → Plural?", hint: "i ristoranti …", a: ["i ristoranti tipici"], why: "-co → -ci: Betonung auf der drittletzten Silbe (TIpico)" },
+        { q: "un palazzo antico → Plural?", hint: "i palazzi …", a: ["i palazzi antichi"], why: "-co → -chi: Betonung auf der vorletzten Silbe (anTIco), harte Aussprache" },
+        { q: "un ristorante tipico → Plural?", hint: "i ristoranti …", a: ["i ristoranti tipici"], why: "-co → -ci: Betonung auf der drittletzten Silbe (TIpico), weiche Aussprache" },
         { q: "un giorno lungo → Plural?", hint: "i giorni …", a: ["i giorni lunghi"], why: "-go → -ghi" },
-        { q: "Plural von «antico»?", options: ["antichi", "antici", "antiche"], a: ["antichi"], why: "Vorletzte Silbe betont: -chi (hart)" },
-        { q: "Plural von «tipico»?", options: ["tipici", "tipichi", "tipiche"], a: ["tipici"], why: "Drittletzte Silbe betont: -ci (weich)" },
+        { q: "Plural von «antico»?", options: ["antichi", "antici", "antiche"], a: ["antichi"], why: "Vorletzte Silbe betont: -chi (harte Aussprache)" },
+        { q: "Plural von «tipico»?", options: ["tipici", "tipichi", "tipiche"], a: ["tipici"], why: "Drittletzte Silbe betont: -ci (weiche Aussprache)" },
         { q: "Plural von «antica»?", options: ["antiche", "antici", "antichi"], a: ["antiche"], why: "-ca → -che" },
         { q: "Welche Adjektive haben männlich und weiblich dieselbe Form?", options: ["auf -e", "auf -o", "auf -a"], a: ["auf -e"], why: "Nur Adjektive auf -e: interessante" },
         { q: "Wie endet ein Adjektiv auf -a im Plural?", options: ["-e", "-i"], a: ["-e"], why: "-a → -e" },
