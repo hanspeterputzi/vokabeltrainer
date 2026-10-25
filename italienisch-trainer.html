@@ -820,7 +820,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-lektionen5";
-  const APP_VERSION = "2026-10-25-e"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-25-f"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -5370,7 +5370,30 @@
   function markDone(id) {
     var c = counts(); c[id] = (c[id] || 0) + 1; lsSet(COUNT_KEY, c);
     var d = doneList(); if (d.indexOf(id) === -1) { d.push(id); lsSet(DONE_KEY, d); }
+    for (var k = 0; k < LESSONS.length; k++) if (LESSONS[k].id === id) { seqAdvance(k); break; }
     return c[id];
+  }
+  // Rhythmus: L1 - L2 - L1 - L3 - L2 - L4 - L3 ... (neue Lektion, dann die vorherige wiederholen)
+  var SEQ_KEY = "italienisch_lessons_seq";
+  function planIdx(p) { return p === 0 ? 0 : (p % 2 === 1 ? (p + 1) / 2 : p / 2 - 1); }
+  function seqPos() {
+    var p = lsGet(SEQ_KEY, null);
+    if (typeof p !== "number") {
+      var m = nextIndex(); if (m === -1) m = LESSONS.length;
+      p = m === 0 ? 0 : m === 1 ? 1 : 2 * m - 2;
+      lsSet(SEQ_KEY, p);
+    }
+    return p;
+  }
+  function seqAdvance(i) {
+    var p = seqPos();
+    for (var q = p; q <= p + 2; q++) if (planIdx(q) === i) { lsSet(SEQ_KEY, q + 1); return; }
+  }
+  // Welche Lektion ist laut Rhythmus als Naechstes dran? (-1 = nichts mehr)
+  function targetIndex() {
+    var t = planIdx(seqPos());
+    if (t < LESSONS.length) return t;
+    return nextIndex();
   }
   function nextIndex() { for (var i = 0; i < LESSONS.length; i++) if (!isDone(LESSONS[i].id)) return i; return -1; }
 
@@ -5386,18 +5409,19 @@
     view.innerHTML = "";
     var card = el("div", "ls-card");
     card.appendChild(el("h2", "", "Lektionen"));
-    var ni = nextIndex();
+    var ni = targetIndex(), fi = nextIndex();
     if (ni === -1) card.appendChild(el("p", "ls-sub", "Alle Lektionen sind geschafft. Mit dem nächsten Update kommen neue dazu. Du kannst jede Lektion beliebig wiederholen."));
+    else card.appendChild(el("p", "ls-sub", "Reihenfolge: neue Lektion, dann die vorherige wiederholen (L1 · L2 · L1 · L3 · L2 · L4 · L3 …)."));
     var path = el("div", "ls-tl");
     LESSONS.forEach(function (ls, i) {
-      var done = isDone(ls.id), cur = i === ni, lock = !done && !cur;
-      var n = el(lock ? "div" : "button", "ls-row" + (done ? " done" : cur ? " next" : " lock")); if (!lock) n.type = "button";
-      var dw = el("span", "dw"); dw.appendChild(el("span", "dot", done ? "✓" : String(i + 1))); n.appendChild(dw);
+      var done = isDone(ls.id), cur = i === ni, lock = !done && !cur && i !== fi;
+      var n = el(lock ? "div" : "button", "ls-row" + (done ? " done" : "") + (cur ? " next" : lock ? " lock" : "")); if (!lock) n.type = "button";
+      var dw = el("span", "dw"); dw.appendChild(el("span", "dot", done ? (cur ? "↻" : "✓") : String(i + 1))); n.appendChild(dw);
       var tx = el("span", "tx"); tx.appendChild(el("span", "tt", headOf(ls)));
       var ss = el("span", "ss"); ss.appendChild(el("span", "tag", tagOf(ls)));
       if (done) ss.appendChild(el("span", "cnt", " · " + countOf(ls.id) + "× geübt"));
       tx.appendChild(ss);
-      if (cur) tx.appendChild(el("span", "go", "Los geht's"));
+      if (cur) tx.appendChild(el("span", "go", done ? "Wiederholen" : "Los geht's"));
       n.appendChild(tx);
       if (!lock) n.addEventListener("click", function () { startLesson(i); });
       path.appendChild(n);
@@ -5670,8 +5694,8 @@
     card.appendChild(el("div", "ls-big", "Gut gemacht!"));
     card.appendChild(el("p", "ls-sub", S.firstOk + " von " + S.tasks.length + " Aufgaben der ersten Runde gleich beim ersten Mal richtig. Danach hast du alles nochmals wiederholt."));
     card.appendChild(el("div", "ls-times", "Diese Lektion hast du " + times + (times === 1 ? " Mal" : " Mal") + " geübt."));
-    var ni = nextIndex();
-    if (ni !== -1 && LESSONS[ni].nw) {
+    var ni = targetIndex();
+    if (ni !== -1 && !isDone(LESSONS[ni].id) && LESSONS[ni].nw) {
       var box = el("div", "ls-nw");
       box.appendChild(el("h2", "", "Neue Wörter in der nächsten Lektion"));
       var nl = el("ul", "ls-intro");
@@ -5685,7 +5709,7 @@
       box.appendChild(nl); card.appendChild(box);
     }
     if (ni !== -1) {
-      var nb = el("button", "ls-btn pri big", "Nächste Lektion: " + headOf(LESSONS[ni])); nb.type = "button";
+      var nb = el("button", "ls-btn pri big", (isDone(LESSONS[ni].id) ? "Jetzt wiederholen: " : "Nächste Lektion: ") + headOf(LESSONS[ni])); nb.type = "button";
       nb.addEventListener("click", function () { startLesson(ni); });
       card.appendChild(nb);
     } else {
