@@ -820,7 +820,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-lektionen5";
-  const APP_VERSION = "2026-10-25-c"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-25-d"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -2629,9 +2629,8 @@
     GRAMMAR_TOPICS.forEach(t => {
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "cat-btn" + (t.id === gTopicId ? " active" : "") + (gDoneCount(t) >= t.exercises.length ? " done" : "");
-      const dn = gDoneCount(t), tot = t.exercises.length;
-      btn.textContent = t.title + " · " + (dn >= tot ? "✓ fertig" : dn + "/" + tot) + (gRounds[t.id] ? (dn >= tot ? " · " + gRounds[t.id] + "×" : " · ✓ " + gRounds[t.id] + "×") : "");
+      btn.className = "cat-btn" + (t.id === gTopicId ? " active" : "") + (gRounds[t.id] ? " done" : "");
+            btn.textContent = t.title + " · " + (gRounds[t.id] || 0) + "×";
       btn.addEventListener("click", () => {
         if (t.id === gTopicId) return;
         gTopicId = t.id;
@@ -2678,7 +2677,7 @@
     }
 
     const ex = gCurrent.ex;
-    gEl.progress.textContent = topic.title + " · Aufgabe " + (gCurrent.idx + 1) + " / " + total + " · geübt " + gDoneCount(topic) + " / " + total + (gRounds[topic.id] ? " · ganz geübt: " + gRounds[topic.id] + "×" : "");
+    gEl.progress.textContent = topic.title + " · Aufgabe " + (gCurrent.idx + 1) + " / " + total + " · ganz geübt: " + (gRounds[topic.id] || 0) + "× · aktueller Durchgang: " + gDoneCount(topic) + " / " + total;
     gEl.question.textContent = ex.q;
     gEl.hint.textContent = ex.hint || "";
 
