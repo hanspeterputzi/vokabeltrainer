@@ -822,7 +822,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-lektionen5";
-  const APP_VERSION = "2026-10-25-g"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-25-h"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4101,98 +4101,36 @@
         try { localStorage.setItem("dict_dir", ddir); } catch (x) {}
         renderDir(); render(); window.scrollTo(0, 0);
       });
-      // --- Sprach-Abfrage: deutsches Wort erscheint, Italienisch wird gesprochen (oder getippt) ---
-      const qz = document.createElement("div");
-      qz.id = "dictQuiz"; qz.className = "card"; qz.style.display = "none";
-      qz.innerHTML =
-        "<div class='dq-top'><h2>Sprach-Abfrage</h2><button type='button' id='dqClose' aria-label='Schliessen'>✕</button></div>" +
-        "<div class='dq-sub' id='dqSub'></div><div class='dq-q' id='dqQ'></div><div class='dq-h' id='dqH'></div>" +
-        "<button type='button' id='dqMic' class='dq-mic'>Antwort sprechen</button>" +
-        "<input type='text' id='dqIn' placeholder='oder Italienisch eintippen' autocomplete='off' autocapitalize='off' spellcheck='false'>" +
-        "<div class='dq-fb' id='dqFb'></div>" +
-        "<div class='dq-row'><button type='button' id='dqCheck' class='dq-pri'>Prüfen</button><button type='button' id='dqNext'>Nächstes Wort</button></div>";
-      view.insertBefore(qz, view.children[1]);
+      // --- Sprachsuche: Wort sprechen (Italienisch oder Deutsch), das Ergebnis erscheint in der Suche ---
+      const vrow = document.createElement("div");
+      vrow.id = "dictVoice";
+      vrow.innerHTML = "<button type='button' data-l='it-IT'>Sprechen: Italienisch</button><button type='button' data-l='de-DE'>Sprechen: Deutsch</button><div id='dictVoiceMsg'></div>";
+      inp.parentNode.insertBefore(vrow, inp.nextSibling);
       const st3 = document.createElement("style");
       st3.textContent =
-        "#dictGo{margin-top:10px;width:100%;font-size:14px;font-weight:700;padding:11px 8px;border-radius:12px;border:1.5px solid var(--accent,var(--blue,#2563eb));background:transparent;color:var(--accent,var(--blue,#2563eb));cursor:pointer}" +
-        "#dictQuiz .dq-top{display:flex;align-items:center;justify-content:space-between}#dictQuiz .dq-top h2{margin:0}" +
-        "#dictQuiz #dqClose{background:none;border:none;font-size:1.3rem;color:var(--muted,#666);cursor:pointer;padding:4px 8px}" +
-        "#dictQuiz .dq-sub{font-size:13px;color:var(--muted,#666);margin:4px 0 12px}" +
-        "#dictQuiz .dq-q{font-size:1.5rem;font-weight:800;line-height:1.25;margin:4px 0 4px}" +
-        "#dictQuiz .dq-h{font-size:13px;color:var(--muted,#666);min-height:18px;margin-bottom:12px}" +
-        "#dictQuiz .dq-mic{width:100%;font-size:1rem;font-weight:700;padding:14px;border-radius:14px;border:none;background:var(--accent,var(--blue,#2563eb));color:#fff;cursor:pointer;margin-bottom:10px}" +
-        "#dictQuiz .dq-mic.listening{background:var(--orange,#ea580c)}#dictQuiz .dq-mic:disabled{opacity:.45}" +
-        "#dictQuiz #dqIn{width:100%;font-size:16px;padding:11px 12px;border:1px solid var(--border,var(--line,#ccc));border-radius:10px;background:var(--bg,#f5f7fa);color:var(--text,var(--ink,#1b2430));box-sizing:border-box}" +
-        "#dictQuiz .dq-fb{margin-top:12px;padding:0;border-radius:12px;font-weight:600;line-height:1.4}" +
-        "#dictQuiz .dq-fb.ok,#dictQuiz .dq-fb.no{padding:11px 14px}" +
-        "#dictQuiz .dq-fb.ok{background:var(--correct-bg,#e7f6ec);color:var(--correct,#166534)}#dictQuiz .dq-fb.no{background:var(--wrong-bg,#fdeee4);color:var(--wrong,#b34a17)}" +
-        "#dictQuiz .dq-row{display:flex;gap:8px;margin-top:12px}#dictQuiz .dq-row button{flex:1;font-size:14px;font-weight:700;padding:12px 6px;border-radius:12px;border:1.5px solid var(--border,var(--line,#ccc));background:transparent;color:var(--text,var(--ink,#1b2430));cursor:pointer}" +
-        "#dictQuiz .dq-row button.dq-pri{background:var(--accent,var(--blue,#2563eb));border-color:transparent;color:#fff}";
+        "#dictVoice{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}#dictVoice button{flex:1;font-size:13px;font-weight:600;padding:9px 6px;border-radius:12px;border:1.5px solid var(--accent,var(--blue,#2563eb));background:transparent;color:var(--accent,var(--blue,#2563eb));cursor:pointer}" +
+        "#dictVoice button.listening{background:var(--orange,#ea580c);border-color:transparent;color:#fff}#dictVoice button:disabled{opacity:.45}" +
+        "#dictVoiceMsg{flex:0 0 100%;font-size:12px;color:var(--muted,#666);min-height:0}#dictVoiceMsg:empty{display:none}";
       document.head.appendChild(st3);
-      const dictGo = document.createElement("button");
-      dictGo.type = "button"; dictGo.id = "dictGo"; dictGo.textContent = "Wörter mit Sprache abfragen";
-      view.querySelector(".card").insertBefore(dictGo, view.querySelector("#dictCats"));
-      const listCard = view.children[2];
-      const dq = { cur: null, answered: false, listening: false };
-      const qEl = id => qz.querySelector("#" + id);
-      const dqAnswers = w => {
-        const base = String(w.it).replace(GENDER_RE, "").replace(/\s+/g, " ").trim();
-        const out = [];
-        base.split(/\s*[;\/]\s*/).forEach(v => { v = v.replace(/\s*\([^)]*\)\s*/g, " ").trim(); if (v) { out.push(v); const na = stripArt(v); if (na && na !== v) out.push(na); } });
-        return out;
-      };
-      function dqPick() {
-        const pool = words.filter(w => (dcat === "Alle" || w.cat === dcat) && w.it && w.de);
-        if (!pool.length) return null;
-        let w, tries = 0;
-        do { w = pool[Math.floor(Math.random() * pool.length)]; tries++; } while (dq.cur && w === dq.cur && pool.length > 1 && tries < 10);
-        return w;
-      }
-      function dqNext() {
-        if (dq.listening) return;
-        dq.cur = dqPick(); dq.answered = false;
-        qEl("dqIn").value = ""; qEl("dqIn").disabled = false; qEl("dqFb").className = "dq-fb"; qEl("dqFb").textContent = "";
-        qEl("dqSub").textContent = "Kategorie: " + (dcat === "Alle" ? "Alle Wörter" : dcat) + " · Sage das Wort auf Italienisch";
-        if (!dq.cur) { qEl("dqQ").textContent = "Keine Wörter in dieser Kategorie."; return; }
-        qEl("dqQ").textContent = String(dq.cur.de).replace(GENDER_RE, "");
-        qEl("dqH").textContent = dq.cur.cat ? dq.cur.cat : "";
-        qEl("dqCheck").disabled = false; qEl("dqMic").disabled = !SpeechRecognitionCtor;
-        if (!SpeechRecognitionCtor) qEl("dqH").textContent = "Spracherkennung wird von diesem Browser nicht unterstützt – bitte eintippen.";
-      }
-      function dqJudge(heard) {
-        if (!dq.cur || dq.answered) return;
-        const list = (Array.isArray(heard) ? heard : [heard]).filter(x => x && x.trim());
-        if (!list.length) return;
-        dq.answered = true;
-        const ans = dqAnswers(dq.cur);
-        const ok = ans.some(a => list.some(h => fold(a).replace(/[^a-z0-9' ]/g, "").trim() === fold(h).replace(/[^a-z0-9' ]/g, "").trim())) || italEqAny(list, ans);
-        const fb = qEl("dqFb");
-        fb.className = "dq-fb " + (ok ? "ok" : "no");
-        fb.textContent = ok ? "Richtig: " + ans[0] : "Gehört: «" + list[0] + "» – richtig ist: " + ans[0];
-        qEl("dqIn").disabled = true; qEl("dqCheck").disabled = true;
-        speakItalian(ans[0]);
-      }
-      qEl("dqMic").addEventListener("click", () => {
-        if (!SpeechRecognitionCtor || dq.listening || dq.answered || !dq.cur) return;
+      const vmsg = vrow.querySelector("#dictVoiceMsg");
+      if (!SpeechRecognitionCtor) { vrow.querySelectorAll("button").forEach(b => b.disabled = true); vmsg.textContent = "Spracherkennung wird von diesem Browser nicht unterstützt."; }
+      let vListening = false;
+      vrow.addEventListener("click", e => {
+        const b = e.target.closest("button"); if (!b || !SpeechRecognitionCtor || vListening) return;
         const rec = new SpeechRecognitionCtor();
-        rec.lang = "it-IT"; rec.interimResults = false; rec.maxAlternatives = 5;
-        dq.listening = true; qEl("dqMic").classList.add("listening"); qEl("dqMic").textContent = "Mikrofon wird aktiviert …";
-        let heard = [];
-        rec.onstart = () => { qEl("dqMic").textContent = "Jetzt sprechen …"; };
-        rec.onresult = ev => { heard = []; for (let i = 0; i < ev.results[0].length; i++) heard.push(ev.results[0][i].transcript.trim()); qEl("dqIn").value = heard[0] || ""; };
-        rec.onerror = ev => { qEl("dqH").textContent = "Spracherkennung fehlgeschlagen (" + ev.error + "). Bitte erneut versuchen oder eintippen."; };
+        rec.lang = b.dataset.l; rec.interimResults = false; rec.maxAlternatives = 1;
+        vListening = true; b.classList.add("listening"); vmsg.textContent = "Mikrofon wird aktiviert …";
+        let got = "";
+        rec.onstart = () => { vmsg.textContent = "Jetzt sprechen …"; };
+        rec.onresult = ev => { got = ev.results[0][0].transcript.trim().replace(/[.!?]+$/, ""); };
+        rec.onerror = ev => { vmsg.textContent = "Spracherkennung fehlgeschlagen (" + ev.error + "). Bitte erneut versuchen."; };
         rec.onend = () => {
-          dq.listening = false; qEl("dqMic").classList.remove("listening"); qEl("dqMic").textContent = "Antwort sprechen";
-          if (heard.length) dqJudge(heard);
+          vListening = false; b.classList.remove("listening");
+          if (got) { vmsg.textContent = "Erkannt: «" + got + "»"; inp.value = got; render(); window.scrollTo(0, 0); }
+          else if (/aktiviert|sprechen/.test(vmsg.textContent)) vmsg.textContent = "Nichts gehört. Bitte erneut versuchen.";
         };
-        try { rec.start(); } catch (e) { dq.listening = false; qEl("dqMic").classList.remove("listening"); qEl("dqMic").textContent = "Antwort sprechen"; }
+        try { rec.start(); } catch (x) { vListening = false; b.classList.remove("listening"); vmsg.textContent = "Mikrofon konnte nicht gestartet werden."; }
       });
-      qEl("dqCheck").addEventListener("click", () => dqJudge(qEl("dqIn").value));
-      qEl("dqIn").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); if (dq.answered) dqNext(); else dqJudge(qEl("dqIn").value); } });
-      qEl("dqNext").addEventListener("click", dqNext);
-      const dqIdx = v => { const ix = document.getElementById("dictIdx"); if (ix) ix.style.display = v; };
-      dictGo.addEventListener("click", () => { qz.style.display = ""; listCard.style.display = "none"; dictGo.style.display = "none"; dqIdx("none"); dqNext(); window.scrollTo(0, 0); });
-      qEl("dqClose").addEventListener("click", () => { qz.style.display = "none"; listCard.style.display = ""; dictGo.style.display = ""; dqIdx(""); });
       function renderCats() {
         catsEl.innerHTML = "";
         ["Alle"].concat(CATEGORIES).forEach(name => {
@@ -4399,8 +4337,7 @@
 
   function render(bump) {
     var s = load(), days = (s.last === today() || s.last === yest()) ? (s.days || 0) : 0;
-    sbar.innerHTML = '<div class="sb f" title="Tage in Serie: an wie vielen Tagen hintereinander du das Tagesziel (30 Minuten üben) erreicht hast">' + svg("flame") + '<b>' + days + '</b><span>Tage in Serie</span></div>' +
-      '<div class="sb z' + (bump ? " bump" : "") + '" title="Richtige Antworten hintereinander ohne Fehler">' + svg("bolt") + '<b>' + (s.run || 0) + '</b><span>in Folge</span></div>';
+    sbar.innerHTML = '<div class="sb f" title="Tage in Serie: an wie vielen Tagen hintereinander du das Tagesziel (30 Minuten üben) erreicht hast">' + svg("flame") + '<b>' + days + '</b><span>Tage in Serie</span></div>';
     sbar.appendChild(goalEl); paintGoal();
   }
   render();
