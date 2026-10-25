@@ -822,7 +822,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-lektionen5";
-  const APP_VERSION = "2026-10-25-h"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-25-i"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4101,36 +4101,6 @@
         try { localStorage.setItem("dict_dir", ddir); } catch (x) {}
         renderDir(); render(); window.scrollTo(0, 0);
       });
-      // --- Sprachsuche: Wort sprechen (Italienisch oder Deutsch), das Ergebnis erscheint in der Suche ---
-      const vrow = document.createElement("div");
-      vrow.id = "dictVoice";
-      vrow.innerHTML = "<button type='button' data-l='it-IT'>Sprechen: Italienisch</button><button type='button' data-l='de-DE'>Sprechen: Deutsch</button><div id='dictVoiceMsg'></div>";
-      inp.parentNode.insertBefore(vrow, inp.nextSibling);
-      const st3 = document.createElement("style");
-      st3.textContent =
-        "#dictVoice{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}#dictVoice button{flex:1;font-size:13px;font-weight:600;padding:9px 6px;border-radius:12px;border:1.5px solid var(--accent,var(--blue,#2563eb));background:transparent;color:var(--accent,var(--blue,#2563eb));cursor:pointer}" +
-        "#dictVoice button.listening{background:var(--orange,#ea580c);border-color:transparent;color:#fff}#dictVoice button:disabled{opacity:.45}" +
-        "#dictVoiceMsg{flex:0 0 100%;font-size:12px;color:var(--muted,#666);min-height:0}#dictVoiceMsg:empty{display:none}";
-      document.head.appendChild(st3);
-      const vmsg = vrow.querySelector("#dictVoiceMsg");
-      if (!SpeechRecognitionCtor) { vrow.querySelectorAll("button").forEach(b => b.disabled = true); vmsg.textContent = "Spracherkennung wird von diesem Browser nicht unterstützt."; }
-      let vListening = false;
-      vrow.addEventListener("click", e => {
-        const b = e.target.closest("button"); if (!b || !SpeechRecognitionCtor || vListening) return;
-        const rec = new SpeechRecognitionCtor();
-        rec.lang = b.dataset.l; rec.interimResults = false; rec.maxAlternatives = 1;
-        vListening = true; b.classList.add("listening"); vmsg.textContent = "Mikrofon wird aktiviert …";
-        let got = "";
-        rec.onstart = () => { vmsg.textContent = "Jetzt sprechen …"; };
-        rec.onresult = ev => { got = ev.results[0][0].transcript.trim().replace(/[.!?]+$/, ""); };
-        rec.onerror = ev => { vmsg.textContent = "Spracherkennung fehlgeschlagen (" + ev.error + "). Bitte erneut versuchen."; };
-        rec.onend = () => {
-          vListening = false; b.classList.remove("listening");
-          if (got) { vmsg.textContent = "Erkannt: «" + got + "»"; inp.value = got; render(); window.scrollTo(0, 0); }
-          else if (/aktiviert|sprechen/.test(vmsg.textContent)) vmsg.textContent = "Nichts gehört. Bitte erneut versuchen.";
-        };
-        try { rec.start(); } catch (x) { vListening = false; b.classList.remove("listening"); vmsg.textContent = "Mikrofon konnte nicht gestartet werden."; }
-      });
       function renderCats() {
         catsEl.innerHTML = "";
         ["Alle"].concat(CATEGORIES).forEach(name => {
@@ -6343,6 +6313,38 @@
     bar.appendChild(row);
     function sync() { row.classList.toggle("on", !!inp.value.trim()); }
     inp.addEventListener("input", sync); sync();
+
+    // Sprechen: erkanntes Wort kommt ins Suchfeld und wird direkt bei DeepL geoeffnet (Italienisch -> Deutsch bzw. Deutsch -> Italienisch)
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var mic = document.createElement("div"); mic.id = "dictMic";
+    mic.innerHTML = "<button type='button' data-l='it-IT' data-s='it' data-t='de'>Sprechen: Italienisch</button><button type='button' data-l='de-DE' data-s='de' data-t='it'>Sprechen: Deutsch</button><div class='mm'></div>";
+    bar.insertBefore(mic, row);
+    var st = document.createElement("style");
+    st.textContent = "#dictMic{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}#dictMic button{flex:1;padding:9px 6px;border:0;border-radius:12px;background:var(--k-blue,#2563eb);color:#fff;font-size:.8rem;font-weight:700;box-shadow:none}" +
+      "#dictMic button.listening{background:var(--k-orange,#ea580c)}#dictMic button:disabled{opacity:.45}#dictMic .mm{flex:0 0 100%;font-size:.78rem;color:var(--k-muted,#666)}#dictMic .mm:empty{display:none}#dictMic .mm a{color:var(--k-orange,#ea580c);font-weight:700}";
+    document.head.appendChild(st);
+    var mm = mic.querySelector(".mm"), busy = false;
+    if (!SR) { [].forEach.call(mic.querySelectorAll("button"), function (b) { b.disabled = true; }); mm.textContent = "Spracherkennung wird von diesem Browser nicht unterstützt."; }
+    mic.addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b || !SR || busy) return;
+      var rec = new SR(); rec.lang = b.dataset.l; rec.interimResults = false; rec.maxAlternatives = 1;
+      busy = true; b.classList.add("listening"); mm.textContent = "Mikrofon wird aktiviert …";
+      var got = "", err = "";
+      rec.onstart = function () { mm.textContent = "Jetzt sprechen …"; };
+      rec.onresult = function (ev) { got = ev.results[0][0].transcript.trim().replace(/[.!?]+$/, ""); };
+      rec.onerror = function (ev) { err = ev.error; };
+      rec.onend = function () {
+        busy = false; b.classList.remove("listening");
+        if (!got) { mm.textContent = err ? "Spracherkennung fehlgeschlagen (" + err + "). Bitte erneut versuchen." : "Nichts gehört. Bitte erneut versuchen."; return; }
+        inp.value = got; inp.dispatchEvent(new Event("input", { bubbles: true }));
+        var url = "https://www.deepl.com/translator#" + b.dataset.s + "/" + b.dataset.t + "/" + encodeURIComponent(got).replace(/%2F/g, "%5C%2F");
+        mm.innerHTML = "";
+        mm.appendChild(document.createTextNode("Erkannt: «" + got + "» – "));
+        var a = document.createElement("a"); a.href = url; a.target = "_blank"; a.rel = "noopener"; a.textContent = "bei DeepL übersetzen ↗"; mm.appendChild(a);
+        try { window.open(url, "_blank", "noopener"); } catch (x) {}
+      };
+      try { rec.start(); } catch (x) { busy = false; b.classList.remove("listening"); mm.textContent = "Mikrofon konnte nicht gestartet werden."; }
+    });
   }
 
   // Neuer Reiter: Seite springt nach oben (orange Kopf mit Streak sichtbar); Grammatik: Uebung vor der Erklaerung
