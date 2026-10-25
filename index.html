@@ -822,7 +822,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-lektionen5";
-  const APP_VERSION = "2026-10-25-l"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-25-m"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -6305,7 +6305,7 @@
     var row = document.createElement("div"); row.id = "dictDeepl";
     function open(src, tgt) {
       var t = inp.value.trim(); if (!t) return;
-      var url = "https://www.deepl.com/de/translator#" + src + "/" + tgt + "/" + encodeURIComponent(t).replace(/%2F/g, "%5C%2F");
+      var url = "https://www.deepl.com/de/translator#auto/" + tgt + "/" + encodeURIComponent(t).replace(/%2F/g, "%5C%2F");
       window.open(url, "_blank", "noopener");
     }
     // Eine Taste: Richtung folgt dem Umschalter IT → DE / DE → IT im Woerterbuch; Enter im Suchfeld loest dasselbe aus
@@ -6321,11 +6321,15 @@
         if (d === q) de = true;
       }
       if (!it && window.italoLookupWord && (window.italoLookupWord(t) || []).length) it = true;
-      return it && !de ? "it" : de && !it ? "de" : "";
+      if (it && !de) return "it"; if (de && !it) return "de";
+      // nicht in der Wortliste: Umlaute / ss / Endung auf Konsonant oder typisch deutsche Buchstabenfolgen = Deutsch, sonst Italienisch
+      var raw = String(t).toLowerCase();
+      if (/[äöüß]/.test(raw) || /(tz|ck|pf)/.test(q) || /[bcdfghklmnpqrstwxz]$/.test(q)) return "de";
+      return "it";
     }
-    function dir() { var g = guess(inp.value), l = g || (dv && dv.dataset.dir === "de" ? "de" : "it"); return l === "de" ? ["de", "it"] : ["it", "de"]; }
+    function dir() { var l = guess(inp.value); return l === "de" ? ["de", "it"] : ["it", "de"]; }
     var b1 = document.createElement("button"); b1.type = "button"; row.appendChild(b1);
-    function lab() { var d = dir(); b1.textContent = "bei DeepL übersetzen (" + d[0].toUpperCase() + " → " + d[1].toUpperCase() + ") ↗"; }
+    function lab() { var d = dir(); b1.textContent = "bei DeepL übersetzen (" + (d[0] === "de" ? "Deutsch → Italienisch" : "Italienisch → Deutsch") + ") ↗"; }
     lab();
     if (dv) new MutationObserver(lab).observe(dv, { attributes: true, attributeFilter: ["data-dir"] });
     inp.addEventListener("input", lab);
@@ -6358,7 +6362,7 @@
         busy = false; b.classList.remove("listening");
         if (!got) { mm.textContent = err ? "Spracherkennung fehlgeschlagen (" + err + "). Bitte erneut versuchen." : "Nichts gehört. Bitte erneut versuchen."; return; }
         inp.value = got; inp.dispatchEvent(new Event("input", { bubbles: true }));
-        var url = "https://www.deepl.com/de/translator#" + b.dataset.s + "/" + b.dataset.t + "/" + encodeURIComponent(got).replace(/%2F/g, "%5C%2F");
+        var url = "https://www.deepl.com/de/translator#auto/" + b.dataset.t + "/" + encodeURIComponent(got).replace(/%2F/g, "%5C%2F");
         mm.textContent = "Erkannt: «" + got + "»";
         try { window.open(url, "_blank", "noopener"); } catch (x) {}
       };
