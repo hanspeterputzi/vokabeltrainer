@@ -820,7 +820,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-lektionen5";
-  const APP_VERSION = "2026-10-25-b"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-25-c"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -2592,6 +2592,13 @@
     });
     lsSet(G_DONE_KEY, gDone);
   }
+  const G_ROUNDS_KEY = "italienisch_grammar_rounds";   // { topicId: Anzahl ganz geuebter Durchgaenge }
+  let gRounds = lsGet(G_ROUNDS_KEY, null);
+  if (!gRounds) {
+    gRounds = {};
+    GRAMMAR_TOPICS.forEach(t => { if ((gDone[t.id] || []).length >= t.exercises.length) gRounds[t.id] = 1; });
+    lsSet(G_ROUNDS_KEY, gRounds);
+  }
   function gDoneCount(t) { return (gDone[t.id] || []).length; }
   let gTopicId = lsGet(G_TOPIC_KEY, GRAMMAR_TOPICS[0].id);
   if (!GRAMMAR_TOPICS.some(t => t.id === gTopicId)) gTopicId = GRAMMAR_TOPICS[0].id;
@@ -2624,7 +2631,7 @@
       btn.type = "button";
       btn.className = "cat-btn" + (t.id === gTopicId ? " active" : "") + (gDoneCount(t) >= t.exercises.length ? " done" : "");
       const dn = gDoneCount(t), tot = t.exercises.length;
-      btn.textContent = t.title + " · " + (dn >= tot ? "✓ fertig" : dn + "/" + tot);
+      btn.textContent = t.title + " · " + (dn >= tot ? "✓ fertig" : dn + "/" + tot) + (gRounds[t.id] ? (dn >= tot ? " · " + gRounds[t.id] + "×" : " · ✓ " + gRounds[t.id] + "×") : "");
       btn.addEventListener("click", () => {
         if (t.id === gTopicId) return;
         gTopicId = t.id;
@@ -2671,7 +2678,7 @@
     }
 
     const ex = gCurrent.ex;
-    gEl.progress.textContent = topic.title + " · Aufgabe " + (gCurrent.idx + 1) + " / " + total + " · geübt " + gDoneCount(topic) + " / " + total;
+    gEl.progress.textContent = topic.title + " · Aufgabe " + (gCurrent.idx + 1) + " / " + total + " · geübt " + gDoneCount(topic) + " / " + total + (gRounds[topic.id] ? " · ganz geübt: " + gRounds[topic.id] + "×" : "");
     gEl.question.textContent = ex.q;
     gEl.hint.textContent = ex.hint || "";
 
@@ -2707,11 +2714,17 @@
     if (ok) {
       st.correct++;
       const dl = gDone[gTopicId] || (gDone[gTopicId] = []);
-      const gWasDone = dl.length >= gTopic().exercises.length;
-      if (dl.indexOf(gCurrent.idx) < 0) { dl.push(gCurrent.idx); lsSet(G_DONE_KEY, gDone); gRenderTopics(); }
+      const gTot = gTopic().exercises.length;
+      if (dl.length >= gTot) dl.length = 0;   // neuer Durchgang beginnt
+      const gWasDone = false;
+      if (dl.indexOf(gCurrent.idx) < 0) {
+        dl.push(gCurrent.idx);
+        if (dl.length >= gTot) gRounds[gTopicId] = (gRounds[gTopicId] || 0) + 1;
+        lsSet(G_DONE_KEY, gDone); lsSet(G_ROUNDS_KEY, gRounds); gRenderTopics();
+      }
       gRepeat = false;
       gEl.feedback.className = "feedback show correct";
-      gEl.feedback.textContent = (gDoneCount(gTopic()) >= gTopic().exercises.length && !gWasDone) ? "Richtig! ✓ Ganzer Block geübt!" : "Richtig!";
+      gEl.feedback.textContent = (gDoneCount(gTopic()) >= gTopic().exercises.length && !gWasDone) ? "Richtig! ✓ Ganzer Block geübt (" + gRounds[gTopicId] + "×)!" : "Richtig!";
     } else {
       st.wrong++;
       gRepeat = true;
