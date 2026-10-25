@@ -820,7 +820,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-lektionen5";
-  const APP_VERSION = "2026-10-24-zzzb"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-25-a"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -2565,6 +2565,7 @@
   const G_STATS_KEY = "italienisch_grammar_stats";   // { topicId: {correct, wrong} }
   const G_PROGRESS_KEY = "italienisch_grammar_progress";
   const G_TOPIC_KEY = "italienisch_grammar_topic";
+  const G_DONE_KEY = "italienisch_grammar_done";   // { topicId: [aufgabenIndex, ...] } richtig geloeste Aufgaben
   const TAB_KEY = "italienisch_tab";
 
   function lsGet(key, fallback) {
@@ -2579,6 +2580,17 @@
 
   let gStats = lsGet(G_STATS_KEY, {});
   let gProgress = lsGet(G_PROGRESS_KEY, {});
+  let gDone = lsGet(G_DONE_KEY, null);
+  if (!gDone) {
+    // Erstmalig: bisherigen Stand aus Fortschritt und Treffern naeherungsweise uebernehmen
+    gDone = {};
+    GRAMMAR_TOPICS.forEach(t => {
+      const n = Math.min(gProgress[t.id] || 0, (gStats[t.id] && gStats[t.id].correct) || 0, t.exercises.length);
+      if (n > 0) gDone[t.id] = Array.from({ length: n }, (_, i) => i);
+    });
+    lsSet(G_DONE_KEY, gDone);
+  }
+  function gDoneCount(t) { return (gDone[t.id] || []).length; }
   let gTopicId = lsGet(G_TOPIC_KEY, GRAMMAR_TOPICS[0].id);
   if (!GRAMMAR_TOPICS.some(t => t.id === gTopicId)) gTopicId = GRAMMAR_TOPICS[0].id;
   let gCurrent = null;      // { ex, idx }
@@ -2609,7 +2621,8 @@
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "cat-btn" + (t.id === gTopicId ? " active" : "");
-      btn.textContent = t.title + " (" + t.exercises.length + ")";
+      const dn = gDoneCount(t), tot = t.exercises.length;
+      btn.textContent = t.title + " · " + (dn >= tot ? "✓ " : "") + dn + "/" + tot;
       btn.addEventListener("click", () => {
         if (t.id === gTopicId) return;
         gTopicId = t.id;
@@ -2656,7 +2669,7 @@
     }
 
     const ex = gCurrent.ex;
-    gEl.progress.textContent = topic.title + " · Aufgabe " + (gCurrent.idx + 1) + " / " + total;
+    gEl.progress.textContent = topic.title + " · Aufgabe " + (gCurrent.idx + 1) + " / " + total + " · geübt " + gDoneCount(topic) + " / " + total;
     gEl.question.textContent = ex.q;
     gEl.hint.textContent = ex.hint || "";
 
@@ -2691,6 +2704,8 @@
     const st = gStats[gTopicId] || (gStats[gTopicId] = { correct: 0, wrong: 0 });
     if (ok) {
       st.correct++;
+      const dl = gDone[gTopicId] || (gDone[gTopicId] = []);
+      if (dl.indexOf(gCurrent.idx) < 0) { dl.push(gCurrent.idx); lsSet(G_DONE_KEY, gDone); gRenderTopics(); }
       gRepeat = false;
       gEl.feedback.className = "feedback show correct";
       gEl.feedback.textContent = "Richtig!";
