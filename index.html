@@ -822,7 +822,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-lektionen5";
-  const APP_VERSION = "2026-10-25-i"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-25-j"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -6307,9 +6307,15 @@
       var url = "https://www.deepl.com/translator#" + src + "/" + tgt + "/" + encodeURIComponent(t).replace(/%2F/g, "%5C%2F");
       window.open(url, "_blank", "noopener");
     }
-    [["de", "it", "DeepL: DE → IT ↗"], ["it", "de", "DeepL: IT → DE ↗"]].forEach(function (c) {
-      var b = document.createElement("button"); b.type = "button"; b.textContent = c[2]; b.addEventListener("click", function () { open(c[0], c[1]); }); row.appendChild(b);
-    });
+    // Eine Taste: Richtung folgt dem Umschalter IT → DE / DE → IT im Woerterbuch; Enter im Suchfeld loest dasselbe aus
+    var dv = document.getElementById("dictView");
+    function dir() { return dv && dv.dataset.dir === "de" ? ["de", "it"] : ["it", "de"]; }
+    var b1 = document.createElement("button"); b1.type = "button"; row.appendChild(b1);
+    function lab() { var d = dir(); b1.textContent = "bei DeepL übersetzen (" + d[0].toUpperCase() + " → " + d[1].toUpperCase() + ") ↗"; }
+    lab();
+    if (dv) new MutationObserver(lab).observe(dv, { attributes: true, attributeFilter: ["data-dir"] });
+    b1.addEventListener("click", function () { var d = dir(); open(d[0], d[1]); });
+    inp.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); var d = dir(); open(d[0], d[1]); } });
     bar.appendChild(row);
     function sync() { row.classList.toggle("on", !!inp.value.trim()); }
     inp.addEventListener("input", sync); sync();
