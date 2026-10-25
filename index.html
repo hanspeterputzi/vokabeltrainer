@@ -325,7 +325,9 @@
     border: 1px solid var(--border);
     text-align: left;
   }
-  .g-options button:hover:not(:disabled) { background: var(--wrong-bg); }
+  /* Alle Antwortvorschlaege gleich hinterlegt (kein Hover-/Fokus-Tipp auf die richtige oder falsche Antwort) */
+  .g-options button:hover:not(:disabled), .g-options button:focus:not(:disabled), .g-options button:active:not(:disabled) { background: var(--bg); }
+  .g-options button:disabled:not(.right):not(.bad) { background: var(--bg); opacity: .6; }
   .g-options button.right { background: var(--correct-bg); border-color: var(--correct); color: var(--correct); }
   .g-options button.bad { background: var(--wrong-bg); border-color: var(--wrong); color: var(--wrong); }
   .g-expl {
@@ -820,7 +822,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-lektionen5";
-  const APP_VERSION = "2026-10-25-f"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-25-g"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1239,7 +1241,7 @@
       const count = name === "Alle" ? words.length : words.filter(w => w.cat === name).length;
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "cat-btn" + (name === selectedCategory ? " active" : "") + (rounds[name] ? " done" : "");
+      btn.className = "cat-btn" + (name === selectedCategory ? " active" : "") + (rounds[name] ? " done r" + Math.min(5, rounds[name]) : "");
       btn.textContent = name + " · " + (rounds[name] || 0) + "×";
       btn.addEventListener("click", () => selectCategory(name));
       categoryBar.appendChild(btn);
@@ -1693,6 +1695,16 @@
         { q: "giornale – Wie wird das «g» gesprochen?", options: HC, a: ["weich"], why: "gi vor a/o/u = weich" },
         { q: "cuoco – Wie wird das erste «c» gesprochen?", options: HC, a: ["hart"], why: "c vor u = hart" },
         { q: "città – Wie wird das erste «c» gesprochen?", options: HC, a: ["weich"], why: "c vor i = weich" },
+        { q: "centro – Wie wird das «c» gesprochen?", options: HC, a: ["weich"], why: "c vor e = weich" },
+        { q: "cellulare – Wie wird das erste «c» gesprochen?", options: HC, a: ["weich"], why: "c vor e = weich" },
+        { q: "dolce – Wie wird das «c» gesprochen?", options: HC, a: ["weich"], why: "c vor e = weich" },
+        { q: "cuore – Wie wird das «c» gesprochen?", options: HC, a: ["hart"], why: "c vor u = hart" },
+        { q: "amiche – Wie wird das «ch» gesprochen?", options: HC, a: ["hart"], why: "ch vor e = hart" },
+        { q: "gentile – Wie wird das «g» gesprochen?", options: HC, a: ["weich"], why: "g vor e = weich" },
+        { q: "lungo – Wie wird das «g» gesprochen?", options: HC, a: ["hart"], why: "g vor o = hart" },
+        { q: "scena – Wie wird das «sc» gesprochen?", options: ["sch", "sk"], a: ["sch"], why: "sc vor e / i = sch" },
+        { q: "Ergänze: ___ena (weiches tsch vor e)", hint: "c oder ch?", a: ["c"], why: "Weich vor e / i schreibt man einfach c" },
+        { q: "Ergänze: ami___e (hartes k vor e)", hint: "c oder ch?", a: ["ch"], why: "Hart vor e / i schreibt man ch" },
         { q: "Ergänze: ___itarra (hartes k vor i)", hint: "c oder ch?", a: ["ch"], why: "Hart vor e/i schreibt man ch" },
         { q: "Ergänze: lun___e (hartes g vor e)", hint: "g oder gh?", a: ["gh"], why: "Hart vor e/i schreibt man gh" },
         { q: "Ergänze: ___ao (weiches tsch vor a)", hint: "c oder ci?", a: ["ci"], why: "Weich vor a/o/u schreibt man ci" },
@@ -1770,9 +1782,9 @@
         { q: "Sono di Coira. E ___? (Und du?)", options: ["tu", "sei", "io"], a: ["tu"], why: "Ohne Verb muss das Pronomen stehen" },
         { q: "___ sono di Coira, tu sei di Berna. (Ich bin aus Chur, du aus Bern.)", options: ["Io", "kein Pronomen"], a: ["Io"], why: "Gegensatz zwischen Personen: Pronomen setzen" },
         { q: "Sono di Coira. – ___. (Ich auch.)", options: ["Anch'io", "Anche sono", "Anch'sei"], a: ["Anch'io"], why: "Ohne Verb: Pronomen (anch'io = ich auch)" },
-        { q: "Di dov'è ___? (Woher kommen Sie?)", options: ["Lei", "lei", "tu"], a: ["Lei"], why: "Lei = Sie (höflich), gross geschrieben" },
-        { q: "Anche ___ sono di qui? (Sind auch Sie von hier?)", options: ["Loro", "Lei", "Noi"], a: ["Loro"], why: "Loro = Sie (Plural), Verb wie bei «loro»" },
-        { q: "Anche ___ siete di qui? (Sind auch Sie von hier?)", options: ["Voi", "Loro", "Lei"], a: ["Voi"], why: "Sie-Form Plural oft mit «voi»" },
+        { q: "Di dov'è ___? (Woher kommen Sie? – höflich, eine Person)", options: ["Lei", "lei", "tu"], a: ["Lei"], why: "Lei = Sie (höflich), gross geschrieben" },
+        { q: "Anche ___ sono di qui? (Sind auch Sie von hier? – höflich, mehrere Personen)", options: ["Loro", "Lei", "Noi"], a: ["Loro"], why: "Loro = Sie (Plural), Verb wie bei «loro»" },
+        { q: "Anche ___ siete di qui? (Seid auch ihr / Sind auch Sie von hier? – mehrere Personen)", options: ["Voi", "Loro", "Lei"], a: ["Voi"], why: "Sie-Form Plural oft mit «voi»" },
         { q: "Wie schreibt man die höfliche Form?", options: ["gross: Lei, Loro", "klein: lei, loro"], a: ["gross: Lei, Loro"], why: "Höflich: immer gross geschrieben" },
         { q: "Wann lässt man das Pronomen normalerweise weg?", options: ["Wenn das Verb da ist", "Wenn das Verb fehlt"], a: ["Wenn das Verb da ist"], why: "Die Verbform zeigt die Person" },
         { q: "Wann setzt man das Pronomen?", options: ["Zum Betonen und wenn das Verb fehlt", "Immer"], a: ["Zum Betonen und wenn das Verb fehlt"], why: "Nur dann; sonst weglassen" },
@@ -1804,19 +1816,11 @@
         "<p class='merk'>Merkhilfe: Singular -are = OIA, -ere / -ire = OIE. Plural = OEO (letzte Buchstaben).</p>" +
         "<h3>3 · Alle Formen</h3>" +
         "<table class='vt'><tr><th></th><th>abitare</th><th>prendere</th><th>dormire</th></tr><tr><td>io</td><td>abito</td><td>prendo</td><td>dormo</td></tr><tr><td>tu</td><td>abiti</td><td>prendi</td><td>dormi</td></tr><tr><td>lui / lei</td><td>abita</td><td>prende</td><td>dorme</td></tr><tr><td>noi</td><td>abitiamo</td><td>prendiamo</td><td>dormiamo</td></tr><tr><td>voi</td><td>abitate</td><td>prendete</td><td>dormite</td></tr><tr><td>loro</td><td>abitano</td><td>prendono</td><td>dormono</td></tr></table>" +
-        "<h3>4 · Verben mit -isc-</h3>" +
-        "<ul>" +
-        "<li><b>-isc-</b> bei manchen -ire-Verben<span class='nt'>Nur bei io / tu / lui / loro.</span>" + "<span class='ex'><span class='ep'>preferisco,</span> <span class='ep'>preferisci,</span> <span class='ep'>preferisce,</span> <span class='ep'>preferiscono</span></span>" + "</li>" +
-        "<li><b>noi / voi</b> ohne -isc-" + "<span class='ex'><span class='ep'>preferiamo,</span> <span class='ep'>preferite</span></span>" + "</li>" +
-        "<li><b>ohne -isc-</b> bei anderen -ire-Verben<span class='nt'>Welche Verben, muss man lernen.</span>" + "<span class='ex'><span class='ep'>dormo,</span> <span class='ep'>dormi,</span> <span class='ep'>dorme,</span> <span class='ep'>dormono</span></span>" + "</li>" +
-        "</ul>" +
-        "<table class='vt'><tr><th></th><th>preferire</th><th>capire</th></tr><tr><td>io</td><td>preferisco</td><td>capisco</td></tr><tr><td>tu</td><td>preferisci</td><td>capisci</td></tr><tr><td>lui / lei</td><td>preferisce</td><td>capisce</td></tr><tr><td>noi</td><td>preferiamo</td><td>capiamo</td></tr><tr><td>voi</td><td>preferite</td><td>capite</td></tr><tr><td>loro</td><td>preferiscono</td><td>capiscono</td></tr></table>" +
-        "<h3>5 · Betonung</h3>" +
+        "<h3>4 · Betonung</h3>" +
         "<p class='nt'>Betonte Silbe fett.</p>" +
         "<ul>" +
         "<li><b>io / tu / lui / loro</b>: Stamm betont<span class='nt'>Stamm = Verb ohne Endung.</span>" + "<span class='ex'><span class='ep'><span class='sy'><b>a</b>bito</span>,</span> <span class='ep'><span class='sy'><b>a</b>biti</span>,</span> <span class='ep'><span class='sy'><b>a</b>bita</span>,</span> <span class='ep'><span class='sy'><b>a</b>bitano</span></span></span><span class='ex'><span class='ep'><span class='sy'><b>pren</b>do</span>,</span> <span class='ep'><span class='sy'><b>pren</b>dono</span></span></span><span class='ex'><span class='ep'><span class='sy'><b>dor</b>mo</span>,</span> <span class='ep'><span class='sy'><b>dor</b>mono</span></span></span>" + "</li>" +
         "<li><b>noi / voi</b>: Endung betont" + "<span class='ex'><span class='ep'><span class='sy'>abi<b>tia</b>mo</span>,</span> <span class='ep'><span class='sy'>abi<b>ta</b>te</span></span></span><span class='ex'><span class='ep'><span class='sy'>pren<b>dia</b>mo</span>,</span> <span class='ep'><span class='sy'>pren<b>de</b>te</span></span></span><span class='ex'><span class='ep'><span class='sy'>dor<b>mia</b>mo</span>,</span> <span class='ep'><span class='sy'>dor<b>mi</b>te</span></span></span>" + "</li>" +
-        "<li><b>-isc-</b>: immer dieselbe Silbe<span class='nt'>Auch bei noi / voi.</span>" + "<span class='ex'><span class='ep'><span class='sy'>prefe<b>ri</b>sco</span>,</span> <span class='ep'><span class='sy'>prefe<b>ri</b>scono</span></span></span><span class='ex'><span class='ep'><span class='sy'>prefe<b>ria</b>mo</span>,</span> <span class='ep'><span class='sy'>prefe<b>ri</b>te</span></span></span>" + "</li>" +
         "</ul>",
       exercises: [
         { q: "Zu welcher Gruppe gehört «prendere»?", options: ["-are", "-ere", "-ire"], a: ["-ere"], why: "prendere endet auf -ere" },
@@ -1839,25 +1843,55 @@
         { q: "dormire – lui / lei:", hint: "er / sie", a: ["dorme"], why: "-ire: -e" },
         { q: "dormire – voi:", hint: "ihr", a: ["dormite"], why: "-ire: voi -ite" },
         { q: "dormire – loro:", hint: "sie (Plural)", a: ["dormono"], why: "-ire: loro -ono" },
-        { q: "preferire – io:", hint: "ich", a: ["preferisco"], why: "preferire hat -isc-" },
-        { q: "preferire – tu:", hint: "du", a: ["preferisci"], why: "preferire hat -isc-" },
-        { q: "preferire – noi:", hint: "wir", a: ["preferiamo"], why: "noi / voi ohne -isc-" },
-        { q: "preferire – loro:", hint: "sie (Plural)", a: ["preferiscono"], why: "loro mit -isc-" },
-        { q: "capire – lui / lei:", hint: "er / sie", a: ["capisce"], why: "capire hat -isc-" },
-        { q: "capire – voi:", hint: "ihr", a: ["capite"], why: "voi ohne -isc-" },
         { q: "Io ___ a Coira. (abitare)", hint: "Form von abitare", a: ["abito"], why: "io + -are: -o" },
         { q: "Lui ___ un caffè. (prendere)", hint: "Form von prendere", a: ["prende"], why: "lui + -ere: -e" },
         { q: "Noi ___ otto ore. (dormire)", hint: "Form von dormire", a: ["dormiamo"], why: "noi: -iamo" },
-        { q: "Loro ___ il caffè. (preferire)", hint: "Form von preferire", a: ["preferiscono"], why: "loro + -isc-: -iscono" },
-        { q: "Tu ___ l'italiano? (capire)", hint: "Form von capire", a: ["capisci"], why: "tu + -isc-: -isci" },
         { q: "Wo liegt die Betonung bei «io abito»?", options: ["ABito", "aBIto", "abiTO"], a: ["ABito"], why: "Singular: Stamm betont" },
         { q: "Wo liegt die Betonung bei «noi abitiamo»?", options: ["abiTIAmo", "ABitiamo", "abitiaMO"], a: ["abiTIAmo"], why: "noi / voi: Endung betont" },
         { q: "Bei welchen Formen ist die Endung betont?", options: ["noi / voi", "io / tu / lui / loro"], a: ["noi / voi"], why: "noi / voi: Endung betont" },
       ],
     },
     {
+      id: "isc",
+      title: "Unregelmässig regelmässige Verben 1",
+      explain:
+        "<h3>1 · Verben mit -isc-</h3>" +
+        "<ul>" +
+        "<li><b>-isc-</b> bei manchen -ire-Verben<span class='nt'>Nur bei io / tu / lui / loro.</span>" + "<span class='ex'><span class='ep'>preferisco,</span> <span class='ep'>preferisci,</span> <span class='ep'>preferisce,</span> <span class='ep'>preferiscono</span></span>" + "</li>" +
+        "<li><b>noi / voi</b> ohne -isc-" + "<span class='ex'><span class='ep'>preferiamo,</span> <span class='ep'>preferite</span></span>" + "</li>" +
+        "<li><b>ohne -isc-</b> bei anderen -ire-Verben<span class='nt'>Welche Verben, muss man lernen.</span>" + "<span class='ex'><span class='ep'>dormo,</span> <span class='ep'>dormi,</span> <span class='ep'>dorme,</span> <span class='ep'>dormono</span></span>" + "</li>" +
+        "</ul>" +
+        "<table class='vt'><tr><th></th><th>preferire</th><th>capire</th></tr><tr><td>io</td><td>preferisco</td><td>capisco</td></tr><tr><td>tu</td><td>preferisci</td><td>capisci</td></tr><tr><td>lui / lei</td><td>preferisce</td><td>capisce</td></tr><tr><td>noi</td><td>preferiamo</td><td>capiamo</td></tr><tr><td>voi</td><td>preferite</td><td>capite</td></tr><tr><td>loro</td><td>preferiscono</td><td>capiscono</td></tr></table>" +
+        "<h3>2 · Betonung</h3>" +
+        "<p class='nt'>Betonte Silbe fett.</p>" +
+        "<ul>" +
+        "<li><b>-isc-</b>: immer dieselbe Silbe<span class='nt'>Auch bei noi / voi.</span>" + "<span class='ex'><span class='ep'><span class='sy'>prefe<b>ri</b>sco</span>,</span> <span class='ep'><span class='sy'>prefe<b>ri</b>scono</span></span></span><span class='ex'><span class='ep'><span class='sy'>prefe<b>ria</b>mo</span>,</span> <span class='ep'><span class='sy'>prefe<b>ri</b>te</span></span></span>" + "</li>" +
+        "</ul>",
+      exercises: [
+        { q: "Hat «preferire» ein -isc-?", options: ["Ja", "Nein"], a: ["Ja"], why: "preferire gehört zu den -isc--Verben" },
+        { q: "Hat «dormire» ein -isc-?", options: ["Ja", "Nein"], a: ["Nein"], why: "dormire hat kein -isc-: dormo, dormi, dorme" },
+        { q: "Bei welchen Formen steht -isc-?", options: ["io / tu / lui / loro", "noi / voi", "alle Formen"], a: ["io / tu / lui / loro"], why: "noi / voi bleiben ohne -isc-" },
+        { q: "Bei welchen Formen fehlt -isc-?", options: ["noi / voi", "io / tu", "lui / loro"], a: ["noi / voi"], why: "noi / voi: preferiamo, preferite" },
+        { q: "preferire – io:", hint: "ich", a: ["preferisco"], why: "preferire hat -isc-" },
+        { q: "preferire – tu:", hint: "du", a: ["preferisci"], why: "preferire hat -isc-" },
+        { q: "preferire – noi:", hint: "wir", a: ["preferiamo"], why: "noi / voi ohne -isc-" },
+        { q: "preferire – loro:", hint: "sie (Plural)", a: ["preferiscono"], why: "loro mit -isc-" },
+        { q: "capire – lui / lei:", hint: "er / sie", a: ["capisce"], why: "capire hat -isc-" },
+        { q: "capire – voi:", hint: "ihr", a: ["capite"], why: "voi ohne -isc-" },
+        { q: "Loro ___ il caffè. (preferire)", hint: "Form von preferire", a: ["preferiscono"], why: "loro + -isc-: -iscono" },
+        { q: "Tu ___ l'italiano? (capire)", hint: "Form von capire", a: ["capisci"], why: "tu + -isc-: -isci" },
+        { q: "preferire – lui / lei:", hint: "er / sie", a: ["preferisce"], why: "preferire hat -isc-" },
+        { q: "capire – io:", hint: "ich", a: ["capisco"], why: "capire hat -isc-" },
+        { q: "capire – noi:", hint: "wir", a: ["capiamo"], why: "noi / voi ohne -isc-" },
+        { q: "capire – loro:", hint: "sie (Plural)", a: ["capiscono"], why: "loro mit -isc-" },
+        { q: "Io ___ il caffè. (preferire)", hint: "Form von preferire", a: ["preferisco"], why: "io + -isc-: -isco" },
+        { q: "Noi ___ l'italiano. (capire)", hint: "Form von capire", a: ["capiamo"], why: "noi: ohne -isc-" },
+        { q: "Wo liegt die Betonung bei «io preferisco»?", options: ["prefeRIsco", "preFErisco", "preferiSco"], a: ["prefeRIsco"], why: "-isc-: immer dieselbe Silbe" },
+      ],
+    },
+    {
       id: "reg_unreg",
-      title: "Regelmässig unregelmässige Verben",
+      title: "Unregelmässig regelmässige Verben 2",
       explain:
         "<h3>1 · Verben auf -care / -gare</h3>" +
         "<ul><li><b>tu / noi</b>: mit h<span class='nt'>Das c / g bleibt hart.</span><span class='ex'><span class='ep'>paghi,</span> <span class='ep'>paghiamo</span></span><span class='ex'><span class='ep'>giochi,</span> <span class='ep'>giochiamo</span></span><span class='ex'><span class='ep'>cerchi,</span> <span class='ep'>cerchiamo</span></span></li><li><b>io / lui / voi / loro</b>: ohne h<span class='ex'><span class='ep'>pago,</span> <span class='ep'>gioca,</span> <span class='ep'>cercate,</span> <span class='ep'>pagano</span></span></li></ul>" +
@@ -2625,12 +2659,24 @@
 
   function gTopic() { return GRAMMAR_TOPICS.find(t => t.id === gTopicId); }
 
+  // Falsche Antworten je Aufgabe (Schluessel «Thema|Frage»): jede Aufgabe zeigt immer 4 Vorschlaege, die richtige an zufaelliger Stelle
+  const G_DISTRACT = {"aussprache|carota – Wie wird das «c» gesprochen?":["weich","wie sch","stumm","wie s"],"aussprache|cinema – Wie wird das «c» gesprochen?":["hart","wie sch","stumm","wie s"],"aussprache|gonna – Wie wird das «g» gesprochen?":["weich","wie sch","stumm","wie s"],"aussprache|gelato – Wie wird das «g» gesprochen?":["hart","wie sch","stumm","wie s"],"aussprache|chitarra – Wie wird das «ch» gesprochen?":["weich","wie sch","stumm","wie s"],"aussprache|ghiaccio – Wie wird das «gh» gesprochen?":["weich","wie sch","stumm","wie s"],"aussprache|ciao – Wie wird das «c» gesprochen?":["hart","wie sch","stumm","wie s"],"aussprache|giornale – Wie wird das «g» gesprochen?":["hart","wie sch","stumm","wie s"],"aussprache|cuoco – Wie wird das erste «c» gesprochen?":["weich","wie sch","stumm","wie s"],"aussprache|città – Wie wird das erste «c» gesprochen?":["hart","wie sch","stumm","wie s"],"aussprache|centro – Wie wird das «c» gesprochen?":["hart","wie sch","stumm","wie s"],"aussprache|cellulare – Wie wird das erste «c» gesprochen?":["hart","wie sch","stumm","wie s"],"aussprache|dolce – Wie wird das «c» gesprochen?":["hart","wie sch","stumm","wie s"],"aussprache|cuore – Wie wird das «c» gesprochen?":["weich","wie sch","stumm","wie s"],"aussprache|amiche – Wie wird das «ch» gesprochen?":["weich","wie sch","stumm","wie s"],"aussprache|gentile – Wie wird das «g» gesprochen?":["hart","wie sch","stumm","wie s"],"aussprache|lungo – Wie wird das «g» gesprochen?":["weich","wie sch","stumm","wie s"],"aussprache|scena – Wie wird das «sc» gesprochen?":["sk","ts","s"],"aussprache|Ergänze: ___ena (weiches tsch vor e)":["ci","ch","cc"],"aussprache|Ergänze: ami___e (hartes k vor e)":["c","cch","k"],"aussprache|Ergänze: ___itarra (hartes k vor i)":["c","k","cch"],"aussprache|Ergänze: lun___e (hartes g vor e)":["g","gg","j"],"aussprache|Ergänze: ___ao (weiches tsch vor a)":["c","ch","cci"],"aussprache|Ergänze: ___ornale (weiches dsch vor o)":["g","gh","gg"],"satzbau|Woran erkennt man im Italienischen eine Frage (ohne Fragewort)?":["An der Wortstellung","An einer besonderen Endung","An einem Hilfswort","An der Melodii"],"satzbau|Mach aus der Aussage eine Frage: «Sei di Zurigo.»":["Sei di Zurigo.","Sei tu di Zurigo?","Di Zurigo sei?"],"satzbau|Mach aus der Aussage eine Frage: «Lui è italiano.»":["Lui è italiano.","È lui italiano?","Lui italiano è?"],"satzbau|Mach aus der Frage eine Aussage: «Parli italiano?»":["Parli italiano?","Tu parli italiano?","Italiano parli."],"satzbau|Muss man im Italienischen für eine Frage die Wörter umstellen?":["Ja","Ja, das Verb kommt zuerst","Ja, das Pronomen kommt ans Ende"],"subjekt|Wie heisst «ich»?":["tu","lui","noi","voi"],"subjekt|Wie heisst «du»?":["io","lei","lui","noi"],"subjekt|Wie heisst «wir»?":["voi","loro","io","tu"],"subjekt|Wie heisst «ihr»?":["noi","loro","io","tu"],"subjekt|Wie heisst «er»?":["lei","loro","io","tu"],"subjekt|Was heisst «Lei» (gross geschrieben)?":["sie","ihr","wir"],"subjekt|Was heisst «Loro» (gross geschrieben)?":["wir","ihr","sie (Plural)"],"subjekt|___ sei di Berna. (Du bist aus Bern.)":["Io","Lui","Noi","Voi"],"subjekt|___ siamo di Coira. (Wir sind aus Chur.)":["Voi","Loro","Io","Tu"],"subjekt|___ siete di Berna. (Ihr seid aus Bern.)":["Noi","Loro","Io","Tu"],"subjekt|Di dove sei? – ___ di Coira.":["Io","Sei","Siamo"],"subjekt|Sono di Coira. E ___? (Und du?)":["sei","io","lui","noi"],"subjekt|___ sono di Coira, tu sei di Berna. (Ich bin aus Chur, du aus Bern.)":["kein Pronomen","Noi","Lui"],"subjekt|Sono di Coira. – ___. (Ich auch.)":["Anche sono","Anch'sei","Anche mi"],"subjekt|Di dov'è ___? (Woher kommen Sie? – höflich, eine Person)":["lei","tu","noi"],"subjekt|Anche ___ sono di qui? (Sind auch Sie von hier? – höflich, mehrere Personen)":["Lei","Noi","Voi"],"subjekt|Anche ___ siete di qui? (Seid auch ihr / Sind auch Sie von hier? – mehrere Personen)":["Loro","Lei","Io","Tu"],"subjekt|Wie schreibt man die höfliche Form?":["klein: lei, loro","gross: Tu, Io","immer mit Bindestrich"],"subjekt|Wann lässt man das Pronomen normalerweise weg?":["Wenn das Verb fehlt","Nur bei Fragen","Nur bei Verneinung"],"subjekt|Wann setzt man das Pronomen?":["Immer","Nie","Nur bei Fragen"],"regelmaessig|Zu welcher Gruppe gehört «prendere»?":["-are","-ire","-isc-"],"regelmaessig|Zu welcher Gruppe gehört «dormire»?":["-are","-ere","-isc-"],"regelmaessig|Welche Endungen haben -are-Verben im Singular?":["-o / -i / -e","-o / -e / -a","-i / -e / -o"],"regelmaessig|Welche Endungen haben -ere- und -ire-Verben im Singular?":["-o / -i / -a","-i / -e / -o","-o / -e / -a"],"regelmaessig|Mit welchen Buchstaben enden noi / voi / loro?":["O – I – E","I – E – O","E – O – I"],"regelmaessig|abitare – io:":["abiti","abita","abitiamo","abitate"],"regelmaessig|abitare – tu:":["abito","abita","abitiamo","abitate"],"regelmaessig|abitare – lui / lei:":["abito","abiti","abitiamo","abitate"],"regelmaessig|abitare – noi:":["abito","abiti","abita","abitate"],"regelmaessig|abitare – voi:":["abito","abiti","abita","abitiamo"],"regelmaessig|abitare – loro:":["abito","abiti","abita","abitiamo"],"regelmaessig|prendere – io:":["prendi","prende","prendiamo","prendete"],"regelmaessig|prendere – lui / lei:":["prendo","prendi","prendiamo","prendete"],"regelmaessig|prendere – noi:":["prendo","prendi","prende","prendete"],"regelmaessig|prendere – voi:":["prendo","prendi","prende","prendiamo"],"regelmaessig|prendere – loro:":["prendo","prendi","prende","prendiamo"],"regelmaessig|dormire – tu:":["dormo","dorme","dormiamo","dormite"],"regelmaessig|dormire – lui / lei:":["dormo","dormi","dormiamo","dormite"],"regelmaessig|dormire – voi:":["dormo","dormi","dorme","dormiamo"],"regelmaessig|dormire – loro:":["dormo","dormi","dorme","dormiamo"],"regelmaessig|Io ___ a Coira. (abitare)":["abiti","abita","abitiamo","abitate"],"regelmaessig|Lui ___ un caffè. (prendere)":["prendo","prendi","prendiamo","prendete"],"regelmaessig|Noi ___ otto ore. (dormire)":["dormo","dormi","dorme","dormite"],"regelmaessig|Wo liegt die Betonung bei «io abito»?":["aBIto","abiTO","abito"],"regelmaessig|Wo liegt die Betonung bei «noi abitiamo»?":["ABitiamo","abitiaMO","aBItiamo"],"regelmaessig|Bei welchen Formen ist die Endung betont?":["io / tu / lui / loro","io / tu","lui / loro"],"isc|Hat «preferire» ein -isc-?":["Nein","Nur bei io","Nur bei noi / voi"],"isc|Hat «dormire» ein -isc-?":["Ja","Nur bei io","Nur bei loro"],"isc|Bei welchen Formen steht -isc-?":["noi / voi","alle Formen","io / noi"],"isc|Bei welchen Formen fehlt -isc-?":["io / tu","lui / loro","io / loro"],"isc|preferire – io:":["preferisci","preferisce","preferiamo","preferite"],"isc|preferire – tu:":["preferisco","preferisce","preferiamo","preferite"],"isc|preferire – noi:":["preferisco","preferisci","preferisce","preferite"],"isc|preferire – loro:":["preferisco","preferisci","preferisce","preferiamo"],"isc|capire – lui / lei:":["capisco","capisci","capiamo","capite"],"isc|capire – voi:":["capisco","capisci","capisce","capiamo"],"isc|Loro ___ il caffè. (preferire)":["preferisco","preferisci","preferisce","preferiamo"],"isc|Tu ___ l'italiano? (capire)":["capisco","capisce","capiamo","capite"],"isc|preferire – lui / lei:":["preferisco","preferisci","preferiamo","preferite"],"isc|capire – io:":["capisci","capisce","capiamo","capite"],"isc|capire – noi:":["capisco","capisci","capisce","capite"],"isc|capire – loro:":["capisco","capisci","capisce","capiamo"],"isc|Io ___ il caffè. (preferire)":["preferisci","preferisce","preferiamo","preferite"],"isc|Noi ___ l'italiano. (capire)":["capisco","capisci","capisce","capite"],"isc|Wo liegt die Betonung bei «io preferisco»?":["preFErisco","preferiSco","PREferisco"],"reg_unreg|pagare – tu:":["pago","paga","paghiamo","pagate"],"reg_unreg|pagare – io:":["paghi","paga","paghiamo","pagate"],"reg_unreg|giocare – noi:":["gioco","giochi","gioca","giocate"],"reg_unreg|giocare – loro:":["gioco","giochi","gioca","giochiamo"],"reg_unreg|cercare – tu:":["cerco","cerca","cerchiamo","cercate"],"reg_unreg|cercare – voi:":["cerco","cerchi","cerca","cerchiamo"],"reg_unreg|Bei welchen Formen steht das h (-care / -gare)?":["io / lui","voi / loro","io / voi"],"reg_unreg|Wozu dient das h in «paghi»?":["Das g wird weich","Das g wird stumm","Das g wird zu sch"],"reg_unreg|mangiare – tu:":["mangio","mangia","mangiamo","mangiate"],"reg_unreg|mangiare – noi:":["mangio","mangi","mangia","mangiate"],"reg_unreg|mangiare – io:":["mangi","mangia","mangiamo","mangiate"],"reg_unreg|mangiare – loro:":["mangio","mangi","mangia","mangiamo"],"reg_unreg|Wie viele i stehen in «mangiamo» nach dem g?":["2","0","3"],"reg_unreg|sciare – tu:":["scio","scia","sciamo","sciate"],"reg_unreg|leggere – io:":["leggi","legge","leggiamo","leggete"],"reg_unreg|leggere – tu:":["leggo","legge","leggiamo","leggete"],"reg_unreg|leggere – noi:":["leggo","leggi","legge","leggete"],"reg_unreg|conoscere – io:":["conosci","conosce","conosciamo","conoscete"],"reg_unreg|conoscere – tu:":["conosco","conosce","conosciamo","conoscete"],"reg_unreg|conoscere – loro:":["conosco","conosci","conosce","conosciamo"],"reg_unreg|leggo – Wie wird das «gg» gesprochen?":["weich","stumm","wie sch","wie k"],"reg_unreg|leggi – Wie wird das «gg» gesprochen?":["hart","stumm","wie sch","wie k"],"reg_unreg|conosco – Wie wird das «sc» gesprochen?":["sch","ts","dsch"],"reg_unreg|conosci – Wie wird das «sc» gesprochen?":["sk","ts","dsch"],"reg_unreg|Bei welchen Formen sind g / sc hart (-gere / -scere)?":["tu / noi","lui / voi","voi / noi"],"reg_unreg|venire – io:":["vieni","viene","veniamo","venite"],"reg_unreg|bere – io:":["bevi","beve","beviamo","bevete"],"reg_unreg|uscire – io:":["esci","esce","usciamo","uscite"],"reg_unreg|uscire – noi:":["esco","esci","esce","uscite"],"reg_unreg|scegliere – io:":["scegli","sceglie","scegliamo","scegliete"],"reg_unreg|finire – io:":["finisci","finisce","finiamo","finite"],"reg_unreg|aprire – tu:":["apro","apre","apriamo","aprite"],"reg_unreg|Io ___ il conto. (pagare)":["paghi","paga","paghiamo","pagate"],"reg_unreg|Tu ___ un hotel. (cercare)":["cerco","cerca","cerchiamo","cercate"],"reg_unreg|Noi ___ a calcio. (giocare)":["gioco","giochi","gioca","giocate"],"reg_unreg|Tu ___ una pizza. (mangiare)":["mangio","mangia","mangiamo","mangiate"],"reg_unreg|Io ___ il giornale. (leggere)":["leggi","legge","leggiamo","leggete"],"reg_unreg|Tu ___ Gigi? (conoscere)":["conosco","conosce","conosciamo","conoscete"],"unregelmaessig|essere – io:":["sei","è","siamo","siete"],"unregelmaessig|essere – loro:":["sei","è","siamo","siete"],"unregelmaessig|essere – lui / lei:":["sono","sei","siamo","siete"],"unregelmaessig|avere – loro:":["ho","hai","ha","abbiamo"],"unregelmaessig|andare – io:":["vai","va","andiamo","andate"],"unregelmaessig|andare – loro:":["vado","vai","va","andiamo"],"unregelmaessig|fare – loro:":["faccio","fai","fa","facciamo"],"unregelmaessig|fare – io:":["fai","fa","facciamo","fate"],"unregelmaessig|sapere – io:":["sai","sa","sappiamo","sapete"],"unregelmaessig|sapere – loro:":["so","sai","sa","sappiamo"],"unregelmaessig|stare – tu:":["sto","sta","stiamo","state"],"unregelmaessig|stare – loro:":["sto","stai","sta","stiamo"],"unregelmaessig|dire – io:":["dici","dice","diciamo","dite"],"unregelmaessig|dire – loro:":["dico","dici","dice","diciamo"],"unregelmaessig|dire – voi:":["dico","dici","dice","diciamo"],"unregelmaessig|dovere – io:":["devi","deve","dobbiamo","dovete"],"unregelmaessig|dovere – noi:":["devo","devi","deve","dovete"],"unregelmaessig|dovere – voi:":["devo","devi","deve","dobbiamo"],"unregelmaessig|dovere – loro:":["devo","devi","deve","dobbiamo"],"unregelmaessig|potere – io:":["puoi","può","possiamo","potete"],"unregelmaessig|potere – tu:":["posso","può","possiamo","potete"],"unregelmaessig|potere – loro:":["posso","puoi","può","possiamo"],"unregelmaessig|rimanere – io:":["rimani","rimane","rimaniamo","rimanete"],"unregelmaessig|rimanere – loro:":["rimango","rimani","rimane","rimaniamo"],"unregelmaessig|volere – tu:":["voglio","vuole","vogliamo","volete"],"unregelmaessig|volere – loro:":["voglio","vuoi","vuole","vogliamo"],"unregelmaessig|Wie ist «loro» bei «andare»?":["vano","vadono","hanno"],"unregelmaessig|Bei welchem Verb sind io und loro gleich?":["avere","fare","andare"],"unregelmaessig|Io ___ a Coira. (andare)":["vai","va","andiamo","andate"],"unregelmaessig|Noi ___ lavorare. (dovere)":["devo","devi","deve","dovete"],"unregelmaessig|Loro ___ parlare italiano. (potere)":["posso","puoi","può","possiamo"],"unregelmaessig|Tu ___ un caffè? (volere)":["voglio","vuole","vogliamo","volete"],"unregelmaessig|Che cosa ___ loro? (fare)":["faccio","fai","fa","facciamo"],"unregelmaessig|Io non ___. (sapere)":["sai","sa","sappiamo","sapete"],"piacere|Mi ___ la pizza.":["piacciono","piaci","piaca"],"piacere|Mi ___ i libri.":["piace","piaci","piacete"],"piacere|Ti ___ questa musica?":["piacciono","piaci","piacete"],"piacere|Le ___ tutti i libri.":["piace","piaci","piacete"],"piacere|Mi ___ gli spaghetti.":["piace","piaci","piacete"],"piacere|Mi piace ___. (Ich lese gern.)":["leggo","legge","leggi"],"piacere|Mi ___ cucinare.":["piacciono","piaci","piacete"],"piacere|Mi ___ il vino. (piacere)":["piacciono","piaci","piacete"],"piacere|Mi ___ le pizze. (piacere)":["piace","piaci","piacete"],"piacere|Was bedeutet «Tu mi piaci»?":["Ich gefalle dir","Du magst mich","Du magst mich nicht","Du gefällst ihm"],"piacere|Wie sagst du «Du gefällst mir»?":["Mi piace","Ti piaccio","Ti piace"],"piacere|Mi ___ i tuoi amici.":["piace","piacete","piaci"],"piacere|Mi ___. (Ihr gefallt mir.)":["piaci","piacciono","piace"],"piacere|___ piace il caffè. (mir)":["Ti","Gli","Le","Me"],"piacere|___ piace il vino? (dir)":["Mi","Gli","Ci","piace"],"piacere|___ piace la pizza. (ihm)":["Mi","Le","Ci","Gle"],"piacere|___ piace la musica. (ihr)":["Gli","Vi","Ti","piace"],"piacere|___ piace il mare. (uns)":["Vi","Mi","Gli","Ce"],"piacere|___ piace il cinema? (euch)":["Ci","Ti","Le","Ve"],"piacere|Ich mag den Wein nicht: ___ mi piace il vino.":["No","Mai","piace","piacciono"],"piacere|Was bedeutet «Ti piace questa musica?»":["Wo ist diese Musik?","Ich mag diese Musik.","Gefalle ich dir?"],"piacere|___ un parcheggio qui vicino?":["Ci sono","Dov'è","Dove"],"piacere|___ due camere libere per domani?":["C'è","Dov'è","Dove"],"piacere|___ il ristorante «Al sole»?":["C'è","Ci sono","Dove"],"piacere|___ una banca? (Gibt es eine Bank?)":["Ci sono","Dov'è","Dove"],"piacere|___ due libri. (Es gibt zwei Bücher.)":["C'è","Dov'è","piace","piacciono"],"piacere|Wann fragst du «C'è un ristorante qui vicino?»":["Wo ein bestimmtes Restaurant ist","Wie viele Restaurants es gibt","Wann das Restaurant öffnet"],"piacere|Wann fragst du «Dov'è il ristorante «Al sole»?»":["Ob es irgendein Restaurant gibt","Wie viele Restaurants es gibt","Wann das Restaurant öffnet"],"piacere|Esserci gibt es nur in der ___ Person.":["1.","2.","4."],"piacere|Was bedeutet «ci sono»?":["wir sind","ich bin da","es gibt (einzeln)"],"geschlecht|___ bambino":["lo","la","l'"],"geschlecht|___ bambina":["il","lo","l'","le"],"geschlecht|___ bar":["lo","la","l'"],"geschlecht|___ sport":["il","la","l'","li"],"geschlecht|___ cinema":["lo","la","l'"],"geschlecht|___ problema":["lo","la","l'"],"geschlecht|___ programma":["lo","la","l'"],"geschlecht|___ sistema":["lo","la","l'"],"geschlecht|___ tema":["lo","la","l'"],"geschlecht|cinema ist die Kurzform von …?":["la cinematografa","il cinemo","lo cinematografo"],"geschlecht|___ foto":["il","lo","l'","le"],"geschlecht|___ moto":["il","lo","l'","le"],"geschlecht|___ auto":["il","lo","la"],"geschlecht|___ studente":["il","la","l'","li"],"geschlecht|Weibliche Form von «il commesso»?":["il commessa","lo commessa","le commessa","la commesse"],"geschlecht|Weibliche Form von «il bambino»?":["il bambina","lo bambina","le bambina","la bambine"],"geschlecht|Weibliche Form von «lo studente»?":["il studentessa","lo studentessa","le studentessa","la studentesse"],"geschlecht|Weibliche Form von «il traduttore»?":["il traduttrice","lo traduttrice","le traduttrice","la traduttrici"],"geschlecht|Weibliche Form von «il collega»?":["il collega","lo collega","le collega","la college"],"geschlecht|Weibliche Form von «il francese»?":["il francese","lo francese","le francese","la francesi"],"geschlecht|Weibliche Form von «il cliente»?":["il cliente","lo cliente","le cliente","la clienti"],"geschlecht|l'ufficio (Büro) – männlich oder weiblich?":["weiblich","beides","unveränderlich"],"geschlecht|l'agenzia (Agentur) – männlich oder weiblich?":["männlich","beides","unveränderlich"],"geschlecht|l'amico – männlich oder weiblich?":["weiblich","beides","unveränderlich"],"geschlecht|l'amica – männlich oder weiblich?":["männlich","beides","unveränderlich"],"geschlecht|l'ora (Stunde) – männlich oder weiblich?":["männlich","beides","unveränderlich"],"geschlecht|Nomen auf Konsonant sind meist …":["weiblich","immer weiblich","immer männlich","unveränderlich"],"plural|il negozio → ?":["gli negozi","le negozi","il negozi","i negoze"],"plural|il ponte → ?":["gli ponti","le ponti","il ponti","i ponte"],"plural|il problema → ?":["gli problemi","le problemi","il problemi","i probleme"],"plural|l'amico (männlich) → ?":["i amici","le amici","lo amici","gli amice"],"plural|l'asparago (männlich) → ?":["i asparagi","le asparagi","lo asparagi","gli asparage"],"plural|la casa → ?":["i case","gli case","la case","le casi"],"plural|la notte → ?":["i notti","gli notti","la notti","le notte"],"plural|il caffè → ?":["gli caffè","le caffè","il caffè","gli caffi"],"plural|la città → ?":["i città","gli città","la città","i citti"],"plural|il film → ?":["gli film","le film","il film","gli fili"],"plural|l'hotel (männlich) → ?":["i hotel","le hotel","lo hotel","i hotei"],"plural|lo yogurt → ?":["i yogurt","le yogurt","lo yogurt","i yoguri"],"plural|il gelato → ?":["gli gelati","le gelati","il gelati","i gelate"],"plural|la bici → ?":["i bici","gli bici","la bici","le bice"],"plural|la foto → ?":["i foto","gli foto","la foto","le foti"],"plural|il cinema → ?":["gli cinema","le cinema","il cinema","i cineme"],"plural|l'amica (weiblich) → ?":["i amiche","gli amiche","la amiche","le amichi"],"plural|il tedesco → ?":["gli tedeschi","le tedeschi","il tedeschi","i tedesche"],"plural|l'albergo (männlich) → ?":["i alberghi","le alberghi","lo alberghi","gli alberghe"],"plural|la mancia → ?":["i mance","gli mance","la mance","le manci"],"plural|la spiaggia → ?":["i spiagge","gli spiagge","la spiagge","le spiaggi"],"plural|il viaggio → ?":["gli viaggi","le viaggi","il viaggi","i viagge"],"plural|lo zio → ?":["i zii","le zii","lo zii","gli zie"],"plural|l'uovo (männlich) → ?":["i uova","gli uova","la uova","le uove"],"plural|il paio → ?":["i paia","gli paia","la paia","le paie"],"plural|la mano → ?":["i mani","gli mani","la mani","le mane"],"plural|Wie heisst «die Hose» auf Italienisch?":["il pantalone","la pantalona","le pantaloni"],"plural|Wie heisst «die Leute» auf Italienisch?":["le genti","i gente","gli gente"],"unbestimmt|___ gelato":["uno","una","un'"],"unbestimmt|___ camera":["un","uno","un'","une"],"unbestimmt|___ amico":["uno","una","un'"],"unbestimmt|___ amica":["un","uno","una"],"unbestimmt|___ hotel":["uno","una","un'"],"unbestimmt|___ straniero":["un","una","un'","uni"],"unbestimmt|___ sport":["un","una","un'","uni"],"unbestimmt|___ zucchino":["un","una","un'","uni"],"unbestimmt|___ psicologo":["un","una","un'","uni"],"unbestimmt|___ yogurt":["un","una","un'","uni"],"unbestimmt|___ gnocco":["un","una","un'","uni"],"unbestimmt|___ pneumatico":["un","una","un'","uni"],"unbestimmt|___ xilofono":["un","una","un'","uni"],"unbestimmt|Welcher Artikel steht vor einem männlichen Nomen mit s + Konsonant?":["un","una","un'"],"unbestimmt|Welcher Artikel steht vor einem weiblichen Nomen mit Konsonant?":["un","uno","un'"],"unbestimmt|Welcher Artikel steht vor einem weiblichen Nomen mit Vokal?":["una","uno","un"],"unbestimmt|Welcher Artikel steht vor einem männlichen Nomen mit h?":["uno","una","un'"],"unbestimmt|Welcher bestimmte Artikel gehört zu «uno zucchino»?":["il","la","un","uno"],"unbestimmt|uno psicologo → ___ psicologo":["il","la","li"],"unbestimmt|Gibt es bei weiblichen Nomen Ausnahmen mit uno?":["Ja","Ja, vor s + Konsonant","Ja, vor z"],"unbestimmt|Steht bei «un amico» ein Apostroph?":["Ja","Ja, wie bei una","Nur im Plural"],"bestimmt|Le presento ___ dottor Rossi.":["kein Artikel","lo","la","le"],"bestimmt|Buongiorno, ___ signor Carli.":["il","lo","la","le"],"bestimmt|Le presento ___ dottoressa Neri.":["kein Artikel","il","lo","le"],"bestimmt|Le presento ___ professor Bruni.":["kein Artikel","lo","la","le"],"bestimmt|Buongiorno, ___ professor Bruni.":["il","lo","la","le"],"bestimmt|Studio ___ tedesco.":["lo","kein Artikel","la","le"],"bestimmt|Studio ___ spagnolo.":["il","kein Artikel","la","le"],"bestimmt|Studio ___ italiano.":["il","kein Artikel","lo","la"],"bestimmt|___ Germania è un paese industriale.":["kein Artikel","Il","Lo","Le"],"bestimmt|___ Svizzera è una destinazione turistica.":["kein Artikel","Il","Lo","Le"],"bestimmt|Vado spesso in ___ Italia.":["l'","il","lo","la"],"bestimmt|Ci rechiamo spesso in ___ Svezia.":["la","il","lo","le"],"bestimmt|La incontrerò in ___ Inghilterra.":["l'","il","lo","la"],"bestimmt|Sono ___ dieci.":["il","la","lo","l'"],"bestimmt|Sono ___ tre.":["il","la","lo","l'"],"bestimmt|___ sabato vado a teatro. (jeden Samstag)":["kein Artikel","Lo","La","Le"],"bestimmt|___ martedì vado alla partita di calcio. (nächsten Dienstag)":["Il","il","lo","la"],"bestimmt|___ domenica sono andato a sciare. (letzten Sonntag)":["La","il","lo","la"],"bestimmt|___ agosto è un mese molto caldo.":["Lo","il","lo","la"],"bestimmt|___ scorso luglio sono stato in Svezia.":["Il","kein Artikel","La","Le"],"bestimmt|___ prossimo dicembre andremo ai Caraibi.":["Lo","kein Artikel","La","Le"],"bestimmt|___ 15 marzo vado a teatro.":["kein Artikel","Lo","La","Le"],"bestimmt|Ogni ___ sabato vado a teatro.":["il","lo","la","le"],"bestimmt|Ogni ___ marzo sono in vacanza.":["il","lo","la","le"],"bestimmt|Was bedeutet «Il sabato vado a teatro»?":["nächsten Samstag","il","lo","la"],"bestimmt|Was bedeutet «Domenica sono andato a sciare»?":["jeden Sonntag","nächsten Sonntag","am Sonntag nie"],"bestimmt|Steht bei Sprachen der Artikel?":["Nein","Nur bei Deutsch","Nur nach «parlare»"],"verneinung|Sei di Berna? ___, di Coira.":["Non","Nein","Mai"],"verneinung|La stanza ___ è libera.":["no","nei","mai"],"verneinung|Vuoi un caffè? Perché ___?":["non","mai","niente"],"verneinung|___ lo so.":["No","Mai","Niente"],"verneinung|Wie sagt man «Ich weiss es nicht»?":["Lo non so.","No lo so.","Non so lo."],"verneinung|Wie sagt man «Warum nicht?»":["Perché non?","Perché mai?","Perché niente?"],"verneinung|Non ho fatto ___.":["più","mai","no"],"verneinung|Adesso non piove ___.":["niente","mai","no"],"verneinung|Non vai ___ a ballare?":["niente","più","no"],"verneinung|Was heisst «non … più»?":["nie","nichts","kein"],"verneinung|Was heisst «non … mai»?":["nicht mehr","nichts","kein"],"verneinung|Was heisst «non … niente»?":["nie","nicht mehr","kein"],"verneinung|Darf bei «Non ho fatto niente» das «non» wegfallen?":["Ja","Ja, bei niente","Nur in der Umgangssprache"],"verneinung|Wo steht «non» in «Non vai mai a ballare?»":["Nach dem Verb","Am Satzende","Nach dem Subjekt"],"questo|___ vestito è stretto.":["questa","questi","queste"],"questo|___ casa è cara.":["questo","questi","queste"],"questo|___ vestiti sono stretti.":["questo","questa","queste"],"questo|___ case sono care.":["questo","questa","questi"],"questo|___ libro è caro.":["questa","questi","queste"],"questo|___ amica è simpatica.":["questo","questi","queste"],"questo|___ è Giovanni Pietro.":["Questa","Questi","Queste"],"questo|___ è Maria.":["Questo","Questi","Queste"],"questo|___ sono Giovanni Pietro e Maria.":["Questo","Questa","Queste"],"questo|___ sono Maria e Anna.":["Questo","Questa","Questi"],"questo|Questa ___ Maria.":["sono","siamo","sei"],"questo|Questi ___ Giovanni Pietro e Maria.":["è","siamo","sei"],"questo|Welche Form passt zu «il libro»?":["questa","questi","queste"],"questo|Welche Form passt zu «le case»?":["questo","questa","questi"],"questo|Steht bei «questo vestito» ein Artikel?":["Ja","Ja, il","Ja, lo"],"fragen|___ sei? (Wer bist du?)":["Come","Dove","Quando","Che"],"fragen|___ studi? (Was lernst du?)":["Chi","Dove","Cose"],"fragen|___ sta? (Wie geht es Ihnen?)":["Chi","Dove","Quando","Comi"],"fragen|___ abiti? (Wo wohnst du?)":["Come","Chi","Quanto","Dovi"],"fragen|Di ___ sei? (Woher bist du?)":["come","chi","cosa","dovi"],"fragen|___ arrivi? (Wann kommst du an?)":["Come","Chi","Dove","Quandi"],"fragen|___ studi italiano? (Warum lernst du Italienisch?)":["Quando","Come","Chi"],"fragen|___ giorno è oggi? (Welcher Tag ist heute?)":["Quanto","Come","Chi","Cha"],"fragen|___ corso frequenta? (Welchen Kurs besuchen Sie?)":["Quali","Quanto","Quala"],"fragen|___ corsi frequenta? (Welche Kurse besuchen Sie?)":["Quale","Quanti","Qualo","Quala"],"fragen|___ è il tuo indirizzo? (Was ist deine Adresse?)":["Quali","Che","quale"],"fragen|___ sono i tuoi hobby? (Was sind deine Hobbys?)":["Qual","Quanti","Quale","Qualo"],"fragen|___ costa il libro? (Wie viel kostet das Buch?)":["Quanta","Quanti","quanto"],"fragen|___ tempo hai? (Wie viel Zeit hast du?)":["Quanta","Quanti","quanto"],"fragen|___ carne hai comprato? (Wie viel Fleisch hast du gekauft?)":["Quanto","Quante","quanto"],"fragen|___ amici hai? (Wie viele Freunde hast du?)":["Quanto","Quante","Quanta"],"fragen|___ amiche hai? (Wie viele Freundinnen hast du?)":["Quanti","Quanta","quanto"],"fragen|___ ti rivedrò? (Wann sehe ich dich wieder?)":["Come","Dove","Quandi"],"fragen|A ___ fermata devo scendere? (An welcher Haltestelle muss ich aussteigen?)":["quali","quanto","quala"],"fragen|___ piatti italiani conosce? (Welche italienischen Gerichte kennen Sie?)":["Quale","Quanti","Qualo","Quala"],"fragen|___ sono i tuoi interessi? (Was sind deine Interessen?)":["Qual","Quale","Qualo","Quala"],"fragen|___ è il tuo numero di telefono? (Wie lautet deine Telefonnummer?)":["Qual'","Quali","quale"],"fragen|Wie schreibt man «quale» vor «è»?":["qual' è","quali è","Qual"],"fragen|___ ora è? (Wie spät ist es?)":["Quale","Qual","Chi","Cha"],"fragen|___ tempo fa? (Wie ist das Wetter?)":["Quale","Quanto","Chi","Cha"],"fragen|___ preferisci? (Welchen von beiden magst du lieber?)":["Quali","Chi","Quala"],"fragen|Welches Fragewort fragt nach einer Person?":["cosa","dove","quando"],"fragen|Was heisst «di dove»?":["wo","wann","wohin"],"fragen|Was fragt «che cos'è?»":["nach einer Auswahl","nach einer Person","nach einem Ort"],"fragen|Ändert sich «che» nach Singular und Plural?":["Ja","Ja, im Plural «chi»","Ja, im Plural «che» + -i"],"teilung|Vorrei ___ formaggio.":["dello","della","dei"],"teilung|Ho comprato ___ carne.":["del","delle","degli"],"teilung|Beviamo ___ vino.":["della","dei","dell'"],"teilung|Vorrei ___ zucchero.":["del","della","degli","delli"],"teilung|Vorrei ___ yogurt.":["del","dell'","dei","delli"],"teilung|Vorrei ___ olio.":["del","della","degli"],"teilung|Vorrei ___ acqua.":["del","della","delle"],"teilung|Ho comprato ___ birra.":["del","delle","dei"],"teilung|Lui invita ___ amici.":["dei","delle","dello","degle"],"teilung|Lui invita ___ amiche.":["dei","degli","della","delli"],"teilung|Ho comprato ___ libri.":["degli","delle","del","dee"],"teilung|Ho comprato ___ mele.":["dei","degli","della","delli"],"teilung|Abbiamo mangiato ___ spaghetti.":["dei","delle","dello","degle"],"teilung|di + il = ___":["dello","della","dell'"],"teilung|di + la = ___":["del","dello","dell'","delle"],"teilung|di + l' = ___":["del","della","delle"],"teilung|di + gli = ___":["dei","delle","degle","deglo"],"teilung|Was bedeutet «del formaggio»?":["der Käse","den Käse","kein Käse"],"teilung|Was bedeutet «degli amici» in «Lui invita degli amici»?":["etwas Freund","die Freunde","der Freund","keine Freunde"],"teilung|Gibt es den Teilungsartikel im Deutschen?":["Ja","Ja, wie «ein»","Nur im Plural"],"teilung|Non ho comprato ___ carne. (Ich habe kein Fleisch gekauft.)":["della","del","delle"],"teilung|Un chilo ___ formaggio.":["del","dello","della"],"teilung|Un po' ___ pane.":["del","dello","della"],"adjektive|un museo ___ (berühmt)":["famosa","famosi","famose","interessanto"],"adjektive|una chiesa ___ (berühmt)":["famoso","famosi","famose","interessanto"],"adjektive|un museo ___ (interessant)":["interessanto","interessanti","interessanta"],"adjektive|una chiesa ___ (interessant)":["interessanta","interessanti","interessanto"],"adjektive|Questo museo è ___.":["famosa","famosi","famose"],"adjektive|Questa chiesa è ___.":["famoso","famosi","famose"],"adjektive|i musei ___ (berühmt)":["famoso","famosa","famose","interessanto"],"adjektive|le chiese ___ (berühmt)":["famoso","famosa","famosi"],"adjektive|i musei ___ (interessant)":["interessante","interessanta","interessanto"],"adjektive|le zone ___ (interessant)":["interessante","interessanta","interessanto"],"adjektive|Questi musei sono ___.":["famoso","famosa","famose"],"adjektive|Queste chiese sono ___.":["famoso","famosa","famosi"],"adjektive|un museo famoso → Plural?":["gli musei famosi","le musei famosi","il musei famosi","i musei famose"],"adjektive|una chiesa famosa → Plural?":["i chiese famose","gli chiese famose","la chiese famose","le chiese famosi"],"adjektive|una zona interessante → Plural?":["i zone interessanti","gli zone interessanti","la zone interessanti","le zone interessante"],"adjektive|una chiesa antica → Plural?":["i chiese antiche","gli chiese antiche","la chiese antiche","le chiese antichi"],"adjektive|una trattoria tipica → Plural?":["i trattorie tipiche","gli trattorie tipiche","la trattorie tipiche","le trattorie tipichi"],"adjektive|una giornata lunga → Plural?":["i giornate lunghe","gli giornate lunghe","la giornate lunghe","le giornate lunghi"],"adjektive|un palazzo antico → Plural?":["gli palazzi antichi","le palazzi antichi","il palazzi antichi","i palazzi antiche"],"adjektive|un ristorante tipico → Plural?":["gli ristoranti tipici","le ristoranti tipici","il ristoranti tipici","i ristoranti tipice"],"adjektive|un giorno lungo → Plural?":["gli giorni lunghi","le giorni lunghi","il giorni lunghi","i giorni lunghe"],"adjektive|Plural von «antico»?":["antici","antiche","antico"],"adjektive|Plural von «tipico»?":["tipichi","tipiche","tipico"],"adjektive|Plural von «antica»?":["antici","antichi","antica"],"adjektive|Welche Adjektive haben männlich und weiblich dieselbe Form?":["auf -o","auf -a","auf -i"],"adjektive|Wie endet ein Adjektiv auf -a im Plural?":["-i","-a","-o"],"adjektive|Wie endet ein Adjektiv auf -e im Plural?":["-e","-o","-a"]};
+  function gShuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+  function gChoices(topic, ex) {
+    const isRight = x => ex.a.some(a => a.trim() === String(x).trim());
+    const pool = (G_DISTRACT[topic.id + "|" + ex.q] || []).concat(ex.options || []).filter(x => !isRight(x));
+    const wrong = [];
+    gShuffle(Array.from(new Set(pool.slice(0, 4)))).forEach(x => { if (wrong.length < 3) wrong.push(x); });
+    pool.forEach(x => { if (wrong.length < 3 && wrong.indexOf(x) < 0) wrong.push(x); });
+    return gShuffle([ex.a[0]].concat(wrong));
+  }
+
   function gRenderTopics() {
     gEl.topicBar.innerHTML = "";
     GRAMMAR_TOPICS.forEach(t => {
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "cat-btn" + (t.id === gTopicId ? " active" : "") + (gRounds[t.id] ? " done" : "");
+      btn.className = "cat-btn" + (t.id === gTopicId ? " active" : "") + (gRounds[t.id] ? " done r" + Math.min(5, gRounds[t.id]) : "");
             btn.textContent = t.title + " · " + (gRounds[t.id] || 0) + "×";
       btn.addEventListener("click", () => {
         if (t.id === gTopicId) return;
@@ -2682,23 +2728,18 @@
     gEl.question.textContent = ex.q;
     gEl.hint.textContent = ex.hint || "";
 
-    if (ex.options) {
+    {
       gEl.options.style.display = "flex";
       gEl.fillRow.style.display = "none";
       gEl.check.style.display = "none";
       gEl.options.innerHTML = "";
-      ex.options.forEach(opt => {
+      gChoices(topic, ex).forEach(opt => {
         const b = document.createElement("button");
         b.type = "button";
         b.textContent = opt;
         b.addEventListener("click", () => gCheck(opt, b));
         gEl.options.appendChild(b);
       });
-    } else {
-      gEl.options.style.display = "none";
-      gEl.fillRow.style.display = "flex";
-      gEl.check.style.display = "";
-      gEl.answer.focus();
     }
   }
 
@@ -2707,7 +2748,7 @@
     const ex = gCurrent.ex;
     const value = given !== undefined ? given : gEl.answer.value;
     if (!value.trim()) return;
-    const ok = ex.a.some(a => gNorm(a) === gNorm(value)) || italEqAny([value], ex.a);
+    const ok = optBtn ? ex.a.some(a => a.trim() === value.trim()) : (ex.a.some(a => gNorm(a) === gNorm(value)) || italEqAny([value], ex.a));
     gAnswered = true;
 
     const st = gStats[gTopicId] || (gStats[gTopicId] = { correct: 0, wrong: 0 });
@@ -2735,10 +2776,10 @@
       gEl.expl.textContent = ex.why;
       gEl.expl.className = "g-expl show";
     }
-    if (ex.options) {
+    if (optBtn) {
       Array.prototype.forEach.call(gEl.options.children, b => {
         b.disabled = true;
-        if (ex.a.some(a => gNorm(a) === gNorm(b.textContent))) b.classList.add("right");
+        if (ex.a.some(a => a.trim() === b.textContent.trim())) b.classList.add("right");
         else if (b === optBtn) b.classList.add("bad");
       });
     }
@@ -4060,6 +4101,98 @@
         try { localStorage.setItem("dict_dir", ddir); } catch (x) {}
         renderDir(); render(); window.scrollTo(0, 0);
       });
+      // --- Sprach-Abfrage: deutsches Wort erscheint, Italienisch wird gesprochen (oder getippt) ---
+      const qz = document.createElement("div");
+      qz.id = "dictQuiz"; qz.className = "card"; qz.style.display = "none";
+      qz.innerHTML =
+        "<div class='dq-top'><h2>Sprach-Abfrage</h2><button type='button' id='dqClose' aria-label='Schliessen'>✕</button></div>" +
+        "<div class='dq-sub' id='dqSub'></div><div class='dq-q' id='dqQ'></div><div class='dq-h' id='dqH'></div>" +
+        "<button type='button' id='dqMic' class='dq-mic'>Antwort sprechen</button>" +
+        "<input type='text' id='dqIn' placeholder='oder Italienisch eintippen' autocomplete='off' autocapitalize='off' spellcheck='false'>" +
+        "<div class='dq-fb' id='dqFb'></div>" +
+        "<div class='dq-row'><button type='button' id='dqCheck' class='dq-pri'>Prüfen</button><button type='button' id='dqNext'>Nächstes Wort</button></div>";
+      view.insertBefore(qz, view.children[1]);
+      const st3 = document.createElement("style");
+      st3.textContent =
+        "#dictGo{margin-top:10px;width:100%;font-size:14px;font-weight:700;padding:11px 8px;border-radius:12px;border:1.5px solid var(--accent,var(--blue,#2563eb));background:transparent;color:var(--accent,var(--blue,#2563eb));cursor:pointer}" +
+        "#dictQuiz .dq-top{display:flex;align-items:center;justify-content:space-between}#dictQuiz .dq-top h2{margin:0}" +
+        "#dictQuiz #dqClose{background:none;border:none;font-size:1.3rem;color:var(--muted,#666);cursor:pointer;padding:4px 8px}" +
+        "#dictQuiz .dq-sub{font-size:13px;color:var(--muted,#666);margin:4px 0 12px}" +
+        "#dictQuiz .dq-q{font-size:1.5rem;font-weight:800;line-height:1.25;margin:4px 0 4px}" +
+        "#dictQuiz .dq-h{font-size:13px;color:var(--muted,#666);min-height:18px;margin-bottom:12px}" +
+        "#dictQuiz .dq-mic{width:100%;font-size:1rem;font-weight:700;padding:14px;border-radius:14px;border:none;background:var(--accent,var(--blue,#2563eb));color:#fff;cursor:pointer;margin-bottom:10px}" +
+        "#dictQuiz .dq-mic.listening{background:var(--orange,#ea580c)}#dictQuiz .dq-mic:disabled{opacity:.45}" +
+        "#dictQuiz #dqIn{width:100%;font-size:16px;padding:11px 12px;border:1px solid var(--border,var(--line,#ccc));border-radius:10px;background:var(--bg,#f5f7fa);color:var(--text,var(--ink,#1b2430));box-sizing:border-box}" +
+        "#dictQuiz .dq-fb{margin-top:12px;padding:0;border-radius:12px;font-weight:600;line-height:1.4}" +
+        "#dictQuiz .dq-fb.ok,#dictQuiz .dq-fb.no{padding:11px 14px}" +
+        "#dictQuiz .dq-fb.ok{background:var(--correct-bg,#e7f6ec);color:var(--correct,#166534)}#dictQuiz .dq-fb.no{background:var(--wrong-bg,#fdeee4);color:var(--wrong,#b34a17)}" +
+        "#dictQuiz .dq-row{display:flex;gap:8px;margin-top:12px}#dictQuiz .dq-row button{flex:1;font-size:14px;font-weight:700;padding:12px 6px;border-radius:12px;border:1.5px solid var(--border,var(--line,#ccc));background:transparent;color:var(--text,var(--ink,#1b2430));cursor:pointer}" +
+        "#dictQuiz .dq-row button.dq-pri{background:var(--accent,var(--blue,#2563eb));border-color:transparent;color:#fff}";
+      document.head.appendChild(st3);
+      const dictGo = document.createElement("button");
+      dictGo.type = "button"; dictGo.id = "dictGo"; dictGo.textContent = "Wörter mit Sprache abfragen";
+      view.querySelector(".card").insertBefore(dictGo, view.querySelector("#dictCats"));
+      const listCard = view.children[2];
+      const dq = { cur: null, answered: false, listening: false };
+      const qEl = id => qz.querySelector("#" + id);
+      const dqAnswers = w => {
+        const base = String(w.it).replace(GENDER_RE, "").replace(/\s+/g, " ").trim();
+        const out = [];
+        base.split(/\s*[;\/]\s*/).forEach(v => { v = v.replace(/\s*\([^)]*\)\s*/g, " ").trim(); if (v) { out.push(v); const na = stripArt(v); if (na && na !== v) out.push(na); } });
+        return out;
+      };
+      function dqPick() {
+        const pool = words.filter(w => (dcat === "Alle" || w.cat === dcat) && w.it && w.de);
+        if (!pool.length) return null;
+        let w, tries = 0;
+        do { w = pool[Math.floor(Math.random() * pool.length)]; tries++; } while (dq.cur && w === dq.cur && pool.length > 1 && tries < 10);
+        return w;
+      }
+      function dqNext() {
+        if (dq.listening) return;
+        dq.cur = dqPick(); dq.answered = false;
+        qEl("dqIn").value = ""; qEl("dqIn").disabled = false; qEl("dqFb").className = "dq-fb"; qEl("dqFb").textContent = "";
+        qEl("dqSub").textContent = "Kategorie: " + (dcat === "Alle" ? "Alle Wörter" : dcat) + " · Sage das Wort auf Italienisch";
+        if (!dq.cur) { qEl("dqQ").textContent = "Keine Wörter in dieser Kategorie."; return; }
+        qEl("dqQ").textContent = String(dq.cur.de).replace(GENDER_RE, "");
+        qEl("dqH").textContent = dq.cur.cat ? dq.cur.cat : "";
+        qEl("dqCheck").disabled = false; qEl("dqMic").disabled = !SpeechRecognitionCtor;
+        if (!SpeechRecognitionCtor) qEl("dqH").textContent = "Spracherkennung wird von diesem Browser nicht unterstützt – bitte eintippen.";
+      }
+      function dqJudge(heard) {
+        if (!dq.cur || dq.answered) return;
+        const list = (Array.isArray(heard) ? heard : [heard]).filter(x => x && x.trim());
+        if (!list.length) return;
+        dq.answered = true;
+        const ans = dqAnswers(dq.cur);
+        const ok = ans.some(a => list.some(h => fold(a).replace(/[^a-z0-9' ]/g, "").trim() === fold(h).replace(/[^a-z0-9' ]/g, "").trim())) || italEqAny(list, ans);
+        const fb = qEl("dqFb");
+        fb.className = "dq-fb " + (ok ? "ok" : "no");
+        fb.textContent = ok ? "Richtig: " + ans[0] : "Gehört: «" + list[0] + "» – richtig ist: " + ans[0];
+        qEl("dqIn").disabled = true; qEl("dqCheck").disabled = true;
+        speakItalian(ans[0]);
+      }
+      qEl("dqMic").addEventListener("click", () => {
+        if (!SpeechRecognitionCtor || dq.listening || dq.answered || !dq.cur) return;
+        const rec = new SpeechRecognitionCtor();
+        rec.lang = "it-IT"; rec.interimResults = false; rec.maxAlternatives = 5;
+        dq.listening = true; qEl("dqMic").classList.add("listening"); qEl("dqMic").textContent = "Mikrofon wird aktiviert …";
+        let heard = [];
+        rec.onstart = () => { qEl("dqMic").textContent = "Jetzt sprechen …"; };
+        rec.onresult = ev => { heard = []; for (let i = 0; i < ev.results[0].length; i++) heard.push(ev.results[0][i].transcript.trim()); qEl("dqIn").value = heard[0] || ""; };
+        rec.onerror = ev => { qEl("dqH").textContent = "Spracherkennung fehlgeschlagen (" + ev.error + "). Bitte erneut versuchen oder eintippen."; };
+        rec.onend = () => {
+          dq.listening = false; qEl("dqMic").classList.remove("listening"); qEl("dqMic").textContent = "Antwort sprechen";
+          if (heard.length) dqJudge(heard);
+        };
+        try { rec.start(); } catch (e) { dq.listening = false; qEl("dqMic").classList.remove("listening"); qEl("dqMic").textContent = "Antwort sprechen"; }
+      });
+      qEl("dqCheck").addEventListener("click", () => dqJudge(qEl("dqIn").value));
+      qEl("dqIn").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); if (dq.answered) dqNext(); else dqJudge(qEl("dqIn").value); } });
+      qEl("dqNext").addEventListener("click", dqNext);
+      const dqIdx = v => { const ix = document.getElementById("dictIdx"); if (ix) ix.style.display = v; };
+      dictGo.addEventListener("click", () => { qz.style.display = ""; listCard.style.display = "none"; dictGo.style.display = "none"; dqIdx("none"); dqNext(); window.scrollTo(0, 0); });
+      qEl("dqClose").addEventListener("click", () => { qz.style.display = "none"; listCard.style.display = ""; dictGo.style.display = ""; dqIdx(""); });
       function renderCats() {
         catsEl.innerHTML = "";
         ["Alle"].concat(CATEGORIES).forEach(name => {
@@ -4223,7 +4356,7 @@
   if (tabs) tabs.parentNode.insertBefore(sbar, tabs.nextSibling);
   var GOAL = 1800, GK = "it_goal_v1";
   function loadG() {
-    try { var o = JSON.parse(localStorage.getItem(GK)) || {}; if (o.d !== today()) o = { d: today(), sec: 0, done: false }; o.sec = 0; return o; }
+    try { var o = JSON.parse(localStorage.getItem(GK)) || {}; if (o.d !== today()) o = { d: today(), sec: 0, done: false }; o.sec = o.sec || 0; return o; }
     catch (e) { return { d: today(), sec: 0, done: false }; }
   }
   var g = loadG();
@@ -4257,16 +4390,17 @@
   var hiddenAt = 0;
   document.addEventListener("visibilitychange", function () {
     if (document.visibilityState !== "visible") { hiddenAt = Date.now(); saveG(); return; }
-    // App war laenger als 20 Sekunden weg: die 30 Minuten beginnen von vorn
-    if (hiddenAt && Date.now() - hiddenAt > 20000 && !g.done) { g.sec = 0; paintGoal(); }
+    // Die Uebungszeit zaehlt pro Tag weiter (kein Neubeginn beim Wiederoeffnen der App)
+    if (g.d !== today()) { g = loadG(); }
+    paintGoal();
     hiddenAt = 0;
   });
   window.addEventListener("pagehide", saveG);
 
   function render(bump) {
     var s = load(), days = (s.last === today() || s.last === yest()) ? (s.days || 0) : 0;
-    sbar.innerHTML = '<div class="sb f">' + svg("flame") + '<b>' + days + '</b><span>Tage</span></div>' +
-      '<div class="sb z' + (bump ? " bump" : "") + '">' + svg("bolt") + '<b>' + (s.run || 0) + '</b><span>in Folge</span></div>';
+    sbar.innerHTML = '<div class="sb f" title="Tage in Serie: an wie vielen Tagen hintereinander du das Tagesziel (30 Minuten üben) erreicht hast">' + svg("flame") + '<b>' + days + '</b><span>Tage in Serie</span></div>' +
+      '<div class="sb z' + (bump ? " bump" : "") + '" title="Richtige Antworten hintereinander ohne Fehler">' + svg("bolt") + '<b>' + (s.run || 0) + '</b><span>in Folge</span></div>';
     sbar.appendChild(goalEl); paintGoal();
   }
   render();
@@ -4461,6 +4595,20 @@
   // K: ganze Praesens-Konjugation eines Hauptverbs (Daten aus der Konjugations-Rubrik der App)
   function K(inf) { return { t: "conj", inf: inf }; }
   var PRON = ["io", "tu", "lui/lei", "noi", "voi", "loro"];
+  // Verben je Lektion: nur die in der Lektion neu behandelten (focus) und die der letzten Lektion mit neuen Verben
+  var CONJ_KEY = "italienisch_conj_stats"; // { verb: { n: Anzahl Abfragen, wrong: [Personen-Nr. zuletzt falsch] } }
+  function conjStat(inf) {
+    var all = lsGet(CONJ_KEY, {}); if (!all || typeof all !== "object") all = {};
+    var st = all[inf] || { n: 0, wrong: [] };
+    return { n: st.n || 0, wrong: Array.isArray(st.wrong) ? st.wrong.slice() : [] };
+  }
+  function conjSave(inf, st) { var all = lsGet(CONJ_KEY, {}); if (!all || typeof all !== "object") all = {}; all[inf] = st; lsSet(CONJ_KEY, all); }
+  // Abgefragte Personen: bis 2x alle, danach nur noch die zuletzt falschen
+  function conjPersons(inf) {
+    var vd = verbData(inf), st = conjStat(inf), all = [];
+    if (vd) vd.f.forEach(function (f, i) { if (f !== null) all.push(i); });
+    return st.n >= 2 ? all.filter(function (i) { return st.wrong.indexOf(i) > -1; }) : all;
+  }
   function verbData(inf) { return (window.italoConj || []).filter(function (v) { return v.inf === inf; })[0]; }
 
   // ---- Lektionen: neue Lektion nur, wenn der Nutzer einen neuen Grammatik-Block erfasst hat ----
@@ -4468,7 +4616,7 @@
   // Der Grammatik-Block wird 1:1 aus dem Tab uebernommen (window.italoGrammar).
   var LESSONS = [
     {
-      id: "aussprache", topic: "aussprache", verbs: ["essere"], title: "Im Café - lerne die Aussprache", sub: "Grammatik-Block «Aussprache»",
+      id: "aussprache", topic: "aussprache", focus: ["essere"], title: "Im Café - lerne die Aussprache", sub: "Grammatik-Block «Aussprache»",
       words: [
         W("Vorrei un caffè, per favore.", "Ich hätte gern einen Kaffee, bitte."),
         W("Per me un succo d'arancia.", "Für mich einen Orangensaft."),
@@ -4489,6 +4637,16 @@
         C("cena – Wie wird das «c» gesprochen?", "weich", ["hart"]),
         C("che – Wie wird das «ch» gesprochen?", "hart", ["weich"]),
         C("cioccolata – Wie wird das erste «c» gesprochen?", "weich", ["hart"]),
+        C("centro – Wie wird das «c» gesprochen?", "weich", ["hart"]),
+        C("cellulare – Wie wird das erste «c» gesprochen?", "weich", ["hart"]),
+        C("dolce – Wie wird das «c» gesprochen?", "weich", ["hart"]),
+        C("cuore – Wie wird das «c» gesprochen?", "hart", ["weich"]),
+        C("amiche – Wie wird das «ch» gesprochen?", "hart", ["weich"]),
+        C("gentile – Wie wird das «g» gesprochen?", "weich", ["hart"]),
+        C("lungo – Wie wird das «g» gesprochen?", "hart", ["weich"]),
+        C("scena – Wie wird das «sc» gesprochen?", "sch", ["sk"]),
+        Y("Ergänze: ___ena (weiches tsch vor e) – c oder ch?", "c"),
+        Y("Ergänze: ami___e (hartes k vor e) – c oder ch?", "ch"),
         Y("Ergänze: ___ao (weiches tsch vor a) – c oder ci?", "ci"),
         Y("Ergänze: ___e cosa prendi? (hartes k vor e) – c oder ch?", "ch"),
         P([["il burro", "Butter"], ["il miele", "Honig"], ["la senape", "Senf"], ["l'aceto (männlich)", "Essig"], ["l'olio (männlich)", "Öl"]]),
@@ -4501,7 +4659,7 @@
       ]
     },
     {
-      id: "satzbau", topic: "satzbau", verbs: ["essere", "avere"], title: "Alter + Familie - lerne den Satzbau", sub: "Grammatik-Block «Satzbau»",
+      id: "satzbau", topic: "satzbau", focus: ["avere"], title: "Alter + Familie - lerne den Satzbau", sub: "Grammatik-Block «Satzbau»",
       nw: [["il figlio", "der Sohn"], ["la figlia", "die Tochter"], ["otto", "8"], ["dodici", "12"], ["venti", "20"], ["trenta", "30"], ["quaranta", "40"]],
       words: [
         W("Quanti anni hai?", "Wie alt bist du?"),
@@ -4535,7 +4693,7 @@
       ]
     },
     {
-      id: "vorstellen", topic: "subjekt", verbs: ["essere", "avere", "chiamarsi"], title: "Sich vorstellen - lerne die Subjektpronomen", sub: "Grammatik-Block «Subjektpronomen»",
+      id: "vorstellen", topic: "subjekt", focus: ["chiamarsi"], title: "Sich vorstellen - lerne die Subjektpronomen", sub: "Grammatik-Block «Subjektpronomen»",
       nw: [["Come ti chiami?", "Wie heisst du?"], ["Piacere!", "Freut mich / Angenehm!"], ["Di dove sei?", "Woher kommst du?"], ["Dove abiti?", "Wo wohnst du?"], ["dare il tu", "sich duzen"], ["dare il Lei", "sich siezen"], ["noi", "wir"], ["voi", "ihr"], ["loro / Loro", "sie / Sie (Plural)"]],
       words: [
         W("Come ti chiami?", "Wie heisst du?"),
@@ -4560,28 +4718,27 @@
         L("Come ti chiami?"),
         P([["Piacere!", "Freut mich / Angenehm!"], ["Come ti chiami?", "Wie heisst du?"], ["Di dove sei?", "Woher kommst du?"], ["Dove abiti?", "Wo wohnst du?"]]),
         C("Was heisst «dare il tu»?", "sich duzen", ["sich siezen", "sich vorstellen", "sich begrüssen"]),
-        Y("Übersetze: Woher kommen Sie?", "Di dov'è?"),
+        Y("Übersetze: Woher kommen Sie? (höflich, eine Person)", "Di dov'è?", ["Di dov'è Lei?"]),
+        Y("Übersetze: Woher kommt ihr?", "Di dove siete?", ["Voi di dove siete?"]),
+        Y("Übersetze: Woher kommen sie? (mehrere Personen)", "Di dove sono?", ["Di dove sono loro?"]),
         C("Wie sagst du höflich «Ich stelle Ihnen … vor»?", "le presento …", ["ti presento …", "vorrei …", "prenda …"]),
         C("Wie heisst «wir»?", "noi", ["voi", "loro", "io"]),
         C("Wie heisst «ihr»?", "voi", ["noi", "loro", "tu"]),
         C("«Sono di Coira. E ___?» (Und du?)", "tu", ["io", "sei", "lui"]),
-        C("«Di dov'è ___?» (Woher kommen Sie?) – wie schreibt man «Sie»?", "Lei", ["lei", "tu", "noi"]),
+        C("«Di dov'è ___?» (Woher kommen Sie? – höflich, eine Person) – wie schreibt man «Sie»?", "Lei", ["lei", "tu", "noi"]),
         Y("Übersetze: Ich bin aus Chur, und du?", "Sono di Coira. E tu?", ["Io sono di Coira, e tu?", "Io sono di Coira. E tu?", "Sono di Coira, e tu?"])
       ]
     },
     {
-      id: "regelmaessig", topic: "regelmaessig", verbs: ["essere", "avere"], noNew: true, title: "Tagesablauf - lerne die regelmässigen Verben", sub: "Grammatik-Block «Regelmässige Verben»",
-      nw: [["prendere", "nehmen"], ["dormire", "schlafen"], ["preferire", "bevorzugen"], ["capire", "verstehen"], ["abitare", "wohnen"]],
+      id: "regelmaessig", topic: "regelmaessig", focus: ["prendere", "dormire"], title: "Tagesablauf - lerne die regelmässigen Verben", sub: "Grammatik-Block «Regelmässige Verben»",
+      nw: [["prendere", "nehmen"], ["dormire", "schlafen"], ["abitare", "wohnen"]],
       words: [
         W("Abito a Coira.", "Ich wohne in Chur."),
         W("Che cosa prendi?", "Was nimmst du?"),
         W("Prendo un caffè.", "Ich nehme einen Kaffee."),
         W("Dormo otto ore.", "Ich schlafe acht Stunden."),
-        W("Preferisco il caffè.", "Ich bevorzuge Kaffee."),
-        W("Capisco l'italiano.", "Ich verstehe Italienisch."),
-        W("Non capisco.", "Ich verstehe nicht."),
         W("Abitiamo a Coira.", "Wir wohnen in Chur."),
-        W("prendere · dormire · capire", "nehmen · schlafen · verstehen")
+        W("prendere · dormire", "nehmen · schlafen")
       ],
       tasks: [
         C("Zu welcher Gruppe gehört «prendere»?", "-ere", ["-are", "-ire"]),
@@ -4592,25 +4749,52 @@
         Y("abitare – tu:", "abiti"),
         Y("prendere – io:", "prendo"),
         Y("dormire – lui / lei:", "dorme"),
-        Y("preferire – io:", "preferisco"),
-        Y("capire – tu:", "capisci"),
         C("«Noi ___ a Coira.» (abitare)", "abitiamo", ["abitate", "abitano", "abito"]),
         C("«Voi ___ un caffè.» (prendere)", "prendete", ["prendiamo", "prendono", "prendi"]),
         C("«Loro ___ otto ore.» (dormire)", "dormono", ["dormite", "dormiamo", "dormo"]),
         C("Wo liegt die Betonung bei «noi abitiamo»?", "abiTIAmo", ["ABitiamo", "abitiaMO"]),
-        P([["abitare", "wohnen"], ["prendere", "nehmen"], ["dormire", "schlafen"], ["preferire", "bevorzugen"], ["capire", "verstehen"]]),
+        P([["abitare", "wohnen"], ["prendere", "nehmen"], ["dormire", "schlafen"]]),
         Y("Übersetze: Ich nehme einen Kaffee.", "Prendo un caffè.", ["Io prendo un caffè."]),
-        Y("Übersetze: Ich verstehe nicht.", "Non capisco.", ["Io non capisco."]),
         O("Ich schlafe acht Stunden.", "Dormo otto ore.", ["Io dormo otto ore."]),
         O("Wir wohnen in Chur.", "Abitiamo a Coira.", ["Noi abitiamo a Coira."]),
-        K("prendere"),
-        K("dormire"),
-        K("preferire"),
         L("Che cosa prendi?")
       ]
     },
     {
-      id: "reg_unreg", topic: "reg_unreg", verbs: ["essere", "avere"], noNew: true, title: "Freizeit + Essen - lerne die regelmässig unregelmässigen Verben", sub: "Grammatik-Block «Regelmässig unregelmässige Verben»",
+      id: "isc", topic: "isc", focus: ["preferire", "capire"], title: "Vorlieben + Verstehen - lerne die unregelmässig regelmässigen Verben 1", sub: "Grammatik-Block «Unregelmässig regelmässige Verben 1»",
+      nw: [["preferire", "bevorzugen"], ["capire", "verstehen"]],
+      words: [
+        W("Preferisco il caffè.", "Ich bevorzuge Kaffee."),
+        W("Che cosa preferisci?", "Was bevorzugst du?"),
+        W("Capisco l'italiano.", "Ich verstehe Italienisch."),
+        W("Non capisco.", "Ich verstehe nicht."),
+        W("Capisci?", "Verstehst du?"),
+        W("Preferiamo il tè.", "Wir bevorzugen Tee."),
+        W("Capite?", "Versteht ihr?"),
+        W("preferire · capire", "bevorzugen · verstehen")
+      ],
+      tasks: [
+        C("Hat «preferire» ein -isc-?", "Ja", ["Nein"]),
+        C("Hat «dormire» ein -isc-?", "Nein", ["Ja"]),
+        C("Bei welchen Formen steht -isc-?", "io / tu / lui / loro", ["noi / voi", "alle Formen"]),
+        C("Bei welchen Formen fehlt -isc-?", "noi / voi", ["io / tu", "lui / loro"]),
+        Y("preferire – io:", "preferisco"),
+        Y("preferire – noi:", "preferiamo"),
+        Y("capire – tu:", "capisci"),
+        Y("capire – voi:", "capite"),
+        C("«Loro ___ il caffè.» (preferire)", "preferiscono", ["preferiamo", "preferite", "preferisci"]),
+        C("«Lui ___ l'italiano.» (capire)", "capisce", ["capite", "capiamo", "capisci"]),
+        C("Wo liegt die Betonung bei «io preferisco»?", "prefeRIsco", ["preFErisco", "preferiSco"]),
+        P([["preferire", "bevorzugen"], ["capire", "verstehen"], ["il caffè", "Kaffee"], ["il tè", "Tee"]]),
+        Y("Übersetze: Ich verstehe nicht.", "Non capisco.", ["Io non capisco."]),
+        Y("Übersetze: Ich bevorzuge Kaffee.", "Preferisco il caffè.", ["Io preferisco il caffè."]),
+        O("Wir bevorzugen Tee.", "Preferiamo il tè.", ["Noi preferiamo il tè."]),
+        O("Verstehst du?", "Capisci?", ["Tu capisci?"]),
+        L("Che cosa preferisci?")
+      ]
+    },
+    {
+      id: "reg_unreg", topic: "reg_unreg", focus: ["pagare", "giocare", "leggere", "conoscere"], title: "Freizeit + Essen - lerne die unregelmässig regelmässigen Verben 2", sub: "Grammatik-Block «Unregelmässig regelmässige Verben 2»",
       nw: [["pagare", "bezahlen"], ["giocare", "spielen"], ["cercare", "suchen"], ["mangiare", "essen"], ["leggere", "lesen"], ["conoscere", "kennen"]],
       words: [
         W("Pago il conto.", "Ich bezahle die Rechnung."),
@@ -4645,15 +4829,11 @@
         Y("Übersetze: Kennst du Gigi?", "Conosci Gigi?", ["Tu conosci Gigi?"]),
         O("Ich lese die Zeitung.", "Leggo il giornale.", ["Io leggo il giornale."]),
         O("Wir suchen ein Hotel.", "Cerchiamo un hotel.", ["Noi cerchiamo un hotel."]),
-        K("pagare"),
-        K("giocare"),
-        K("leggere"),
-        K("conoscere"),
         L("Giochi a calcio?")
       ]
     },
     {
-      id: "unregelmaessig", topic: "unregelmaessig", verbs: ["essere", "avere"], noNew: true, title: "Alltag + Pläne - lerne die unregelmässigen Verben", sub: "Grammatik-Block «Unregelmässige Verben»",
+      id: "unregelmaessig", topic: "unregelmaessig", focus: ["andare", "sapere", "dovere", "potere", "volere"], title: "Alltag + Pläne - lerne die unregelmässigen Verben", sub: "Grammatik-Block «Unregelmässige Verben»",
       nw: [["andare", "gehen / fahren"], ["dire", "sagen"], ["dovere", "müssen / sollen"], ["potere", "können / dürfen"], ["sapere", "wissen"], ["stare", "bleiben / sich fühlen"], ["volere", "wollen"], ["rimanere", "bleiben"]],
       words: [
         W("Vado a Coira.", "Ich gehe nach Chur."),
@@ -4686,16 +4866,11 @@
         Y("Übersetze: Ich muss arbeiten.", "Devo lavorare.", ["Io devo lavorare."]),
         O("Ich will einen Kaffee.", "Voglio un caffè.", ["Io voglio un caffè."]),
         O("Ich bleibe in Chur.", "Rimango a Coira.", ["Io rimango a Coira."]),
-        K("andare"),
-        K("sapere"),
-        K("dovere"),
-        K("potere"),
-        K("volere"),
         L("Che cosa dici?")
       ]
     },
     {
-      id: "piacere", topic: "piacere", verbs: ["essere", "avere"], noNew: true, title: "Vorlieben + Orte - lerne piacere und esserci", sub: "Grammatik-Block «Piacere und esserci»",
+      id: "piacere", topic: "piacere", focus: ["piacere"], title: "Vorlieben + Orte - lerne piacere und esserci", sub: "Grammatik-Block «Piacere und esserci»",
       nw: [["piacere", "gefallen / schmecken"], ["la musica", "die Musik"], ["tutti / tutte", "alle"], ["il parcheggio", "der Parkplatz"], ["la camera", "das Zimmer"], ["libero / libera", "frei"], ["il ristorante", "das Restaurant"], ["c'è / ci sono", "es gibt"]],
       words: [
         W("Mi piace la pizza.", "Mir schmeckt die Pizza."),
@@ -4736,7 +4911,7 @@
       ]
     },
     {
-      id: "geschlecht", topic: "geschlecht", verbs: ["essere", "avere", "fare"], title: "Beruf + Arbeit - lerne das Geschlecht der Nomen", sub: "Grammatik-Block «Nomen – Geschlecht»",
+      id: "geschlecht", topic: "geschlecht", focus: ["fare"], title: "Beruf + Arbeit - lerne das Geschlecht der Nomen", sub: "Grammatik-Block «Nomen – Geschlecht»",
       nw: [["il cameriere", "der Kellner"], ["il cuoco / la cuoca", "Koch / Köchin"], ["l'infermiere (männlich) / l'infermiera (weiblich)", "Krankenpfleger / Krankenschwester"], ["lo studente / la studentessa", "Student / Studentin"], ["il commesso / la commessa", "Verkäufer / Verkäuferin"], ["la fabbrica", "die Fabrik"]],
       words: [
         W("Che lavoro fai?", "Was machst du beruflich?"),
@@ -4772,7 +4947,7 @@
       ]
     },
     {
-      id: "plural", topic: "plural", verbs: ["essere", "avere", "fare", "andare"], title: "Zeit + Tage - lerne den Plural der Nomen", sub: "Grammatik-Block «Nomen – Plural»",
+      id: "plural", topic: "plural", focus: ["andare"], title: "Zeit + Tage - lerne den Plural der Nomen", sub: "Grammatik-Block «Nomen – Plural»",
       nw: [["ieri", "gestern"], ["domani", "morgen"], ["il giorno", "der Tag"], ["la giornata", "der Verlauf des Tages"], ["la settimana", "die Woche"], ["il mese", "der Monat"]],
       words: [
         W("Oggi è martedì.", "Heute ist Dienstag."),
@@ -4812,7 +4987,7 @@
     }
     ,
     {
-      id: "unbestimmt", topic: "unbestimmt", verbs: ["essere", "avere", "fare", "andare", "parlare"], title: "Im Hotel - lerne den unbestimmten Artikel", sub: "Grammatik-Block «Unbestimmter Artikel»",
+      id: "unbestimmt", topic: "unbestimmt", focus: ["parlare"], title: "Im Hotel - lerne den unbestimmten Artikel", sub: "Grammatik-Block «Unbestimmter Artikel»",
       nw: [["la camera", "das Zimmer"], ["l'hotel (männlich)", "das Hotel"], ["l'amico (männlich) / l'amica (weiblich)", "Freund / Freundin"], ["lo straniero", "der Ausländer"], ["lo psicologo", "der Psychologe"], ["lo yogurt", "der Joghurt"], ["il gelato", "die Glace"]],
       words: [
         W("Vorrei una camera, per favore.", "Ich hätte gern ein Zimmer, bitte."),
@@ -4850,7 +5025,7 @@
     }
     ,
     {
-      id: "bestimmt", topic: "bestimmt", verbs: ["essere", "avere", "fare", "andare", "parlare"], noNew: true, title: "Länder + Zeit - lerne den bestimmten Artikel", sub: "Grammatik-Block «Bestimmter Artikel»",
+      id: "bestimmt", topic: "bestimmt", title: "Länder + Zeit - lerne den bestimmten Artikel", sub: "Grammatik-Block «Bestimmter Artikel»",
       nw: [["la Germania", "Deutschland"], ["la Svizzera", "die Schweiz"], ["il paese", "das Land"], ["il tedesco", "Deutsch"], ["lo spagnolo", "Spanisch"], ["il teatro", "das Theater"], ["la partita", "das Spiel"]],
       words: [
         W("Studio l'italiano (männlich).", "Ich lerne Italienisch."),
@@ -4886,7 +5061,7 @@
     }
     ,
     {
-      id: "verneinung", topic: "verneinung", verbs: ["essere", "avere", "fare", "andare", "parlare"], noNew: true, title: "Verabredung + Absage - lerne die Verneinung", sub: "Grammatik-Block «Verneinung»",
+      id: "verneinung", topic: "verneinung", title: "Verabredung + Absage - lerne die Verneinung", sub: "Grammatik-Block «Verneinung»",
       nw: [["niente", "nichts"], ["mai", "nie"], ["più", "mehr / nicht mehr"], ["ballare", "tanzen"], ["piovere", "regnen"], ["alzarsi", "aufstehen"]],
       words: [
         W("No, di Coira.", "Nein, aus Chur."),
@@ -4923,7 +5098,7 @@
     }
     ,
     {
-      id: "questo", topic: "questo", verbs: ["essere", "avere", "fare", "andare", "parlare"], noNew: true, title: "Kleidung + Personen - lerne «questo»", sub: "Grammatik-Block «Questo»",
+      id: "questo", topic: "questo", title: "Kleidung + Personen - lerne «questo»", sub: "Grammatik-Block «Questo»",
       nw: [["il vestito", "das Kleid / der Anzug"], ["stretto", "eng"], ["caro", "teuer"], ["questo / questa", "dieser / diese"], ["questi / queste", "diese (Plural)"]],
       words: [
         W("Questo vestito è stretto.", "Dieses Kleid ist eng."),
@@ -4958,7 +5133,7 @@
     }
     ,
     {
-      id: "fragen", topic: "fragen", verbs: ["essere", "avere", "fare", "andare", "parlare"], noNew: true, title: "Fragen + Antworten - lerne die Fragewörter", sub: "Grammatik-Block «Fragewörter»",
+      id: "fragen", topic: "fragen", title: "Fragen + Antworten - lerne die Fragewörter", sub: "Grammatik-Block «Fragewörter»",
       nw: [["chi", "wer"], ["come", "wie"], ["dove", "wo"], ["quando", "wann"], ["perché", "warum"], ["quanto", "wie viel"], ["l'indirizzo (männlich)", "die Adresse"]],
       words: [
         W("Chi sei?", "Wer bist du?"),
@@ -5007,7 +5182,7 @@
     }
     ,
     {
-      id: "wohnen", topic: "teilung", verbs: ["essere", "avere", "fare", "andare", "parlare", "chiamarsi", "abitare"], title: "Wohnen + Essen - lerne den Teilungsartikel", sub: "Grammatik-Block «Teilungsartikel»",
+      id: "wohnen", topic: "teilung", focus: ["abitare"], title: "Wohnen + Essen - lerne den Teilungsartikel", sub: "Grammatik-Block «Teilungsartikel»",
       nw: [["la città", "die Stadt"], ["la casa", "das Haus"], ["l'appartamento (männlich)", "die Wohnung"], ["l'ufficio (männlich)", "das Büro"], ["Dov'è …?", "Wo ist …?"]],
       words: [
         W("Dove abiti?", "Wo wohnst du?"),
@@ -5049,7 +5224,7 @@
       ]
     },
     {
-      id: "adjektive", topic: "adjektive", verbs: ["essere", "avere", "fare", "andare", "parlare", "chiamarsi", "abitare"], noNew: true, title: "Stadt + Sehenswürdigkeiten - lerne die Adjektive", sub: "Grammatik-Block «Adjektive – Grundlagen»",
+      id: "adjektive", topic: "adjektive", title: "Stadt + Sehenswürdigkeiten - lerne die Adjektive", sub: "Grammatik-Block «Adjektive – Grundlagen»",
       nw: [["il museo", "das Museum"], ["la chiesa", "die Kirche"], ["famoso", "berühmt"], ["antico", "antik"], ["tipico", "typisch"], ["interessante", "interessant"]],
       words: [
         W("Il museo è famoso.", "Das Museum ist berühmt."),
@@ -5086,7 +5261,7 @@
       ]
     },
     {
-      id: "orte", topic: null, verbs: ["essere", "avere", "fare", "andare", "parlare", "chiamarsi", "abitare", "esserci"], title: "Was gibt es? - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
+      id: "orte", topic: null, focus: ["esserci"], title: "Was gibt es? - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
       nw: [["la farmacia", "die Apotheke"], ["la banca", "die Bank"], ["la stazione", "der Bahnhof"], ["l'ospedale (männlich)", "das Krankenhaus"], ["la piscina", "das Schwimmbad"], ["la fermata", "die Haltestelle"], ["C'è …?", "Gibt es …?"]],
       words: [
         W("C'è una farmacia?", "Gibt es eine Apotheke?"),
@@ -5112,7 +5287,7 @@
       ]
     },
     {
-      id: "fussball", topic: null, noNew: true, verbs: ["essere", "avere", "fare", "andare", "parlare", "chiamarsi", "abitare", "esserci"], title: "Fussball - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
+      id: "fussball", topic: null, focus: ["vincere", "perdere"], title: "Fussball - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
       nw: [["la squadra", "die Mannschaft"], ["il gol", "das Tor"], ["l'allenatore (männlich)", "der Trainer"], ["l'arbitro (männlich)", "der Schiedsrichter"], ["il tifoso", "der Fan"], ["vincere", "gewinnen"], ["perdere", "verlieren"]],
       words: [
         W("La partita è domenica.", "Das Spiel ist am Sonntag."),
@@ -5140,13 +5315,11 @@
         O("Wir verlieren das Spiel.", "Noi perdiamo la partita."),
         O("Der Fan schaut das Spiel.", "Il tifoso guarda la partita."),
         L("La squadra vince la partita."),
-        L("Il tifoso guarda la partita."),
-        K("vincere"),
-        K("perdere")
+        L("Il tifoso guarda la partita.")
       ]
     },
     {
-      id: "arzt", topic: null, noNew: true, verbs: ["essere", "avere", "fare", "andare", "parlare", "chiamarsi", "abitare", "esserci"], title: "Beim Arzt - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
+      id: "arzt", topic: null, title: "Beim Arzt - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
       nw: [["il raffreddore", "die Erkältung"], ["la tosse", "der Husten"], ["la ricetta", "das Rezept"], ["il paziente", "der Patient"], ["malato / malata", "krank"], ["stanco / stanca", "müde"]],
       words: [
         W("Ho il mal di testa.", "Ich habe Kopfschmerzen."),
@@ -5178,7 +5351,7 @@
       ]
     },
     {
-      id: "bahnhof", topic: null, noNew: true, verbs: ["essere", "avere", "fare", "andare", "parlare", "chiamarsi", "abitare", "esserci"], title: "Am Bahnhof - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
+      id: "bahnhof", topic: null, title: "Am Bahnhof - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
       nw: [["il ritardo", "die Verspätung"], ["l'aereo (männlich)", "das Flugzeug"], ["l'aeroporto (männlich)", "der Flughafen"], ["il passeggero", "der Passagier"], ["la partenza", "die Abfahrt / der Abflug"], ["l'arrivo (männlich)", "die Ankunft"]],
       words: [
         W("Il treno ha un ritardo.", "Der Zug hat Verspätung."),
@@ -5209,7 +5382,7 @@
       ]
     },
     {
-      id: "wetter", topic: null, noNew: true, verbs: ["essere", "avere", "fare", "andare", "parlare", "chiamarsi", "abitare", "esserci"], title: "Wetter + Jahreszeiten - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
+      id: "wetter", topic: null, title: "Wetter + Jahreszeiten - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
       nw: [["la pioggia", "der Regen"], ["la neve", "der Schnee"], ["il vento", "der Wind"], ["la nuvola", "die Wolke"], ["l'estate (weiblich)", "der Sommer"], ["l'inverno (männlich)", "der Winter"], ["nevicare", "schneien"]],
       words: [
         W("Che tempo fa?", "Wie ist das Wetter?"),
@@ -5242,7 +5415,7 @@
       ]
     },
     {
-      id: "geburtstag", topic: null, noNew: true, verbs: ["essere", "avere", "fare", "andare", "parlare", "chiamarsi", "abitare", "esserci"], title: "Geburtstag + Feste - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
+      id: "geburtstag", topic: null, focus: ["regalare"], title: "Geburtstag + Feste - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
       nw: [["il compleanno", "der Geburtstag"], ["il regalo", "das Geschenk"], ["gli auguri", "die Glückwünsche"], ["regalare", "schenken"], ["contento / contenta", "froh / zufrieden"], ["il Natale", "Weihnachten"]],
       words: [
         W("Buon compleanno!", "Alles Gute zum Geburtstag!"),
@@ -5270,8 +5443,7 @@
         O("Die Torte ist gut.", "La torta è buona."),
         O("Ich bin froh.", "Sono contento."),
         L("Buon compleanno!"),
-        L("Ho un regalo per te."),
-        K("regalare")
+        L("Ho un regalo per te.")
       ]
     }
   ];
@@ -5374,7 +5546,7 @@
     return c[id];
   }
   // Rhythmus: L1 - L2 - L1 - L3 - L2 - L4 - L3 ... (neue Lektion, dann die vorherige wiederholen)
-  var SEQ_KEY = "italienisch_lessons_seq";
+  var SEQ_KEY = "italienisch_lessons_seq2";
   function planIdx(p) { return p === 0 ? 0 : (p % 2 === 1 ? (p + 1) / 2 : p / 2 - 1); }
   function seqPos() {
     var p = lsGet(SEQ_KEY, null);
@@ -5392,9 +5564,22 @@
   // Welche Lektion ist laut Rhythmus als Naechstes dran? (-1 = nichts mehr)
   function targetIndex() {
     var t = planIdx(seqPos());
-    if (t < LESSONS.length) return t;
-    return nextIndex();
+    if (t >= LESSONS.length) t = nextIndex();
+    if (t !== -1 && !isDone(LESSONS[t].id) && !unlocked(t)) {
+      // Rhythmus nicht erfuellt: zuerst die Lektion wiederholen, die noch nicht 2x absolviert ist
+      for (var k = 0; k < LESSONS.length; k++) if (isDone(LESSONS[k].id) && countOf(LESSONS[k].id) < 2) return k;
+    }
+    return t;
   }
+  // Neue Lektion erst, wenn die davor erledigt ist und die Lektion davor 2x absolviert wurde (die zweite war die Wiederholung)
+  function unlocked(i) {
+    if (i === 0) return true;
+    if (countOf(LESSONS[i - 1].id) < 1) return false;
+    return i < 2 || countOf(LESSONS[i - 2].id) >= 2;
+  }
+  function focusOf(i) { return LESSONS[i].focus || []; }
+  function prevFocus(i) { for (var k = i - 1; k >= 0; k--) if ((LESSONS[k].focus || []).length) return LESSONS[k].focus; return []; }
+  function verbsFor(i) { var f = focusOf(i); return f.concat(prevFocus(i).filter(function (v) { return f.indexOf(v) < 0; })); }
   function nextIndex() { for (var i = 0; i < LESSONS.length; i++) if (!isDone(LESSONS[i].id)) return i; return -1; }
 
   // Titel ohne «- lerne …»-Zusatz; das Thema steht darunter in Orange
@@ -5409,12 +5594,10 @@
     view.innerHTML = "";
     var card = el("div", "ls-card");
     card.appendChild(el("h2", "", "Lektionen"));
-    var ni = targetIndex(), fi = nextIndex();
-    if (ni === -1) card.appendChild(el("p", "ls-sub", "Alle Lektionen sind geschafft. Mit dem nächsten Update kommen neue dazu. Du kannst jede Lektion beliebig wiederholen."));
-    else card.appendChild(el("p", "ls-sub", "Reihenfolge: neue Lektion, dann die vorherige wiederholen (L1 · L2 · L1 · L3 · L2 · L4 · L3 …)."));
+    var ni = targetIndex();
     var path = el("div", "ls-tl");
     LESSONS.forEach(function (ls, i) {
-      var done = isDone(ls.id), cur = i === ni, lock = !done && !cur && i !== fi;
+      var done = isDone(ls.id), cur = i === ni, lock = !done && !(cur && unlocked(i));
       var n = el(lock ? "div" : "button", "ls-row" + (done ? " done" : "") + (cur ? " next" : lock ? " lock" : "")); if (!lock) n.type = "button";
       var dw = el("span", "dw"); dw.appendChild(el("span", "dot", done ? (cur ? "↻" : "✓") : String(i + 1))); n.appendChild(dw);
       var tx = el("span", "tx"); tx.appendChild(el("span", "tt", headOf(ls)));
@@ -5435,7 +5618,7 @@
   function startLesson(i) {
     var tl = LESSONS[i].tasks.slice();
     // Jedes Verb der Lektion (kumulativ: neues Verb + alle frueheren) wird gleichmaessig verteilt komplett abgefragt
-    var vs = LESSONS[i].verbs || [], base = tl.length;
+    var vs = verbsFor(i), base = tl.length;
     vs.forEach(function (v, k) { tl.splice(Math.round(base * (k + 1) / (vs.length + 1)) + k, 0, K(v)); });
     S = { i: i, ls: LESSONS[i], tasks: tl, queue: [], total: 0, done: 0, firstOk: 0 };
     showIntro();
@@ -5456,20 +5639,25 @@
       ul.appendChild(li);
     });
     card.appendChild(ul);
-    var vlist = S.ls.verbs || [], newVerb = S.ls.noNew ? null : vlist[vlist.length - 1];
-    var vd = newVerb && verbData(newVerb);
-    if (vd) {
-      card.appendChild(el("h2", "", vlist.length > 1 ? "Neues Verb" : "Verb dieser Lektion"));
-      if (vlist.length > 1) card.appendChild(el("p", "ls-sub", "Dazu wiederholst du: " + vlist.slice(0, -1).join(", ")));
-      card.appendChild(el("div", "ls-gt", vd.inf + " (" + vd.de + ")"));
-      var vl = el("ul", "ls-intro");
-      vd.f.forEach(function (f, i) {
-        if (f === null) return;
-        var li = el("li"); var tx = el("span"); tx.appendChild(el("span", "it", PRON[i] + " " + f)); li.appendChild(tx);
-        if (canSpeak) { var vb = el("button", "ls-spk", "Hören"); vb.type = "button"; vb.addEventListener("click", function () { speak(f); }); li.appendChild(vb); }
-        vl.appendChild(li);
+    var fv = focusOf(S.i).filter(function (v) { return verbData(v); }), pv = prevFocus(S.i);
+    if (fv.length) {
+      card.appendChild(el("h2", "", fv.length > 1 ? "Neue Verben" : "Neues Verb"));
+      if (pv.length) card.appendChild(el("p", "ls-sub", "Dazu wiederholst du: " + pv.join(", ")));
+      fv.forEach(function (inf) {
+        var vd = verbData(inf);
+        card.appendChild(el("div", "ls-gt", vd.inf + " (" + vd.de + ")"));
+        var vl = el("ul", "ls-intro");
+        vd.f.forEach(function (f, i) {
+          if (f === null) return;
+          var li = el("li"); var tx = el("span"); tx.appendChild(el("span", "it", PRON[i] + " " + f)); li.appendChild(tx);
+          if (canSpeak) { var vb = el("button", "ls-spk", "Hören"); vb.type = "button"; vb.addEventListener("click", function () { speak(f); }); li.appendChild(vb); }
+          vl.appendChild(li);
+        });
+        card.appendChild(vl);
       });
-      card.appendChild(vl);
+    } else if (pv.length) {
+      card.appendChild(el("h2", "", "Verben zum Wiederholen"));
+      card.appendChild(el("p", "ls-sub", pv.join(", ")));
     }
     var topic = (window.italoGrammar || []).filter(function (t) { return t.id === S.ls.topic; })[0];
     if (topic) {
@@ -5495,6 +5683,8 @@
   }
 
   function nextTask() {
+    // Konjugationen ohne abzufragende Formen (ab dem 3. Mal alles richtig) entfallen
+    while (S.queue.length && S.queue[0].t === "conj" && !conjPersons(S.queue[0].inf).length) { S.queue.shift(); S.total = Math.max(1, S.total - 1); }
     if (!S.queue.length) return showSummary();
     var t = S.queue.shift(); S.cur = t;
     view.innerHTML = "";
@@ -5591,11 +5781,12 @@
       });
     } else if (t.t === "conj") {
       var vd2 = verbData(t.inf);
-      body.appendChild(el("div", "ls-hint", "Konjugiere im Präsens"));
+      var cst = conjStat(t.inf), persons = conjPersons(t.inf);
+      body.appendChild(el("div", "ls-hint", cst.n >= 2 ? "Konjugiere – nur die Formen, die noch nicht sitzen" : "Konjugiere im Präsens"));
       body.appendChild(el("div", "ls-q", vd2.inf + " (" + vd2.de + ")"));
       var grid2 = el("div", "ls-conj"), ins = [];
       vd2.f.forEach(function (f, i) {
-        if (f === null) return;
+        if (f === null || persons.indexOf(i) === -1) return;
         var row = el("label", "ls-crow"); row.appendChild(el("span", "ls-cl", PRON[i]));
         var inp2 = el("input", "ls-in"); inp2.type = "text"; inp2.autocomplete = "off"; inp2.setAttribute("autocapitalize", "off"); inp2.spellcheck = false;
         inp2._i = i; ins.push(inp2); row.appendChild(inp2); grid2.appendChild(row);
@@ -5613,8 +5804,13 @@
           var f = vd2.f[x._i];
           var good = norm(x.value) === norm(f) || (typeof window.italEqAny === "function" && window.italEqAny([x.value], [f]));
           x.disabled = true; x.classList.add(good ? "ok" : "bad"); if (!good) allOk = false;
+          var wi = cst.wrong.indexOf(x._i);
+          if (good && wi > -1) cst.wrong.splice(wi, 1);
+          if (!good && wi === -1) cst.wrong.push(x._i);
         });
-        var sol = vd2.f.filter(function (f) { return f !== null; }).join(" · ");
+        if (!t.retry) cst.n++;
+        conjSave(t.inf, cst);
+        var sol = ins.map(function (x) { return vd2.f[x._i]; }).join(" · ");
         if (allOk) finish(true, "Richtig!", null, null); else finish(false, "Nicht ganz.", "Richtig ist: " + sol, null);
       });
     } else if (t.t === "pairs") {
@@ -6234,10 +6430,19 @@
 })();
 </script>
 <style>
-/* Grammatik: fertig geuebter Block deutlich gruen */
-#gTopicBar .cat-btn.done:not(.active), #categoryBar .cat-btn.done:not(.active) { background: #e7f6ec !important; border-color: #2f9e5b !important; color: #166534 !important; }
-@media (prefers-color-scheme: dark) { #gTopicBar .cat-btn.done:not(.active), #categoryBar .cat-btn.done:not(.active) { background: #14352395 !important; border-color: #4ade80 !important; color: #86efac !important; } }
-:root[data-theme="dark"] #gTopicBar .cat-btn.done:not(.active), :root[data-theme="dark"] #categoryBar .cat-btn.done:not(.active), body.dark #gTopicBar .cat-btn.done:not(.active), body.dark #categoryBar .cat-btn.done:not(.active) { background: #14352395 !important; border-color: #4ade80 !important; color: #86efac !important; }
+/* Vokabeln + Grammatik: Farbe des Knopfs nach Anzahl ganz geuebter Durchgaenge: 1x dunkelrot, 2x rot, 3x gelb, 4x dunkelgruen, 5x+ hellgruen */
+#gTopicBar .cat-btn.done:not(.active), #categoryBar .cat-btn.done:not(.active) { border-color: transparent !important; color: #fff !important; }
+#gTopicBar .cat-btn.r1:not(.active), #categoryBar .cat-btn.r1:not(.active) { background: #7f1d1d !important; }
+#gTopicBar .cat-btn.r2:not(.active), #categoryBar .cat-btn.r2:not(.active) { background: #dc2626 !important; }
+#gTopicBar .cat-btn.r3:not(.active), #categoryBar .cat-btn.r3:not(.active) { background: #facc15 !important; color: #422006 !important; }
+#gTopicBar .cat-btn.r4:not(.active), #categoryBar .cat-btn.r4:not(.active) { background: #166534 !important; }
+#gTopicBar .cat-btn.r5:not(.active), #categoryBar .cat-btn.r5:not(.active) { background: #86efac !important; color: #14532d !important; }
+/* aktiver Knopf behaelt die Stufenfarbe als dicker Streifen unten */
+#gTopicBar .cat-btn.active.r1, #categoryBar .cat-btn.active.r1 { box-shadow: inset 0 -6px 0 #7f1d1d !important; }
+#gTopicBar .cat-btn.active.r2, #categoryBar .cat-btn.active.r2 { box-shadow: inset 0 -6px 0 #dc2626 !important; }
+#gTopicBar .cat-btn.active.r3, #categoryBar .cat-btn.active.r3 { box-shadow: inset 0 -6px 0 #facc15 !important; }
+#gTopicBar .cat-btn.active.r4, #categoryBar .cat-btn.active.r4 { box-shadow: inset 0 -6px 0 #166534 !important; }
+#gTopicBar .cat-btn.active.r5, #categoryBar .cat-btn.active.r5 { box-shadow: inset 0 -6px 0 #86efac !important; }
 </style>
 <!-- NAVMODERN END -->
 <!-- BEISPIELE START -->
