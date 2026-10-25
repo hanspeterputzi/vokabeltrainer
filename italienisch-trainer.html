@@ -822,7 +822,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-lektionen5";
-  const APP_VERSION = "2026-10-25-n"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-25-o"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -6340,6 +6340,15 @@
     inp.addEventListener("input", sync); sync();
 
     // Sprechen: erkanntes Wort kommt ins Suchfeld und wird direkt bei DeepL geoeffnet (Italienisch -> Deutsch bzw. Deutsch -> Italienisch)
+    // Loeschen-Kreuz im Suchfeld
+    var wrap = document.createElement("div"); wrap.id = "dictInWrap"; inp.parentNode.insertBefore(wrap, inp); wrap.appendChild(inp);
+    var clr = document.createElement("button"); clr.type = "button"; clr.id = "dictClear"; clr.setAttribute("aria-label", "Suchfeld leeren"); clr.textContent = "✕"; wrap.appendChild(clr);
+    var stc = document.createElement("style");
+    stc.textContent = "#dictInWrap{position:relative}#dictInWrap #dictIn{padding-right:42px}#dictClear{display:none;position:absolute;right:6px;top:50%;transform:translateY(-50%);width:30px;height:30px;padding:0;border:0;border-radius:50%;background:var(--k-bg,#eef1f5);color:var(--k-muted,#666);font-size:.9rem;line-height:1;box-shadow:none;cursor:pointer}#dictClear.on{display:block}";
+    document.head.appendChild(stc);
+    function clrSync() { clr.classList.toggle("on", !!inp.value); }
+    inp.addEventListener("input", clrSync); clrSync();
+    clr.addEventListener("click", function () { inp.value = ""; inp.dispatchEvent(new Event("input", { bubbles: true })); var m = document.querySelector("#dictMic .mm"); if (m) m.textContent = ""; inp.focus(); });
     var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     var mic = document.createElement("div"); mic.id = "dictMic";
     mic.innerHTML = "<button type='button' data-l='it-IT' data-s='it' data-t='de'>Sprechen: Italienisch</button><button type='button' data-l='de-DE' data-s='de' data-t='it'>Sprechen: Deutsch</button><div class='mm'></div>";
