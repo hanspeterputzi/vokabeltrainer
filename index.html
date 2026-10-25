@@ -820,7 +820,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-lektionen5";
-  const APP_VERSION = "2026-10-25-d"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-25-e"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1239,8 +1239,8 @@
       const count = name === "Alle" ? words.length : words.filter(w => w.cat === name).length;
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "cat-btn" + (name === selectedCategory ? " active" : "");
-      btn.textContent = name + " (" + count + ")";
+      btn.className = "cat-btn" + (name === selectedCategory ? " active" : "") + (rounds[name] ? " done" : "");
+      btn.textContent = name + " · " + (rounds[name] || 0) + "×";
       btn.addEventListener("click", () => selectCategory(name));
       categoryBar.appendChild(btn);
     });
@@ -1530,6 +1530,7 @@
         idx = 0;
         rounds[selectedCategory] = (rounds[selectedCategory] || 0) + 1;
         try { localStorage.setItem(ROUNDS_KEY, JSON.stringify(rounds)); } catch (e) {}
+        renderCategoryBar();
       }
     }
     if (!word) {
@@ -6210,9 +6211,9 @@
 </script>
 <style>
 /* Grammatik: fertig geuebter Block deutlich gruen */
-#gTopicBar .cat-btn.done:not(.active) { background: #e7f6ec !important; border-color: #2f9e5b !important; color: #166534 !important; }
-@media (prefers-color-scheme: dark) { #gTopicBar .cat-btn.done:not(.active) { background: #14352395 !important; border-color: #4ade80 !important; color: #86efac !important; } }
-:root[data-theme="dark"] #gTopicBar .cat-btn.done:not(.active), body.dark #gTopicBar .cat-btn.done:not(.active) { background: #14352395 !important; border-color: #4ade80 !important; color: #86efac !important; }
+#gTopicBar .cat-btn.done:not(.active), #categoryBar .cat-btn.done:not(.active) { background: #e7f6ec !important; border-color: #2f9e5b !important; color: #166534 !important; }
+@media (prefers-color-scheme: dark) { #gTopicBar .cat-btn.done:not(.active), #categoryBar .cat-btn.done:not(.active) { background: #14352395 !important; border-color: #4ade80 !important; color: #86efac !important; } }
+:root[data-theme="dark"] #gTopicBar .cat-btn.done:not(.active), :root[data-theme="dark"] #categoryBar .cat-btn.done:not(.active), body.dark #gTopicBar .cat-btn.done:not(.active), body.dark #categoryBar .cat-btn.done:not(.active) { background: #14352395 !important; border-color: #4ade80 !important; color: #86efac !important; }
 </style>
 <!-- NAVMODERN END -->
 <!-- BEISPIELE START -->
