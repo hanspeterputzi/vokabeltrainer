@@ -822,7 +822,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-lektionen5";
-  const APP_VERSION = "2026-10-25-o"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-25-p"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -6373,7 +6373,11 @@
         inp.value = got; inp.dispatchEvent(new Event("input", { bubbles: true }));
         var url = "https://www.deepl.com/translator#" + b.dataset.s + "/" + b.dataset.t + "/" + encodeURIComponent(got).replace(/%2F/g, "%5C%2F");
         mm.textContent = "Erkannt: «" + got + "»";
-        try { window.open(url, "_blank", "noopener"); } catch (x) {}
+        // automatisch zu DeepL: neuer Tab; blockiert der Browser das (kein Tippen), wechselt der gleiche Tab, Zurueck bringt dich in die App
+        setTimeout(function () {
+          var w = null; try { w = window.open(url, "_blank"); } catch (x) {}
+          if (!w) window.location.href = url;
+        }, 500);
       };
       try { rec.start(); } catch (x) { busy = false; b.classList.remove("listening"); mm.textContent = "Mikrofon konnte nicht gestartet werden."; }
     });
