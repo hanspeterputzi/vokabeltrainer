@@ -822,7 +822,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-lektionen5";
-  const APP_VERSION = "2026-10-25-m"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-25-n"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -6305,7 +6305,7 @@
     var row = document.createElement("div"); row.id = "dictDeepl";
     function open(src, tgt) {
       var t = inp.value.trim(); if (!t) return;
-      var url = "https://www.deepl.com/de/translator#auto/" + tgt + "/" + encodeURIComponent(t).replace(/%2F/g, "%5C%2F");
+      var url = "https://www.deepl.com/translator#" + src + "/" + tgt + "/" + encodeURIComponent(t).replace(/%2F/g, "%5C%2F");
       window.open(url, "_blank", "noopener");
     }
     // Eine Taste: Richtung folgt dem Umschalter IT → DE / DE → IT im Woerterbuch; Enter im Suchfeld loest dasselbe aus
@@ -6362,7 +6362,7 @@
         busy = false; b.classList.remove("listening");
         if (!got) { mm.textContent = err ? "Spracherkennung fehlgeschlagen (" + err + "). Bitte erneut versuchen." : "Nichts gehört. Bitte erneut versuchen."; return; }
         inp.value = got; inp.dispatchEvent(new Event("input", { bubbles: true }));
-        var url = "https://www.deepl.com/de/translator#auto/" + b.dataset.t + "/" + encodeURIComponent(got).replace(/%2F/g, "%5C%2F");
+        var url = "https://www.deepl.com/translator#" + b.dataset.s + "/" + b.dataset.t + "/" + encodeURIComponent(got).replace(/%2F/g, "%5C%2F");
         mm.textContent = "Erkannt: «" + got + "»";
         try { window.open(url, "_blank", "noopener"); } catch (x) {}
       };
