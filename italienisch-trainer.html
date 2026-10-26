@@ -695,8 +695,8 @@
   <h1>Ciao</h1>
   
   <div class="tabs">
-    <button class="tab-btn active" id="tabVocab" type="button">Vokabeln</button>
-    <button class="tab-btn" id="tabGrammar" type="button">Grammatik</button>
+    <button class="tab-btn active" id="tabVocab" type="button">Vocabolario</button>
+    <button class="tab-btn" id="tabGrammar" type="button">Grammatica</button>
   </div>
 
   <div id="vocabView">
@@ -822,7 +822,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-lektionen5";
-  const APP_VERSION = "2026-10-26-a"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-26-b"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3283,7 +3283,7 @@
     view.appendChild(listBox); view.appendChild(runBox);
     const wrap = document.querySelector(".wrap");
     wrap.appendChild(view);
-    const btn = $("button", "tab-btn", "Sprechen"); btn.type = "button"; btn.id = "tabTalk";
+    const btn = $("button", "tab-btn", "Parlare"); btn.type = "button"; btn.id = "tabTalk";
     document.querySelector(".tabs").appendChild(btn);
 
     // Zustand
@@ -4040,7 +4040,7 @@
       view.id = "dictView";
       view.style.display = "none";
       view.innerHTML =
-        "<div class='card'><h2>Wörterbuch</h2>" +
+        "<div class='card'><h2>Dizionario</h2>" +
         "<input type='text' id='dictIn' placeholder='Italienisch oder Deutsch suchen …' autocomplete='off' autocapitalize='off' spellcheck='false'>" +
         "<div class='category-bar' id='dictCats' style='margin-top:10px;'></div></div>" +
         "<div class='card'><h2><span id='dictTitle'>Alle Wörter</span> (<span id='dictCount'>0</span>)</h2><div id='dictList'></div></div>";
@@ -4059,7 +4059,7 @@
         "#dictList .dform{padding:2px 0}#dictList .dform b{display:inline-block;min-width:52px;font-weight:600;color:var(--muted,var(--ink-muted,#666))}";
       document.head.appendChild(st2);
       const btn = document.createElement("button");
-      btn.type = "button"; btn.className = "tab-btn"; btn.id = "tabDict"; btn.textContent = "Wörterbuch";
+      btn.type = "button"; btn.className = "tab-btn"; btn.id = "tabDict"; btn.textContent = "Dizionario";
       const tabsEl = document.querySelector(".tabs");
       tabsEl.appendChild(btn);
       const inp = view.querySelector("#dictIn"), catsEl = view.querySelector("#dictCats"), listEl = view.querySelector("#dictList");
@@ -4245,7 +4245,7 @@
   P.vol = '<path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>';
   var mb = document.getElementById("micBtn");
     var sp = document.getElementById("speakBtn");
-    var TI = { "Vokabeln": "book", "Grammatik": "cap", "Wörterbuch": "search", "Sprechen": "mic" };
+    var TI = { "Vocabolario": "book", "Grammatica": "cap", "Dizionario": "search", "Parlare": "mic" };
   $$(".tab-btn").forEach(function (b) {
     if (b.querySelector(".ti")) return;
     var t = b.textContent.trim();
@@ -5400,11 +5400,11 @@
     linking = false;
   });
   linkObs.observe(view, { childList: true, subtree: true });
-  var btn = el("button", "tab-btn", "Lektionen"); btn.type = "button"; btn.id = "tabLessons";
+  var btn = el("button", "tab-btn", "Lezioni"); btn.type = "button"; btn.id = "tabLessons";
   var tv = document.getElementById("tabVocab");
   if (tv && tv.nextSibling) tabs.insertBefore(btn, tv.nextSibling); else tabs.appendChild(btn);
 
-  var ORDER = ["Lektionen", "Sprechen", "Vokabeln", "Grammatik", "Wörterbuch"];
+  var ORDER = ["Lezioni", "Parlare", "Vocabolario", "Grammatica", "Dizionario"];
   function orderTabs() {
     var cur = Array.prototype.slice.call(tabs.querySelectorAll(".tab-btn"));
     var want = ORDER.map(function (n) { return cur.filter(function (b) { return b.textContent.trim() === n; })[0]; }).filter(Boolean);
@@ -5501,7 +5501,7 @@
   function showList() {
     view.innerHTML = "";
     var card = el("div", "ls-card");
-    card.appendChild(el("h2", "", "Lektionen"));
+    card.appendChild(el("h2", "", "Lezioni"));
     var ni = targetIndex();
     var path = el("div", "ls-tl");
     LESSONS.forEach(function (ls, i) {
@@ -5569,7 +5569,7 @@
     }
     var topic = (window.italoGrammar || []).filter(function (t) { return t.id === S.ls.topic; })[0];
     if (topic) {
-      card.appendChild(el("h2", "", "Grammatik"));
+      card.appendChild(el("h2", "", "Grammatica"));
       card.appendChild(el("div", "ls-gt", topic.title));
       var gbox = el("div", "explain ls-gram"); gbox.innerHTML = topic.explain;
       card.appendChild(gbox);
