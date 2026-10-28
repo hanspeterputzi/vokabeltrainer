@@ -822,7 +822,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-lektionen5";
-  const APP_VERSION = "2026-10-26-b"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-28-b"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -2805,13 +2805,13 @@
     const N = (it, de) => ({ w: "n", it, de });
     const M = (de, it, alts) => ({ w: "m", de, it, alts: alts || [] });
     return [
-      { id: "pa_kontrolle", group: "Postauto: Ticketkontrolle", icon: "🚌", title: "Normale Ticketkontrolle", setting: "Du bist Ticketkontrolleur im Postauto und kontrollierst einen Fahrgast (Lei-Form).",
+      { id: "pa_kontrolle", group: "Autopostale: controllo biglietti", icon: "🚌", title: "Controllo normale dei biglietti", setting: "Du bist Ticketkontrolleur im Postauto und kontrollierst einen Fahrgast (Lei-Form).",
         turns: [
           M("Begrüsse den Fahrgast, sag: Ticketkontrolle, und bitte um das Ticket.", "Buongiorno! Controllo biglietti. Mi mostri il suo biglietto, per favore.", ["Buongiorno! Controllo dei biglietti. Mi mostri il suo biglietto, per favore.", "Buongiorno, mi mostri il suo biglietto, per favore."]),
           N("Ecco il biglietto. Va bene?", "Hier ist das Ticket. Ist es in Ordnung?"),
           M("Sag: Ja, alles in Ordnung. Danke und gute Fahrt!", "Sì, è tutto a posto. Grazie e buon viaggio!", ["Sì, va bene. Grazie e buon viaggio!"])
         ] },
-      { id: "pa_ungueltig", group: "Postauto: Ticketkontrolle", icon: "🚌", title: "Ticket nicht gültig (falsche Strecke)", setting: "Das Ticket des Fahrgastes gilt nur bis Coira (Lei-Form).",
+      { id: "pa_ungueltig", group: "Autopostale: controllo biglietti", icon: "🚌", title: "Biglietto non valido (tratta sbagliata)", setting: "Das Ticket des Fahrgastes gilt nur bis Coira (Lei-Form).",
         turns: [
           N("Buongiorno. Ecco il mio biglietto.", "Guten Tag. Hier ist mein Ticket."),
           M("Sag: Es tut mir leid, dieses Ticket ist für diese Strecke nicht gültig.", "Mi dispiace, questo biglietto non è valido per questa tratta.", ["Questo biglietto non è valido per questa tratta.", "Mi dispiace, questo biglietto non è valido."]),
@@ -2822,7 +2822,7 @@
           N("Posso pagare con la carta?", "Kann ich mit Karte zahlen?"),
           M("Sag: Nein, ich kassiere nicht. Sie bekommen eine Rechnung.", "No, io non incasso. Riceverà una fattura.", ["No, non incasso io. Riceverà una fattura.", "Mi dispiace, io non incasso. Riceverà una fattura."])
         ] },
-      { id: "pa_keinticket", group: "Postauto: Ticketkontrolle", icon: "🚌", title: "Fahrgast ohne Ticket", setting: "Ein Fahrgast hat kein Ticket (Lei-Form).",
+      { id: "pa_keinticket", group: "Autopostale: controllo biglietti", icon: "🚌", title: "Passeggero senza biglietto", setting: "Ein Fahrgast hat kein Ticket (Lei-Form).",
         turns: [
           N("Buongiorno. Non ho il biglietto, mi dispiace.", "Guten Tag. Ich habe leider kein Ticket."),
           M("Frag, wo der Fahrgast eingestiegen ist.", "Dove è salito?", ["Da dove è salito?", "Dove è salita?"]),
@@ -2833,7 +2833,7 @@
           N("Va bene. Posso pagare adesso?", "Gut. Kann ich jetzt zahlen?"),
           M("Sag: Ich kassiere nicht. Sie bekommen eine Rechnung per Post.", "Non incasso io. Riceverà una fattura per posta.", ["Io non incasso. Riceverà una fattura per posta.", "Riceverà una fattura per posta."])
         ] },
-      { id: "pa_abo", group: "Postauto: Ticketkontrolle", icon: "🚌", title: "Abo und Ausweis", setting: "Ein Fahrgast hat ein Abonnement (Lei-Form).",
+      { id: "pa_abo", group: "Autopostale: controllo biglietti", icon: "🚌", title: "Abbonamento e documento", setting: "Ein Fahrgast hat ein Abonnement (Lei-Form).",
         turns: [
           N("Buongiorno. Ho un abbonamento.", "Guten Tag. Ich habe ein Abonnement."),
           M("Bitte um das Abonnement.", "Mi mostri l'abbonamento, per favore.", ["Posso vedere l'abbonamento, per favore?"]),
@@ -2842,7 +2842,7 @@
           N("Ecco la mia carta d'identità.", "Hier ist meine Identitätskarte."),
           M("Sag: Danke, alles in Ordnung. Gute Fahrt!", "Grazie, è tutto a posto. Buon viaggio!", ["Grazie, va bene. Buon viaggio!"])
         ] },
-      { id: "pa_handy", group: "Postauto: Ticketkontrolle", icon: "🚌", title: "Ticket auf dem Handy", setting: "Ein Fahrgast hat ein elektronisches Ticket (Lei-Form).",
+      { id: "pa_handy", group: "Autopostale: controllo biglietti", icon: "🚌", title: "Biglietto sul cellulare", setting: "Ein Fahrgast hat ein elektronisches Ticket (Lei-Form).",
         turns: [
           N("Ho il biglietto sul telefono.", "Ich habe das Ticket auf dem Handy."),
           M("Sag: Gut. Zeigen Sie mir bitte den Code.", "Va bene. Mi mostri il codice, per favore.", ["Mi mostri il codice, per favore.", "Può mostrarmi il codice?"]),
@@ -2851,7 +2851,7 @@
           N("Va bene?", "Ist es in Ordnung?"),
           M("Sag: Ja, das Ticket ist gültig. Danke!", "Sì, il biglietto è valido. Grazie!", ["Sì, è valido. Grazie!", "Sì, va bene. Grazie!"])
         ] },
-      { id: "pa_auskunft", group: "Postauto: Ticketkontrolle", icon: "🚌", title: "Auskunft für Fahrgäste", setting: "Ein Fahrgast fragt dich nach Fahrziel und Haltestelle (Lei-Form).",
+      { id: "pa_auskunft", group: "Autopostale: controllo biglietti", icon: "🚌", title: "Informazioni per i passeggeri", setting: "Ein Fahrgast fragt dich nach Fahrziel und Haltestelle (Lei-Form).",
         turns: [
           N("Scusi, questo autobus va a Coira?", "Entschuldigung, fährt dieser Bus nach Chur?"),
           M("Antworte: Ja, dieser Bus fährt nach Chur.", "Sì, questo autobus va a Coira.", ["Sì, va a Coira.", "Sì, è l'autobus per Coira."]),
@@ -2862,7 +2862,7 @@
           N("Grazie mille!", "Vielen Dank!"),
           M("Sag: Gern geschehen! Gute Fahrt!", "Prego! Buon viaggio!", ["Prego, buon viaggio!"])
         ] },
-      { id: "pa_streit", group: "Postauto: Ticketkontrolle", icon: "🚌", title: "Schwieriger Fahrgast (ruhig bleiben)", setting: "Ein Fahrgast ärgert sich über den Zuschlag (Lei-Form).",
+      { id: "pa_streit", group: "Autopostale: controllo biglietti", icon: "🚌", title: "Passeggero difficile (restare calmi)", setting: "Ein Fahrgast ärgert sich über den Zuschlag (Lei-Form).",
         turns: [
           N("Io non pago! Il biglietto non funziona!", "Ich zahle nicht! Das Ticket funktioniert nicht!"),
           M("Sag ruhig: Beruhigen Sie sich bitte. Ich verstehe das Problem.", "Si calmi, per favore. Capisco il problema.", ["Si calmi, per favore."]),
@@ -2873,7 +2873,7 @@
           N("Posso parlare con il suo capo?", "Kann ich mit Ihrem Chef sprechen?"),
           M("Sag: Natürlich. Sie können eine Beschwerde schreiben.", "Certo. Può scrivere un reclamo.", ["Certo, può fare un reclamo."])
         ] },
-      { id: "pi_erklaeren", group: "Postauto: Zuschlag melden (Inkasso)", icon: "📝", title: "Meldung ans Inkasso erklären", setting: "Du erklärst, dass du den Zuschlag nicht selbst kassierst, sondern meldest (Lei-Form).",
+      { id: "pi_erklaeren", group: "Autopostale: segnalare il supplemento (incasso)", icon: "📝", title: "Spiegare la segnalazione all'incasso", setting: "Du erklärst, dass du den Zuschlag nicht selbst kassierst, sondern meldest (Lei-Form).",
         turns: [
           N("Non ho il biglietto. Devo pagare adesso?", "Ich habe kein Ticket. Muss ich jetzt bezahlen?"),
           M("Erkläre: Ich kassiere nicht selbst. Ich mache eine Meldung ans Inkasso von PostAuto.", "Non incasso io. Faccio una segnalazione all'incasso di PostAuto.", ["Non incasso io il supplemento. Faccio una segnalazione all'incasso.", "Io non incasso. Faccio una segnalazione all'incasso di PostAuto."]),
@@ -2884,7 +2884,7 @@
           N("Ecco la mia carta d'identità.", "Hier ist meine Identitätskarte."),
           M("Sag: Danke. Ich notiere Ihre Daten.", "Grazie. Scrivo i suoi dati.", ["Grazie. Annoto i suoi dati.", "Grazie. Registro i suoi dati."])
         ] },
-      { id: "pi_name", group: "Postauto: Zuschlag melden (Inkasso)", icon: "📝", title: "Personalien: Name und Geburtsdatum", setting: "Du nimmst die Personalien eines Fahrgastes auf (Lei-Form).",
+      { id: "pi_name", group: "Autopostale: segnalare il supplemento (incasso)", icon: "📝", title: "Dati personali: nome e data di nascita", setting: "Du nimmst die Personalien eines Fahrgastes auf (Lei-Form).",
         turns: [
           M("Frag nach Familienname und Vorname.", "Qual è il suo cognome e il suo nome?", ["Il suo nome e cognome, per favore.", "Come si chiama? Cognome e nome, per favore."]),
           N("Mi chiamo Marco Rossi.", "Ich heisse Marco Rossi."),
@@ -2896,7 +2896,7 @@
           N("Sì, esatto.", "Ja, genau."),
           M("Bedanke dich.", "Grazie mille.", ["Grazie.", "Grazie, va bene."])
         ] },
-      { id: "pi_adresse", group: "Postauto: Zuschlag melden (Inkasso)", icon: "📝", title: "Personalien: Adresse und E-Mail", setting: "Du nimmst Adresse und E-Mail-Adresse für das Inkasso auf (Lei-Form).",
+      { id: "pi_adresse", group: "Autopostale: segnalare il supplemento (incasso)", icon: "📝", title: "Dati personali: indirizzo e e-mail", setting: "Du nimmst Adresse und E-Mail-Adresse für das Inkasso auf (Lei-Form).",
         turns: [
           M("Frag nach der Adresse.", "Qual è il suo indirizzo?", ["Mi dà il suo indirizzo, per favore?", "Qual è il suo indirizzo, per favore?"]),
           N("Abito in Via Roma 10, 7000 Coira.", "Ich wohne an der Via Roma 10, 7000 Chur."),
@@ -2908,7 +2908,7 @@
           N("Certo. Marco, punto, Rossi, chiocciola, gmail, punto, com.", "Natürlich. marco.rossi@gmail.com"),
           M("Sag: Danke, ich habe alles notiert.", "Grazie, ho scritto tutto.", ["Grazie, ho annotato tutto.", "Grazie, ho tutto."])
         ] },
-      { id: "pi_weigert", group: "Postauto: Zuschlag melden (Inkasso)", icon: "📝", title: "Fahrgast verweigert die Angaben", setting: "Der Fahrgast will seine Personalien nicht angeben (Lei-Form).",
+      { id: "pi_weigert", group: "Autopostale: segnalare il supplemento (incasso)", icon: "📝", title: "Il passeggero rifiuta i dati", setting: "Der Fahrgast will seine Personalien nicht angeben (Lei-Form).",
         turns: [
           N("Non voglio dare i miei dati!", "Ich will meine Daten nicht angeben!"),
           M("Bleib ruhig: Ich verstehe, aber ich brauche Ihre Daten.", "Capisco, ma ho bisogno dei suoi dati.", ["Capisco, ma mi servono i suoi dati."]),
@@ -2919,7 +2919,7 @@
           N("Va bene, va bene. Le do i miei dati.", "Gut, gut. Ich gebe Ihnen meine Daten."),
           M("Sag: Danke, das ist besser für Sie.", "Grazie, è meglio per lei.", ["Grazie, è meglio così."])
         ] },
-      { id: "pi_rechnung", group: "Postauto: Zuschlag melden (Inkasso)", icon: "📝", title: "Wann und wie bezahlen?", setting: "Der Fahrgast fragt nach der Rechnung (Lei-Form).",
+      { id: "pi_rechnung", group: "Autopostale: segnalare il supplemento (incasso)", icon: "📝", title: "Quando e come pagare?", setting: "Der Fahrgast fragt nach der Rechnung (Lei-Form).",
         turns: [
           N("Quando devo pagare?", "Wann muss ich bezahlen?"),
           M("Sag: Sie bekommen in den nächsten Tagen eine Rechnung.", "Riceverà una fattura nei prossimi giorni.", ["Riceverà la fattura nei prossimi giorni.", "Riceverà una fattura tra pochi giorni."]),
@@ -2930,7 +2930,7 @@
           N("Va bene, ho capito.", "Gut, ich habe verstanden."),
           M("Sag: Danke und gute Weiterfahrt.", "Grazie e buon proseguimento.", ["Grazie e buon viaggio."])
         ] },
-      { id: "vorstellen", icon: "👋", title: "Sich vorstellen", setting: "Du lernst Giulia auf einer Party kennen (du-Form).",
+      { id: "vorstellen", icon: "👋", title: "Presentarsi", setting: "Du lernst Giulia auf einer Party kennen (du-Form).",
         turns: [
           N("Ciao! Come ti chiami?", "Hallo! Wie heisst du?"),
           M("Sag, dass du Giovanni Pietro heisst.", "Mi chiamo Giovanni Pietro.", ["Sono Giovanni Pietro.", "Il mio nome è Giovanni Pietro.", "Mi chiamo Giovanni Pietro, piacere.", "Sono Giovanni Pietro, piacere."]),
@@ -2941,7 +2941,7 @@
           N("Io abito a Milano. Parli italiano molto bene!", "Ich wohne in Mailand. Du sprichst sehr gut Italienisch!"),
           M("Bedanke dich und sag, dass du nur ein bisschen sprichst.", "Grazie, ma parlo solo un po'.", ["Grazie, parlo solo un po' di italiano.", "Parlo solo un po'."])
         ] },
-      { id: "smalltalk", icon: "☀️", title: "Smalltalk", setting: "Du triffst einen Bekannten auf der Strasse (du-Form).",
+      { id: "smalltalk", icon: "☀️", title: "Due chiacchiere", setting: "Du triffst einen Bekannten auf der Strasse (du-Form).",
         turns: [
           N("Ciao Giovanni Pietro! Come stai?", "Hallo Giovanni Pietro! Wie geht es dir?"),
           M("Sag, dass es dir gut geht, und frag zurück.", "Sto bene, grazie. E tu?", ["Bene, grazie. E tu?"]),
@@ -2952,7 +2952,7 @@
           N("Che bello! Buon fine settimana!", "Wie schön! Schönes Wochenende!"),
           M("Bedanke dich und wünsche gleichfalls.", "Grazie, altrettanto!", ["Grazie, anche a te!"])
         ] },
-      { id: "bar", icon: "☕", title: "In der Bar", setting: "Du bestellst am Tresen (Lei-Form, höflich).",
+      { id: "bar", icon: "☕", title: "Al bar", setting: "Du bestellst am Tresen (Lei-Form, höflich).",
         turns: [
           N("Buongiorno! Cosa desidera?", "Guten Tag! Was möchten Sie?"),
           M("Bestelle einen Kaffee und ein Gipfeli.", "Un caffè e un cornetto, per favore.", ["Vorrei un caffè e un cornetto, per favore.", "Prendo un caffè e un cornetto, per favore.", "Vorrei prendere un caffè e un cornetto, per favore."]),
@@ -2963,7 +2963,7 @@
           N("Ecco a lei. Sono tre euro e cinquanta.", "Bitte schön. Das macht 3.50 Euro."),
           M("Bezahle und verabschiede dich.", "Ecco a lei. Grazie e arrivederci!", ["Ecco. Grazie, arrivederci!"])
         ] },
-      { id: "restaurant", icon: "🍝", title: "Im Restaurant", setting: "Du bist abends im Restaurant (Lei-Form).",
+      { id: "restaurant", icon: "🍝", title: "Al ristorante", setting: "Du bist abends im Restaurant (Lei-Form).",
         turns: [
           N("Buonasera! Avete prenotato?", "Guten Abend! Haben Sie reserviert?"),
           M("Frag, ob es einen Tisch für zwei gibt.", "Avete un tavolo per due, per favore?", ["Avete un tavolo per due persone?", "C'è un tavolo per due?"]),
@@ -2975,7 +2975,7 @@
           M("Lehne ab und bitte um die Rechnung.", "No, grazie. Il conto, per favore.", ["No, grazie. Il conto, per piacere."]),
           N("Subito!", "Sofort!")
         ] },
-      { id: "supermarkt", icon: "🛒", title: "Im Supermarkt", setting: "Du suchst Lebensmittel (Lei-Form).",
+      { id: "supermarkt", icon: "🛒", title: "Al supermercato", setting: "Du suchst Lebensmittel (Lei-Form).",
         turns: [
           N("Buongiorno! Posso aiutarla?", "Guten Tag! Kann ich Ihnen helfen?"),
           M("Sag, dass du Brot suchst, und frag, wo es ist.", "Sì, cerco il pane. Dov'è?", ["Sì, dov'è il pane, per favore?"]),
@@ -2986,7 +2986,7 @@
           N("Costa otto euro al chilo.", "Er kostet 8 Euro pro Kilo."),
           M("Sag, dass du ein halbes Kilo möchtest.", "Vorrei mezzo chilo, per favore.", ["Mezzo chilo, per favore.", "Ne vorrei mezzo chilo, per favore."])
         ] },
-      { id: "arbeit", icon: "💼", title: "Arbeit und Beruf", setting: "Du sprichst mit Paolo, einem neuen Kontakt (Lei-Form).",
+      { id: "arbeit", icon: "💼", title: "Lavoro e professione", setting: "Du sprichst mit Paolo, einem neuen Kontakt (Lei-Form).",
         turns: [
           N("Buongiorno! Piacere, sono Paolo. Che lavoro fa?", "Guten Tag! Freut mich, ich bin Paolo. Was arbeiten Sie?"),
           M("Sag, dass du in einer Bank in Chur arbeitest.", "Lavoro in una banca a Coira.", ["Lavoro in banca a Coira."]),
@@ -2997,7 +2997,7 @@
           N("Sì, lavoro dal lunedì al venerdì, e a volte anche il sabato.", "Ja, ich arbeite von Montag bis Freitag, manchmal auch am Samstag."),
           M("Sag: Ich verstehe. Viel Erfolg bei der Arbeit!", "Capisco. Buon lavoro!", ["Ho capito. Buon lavoro!"])
         ] },
-      { id: "lieferdienst", icon: "🍕", title: "Lieferdienst (Telefon)", setting: "Du bestellst telefonisch Pizza (Lei-Form).",
+      { id: "lieferdienst", icon: "🍕", title: "Consegna a domicilio (telefono)", setting: "Du bestellst telefonisch Pizza (Lei-Form).",
         turns: [
           N("Pizzeria Da Mario, buonasera!", "Pizzeria Da Mario, guten Abend!"),
           M("Sag, dass du zwei Pizzen bestellen möchtest.", "Buonasera. Vorrei ordinare due pizze, per favore.", ["Buonasera, vorrei due pizze, per favore.", "Vorrei due pizze, per favore.", "Vorrei prendere due pizze, per favore.", "Prendo due pizze, per favore.", "Prendo due pizze."]),
@@ -3010,7 +3010,7 @@
           N("Sono venticinque euro.", "Das sind 25 Euro."),
           M("Sag: Gut, danke, auf Wiedersehen.", "Va bene, grazie. Arrivederci!", ["Va bene, grazie, arrivederci!"])
         ] },
-      { id: "weg", icon: "🧭", title: "Nach dem Weg fragen", setting: "Du bist in der Stadt und suchst den Bahnhof (Lei-Form).",
+      { id: "weg", icon: "🧭", title: "Chiedere la strada", setting: "Du bist in der Stadt und suchst den Bahnhof (Lei-Form).",
         turns: [
           M("Frag höflich, wo der Bahnhof ist.", "Scusi, dov'è la stazione?", ["Scusi, dov'è la stazione, per favore?"]),
           N("Vada sempre dritto, poi giri a sinistra.", "Gehen Sie immer geradeaus, dann biegen Sie links ab."),
@@ -3019,7 +3019,7 @@
           M("Bedanke dich herzlich und wünsche einen schönen Tag.", "Grazie mille! Buona giornata!", ["Grazie mille, buona giornata!", "Grazie, buona giornata!"]),
           N("Prego, anche a lei!", "Gern geschehen, ebenfalls!")
         ] },
-      { id: "zug", icon: "🚆", title: "Zugticket kaufen", setting: "Du stehst am Bahnschalter (Lei-Form).",
+      { id: "zug", icon: "🚆", title: "Comprare un biglietto del treno", setting: "Du stehst am Bahnschalter (Lei-Form).",
         turns: [
           M("Bitte um ein Ticket nach Mailand.", "Buongiorno, un biglietto per Milano, per favore.", ["Vorrei un biglietto per Milano, per favore."]),
           N("Solo andata o andata e ritorno?", "Einfach oder hin und zurück?"),
@@ -3031,7 +3031,7 @@
           N("Dal binario tre. Buon viaggio!", "Von Gleis drei. Gute Reise!"),
           M("Bedanke dich und verabschiede dich.", "Grazie, arrivederci!", ["Grazie mille, arrivederci!"])
         ] },
-      { id: "hotel", icon: "🏨", title: "Im Hotel einchecken", setting: "Du kommst im Hotel an (Lei-Form).",
+      { id: "hotel", icon: "🏨", title: "Fare il check-in in albergo", setting: "Du kommst im Hotel an (Lei-Form).",
         turns: [
           N("Buonasera! Posso aiutarla?", "Guten Abend! Kann ich Ihnen helfen?"),
           M("Sag, dass du eine Reservierung auf den Namen Giovanni Pietro hast.", "Buonasera, ho una prenotazione a nome Giovanni Pietro.", ["Ho prenotato una camera a nome Giovanni Pietro.", "Ho una prenotazione. Mi chiamo Giovanni Pietro.", "Ho una prenotazione a nome di Giovanni Pietro.", "Buonasera, mi chiamo Giovanni Pietro. Ho una prenotazione.", "Ho una prenotazione a nome Giovanni Pietro."]),
@@ -3042,7 +3042,7 @@
           N("Sì, la password è sul tavolo. Ecco la chiave: camera dodici.", "Ja, das Passwort liegt auf dem Tisch. Hier ist der Schlüssel: Zimmer zwölf."),
           M("Bedanke dich herzlich.", "Grazie mille!", ["Grazie tante!", "Molte grazie!"])
         ] },
-      { id: "apotheke", icon: "💊", title: "In der Apotheke", setting: "Du fühlst dich krank (Lei-Form).",
+      { id: "apotheke", icon: "💊", title: "In farmacia", setting: "Du fühlst dich krank (Lei-Form).",
         turns: [
           N("Buongiorno, come posso aiutarla?", "Guten Tag, wie kann ich Ihnen helfen?"),
           M("Sag, dass du Kopfschmerzen und etwas Fieber hast.", "Ho mal di testa e un po' di febbre.", ["Ho mal di testa e la febbre.", "Ho mal di testa."]),
@@ -3053,7 +3053,7 @@
           N("Sono dodici euro.", "Das macht 12 Euro."),
           M("Bezahle und verabschiede dich.", "Ecco. Grazie e arrivederci!", ["Ecco. Grazie, arrivederci!"])
         ] },
-      { id: "termin", icon: "✂️", title: "Termin telefonisch vereinbaren", setting: "Du rufst beim Friseur an (Lei-Form).",
+      { id: "termin", icon: "✂️", title: "Prendere un appuntamento al telefono", setting: "Du rufst beim Friseur an (Lei-Form).",
         turns: [
           N("Salone Bella, buongiorno!", "Salon Bella, guten Tag!"),
           M("Sag, dass du einen Termin für morgen möchtest.", "Buongiorno, vorrei un appuntamento per domani.", ["Vorrei prenotare un appuntamento per domani.", "Vorrei un appuntamento per domani."]),
@@ -3064,7 +3064,7 @@
           N("Perfetto, Giovanni Pietro. A domani!", "Perfekt, Giovanni Pietro. Bis morgen!"),
           M("Bedanke dich und sag: Bis morgen.", "A domani, grazie!", ["Grazie, a domani!", "Grazie, arrivederci!"])
         ] },
-      { id: "kleidung", icon: "🧥", title: "Kleidung kaufen", setting: "Du suchst in einem Geschäft eine Jacke (Lei-Form).",
+      { id: "kleidung", icon: "🧥", title: "Comprare vestiti", setting: "Du suchst in einem Geschäft eine Jacke (Lei-Form).",
         turns: [
           N("Buongiorno! Cerca qualcosa?", "Guten Tag! Suchen Sie etwas?"),
           M("Sag, dass du eine schwarze Jacke suchst.", "Sì, cerco una giacca nera.", ["Cerco una giacca nera."]),
@@ -3075,7 +3075,7 @@
           N("Certo, il camerino è là.", "Natürlich, die Umkleidekabine ist dort."),
           M("Sag: Sie gefällt mir! Ich nehme sie.", "Mi piace! La prendo.", ["Mi piace, la prendo.", "La prendo, grazie."])
         ] },
-      { id: "taxi", icon: "🚕", title: "Im Taxi", setting: "Du fährst mit dem Taxi zum Bahnhof (Lei-Form).",
+      { id: "taxi", icon: "🚕", title: "In taxi", setting: "Du fährst mit dem Taxi zum Bahnhof (Lei-Form).",
         turns: [
           M("Sag, dass du zum Bahnhof möchtest.", "Buonasera, vorrei andare alla stazione, per favore.", ["Alla stazione, per favore.", "Alla stazione, grazie."]),
           N("Certo, salga pure! Ha dei bagagli?", "Natürlich, steigen Sie ein! Haben Sie Gepäck?"),
@@ -3085,7 +3085,7 @@
           N("Circa quindici euro.", "Etwa 15 Euro."),
           M("Sag: Gut, danke.", "Va bene, grazie.", ["Va bene, grazie mille."])
         ] },
-      { id: "nichtverstanden", icon: "🙋", title: "Wenn du nichts verstehst", setting: "Du sprichst mit Marco. Er redet schnell (du-Form).",
+      { id: "nichtverstanden", icon: "🙋", title: "Quando non capisci", setting: "Du sprichst mit Marco. Er redet schnell (du-Form).",
         turns: [
           N("Allora, domani andiamo al mercato alle nove, va bene?", "Also, morgen gehen wir um neun auf den Markt, einverstanden?"),
           M("Sag: Entschuldige, ich habe nicht verstanden. Kannst du wiederholen?", "Scusa, non ho capito. Puoi ripetere, per favore?", ["Scusa, puoi ripetere?", "Non ho capito. Puoi ripetere, per favore?"]),
@@ -3094,7 +3094,7 @@
           N("Certo, scusa. Domani. Alle nove. Al mercato.", "Klar, entschuldige. Morgen. Um neun. Auf den Markt."),
           M("Sag: Ah, ich habe verstanden! Gut, bis morgen!", "Ah, ho capito! Va bene, a domani!", ["Ho capito! A domani!", "Ho capito, va bene."])
         ] },
-      { id: "bank", icon: "🏦", title: "Bank: Geld wechseln", setting: "Du wechselst Franken in Euro (Lei-Form).",
+      { id: "bank", icon: "🏦", title: "In banca: cambiare denaro", setting: "Du wechselst Franken in Euro (Lei-Form).",
         turns: [
           N("Buongiorno! Come posso aiutarla?", "Guten Tag! Wie kann ich Ihnen helfen?"),
           M("Sag, dass du hundert Franken in Euro wechseln möchtest.", "Vorrei cambiare cento franchi in euro, per favore.", ["Vorrei cambiare cento franchi in euro."]),
@@ -3105,7 +3105,7 @@
           N("No, non c'è nessuna commissione.", "Nein, es gibt keine Gebühr."),
           M("Bedanke dich herzlich.", "Perfetto, grazie mille!", ["Grazie mille!"])
         ] },
-      { id: "handy", icon: "📱", title: "Handy: SIM-Karte kaufen", setting: "Du kaufst eine SIM-Karte (Lei-Form).",
+      { id: "handy", icon: "📱", title: "Cellulare: comprare una SIM", setting: "Du kaufst eine SIM-Karte (Lei-Form).",
         turns: [
           N("Buongiorno! Cosa desidera?", "Guten Tag! Was wünschen Sie?"),
           M("Sag, dass du eine italienische SIM-Karte möchtest.", "Vorrei una SIM italiana, per favore.", ["Vorrei una carta SIM, per favore."]),
@@ -3116,7 +3116,7 @@
           N("Sì, certo. Funziona in tutta Europa.", "Ja, natürlich. Sie funktioniert in ganz Europa."),
           M("Frag, ob sie auch in der Schweiz funktioniert.", "Funziona anche in Svizzera?", ["Funziona in Svizzera?"])
         ] },
-      { id: "verabreden", icon: "🥂", title: "Jemanden einladen", setting: "Du lädst Giulia zum Abendessen ein (du-Form).",
+      { id: "verabreden", icon: "🥂", title: "Invitare qualcuno", setting: "Du lädst Giulia zum Abendessen ein (du-Form).",
         turns: [
           M("Frag Giulia, ob sie Samstagabend frei ist.", "Ciao Giulia! Sei libera sabato sera?", ["Ciao! Sei libera sabato sera?"]),
           N("Sì, perché?", "Ja, warum?"),
@@ -3128,7 +3128,7 @@
           N("Va bene, a sabato!", "Gut, bis Samstag!"),
           M("Verabschiede dich: Bis Samstag!", "A sabato, ciao!", ["Ciao, a sabato!"])
         ] },
-      { id: "reklamation", icon: "😕", title: "Reklamation im Restaurant", setting: "Du bekommst das falsche Essen (Lei-Form).",
+      { id: "reklamation", icon: "😕", title: "Reclamo al ristorante", setting: "Du bekommst das falsche Essen (Lei-Form).",
         turns: [
           N("Ecco a lei! Buon appetito!", "Bitte schön! Guten Appetit!"),
           M("Sag höflich: Entschuldigung, das ist nicht meine Pizza.", "Scusi, questa non è la mia pizza.", ["Scusi, non è la mia pizza.", "Scusi, questa non è la pizza che ho ordinato."]),
@@ -3137,7 +3137,7 @@
           N("Subito! Mi scusi ancora!", "Sofort! Entschuldigen Sie nochmals!"),
           M("Sag: Kein Problem, danke.", "Non c'è problema, grazie.", ["Nessun problema, grazie."])
         ] },
-      { id: "post", icon: "📦", title: "Auf der Post: Paket senden", setting: "Du schickst ein Paket in die Schweiz (Lei-Form).",
+      { id: "post", icon: "📦", title: "Alla posta: spedire un pacco", setting: "Du schickst ein Paket in die Schweiz (Lei-Form).",
         turns: [
           N("Buongiorno, desidera?", "Guten Tag, was wünschen Sie?"),
           M("Sag, dass du ein Paket in die Schweiz schicken möchtest.", "Vorrei spedire un pacco in Svizzera.", ["Vorrei mandare un pacco in Svizzera."]),
@@ -3148,7 +3148,7 @@
           N("Tra cinque giorni.", "In fünf Tagen."),
           M("Sag: Gut. Hier sind die zwanzig Euro.", "Va bene. Ecco i venti euro.", ["Va bene, ecco venti euro.", "Ecco a lei."])
         ] },
-      { id: "hobby", icon: "⚽", title: "Sport und Hobbys", setting: "Du sprichst mit Giulia über die Freizeit (du-Form).",
+      { id: "hobby", icon: "⚽", title: "Sport e hobby", setting: "Du sprichst mit Giulia über die Freizeit (du-Form).",
         turns: [
           N("Ciao Giovanni Pietro! Che cosa fai nel tempo libero?", "Hallo Giovanni Pietro! Was machst du in deiner Freizeit?"),
           M("Sag: Ich spiele Fussball und fahre Velo.", "Gioco a calcio e vado in bicicletta.", ["Gioco a calcio e vado in bici."]),
@@ -3294,11 +3294,11 @@
       const sc = loadScores();
       const cnt = loadCounts();
       listBox.innerHTML = "";
-      listBox.appendChild($("h2", "", "Sprechen – Dialoge"));
+      listBox.appendChild($("h2", "", "Parlare – Dialoghi"));
       if (!SR) listBox.appendChild($("p", "tk-sub", "Hinweis: Dieser Browser kann dein Sprechen nicht erkennen (z. B. im Artifact oder Home-Bildschirm-Icon). Du kannst die Antworten eintippen. Zum Sprechen: die Seite als normalen Safari-/Chrome-Tab öffnen."));
       const groups = [];
       TALK_DIALOGS.forEach(d => {
-        const g = d.group || "Alltag";
+        const g = d.group || "Vita quotidiana";
         let G = groups.find(x => x.name === g);
         if (!G) { G = { name: g, items: [] }; groups.push(G); }
         G.items.push(d);
@@ -5400,11 +5400,11 @@
     linking = false;
   });
   linkObs.observe(view, { childList: true, subtree: true });
-  var btn = el("button", "tab-btn", "Lezioni"); btn.type = "button"; btn.id = "tabLessons";
+  var btn = el("button", "tab-btn", "Lektionen"); btn.type = "button"; btn.id = "tabLessons";
   var tv = document.getElementById("tabVocab");
   if (tv && tv.nextSibling) tabs.insertBefore(btn, tv.nextSibling); else tabs.appendChild(btn);
 
-  var ORDER = ["Lezioni", "Parlare", "Vocabolario", "Grammatica", "Dizionario"];
+  var ORDER = ["Lektionen", "Sprechen", "Vokabeln", "Grammatik", "Wörterbuch"];
   function orderTabs() {
     var cur = Array.prototype.slice.call(tabs.querySelectorAll(".tab-btn"));
     var want = ORDER.map(function (n) { return cur.filter(function (b) { return b.textContent.trim() === n; })[0]; }).filter(Boolean);
@@ -5491,8 +5491,10 @@
   function nextIndex() { for (var i = 0; i < LESSONS.length; i++) if (!isDone(LESSONS[i].id)) return i; return -1; }
 
   // Titel ohne «- lerne …»-Zusatz; das Thema steht darunter in Orange
-  function headOf(ls) { return String(ls.title).replace(/\s+-\s+.*$/, ""); }
+  var LS_IT = {"aussprache": ["Al caffè", "Pronuncia"], "satzbau": ["Età + famiglia", "Struttura della frase"], "vorstellen": ["Presentarsi", "Pronomi soggetto"], "regelmaessig": ["Giornata tipo", "Verbi regolari"], "isc": ["Preferenze + comprensione", "Verbi regolari con particolarità 1"], "reg_unreg": ["Tempo libero + cibo", "Verbi regolari con particolarità 2"], "unregelmaessig": ["Quotidiano + progetti", "Verbi irregolari"], "piacere": ["Preferenze + luoghi", "Piacere e esserci"], "geschlecht": ["Professione + lavoro", "Nomi – genere"], "plural": ["Tempo + giorni", "Nomi – plurale"], "unbestimmt": ["In albergo", "Articolo indeterminativo"], "bestimmt": ["Paesi + tempo", "Articolo determinativo"], "verneinung": ["Appuntamento + disdetta", "Negazione"], "questo": ["Abbigliamento + persone", "Questo"], "fragen": ["Domande + risposte", "Parole interrogative"], "wohnen": ["Abitare + cibo", "Articolo partitivo"], "adjektive": ["Città + monumenti", "Aggettivi – basi"], "orte": ["Che cosa c'è?", "Vocabolario e verbi"], "fussball": ["Calcio", "Vocabolario e verbi"], "arzt": ["Dal medico", "Vocabolario e verbi"], "bahnhof": ["In stazione", "Vocabolario e verbi"], "wetter": ["Tempo + stagioni", "Vocabolario e verbi"], "geburtstag": ["Compleanno + feste", "Vocabolario e verbi"]};
+  function headOf(ls) { return LS_IT[ls.id] ? LS_IT[ls.id][0] : String(ls.title).replace(/\s+-\s+.*$/, ""); }
   function tagOf(ls) {
+    if (LS_IT[ls.id]) return LS_IT[ls.id][1];
     var m = /«(.+)»/.exec(ls.sub || ""); if (m) return m[1];
     var t = /\s+-\s+(.*)$/.exec(ls.title || ""); return t ? t[1] : "";
   }
@@ -5536,7 +5538,7 @@
     var card = el("div", "ls-card");
     var top = el("div", "ls-top");
     var x = el("button", "ls-x", "✕"); x.type = "button"; x.addEventListener("click", showList);
-    top.appendChild(x); top.appendChild(el("h2", "", "Lektion " + (S.i + 1) + " · " + headOf(S.ls)));
+    top.appendChild(x); top.appendChild(el("h2", "", "Lezione " + (S.i + 1) + " · " + headOf(S.ls)));
     card.appendChild(top);
     var ul = el("ul", "ls-intro");
     S.ls.words.forEach(function (w) {
@@ -5549,7 +5551,7 @@
     card.appendChild(ul);
     var fv = focusOf(S.i).filter(function (v) { return verbData(v); }), pv = prevFocus(S.i);
     if (fv.length) {
-      card.appendChild(el("h2", "", fv.length > 1 ? "Neue Verben" : "Neues Verb"));
+      card.appendChild(el("h2", "", fv.length > 1 ? "Nuovi verbi" : "Nuovo verbo"));
       if (pv.length) card.appendChild(el("p", "ls-sub", "Dazu wiederholst du: " + pv.join(", ")));
       fv.forEach(function (inf) {
         var vd = verbData(inf);
@@ -5564,13 +5566,13 @@
         card.appendChild(vl);
       });
     } else if (pv.length) {
-      card.appendChild(el("h2", "", "Verben zum Wiederholen"));
+      card.appendChild(el("h2", "", "Verbi da ripassare"));
       card.appendChild(el("p", "ls-sub", pv.join(", ")));
     }
     var topic = (window.italoGrammar || []).filter(function (t) { return t.id === S.ls.topic; })[0];
     if (topic) {
       card.appendChild(el("h2", "", "Grammatica"));
-      card.appendChild(el("div", "ls-gt", topic.title));
+      card.appendChild(el("div", "ls-gt", LS_IT[S.ls.id] ? LS_IT[S.ls.id][1] : topic.title));
       var gbox = el("div", "explain ls-gram"); gbox.innerHTML = topic.explain;
       card.appendChild(gbox);
     }
@@ -5794,14 +5796,14 @@
     fanfare(); confetti();
     view.innerHTML = "";
     var card = el("div", "ls-card"); card.style.textAlign = "center";
-    card.appendChild(el("h2", "", "Lektion " + (S.i + 1) + " geschafft"));
+    card.appendChild(el("h2", "", "Lezione " + (S.i + 1) + " completata"));
     card.appendChild(el("div", "ls-big", "Gut gemacht!"));
     card.appendChild(el("p", "ls-sub", S.firstOk + " von " + S.tasks.length + " Aufgaben der ersten Runde gleich beim ersten Mal richtig. Danach hast du alles nochmals wiederholt."));
     card.appendChild(el("div", "ls-times", "Diese Lektion hast du " + times + (times === 1 ? " Mal" : " Mal") + " geübt."));
     var ni = targetIndex();
     if (ni !== -1 && !isDone(LESSONS[ni].id) && LESSONS[ni].nw) {
       var box = el("div", "ls-nw");
-      box.appendChild(el("h2", "", "Neue Wörter in der nächsten Lektion"));
+      box.appendChild(el("h2", "", "Parole nuove nella prossima lezione"));
       var nl = el("ul", "ls-intro");
       LESSONS[ni].nw.forEach(function (w) {
         var li = el("li"); var tx = el("span");
@@ -6266,8 +6268,8 @@
         bar = el("div", "tk-gb"); bar.appendChild(document.createElement("i")); g.parentNode.insertBefore(bar, g);
       }
       if (gh && bar) {
-        var hh = gh.querySelector("h2"); if (hh && /^Postauto:\s/.test(hh.textContent)) hh.textContent = hh.textContent.replace(/^Postauto:\s*/, "Postauto - ");
-        gh.querySelector(".n").textContent = nd + " von " + tops.length;
+        var hh = gh.querySelector("h2"); if (hh && /^Autopostale:\s/.test(hh.textContent)) hh.textContent = hh.textContent.replace(/^Autopostale:\s*/, "Autopostale - ");
+        gh.querySelector(".n").textContent = nd + " di " + tops.length;
         bar.firstChild.style.width = Math.round(100 * nd / Math.max(1, tops.length)) + "%";
       }
     });
