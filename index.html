@@ -822,7 +822,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-lektionen5";
-  const APP_VERSION = "2026-10-28-c"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-28-d"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -5404,11 +5404,11 @@
     linking = false;
   });
   linkObs.observe(view, { childList: true, subtree: true });
-  var btn = el("button", "tab-btn", "Lektionen"); btn.type = "button"; btn.id = "tabLessons";
+  var btn = el("button", "tab-btn", "Lezioni"); btn.type = "button"; btn.id = "tabLessons";
   var tv = document.getElementById("tabVocab");
   if (tv && tv.nextSibling) tabs.insertBefore(btn, tv.nextSibling); else tabs.appendChild(btn);
 
-  var ORDER = ["Lektionen", "Sprechen", "Vokabeln", "Grammatik", "Wörterbuch"];
+  var ORDER = ["Lezioni", "Parlare", "Vocabolario", "Grammatica", "Dizionario"];
   function orderTabs() {
     var cur = Array.prototype.slice.call(tabs.querySelectorAll(".tab-btn"));
     var want = ORDER.map(function (n) { return cur.filter(function (b) { return b.textContent.trim() === n; })[0]; }).filter(Boolean);
@@ -5497,7 +5497,6 @@
   // Titel ohne «- lerne …»-Zusatz; das Thema steht darunter in Orange
   var LS_IT = {"aussprache": ["Al caffè", "Pronuncia"], "satzbau": ["Età + famiglia", "Struttura della frase"], "vorstellen": ["Presentarsi", "Pronomi soggetto"], "regelmaessig": ["Giornata tipo", "Verbi regolari"], "isc": ["Preferenze + comprensione", "Verbi regolari con particolarità 1"], "reg_unreg": ["Tempo libero + cibo", "Verbi regolari con particolarità 2"], "unregelmaessig": ["Quotidiano + progetti", "Verbi irregolari"], "piacere": ["Preferenze + luoghi", "Piacere e esserci"], "geschlecht": ["Professione + lavoro", "Nomi – genere"], "plural": ["Tempo + giorni", "Nomi – plurale"], "unbestimmt": ["In albergo", "Articolo indeterminativo"], "bestimmt": ["Paesi + tempo", "Articolo determinativo"], "verneinung": ["Appuntamento + disdetta", "Negazione"], "questo": ["Abbigliamento + persone", "Questo"], "fragen": ["Domande + risposte", "Parole interrogative"], "wohnen": ["Abitare + cibo", "Articolo partitivo"], "adjektive": ["Città + monumenti", "Aggettivi – basi"], "orte": ["Che cosa c'è?", "Vocabolario e verbi"], "fussball": ["Calcio", "Vocabolario e verbi"], "arzt": ["Dal medico", "Vocabolario e verbi"], "bahnhof": ["In stazione", "Vocabolario e verbi"], "wetter": ["Tempo + stagioni", "Vocabolario e verbi"], "geburtstag": ["Compleanno + feste", "Vocabolario e verbi"]};
   function headDe(ls) { return String(ls.title).replace(/\s+-\s+.*$/, ""); }
-  function tagDe(ls) { var m = /«(.+)»/.exec(ls.sub || ""); if (m) return m[1]; var t = /\s+-\s+(.*)$/.exec(ls.title || ""); return t ? t[1] : ""; }
   function headOf(ls) { return LS_IT[ls.id] ? LS_IT[ls.id][0] : String(ls.title).replace(/\s+-\s+.*$/, ""); }
   function tagOf(ls) {
     if (LS_IT[ls.id]) return LS_IT[ls.id][1];
