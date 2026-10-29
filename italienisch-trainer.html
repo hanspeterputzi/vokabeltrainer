@@ -822,7 +822,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-24-lektionen5";
-  const APP_VERSION = "2026-10-29-e"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-29-f"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4138,7 +4138,11 @@
         "#dictList details{margin-top:4px;font-size:14px}#dictList summary{cursor:pointer;color:var(--accent,var(--orange,#ea580c))}" +
         "#dictDir{display:flex;gap:6px;margin-top:10px}#dictDir button{flex:1;font-size:13px;font-weight:600;padding:9px 6px;border-radius:12px;border:1px solid var(--border,var(--line,#ccc));background:transparent;color:var(--text,var(--ink,#1b2430));cursor:pointer}" +
         "#dictDir button.active{background:var(--accent,var(--blue,#2563eb));border-color:transparent;color:#fff}" +
-        "#dictList .dform{padding:2px 0}#dictList .dform b{display:inline-block;min-width:52px;font-weight:600;color:var(--muted,var(--ink-muted,#666))}";
+        "#dictList .dform{padding:2px 0}#dictList .dform b{display:inline-block;min-width:52px;font-weight:600;color:var(--muted,var(--ink-muted,#666))}" +
+        "#dictList .dspk{float:right;margin:0 0 4px 8px;width:36px;height:36px;padding:0;border-radius:50%;border:1px solid var(--border,var(--line,#ccc));background:var(--bg,#f5f7fa);color:var(--accent,var(--blue,#2563eb));display:inline-flex;align-items:center;justify-content:center;cursor:pointer}" +
+        "#dictList .dspk svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}" +
+        "#dictList .dspk.on{background:var(--accent,var(--blue,#2563eb));color:#fff;border-color:transparent}" +
+        "#dictList .dw::after{content:'';display:block;clear:both}";
       document.head.appendChild(st2);
       const btn = document.createElement("button");
       btn.type = "button"; btn.className = "tab-btn"; btn.id = "tabDict"; btn.textContent = "Dizionario";
@@ -4200,9 +4204,26 @@
         const rows = v.f.map((f, i) => f === null ? "" : "<div class='dform'><b>" + CONJ_PRON[i] + "</b> " + escapeHtml(f) + "</div>").join("");
         return "<details><summary>Formen (Präsens)</summary>" + rows + "</details>";
       }
+      const canSpeakDict = "speechSynthesis" in window;
+      function speakDict(text, el) {
+        try {
+          const ss = window.speechSynthesis; ss.cancel();
+          const u = new SpeechSynthesisUtterance(text); u.lang = "it-IT"; u.rate = 0.85;
+          const vs = ss.getVoices().filter(v => v.lang && v.lang.toLowerCase().replace("_", "-").startsWith("it"));
+          const v = vs.find(x => x.localService) || vs[0]; if (v) u.voice = v;
+          listEl.querySelectorAll(".dspk.on").forEach(x => x.classList.remove("on"));
+          el.classList.add("on");
+          u.onend = u.onerror = () => el.classList.remove("on");
+          ss.speak(u);
+        } catch (e) { el.classList.remove("on"); }
+      }
+      listEl.addEventListener("click", e => {
+        const b = e.target.closest(".dspk"); if (b) speakDict(b.dataset.s, b);
+      });
       function entryHtml(w, note) {
         const head = ddir === "de" ? w.de : w.it, val = ddir === "de" ? w.it : w.de;
-        return "<div class='dw'><span class='dit'>" + escapeHtml(head) + "</span> = <span class='dde'>" + escapeHtml(val) + "</span>" +
+        const spk = String(w.it).replace(/\([^)]*\)/g, "").replace(/\s*[\/;]\s*/g, ", ").replace(/[…]/g, "").replace(/\s{2,}/g, " ").trim();
+        return "<div class='dw'>" + (canSpeakDict ? "<button type='button' class='dspk' data-s='" + escapeHtml(spk) + "' aria-label='Aussprache anhören'><svg viewBox='0 0 24 24'><path d='M11 5 6 9H3v6h3l5 4z'/><path d='M15.5 8.5a5 5 0 0 1 0 7'/><path d='M18.5 5.5a9 9 0 0 1 0 13'/></svg></button>" : "") + "<span class='dit'>" + escapeHtml(head) + "</span> = <span class='dde'>" + escapeHtml(val) + "</span>" +
           (w.cat ? "<span class='dtag'>" + escapeHtml(w.cat) + "</span>" : "") +
           (note ? "<span class='dnote'>" + escapeHtml(note) + "</span>" : "") + (w._multi ? "" : formsHtml(w)) + "</div>";
       }
