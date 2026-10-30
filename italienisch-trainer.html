@@ -822,7 +822,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-30-zahlen";
-  const APP_VERSION = "2026-10-30-f"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-30-g"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1422,11 +1422,12 @@
     const list = words.filter(w => w.cat === selectedCategory);
     return selectedCategory === "Zahlen" ? mixedOrder(list.filter(zahlAbfrage), rounds["Zahlen"] || 0) : list;
   }
-  // Zahlen-Abfrage: 0-20, alle Zehner bis 100 und je Zehnergruppe eine Zahl auf -1 und eine auf -8 (uno/otto: Endvokal faellt weg)
+  // Zahlen-Abfrage: 0-20, alle Zehner bis 100 und sechs Zahlen auf -1/-8 (uno/otto: Endvokal faellt weg)
+  const ZAHL_EINZELN = [21, 38, 51, 68, 81, 98];
   function zahlAbfrage(w) {
     const n = /^\d+$/.test(w.de) ? parseInt(w.de, 10) : -1;
     if (n < 0) return false;
-    return n <= 20 || (n <= 100 && (n % 10 === 0 || n % 10 === 1 || n % 10 === 8));
+    return n <= 20 || (n <= 100 && n % 10 === 0) || ZAHL_EINZELN.indexOf(n) >= 0;
   }
   // Zahlen gemischt abfragen: feste Zufallsreihenfolge je Durchgang (bleibt bei jedem Aufruf gleich, neuer Durchgang = neue Reihenfolge)
   function mixedOrder(list, seed) {
