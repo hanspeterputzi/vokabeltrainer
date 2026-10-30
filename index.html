@@ -822,7 +822,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-30-praep";
-  const APP_VERSION = "2026-10-30-d"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-30-e"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1419,7 +1419,13 @@
   function activePool() {
     if (selectedCategory === TODAY_CAT) return todayList;
     if (selectedCategory === "Alle") return words;
-    return words.filter(w => w.cat === selectedCategory);
+    const list = words.filter(w => w.cat === selectedCategory);
+    return selectedCategory === "Zahlen" ? mixedOrder(list, rounds["Zahlen"] || 0) : list;
+  }
+  // Zahlen gemischt abfragen: feste Zufallsreihenfolge je Durchgang (bleibt bei jedem Aufruf gleich, neuer Durchgang = neue Reihenfolge)
+  function mixedOrder(list, seed) {
+    const h = w => { let x = 2166136261 ^ seed; const t = w.de + "|" + w.it; for (let i = 0; i < t.length; i++) { x = Math.imul(x ^ t.charCodeAt(i), 16777619); } x ^= x >>> 15; x = Math.imul(x, 2246822507); x ^= x >>> 13; return x >>> 0; };
+    return list.map(w => [h(w), w]).sort((a, b) => a[0] - b[0]).map(e => e[1]);
   }
 
   // Tolerante Satzpruefung: Es gibt oft mehrere richtige Formulierungen.
