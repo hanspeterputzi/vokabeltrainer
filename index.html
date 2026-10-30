@@ -822,7 +822,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-30-praep";
-  const APP_VERSION = "2026-10-30-b"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-30-c"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -6408,11 +6408,6 @@
   #vocabView > .card:first-of-type > h2 { display: none !important; }
   #vocabView > .card:first-of-type { padding: 14px 16px !important; }
 
-  /* Erinnerung Seitenschalter: kleines Lautsprecher-Symbol rechts in der Streak-Zeile, Antippen zeigt den Hinweis */
-  .streakbar { grid-template-columns: auto auto 1fr auto !important; }
-  .streakbar .swb { grid-column: 4; grid-row: 1; width: 22px; height: 22px; padding: 0; border: 0; background: none; color: #fff; opacity: .85; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
-  .streakbar .swb svg { width: 16px; height: 16px; }
-  .swtip { position: fixed; width: max-content; left: 50%; top: 52px; transform: translateX(-50%); z-index: 400; max-width: calc(100vw - 32px); padding: 9px 14px; border-radius: 12px; background: rgba(18,32,58,.92); color: #fff; font-size: .8rem; font-weight: 600; line-height: 1.35; text-align: center; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
   /* Streak: dezente Textzeile direkt auf dem Orange, feine Linie darunter */
   .streakbar { display: grid !important; grid-template-columns: auto auto 1fr; align-items: center; column-gap: 14px !important; row-gap: 7px !important; padding: 2px 4px 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
   .streakbar .sb { background: none !important; padding: 0 !important; gap: 5px !important; border-radius: 0 !important; }
@@ -6552,24 +6547,6 @@
   window.addEventListener("resize", moveStreak); window.addEventListener("load", moveStreak);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(moveStreak);
   try { var sbe = document.querySelector(".streakbar"); if (sbe && window.ResizeObserver) new ResizeObserver(moveStreak).observe(sbe); } catch (e) {}
-
-  // Erinnerung an den Seitenschalter (Ton am Handy): Symbol in der Streak-Zeile, Antippen zeigt den Hinweis
-  function ensureSw() {
-    try {
-      var sb = document.querySelector(".streakbar");
-      if (!sb || sb.querySelector(".swb")) return;
-      var b = document.createElement("button"); b.type = "button"; b.className = "swb"; b.setAttribute("aria-label", "Hinweis zum Ton");
-      b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
-      b.addEventListener("click", function () {
-        var o = document.querySelector(".swtip"); if (o) o.remove();
-        var t = document.createElement("div"); t.className = "swtip"; t.textContent = "Kein Ton? Seitenschalter am Handy auf Ton stellen.";
-        document.body.appendChild(t); setTimeout(function () { t.remove(); }, 4000);
-      });
-      sb.appendChild(b);
-    } catch (e) {}
-  }
-  ensureSw();
-  try { var sbw = document.querySelector(".streakbar"); if (sbw) new MutationObserver(ensureSw).observe(sbw, { childList: true }); } catch (e) {}
 
   // «Wortliste (942)» ohne Anzahl
   (function () {
