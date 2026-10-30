@@ -822,7 +822,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-30-praep";
-  const APP_VERSION = "2026-10-30-c"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-10-30-d"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -6408,6 +6408,12 @@
   #vocabView > .card:first-of-type > h2 { display: none !important; }
   #vocabView > .card:first-of-type { padding: 14px 16px !important; }
 
+  /* Ton-Hinweis: gross in der Mitte beim ersten Hoeren pro Sitzung, verschwindet von selbst */
+  .swpop { position: fixed; left: 50%; top: 38%; transform: translate(-50%, -50%); z-index: 500; width: max-content; max-width: calc(100vw - 48px); padding: 22px 26px 20px; border-radius: 22px; background: rgba(18,32,58,.94); color: #fff; text-align: center; box-shadow: 0 14px 40px rgba(0,0,0,.3); pointer-events: none; animation: swin .25s ease-out; transition: opacity .4s; }
+  .swpop.out { opacity: 0; }
+  .swpop svg { width: 64px; height: 64px; display: block; margin: 0 auto 10px; color: var(--k-orange, #ea580c); }
+  .swpop b { display: block; font-size: 1rem; font-weight: 700; line-height: 1.35; }
+  @keyframes swin { from { opacity: 0; transform: translate(-50%, -46%) scale(.94); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
   /* Streak: dezente Textzeile direkt auf dem Orange, feine Linie darunter */
   .streakbar { display: grid !important; grid-template-columns: auto auto 1fr; align-items: center; column-gap: 14px !important; row-gap: 7px !important; padding: 2px 4px 0 !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
   .streakbar .sb { background: none !important; padding: 0 !important; gap: 5px !important; border-radius: 0 !important; }
@@ -6547,6 +6553,27 @@
   window.addEventListener("resize", moveStreak); window.addEventListener("load", moveStreak);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(moveStreak);
   try { var sbe = document.querySelector(".streakbar"); if (sbe && window.ResizeObserver) new ResizeObserver(moveStreak).observe(sbe); } catch (e) {}
+
+  // Ton-Hinweis beim ersten Hoeren pro Sitzung (Seitenschalter am Handy)
+  (function () {
+    try {
+      if (!window.speechSynthesis || !window.SpeechSynthesis) return;
+      var orig = SpeechSynthesis.prototype.speak, shown = false;
+      SpeechSynthesis.prototype.speak = function () {
+        try {
+          var seen = false; try { seen = sessionStorage.getItem("ton_hinweis") === "1"; } catch (e) {}
+          if (!shown && !seen) {
+            shown = true; try { sessionStorage.setItem("ton_hinweis", "1"); } catch (e) {}
+            var d = document.createElement("div"); d.className = "swpop";
+            d.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg><b>Seitenschalter<br>auf Ton?</b>';
+            document.body.appendChild(d);
+            setTimeout(function () { d.classList.add("out"); }, 2600); setTimeout(function () { d.remove(); }, 3100);
+          }
+        } catch (e) {}
+        return orig.apply(this, arguments);
+      };
+    } catch (e) {}
+  })();
 
   // «Wortliste (942)» ohne Anzahl
   (function () {
