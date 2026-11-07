@@ -824,7 +824,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-07-monate";
-  const APP_VERSION = "2026-11-07-c"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-07-d"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -3242,11 +3242,11 @@
       { id: "pa_keinticket", group: "Autopostale: controllo biglietti", icon: "🚌", title: "Passeggero senza biglietto", tde: "Fahrgast ohne Ticket", setting: "Ein Fahrgast hat kein Ticket (Lei-Form).",
         turns: [
           N("Buongiorno. Non ho il biglietto, mi dispiace.", "Guten Tag. Ich habe leider kein Ticket."),
-          M("Frag, wo der Fahrgast eingestiegen ist.", "Dove è salito?", ["Da dove è salito?", "Dove è salita?"]),
+          M("Frag, an welcher Haltestelle der Fahrgast eingestiegen ist.", "A quale fermata è salito?", ["A che fermata è salito?", "Da quale fermata è salito?", "A quale fermata è salita?"]),
           N("Sono salito a Coira, alla stazione.", "Ich bin in Chur beim Bahnhof eingestiegen."),
-          M("Sag: Ohne Ticket müssen Sie einen Zuschlag von neunzig Franken zahlen.", "Senza biglietto deve pagare un supplemento di novanta franchi.", ["Deve pagare novanta franchi di supplemento.", "Senza biglietto deve pagare novanta franchi."]),
-          N("Novanta franchi? È molto!", "Neunzig Franken? Das ist viel!"),
-          M("Sag: Es tut mir leid, das sind die Regeln.", "Mi dispiace, queste sono le regole.", ["Mi dispiace, è la regola."]),
+          M("Sag: Ohne Ticket müssen Sie einen Zuschlag bezahlen.", "Senza biglietto deve pagare un supplemento.", ["Deve pagare un supplemento.", "Senza biglietto c'è un supplemento."]),
+          N("Quanto devo pagare?", "Wie viel muss ich bezahlen?"),
+          M("Sag: Das entscheide nicht ich. Das entscheidet das Inkasso von PostAuto.", "Non lo decido io. Lo decide l'incasso di PostAuto.", ["Non lo decido io. Lo decide l'incasso.", "Non decido io. Decide l'incasso di PostAuto.", "Lo decide l'incasso di PostAuto."]),
           N("Va bene. Posso pagare adesso?", "Gut. Kann ich jetzt zahlen?"),
           M("Sag: Ich kassiere nicht. Sie bekommen eine Rechnung per Post.", "Non incasso io. Riceverà una fattura per posta.", ["Io non incasso. Riceverà una fattura per posta.", "Riceverà una fattura per posta."])
         ] },
@@ -3774,7 +3774,9 @@
     function showList() { runBox.style.display = "none"; listBox.style.display = ""; renderList(); }
     function stopAll() {
       try { if ("speechSynthesis" in window) window.speechSynthesis.cancel(); } catch (e) {}
+      if (sess) { sess.cancel(); }
       if (rec) { try { rec.abort(); } catch (e) {} }
+      listening = false;
     }
 
     function advance() {
@@ -3820,22 +3822,88 @@
       panelEl.scrollIntoView({ block: "nearest", behavior: "smooth" });
     }
 
-    let rec = null;
+    let rec = null, sess = null;
+    // Robuste Aufnahme: laeuft, bis du fertig bist (Pause ca. 2 Sek. oder Knopf «Fertig»),
+    // zeigt live mit, was erkannt wird, und endet nie im «Jetzt sprechen»-Zustand.
     function listen(t) {
-      if (!SR || listening) return;
+      if (!SR) return;
+      if (listening) { if (sess) sess.finish(); return; }
       try { window.speechSynthesis.cancel(); } catch (e) {}
-      rec = new SR(); rec.lang = "it-IT"; rec.interimResults = false; rec.maxAlternatives = 5;
-      listening = true; micEl.classList.add("listening");
+      const S = sess = { t: t, done: false, stopping: false, base: "", text: "", head: "", lastAlts: [], restarts: 0, err: "", tSil: 0, tFirst: 0, tMax: 0, tFb: 0 };
+      listening = true; micEl.classList.add("listening"); micEl.textContent = "Fertig";
       statusEl.className = "tk-status"; statusEl.textContent = "Mikrofon wird aktiviert ...";
-      let heard = [];
-      rec.onstart = () => { statusEl.textContent = "Jetzt sprechen ..."; };
-      rec.onresult = ev => { heard = []; for (let i = 0; i < ev.results[0].length; i++) heard.push(ev.results[0][i].transcript.trim()); };
-      rec.onerror = ev => { statusEl.className = "tk-status bad"; statusEl.textContent = ev.error === "no-speech" ? "Ich habe nichts gehört. Nochmal versuchen." : "Spracherkennung fehlgeschlagen (" + ev.error + "). Bitte erneut versuchen oder tippen."; };
-      rec.onend = () => {
-        listening = false; micEl.classList.remove("listening");
-        if (heard.length) evaluate(t, heard, false);
+      const clearT = () => { clearTimeout(S.tSil); clearTimeout(S.tFirst); clearTimeout(S.tMax); clearTimeout(S.tFb); };
+      const cands = () => {
+        const base = S.base ? S.base + " " : "";
+        const out = [];
+        if (S.text) out.push(S.text);
+        S.lastAlts.forEach((a, i) => { if (i > 0) { const c = (base + S.head + " " + a).replace(/\s+/g, " ").trim(); if (c && out.indexOf(c) < 0) out.push(c); } });
+        return out;
       };
-      try { rec.start(); } catch (e) { listening = false; micEl.classList.remove("listening"); statusEl.textContent = "Mikrofon konnte nicht gestartet werden."; }
+      const conclude = () => {
+        if (S.done) return; S.done = true; clearT();
+        try { if (S.r) { S.r.onresult = S.r.onerror = S.r.onend = S.r.onstart = null; S.r.abort(); } } catch (e) {}
+        listening = false; sess = null;
+        if (micEl) { micEl.classList.remove("listening"); micEl.textContent = "Sprechen"; }
+        const heard = cands();
+        if (heard.length) evaluate(t, heard, false);
+        else { statusEl.className = "tk-status bad"; statusEl.textContent = S.err || "Ich habe nichts gehört. Tippe nochmal auf «Sprechen»."; }
+      };
+      S.cancel = () => { S.done = true; clearT(); try { if (S.r) { S.r.onresult = S.r.onerror = S.r.onend = S.r.onstart = null; S.r.abort(); } } catch (e) {} listening = false; sess = null; };
+      S.finish = () => {
+        if (S.done || S.stopping) return; S.stopping = true;
+        statusEl.className = "tk-status"; statusEl.textContent = "Wird ausgewertet ...";
+        S.tFb = setTimeout(conclude, 1500);
+        try { S.r.stop(); } catch (e) { conclude(); }
+      };
+      const armSilence = () => { clearTimeout(S.tSil); S.tSil = setTimeout(() => S.finish(), 2200); };
+      const begin = () => {
+        let r;
+        try { r = new SR(); } catch (e) { S.err = "Spracherkennung nicht verfügbar. Bitte tippen."; conclude(); return; }
+        S.r = rec = r;
+        r.lang = "it-IT"; r.continuous = true; r.interimResults = true; r.maxAlternatives = 5;
+        r.onstart = () => { if (!S.text) { statusEl.className = "tk-status"; statusEl.textContent = "Jetzt sprechen ... (Tippe danach auf «Fertig», oder mach eine Pause.)"; } };
+        r.onresult = ev => {
+          if (S.done) return;
+          let head = "", lastAlts = [];
+          for (let i = 0; i < ev.results.length; i++) {
+            const res = ev.results[i];
+            if (i < ev.results.length - 1) head += (head ? " " : "") + res[0].transcript.trim();
+            else { for (let j = 0; j < res.length; j++) lastAlts.push(res[j].transcript.trim()); }
+          }
+          S.head = head; S.lastAlts = lastAlts;
+          S.text = ((S.base ? S.base + " " : "") + (head ? head + " " : "") + (lastAlts[0] || "")).replace(/\s+/g, " ").trim();
+          if (S.text) {
+            clearTimeout(S.tFirst);
+            statusEl.className = "tk-status"; statusEl.innerHTML = "Ich höre: „" + esc(S.text) + "“ ...";
+            if (!S.stopping && matches(cands(), t).ok) { conclude(); return; }
+            if (!S.stopping) armSilence();
+          }
+        };
+        r.onerror = ev => {
+          if (S.done) return;
+          const e = ev && ev.error;
+          if (e === "no-speech" || e === "aborted") return;
+          if (e === "not-allowed" || e === "service-not-allowed") S.err = "Das Mikrofon ist nicht erlaubt. Erlaube es im Browser (Adressleiste) oder tippe die Antwort.";
+          else if (e === "network") S.err = "Keine Verbindung zur Spracherkennung. Bitte tippe die Antwort.";
+          else if (e === "audio-capture") S.err = "Kein Mikrofon gefunden. Bitte tippe die Antwort.";
+          else S.err = "Spracherkennung fehlgeschlagen (" + e + "). Bitte erneut versuchen oder tippen.";
+          conclude();
+        };
+        r.onend = () => {
+          if (S.done) return;
+          if (S.stopping) { conclude(); return; }
+          // Browser hat von sich aus beendet: weiter zuhoeren, solange noch Zeit ist
+          if (S.restarts < 6) {
+            S.restarts++; S.base = S.text;
+            setTimeout(() => { if (!S.done && !S.stopping) { try { begin(); } catch (e) { conclude(); } } }, 150);
+          } else conclude();
+        };
+        try { r.start(); } catch (e) { S.err = "Mikrofon konnte nicht gestartet werden."; conclude(); }
+      };
+      S.tFirst = setTimeout(() => { if (!S.text) { S.err = "Ich habe nichts gehört. Tippe nochmal auf «Sprechen» und sprich gleich los."; conclude(); } }, 12000);
+      S.tMax = setTimeout(() => S.finish(), 30000);
+      begin();
     }
 
     function evaluate(t, heard, typed) {
