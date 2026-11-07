@@ -822,7 +822,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-10-30-di";
-  const APP_VERSION = "2026-10-30-l"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-07-a"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -5987,6 +5987,9 @@
   function targetIndex() {
     var t = planIdx(seqPos());
     if (t >= LESSONS.length) t = nextIndex();
+    // Nie eine Lektion ueberspringen: ist eine fruehere noch nicht gemacht, kommt sie zuerst (z. B. wenn man eine alte Lektion ausser der Reihe wiederholt hat)
+    var ni = nextIndex();
+    if (t !== -1 && !isDone(LESSONS[t].id) && ni !== -1 && ni < t) t = ni;
     if (t !== -1 && !isDone(LESSONS[t].id) && !unlocked(t)) {
       // Rhythmus nicht erfuellt: zuerst die Lektion wiederholen, die noch nicht 2x absolviert ist
       for (var k = 0; k < LESSONS.length; k++) if (isDone(LESSONS[k].id) && countOf(LESSONS[k].id) < 2) return k;
