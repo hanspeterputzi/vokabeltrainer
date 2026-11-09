@@ -824,7 +824,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-09-qua";
-  const APP_VERSION = "2026-11-09-o"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-09-v"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1117,6 +1117,7 @@
     quizDirection.textContent = "";
     quizContent.classList.add("td-done");
     quizWord.textContent = "Heute fertig ✓";
+    window.italoFx.celebrate();
     quizProgress.textContent = left ? "Noch " + left + " Wörter zum Wiederholen" : "";
     renderToday();
   }
@@ -1198,6 +1199,8 @@
       ".fx-bar.ok .fx-next{background:#58a700}.fx-bar.no .fx-next{background:#d33a3a}.fx-next:active{transform:translateY(3px);box-shadow:none}" +
       "body.fx-on #lwBar{bottom:calc(var(--fxh,170px) + 12px)!important}" +
       ".fx-hearts{display:inline-flex;align-items:center;gap:4px;margin-left:10px;padding:5px 9px;border-radius:999px;background:#e0661f;vertical-align:middle}.fx-h{width:16px;height:16px;display:block;transition:transform .2s,opacity .2s}.fx-h.off{opacity:.5}.fx-h.pop{animation:fxpop .45s}" +
+      ".fx-oranges{position:fixed;inset:0;pointer-events:none;z-index:400;overflow:hidden}.fx-or{position:absolute;top:-50px;animation:fxfall linear forwards}" +
+      "@keyframes fxfall{to{transform:translateY(112vh) rotate(540deg)}}" +
       "@keyframes fxpop{0%{transform:scale(1)}40%{transform:scale(1.6)}100%{transform:scale(1)}}";
     document.head.appendChild(st);
     var Actx = null, cur = null, hearts = {};
@@ -1233,12 +1236,28 @@
       document.body.classList.add("fx-on");
       requestAnimationFrame(function () { document.documentElement.style.setProperty("--fxh", bar.offsetHeight + "px"); bar.classList.add("in"); });
       tone(o.ok ? [660, 880] : [220, 165]);
+      if (o.celebrate) { celebrate(); setTimeout(function () { tone([523, 659, 784, 1047]); }, 350); }
       setTimeout(function () { try { nb.focus({ preventScroll: true }); } catch (e) {} }, 60);
     }
     var ORANGE = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="9" r="6" fill="#ffe3c8"/><path d="M8 4 q3 -4 6 -2 q-3 4 -6 2z" fill="#7fb24a"/></svg>',
       LOST = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="9" r="5.2" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="1.4"/></svg>';
     var MAX = 5;
     function st_(k) { return hearts[k] || (hearts[k] = { errors: 0, n: 0 }); }
+    // Feier: Orangen (orange, weiss, schwarz) fallen von oben nach unten
+    function celebrate() {
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var layer = document.createElement("div"); layer.className = "fx-oranges";
+      var cols = [["#ea580c", "#5f9f2e"], ["#ffffff", "#7fb24a"], ["#16181d", "#4d7a22"]];
+      for (var i = 0; i < 36; i++) {
+        var c = cols[i % 3], sz = 22 + Math.random() * 22, sp = document.createElement("span");
+        sp.className = "fx-or"; sp.style.left = (Math.random() * 96) + "%"; sp.style.width = sp.style.height = sz + "px";
+        sp.style.animationDuration = (2 + Math.random() * 1.8) + "s"; sp.style.animationDelay = (Math.random() * 0.8) + "s";
+        sp.innerHTML = '<svg viewBox="0 0 24 24" width="100%" height="100%"><circle cx="12" cy="13.5" r="9.5" fill="' + c[0] + '" stroke="rgba(0,0,0,.28)" stroke-width="1"/><path d="M12 5.5 q4.5 -6 9 -3 q-4 6 -9 3z" fill="' + c[1] + '"/></svg>';
+        layer.appendChild(sp);
+      }
+      document.body.appendChild(layer);
+      setTimeout(function () { if (layer.parentNode) layer.parentNode.removeChild(layer); }, 5200);
+    }
     function paint(e) { var s = st_(e.dataset.k); e.innerHTML = ""; e.setAttribute("aria-label", (MAX - s.errors) + " von " + MAX + " Fehlern übrig"); for (var i = 0; i < MAX; i++) { var sp = document.createElement("span"); var lost = i >= MAX - s.errors; sp.className = "fx-h" + (lost ? " off" : ""); sp.innerHTML = lost ? LOST : ORANGE; e.appendChild(sp); } }
     function paintAll(k, pop) { Array.prototype.forEach.call(document.querySelectorAll('.fx-hearts[data-k="' + k + '"]'), function (e) { paint(e); if (pop) { var hs = e.querySelectorAll(".fx-h"), l = hs[MAX - st_(k).errors]; if (l) l.classList.add("pop"); } }); }
     function heartsEl(k) { var e = document.createElement("span"); e.className = "fx-hearts"; e.dataset.k = k; paint(e); return e; }
@@ -1252,7 +1271,7 @@
       if (r.ended && size) { r.resetKey = k; r.label = "Neue Runde"; }
       return r;
     }
-    return { dock: dock, undock: undock, hearts: heartsEl, reset: reset, round: round, tone: tone };
+    return { dock: dock, undock: undock, hearts: heartsEl, reset: reset, round: round, tone: tone, celebrate: celebrate };
   })();
 
   ["vocab", "gram"].forEach(function (k) { var sl = document.getElementById(k === "vocab" ? "vHeartsSlot" : "gHeartsSlot"); if (sl) sl.appendChild(window.italoFx.hearts(k)); });
@@ -1884,7 +1903,7 @@
       } else {
         if (selectedCategory === TODAY_CAT) { todayDone(); return; }
         idx = 0;
-        rounds[selectedCategory] = (rounds[selectedCategory] || 0) + 1;
+        rounds[selectedCategory] = (rounds[selectedCategory] || 0) + 1; window.italoFx.celebrate();
         try { localStorage.setItem(ROUNDS_KEY, JSON.stringify(rounds)); } catch (e) {}
         renderCategoryBar();
       }
@@ -1920,7 +1939,7 @@
   function afterAnswer(ok) {
     answered = true;
     const rd = window.italoFx.round("vocab", ok, 10);
-    window.italoFx.dock({ ok: ok && rd.ended !== "fail", title: rd.msg, label: rd.label, resetKey: rd.resetKey, nodes: exBox.hidden ? [feedback] : [feedback, exBox], onNext: () => nextBtn.click() });
+    window.italoFx.dock({ ok: ok && rd.ended !== "fail", title: rd.msg, label: rd.label, resetKey: rd.resetKey, celebrate: rd.ended === "done", nodes: exBox.hidden ? [feedback] : [feedback, exBox], onNext: () => nextBtn.click() });
     checkBtn.disabled = true;
     answerInput.disabled = true;
     micBtn.disabled = true;
@@ -3595,7 +3614,7 @@
       const gWasDone = false;
       if (dl.indexOf(gCurrent.idx) < 0) {
         dl.push(gCurrent.idx);
-        if (dl.length >= gTot) gRounds[gTopicId] = (gRounds[gTopicId] || 0) + 1;
+        if (dl.length >= gTot) { gRounds[gTopicId] = (gRounds[gTopicId] || 0) + 1; window.italoFx.celebrate(); }
         lsSet(G_DONE_KEY, gDone); lsSet(G_ROUNDS_KEY, gRounds); gRenderTopics();
       }
       gRepeat = false;
@@ -3623,7 +3642,7 @@
     if (optBtn && window.italoLink) { Array.prototype.forEach.call(gEl.options.children, b => b.classList.add("lk")); window.italoLink(gEl.options); } // nach der Antwort sind auch die Antwortwoerter antippbar
     lsSet(G_STATS_KEY, gStats);
     const rd = window.italoFx.round("gram", ok, 10);
-    window.italoFx.dock({ ok: ok && rd.ended !== "fail", title: rd.msg, label: rd.label, resetKey: rd.resetKey, nodes: ex.why ? [gEl.feedback, gEl.expl] : [gEl.feedback], onNext: gNext });
+    window.italoFx.dock({ ok: ok && rd.ended !== "fail", title: rd.msg, label: rd.label, resetKey: rd.resetKey, celebrate: rd.ended === "done", nodes: ex.why ? [gEl.feedback, gEl.expl] : [gEl.feedback], onNext: gNext });
   }
 
   gEl.check.addEventListener("click", () => gCheck());
@@ -6845,7 +6864,7 @@
   // ---- Allenamento misto: Vokabeln + Grammatik + Lektionen gemischt (abwechslungsreich, wie bei Duolingo) ----
   var MIX_KEY = "italienisch_mix_count";
   function mixCount() { var n = lsGet(MIX_KEY, 0); return typeof n === "number" ? n : 0; }
-  var SRC_LABEL = { v: "Vokabeln", g: "Grammatik", l: "Lektion" };
+  var SRC_LABEL = { v: "Vokabeln", g: "Grammatik", l: "Lektion", w: "Alltag", n: "Neue Wörter", r: "Früher gelernt" };
   function cleanIt(s) { return String(s).replace(/\s*\((?:männlich|weiblich)(?: \+ weiblich)?\)/g, "").split(/\s*\/\s*/)[0].trim(); }
   function deOf(w) { return (w.dd || w.de); }
   function okVocab(w) { return w && w.cat !== "ABC" && w.cat !== "Zahlen" && String(w.de).indexOf("(") < 0 && String(w.de).length <= 28 && String(w.it).length <= 30 && String(w.it).indexOf("…") < 0; }
@@ -6855,8 +6874,8 @@
     function others(w, n, f) { return shuffle(all.filter(function (x) { return x.cat === w.cat && x !== w && f(x) !== f(w); })).slice(0, n).map(f); }
     function pickN(n) { return shuffle(all).slice(0, n); }
     pickN(2).forEach(function (w) { out.push(C("Was heisst «" + cleanIt(w.it) + "»?", deOf(w), others(w, 3, deOf))); });
-    pickN(2).forEach(function (w) { out.push(C("Wie heisst «" + deOf(w) + "» auf Italienisch?", cleanIt(w.it), others(w, 3, function (x) { return cleanIt(x.it); }))); });
-    pickN(1).forEach(function (w) { out.push(Y("«" + deOf(w) + "» auf Italienisch" + (w.cat === "Nomen" ? " (mit Artikel)" : "") + ":", cleanIt(w.it))); });
+    pickN(2).forEach(function (w) { out.push(C("Wie heisst „" + deOf(w) + "“ auf Italienisch?", cleanIt(w.it), others(w, 3, function (x) { return cleanIt(x.it); }))); });
+    pickN(1).forEach(function (w) { out.push(Y("„" + deOf(w) + "“ auf Italienisch" + (w.cat === "Nomen" ? " (mit Artikel)" : "") + ":", cleanIt(w.it))); });
     pickN(1).forEach(function (w) { out.push(L(cleanIt(w.it))); });
     out.push(P(pickN(5).map(function (w) { return [cleanIt(w.it), deOf(w)]; })));
     var EX = window.italoExamples || {}, ks = shuffle(Object.keys(EX).filter(function (k) { var n = EX[k][0].replace(/[.?!]+$/, "").split(/\s+/).length; return n >= 3 && n <= 7; }));
@@ -6929,13 +6948,144 @@
     extra.forEach(function (e, k) { var pos = Math.min(tl.length, Math.round((k + 1) * tl.length / (extra.length + 1))); tl.splice(pos + k, 0, e); });
     return tl;
   }
+  // ---- Lernpaket je Lektion: Alltags-Wendungen, neue Woerter (Nomen, Adjektive, Zahlen, Funktionswoerter, Verben),
+  //      Grammatik-Uebungen und Wiederholung frueherer Lektionen. Alles aus dem Vokabular, sequentiell und ohne Wiederholung. ----
+  var PACK_MAP = {
+    aussprache: ["Getränke", "Gefühle & Charakter", "Restaurant & Bestellen"], satzbau: ["Familie", "Grösse, Alter & Form", "Fragen zur Person"],
+    vorstellen: ["Personen & Anreden", "Nationalitäten", "Sich vorstellen"], regelmaessig: ["Zeit & Tageszeiten", "Gefühle & Charakter", "Begrüssen & Verabschieden"],
+    isc: ["Sprache & Texte", "Gefühle & Charakter", "Verstehen & Nachfragen"], reg_unreg: ["Freizeit, Sport & Feste", "Gut, schlecht & richtig", "Restaurant & Bestellen"],
+    reg_unreg2: ["Schule & Lernen", "Gefühle & Charakter", "Sich vorstellen"], unregelmaessig: ["Haus & Wohnen", "Gefühle & Charakter", "Höfliche Anweisungen & Sonstiges"],
+    unreg2: ["Technik & Medien", "Gut, schlecht & richtig", "Meinung & Gefühle"], piacere: ["Brot, Pasta & Pizza", "Gefühle & Charakter", "Meinung & Gefühle"],
+    geschlecht: ["Berufe", "Gefühle & Charakter", "Fragen zur Person"], plural: ["Wochentage, Monate, Jahreszeiten", "Gefühle & Charakter", "Begrüssen & Verabschieden"],
+    unbestimmt: ["Reisen & Dokumente", "Grösse, Alter & Form", "Höfliche Anweisungen & Sonstiges"], bestimmt: ["Länder & Kontinente", "Nationalitäten", "Fragen zur Person"],
+    verneinung: ["Mengen & Allgemeines", "Gut, schlecht & richtig", "Verstehen & Nachfragen"], questo: ["Kleidung & Farbe", "Farben", "Meinung & Gefühle"],
+    fragen: ["Personen & Anreden", "Gefühle & Charakter", "Fragen zur Person"], wohnen: ["Zutaten, Fleisch & Fisch", "Grösse, Alter & Form", "Restaurant & Bestellen"],
+    adjektive: ["Städte & Sprachen", "Grösse, Alter & Form", "Höfliche Anweisungen & Sonstiges"], stellung: ["Verkehr & Bahn", "Gefühle & Charakter", "Meinung & Gefühle"],
+    indirekt: ["Kleidung & Farbe", "Farben", "Meinung & Gefühle"], praeposition: ["Gebäude & Einrichtungen", "Grösse, Alter & Form", "Höfliche Anweisungen & Sonstiges"],
+    konjunktion: ["Geschäfte & Dienstleister", "Gefühle & Charakter", "Meinung & Gefühle"], di: ["Obst & Gemüse", "Gefühle & Charakter", "Restaurant & Bestellen"],
+    a: ["Stadt, Landschaft & Wetter", "Gut, schlecht & richtig", "Begrüssen & Verabschieden"], orte: ["Gebäude & Einrichtungen", "Gefühle & Charakter", "Höfliche Anweisungen & Sonstiges"],
+    fussball: ["Freizeit, Sport & Feste", "Gefühle & Charakter", "Meinung & Gefühle"], arzt: ["Körper & Gesundheit", "Gefühle & Charakter", "Verstehen & Nachfragen"],
+    bahnhof: ["Verkehr & Bahn", "Gefühle & Charakter", "Höfliche Anweisungen & Sonstiges"], wetter: ["Stadt, Landschaft & Wetter", "Grösse, Alter & Form", "Begrüssen & Verabschieden"],
+    geburtstag: ["Süsses & Glace", "Gefühle & Charakter", "Meinung & Gefühle"]
+  };
+  var _packs = null;
+  function allWords() { return window.italoWordsRef ? window.italoWordsRef() : []; }
+  var ADJ_BAD = ["nato", "ripieno", "scritto", "evidenziate", "venduto", "fatto", "rimasto", "migliori", "molti", "poco", "massimo", "chiaro", "usato", "stretto", "mezzo", "doppio", "maschile", "femminile", "storico", "industriale", "scorretto", "falso", "esatto", "straniero", "stesso", "altro", "semplice", "fresco"];
+  function packOk(w, kind) {
+    if (!w || !w.de || !w.it) return false;
+    var it = cleanIt(w.it), nw = it.split(/\s+/).length, de = String(w.de);
+    if (String(w.it).indexOf("…") >= 0 || it.indexOf("(") >= 0 || /XY/.test(it)) return false;
+    if (kind === "noun") return nw <= 2 && it.indexOf(",") < 0 && de.indexOf("(") < 0 && de.length <= 28 && /^(il|lo|la|l'|i|gli|le)\b/i.test(it);
+    if (kind === "adj") return nw === 1 && de.indexOf("(") < 0 && de.length <= 28 && ADJ_BAD.indexOf(it) < 0;
+    if (kind === "ph" && (/\d/.test(it) || (nw === 1 && w.grp === "Höfliche Anweisungen & Sonstiges"))) return false;
+    if (kind === "ph") return nw <= 7 && it.length <= 44 && de.length <= 60 && /^[A-ZÈÀ]/.test(it) && !/[A-Z]/.test(it.slice(1).replace(/\b[?!]\s*[A-Z]/, ""));
+    if (kind === "fn") return nw === 1 && de.indexOf("(") < 0 && de.length <= 30;
+    if (kind === "num") return de.length <= 48 && nw === 1;
+    return true;
+  }
+  function inLesson(ls, w) { var s = itOf(w).toLowerCase().replace(/[.,!?]/g, ""); return (ls.words || []).some(function (x) { return String(x.it).toLowerCase().replace(/[.,!?]/g, "").indexOf(s) >= 0; }); }
+  // nimmt n noch nicht verwendete Woerter: zuerst aus der thematischen Gruppe, dann aus der ganzen Wortart; erst wenn alles gebraucht ist, beginnt es von vorn
+  function takeUnused(used, key, pools, n) {
+    var out = [], seen = used[key] = used[key] || {};
+    for (var pass = 0; pass < 2 && out.length < n; pass++) {
+      pools.forEach(function (pool) { pool.forEach(function (w) { var k = w.it; if (out.length < n && !seen[k] && out.indexOf(w) < 0) { out.push(w); } }); });
+      if (out.length < n) { used[key] = seen = {}; }
+    }
+    out.forEach(function (w) { seen[w.it] = 1; });
+    return out;
+  }
+  function buildPacks() {
+    if (_packs) return _packs;
+    var W = allWords(), used = {}, packs = [], focusAll = [], order = {};
+    W.forEach(function (w, ix) { if ((w.cat === "Hauptverben" || w.cat === "Übrige Verben") && order[w.it] == null) order[w.it] = ix; });
+    LESSONS.forEach(function (l) { (l.focus || []).forEach(function (v) { focusAll.push(v); }); });
+    var CV = (window.italoConj || []).filter(function (v) { return v.inf.indexOf(" ") < 0 && focusAll.indexOf(v.inf) < 0 && order[v.inf] != null && v.f && v.f.length === 6 && v.f.every(function (x) { return x; }); });
+    CV.sort(function (a, b) { return order[a.inf] - order[b.inf]; });
+    var vUsed = 0;
+    LESSONS.forEach(function (ls, i) {
+      var m = PACK_MAP[ls.id] || ["Mengen & Allgemeines", "Gefühle & Charakter", "Begrüssen & Verabschieden"], P = {};
+      function pools(cat, grp, kind) { var all = W.filter(function (w) { return w.cat === cat && packOk(w, kind) && !inLesson(ls, w); }); return [all.filter(function (w) { return w.grp === grp; }), all]; }
+      P.noun = takeUnused(used, "n", pools("Nomen", m[0], "noun"), 5);
+      P.adj = takeUnused(used, "a", pools("Adjektive", m[1], "adj"), 5);
+      P.num = takeUnused(used, "z", pools("Zahlen", null, "num"), 4);
+      P.ph = takeUnused(used, "p", pools("Feste Wendungen", m[2], "ph"), 4);
+      P.fn = []; ["Pronomen", "Präpositionen", "Adverbien", "Konjunktionen"].forEach(function (c) { P.fn = P.fn.concat(takeUnused(used, "f" + c, pools(c, null, "fn"), 1)); });
+      P.verbs = [CV[vUsed % CV.length], CV[(vUsed + 1) % CV.length]].filter(Boolean).map(function (v) { return v.inf; }); vUsed += 2;
+      packs.push(P);
+    });
+    _packs = packs; return packs;
+  }
+  function itOf(w) { return cleanIt(w.it); }
+  function sameCat(w, pool, n, f) { var seen = {}; seen[f(w)] = 1; var out = []; shuffle(pool.filter(function (x) { return x !== w && x.cat === w.cat; })).forEach(function (x) { var v = f(x); if (out.length < n && !seen[v]) { seen[v] = 1; out.push(v); } }); return out; }
+  function mkHearTask(w, pool) { var wr = sameCat(w, pool, 3, itOf); if (wr.length < 3) return null; var h = C(null, itOf(w), wr); h.t = "hear"; return h; }
+  function verbForm(inf) { var vd = verbData(inf); if (!vd) return null; var p = Math.floor(Math.random() * 6); if (!vd.f[p]) return null; return Y(inf + " (" + vd.de + ") – " + PRON[p] + ":", vd.f[p]); }
+  function addPack(i, tl) {
+    var packs = buildPacks(), P = packs[i]; if (!P) return tl;
+    var W = allWords().filter(function (w) { return packOk(w, "ph") || packOk(w, "noun") || packOk(w, "adj") || packOk(w, "fn") || packOk(w, "num"); }), out = [], tag = function (a, s) { return a.filter(Boolean).map(function (x) { x.src = s; return x; }); };
+    // Alltagssituation: feste Wendungen
+    var ph = P.ph.filter(function (w) { return String(deOf(w)) !== itOf(w); }), ph3 = tag([
+      ph.length >= 3 ? P_(ph) : null,
+      ph[0] ? C("Wie sagst du „" + deOf(ph[0]) + "“?", itOf(ph[0]), sameCat(ph[0], W, 3, itOf)) : null,
+      ph[1] ? C("Was bedeutet «" + itOf(ph[1]) + "»?", deOf(ph[1]), sameCat(ph[1], W, 3, deOf)) : null,
+      ph[2] && canSpeak ? mkHearTask(ph[2], W) : null,
+      ph[3] ? Y("Übersetze: " + deOf(ph[3]), itOf(ph[3]), String(ph[3].it).split(/\s*\/\s*/).slice(1)) : null
+    ], "w"); out = out.concat(ph3);
+    // Neue Woerter
+    var N = P.noun, A = P.adj, Z = P.num, F = P.fn;
+    var nw = [
+      N.length >= 4 ? P_(N) : null,
+      N[0] ? C("Was heisst «" + itOf(N[0]) + "»?", deOf(N[0]), sameCat(N[0], W, 3, deOf)) : null,
+      N[1] ? C("Wie heisst „" + deOf(N[1]) + "“ auf Italienisch?", itOf(N[1]), sameCat(N[1], W, 3, itOf)) : null,
+      N[2] ? Y("„" + deOf(N[2]) + "“ auf Italienisch (mit Artikel):", itOf(N[2])) : null,
+      N[3] && canSpeak ? mkHearTask(N[3], W) : null,
+      A.length >= 4 ? P_(A) : null,
+      A[0] ? C("Wie heisst „" + deOf(A[0]) + "“ auf Italienisch?", itOf(A[0]), sameCat(A[0], W, 3, itOf)) : null,
+      A[1] ? C("Was heisst «" + itOf(A[1]) + "»?", deOf(A[1]), sameCat(A[1], W, 3, deOf)) : null,
+      A[2] ? Y("„" + deOf(A[2]) + "“ auf Italienisch:", itOf(A[2])) : null
+    ];
+    if (Z.length >= 3) {
+      var zd = function (x) { return String(x.de); };
+      nw.push(C("Welche Zahl ist «" + itOf(Z[0]) + "»?", zd(Z[0]), sameCat(Z[0], allWords().filter(function (w) { return w.cat === "Zahlen"; }), 3, zd)));
+      nw.push(Y("Schreibe die Zahl " + zd(Z[1]) + " auf Italienisch:", itOf(Z[1])));
+      if (canSpeak) { var zh = C(null, itOf(Z[2]), sameCat(Z[2], allWords().filter(function (w) { return w.cat === "Zahlen"; }), 3, itOf)); zh.t = "hear"; nw.push(zh); }
+    }
+    F.forEach(function (w) { var pool = allWords().filter(function (x) { return x.cat === w.cat && packOk(x, "fn"); }); var wr = sameCat(w, pool, 3, deOf); if (wr.length >= 2) nw.push(C("Was heisst «" + itOf(w) + "»?", deOf(w), wr)); });
+    out = out.concat(tag(nw, "n"));
+    // Verben dieser Lektion
+    var vt = [];
+    P.verbs.forEach(function (inf, k) { var vd = verbData(inf); if (!vd) return; if (k === 0) { var ov = (window.italoConj || []).filter(function (v) { return v.inf !== inf && v.inf.indexOf(" ") < 0; }); var wr = shuffle(ov).slice(0, 3).map(function (v) { return v.inf; }); vt.push(C("Wie heisst „" + vd.de + "“ auf Italienisch?", inf, wr)); } vt.push(verbForm(inf)); });
+    out = out.concat(tag(vt, "n"));
+    // Grammatik-Block: weitere Uebungen aus dem Tab «Grammatik»
+    var tp = (window.italoGrammar || []).filter(function (g) { return g.id === ls_topic(i); })[0], gt = [];
+    if (tp) shuffle(tp.exercises.filter(function (e) { return e.options && e.options.length >= 2 && e.a && e.a.length && !/Stimmt das/.test(e.q); })).slice(0, 4).forEach(function (e) { var wr = e.options.filter(function (o) { return e.a.indexOf(o) < 0; }); if (wr.length) gt.push(C(e.q, e.a[0], wr.slice(0, 3))); });
+    out = out.concat(tag(gt, "g"));
+    // Wiederholung frueherer Lektionen
+    if (i > 0) {
+      var prevW = [], prevV = [];
+      for (var k = 0; k < i; k++) { var pk = packs[k]; prevW = prevW.concat(pk.noun, pk.adj, pk.ph, pk.fn); prevV = prevV.concat(pk.verbs, LESSONS[k].focus || []); }
+      prevW = shuffle(prevW.filter(Boolean)); prevV = shuffle(prevV.filter(function (v, x) { return prevV.indexOf(v) === x; }));
+      var rv = [];
+      if (prevW.length >= 5) rv.push(P_(prevW.slice(0, 5)));
+      for (var q = 5; q < Math.min(prevW.length, 8); q++) { var w = prevW[q]; rv.push(q % 2 ? C("Wie heisst „" + deOf(w) + "“ auf Italienisch?", itOf(w), sameCat(w, W, 3, itOf)) : C("Was heisst «" + itOf(w) + "»?", deOf(w), sameCat(w, W, 3, deOf))); }
+      for (var h = 8; h < Math.min(prevW.length, 10) && canSpeak; h++) rv.push(mkHearTask(prevW[h], W));
+      prevV.slice(0, 2).forEach(function (inf) { rv.push(verbForm(inf)); });
+      out = out.concat(tag(rv, "r"));
+    }
+    out = out.filter(function (x) { return x && (x.t === "pairs" || x.a); });
+    // gleichmaessig zwischen die bisherigen Aufgaben mischen
+    var m = out.length; out.forEach(function (e, k) { var pos = Math.min(tl.length, Math.round((k + 1) * tl.length / (m + 1))); tl.splice(pos + k, 0, e); });
+    return tl;
+  }
+  window.italoLessonDebug = function (i) { var tl = addPack(i, LESSONS[i].tasks.slice()); return { pack: buildPacks()[i], tasks: tl, orig: LESSONS[i].tasks.length }; };
+  function ls_topic(i) { return LESSONS[i] && LESSONS[i].topic; }
+  function P_(ws) { var seen = {}, pairs = []; ws.forEach(function (w) { var a = itOf(w), b = deOf(w); if (!seen[b] && !seen[a] && pairs.length < 5) { seen[a] = seen[b] = 1; pairs.push([a, b]); } }); return pairs.length >= 3 ? P(pairs) : null; }
   function startLesson(i) {
     window.italoInput.reset("lesson"); window.italoFx.reset("lesson");
-    var tl = addExtra(LESSONS[i], LESSONS[i].tasks.slice());
+    var tl = addExtra(LESSONS[i], addPack(i, LESSONS[i].tasks.slice()));
     // Jedes Verb der Lektion (kumulativ: neues Verb + alle frueheren) wird gleichmaessig verteilt komplett abgefragt
     var vs = verbsFor(i), base = tl.length;
     vs.forEach(function (v, k) { tl.splice(Math.round(base * (k + 1) / (vs.length + 1)) + k, 0, K(v)); });
-    S = { i: i, ls: LESSONS[i], tasks: tl, queue: [], total: 0, done: 0, firstOk: 0 };
+    S = { i: i, ls: LESSONS[i], pack: buildPacks()[i], tasks: tl, queue: [], total: 0, done: 0, firstOk: 0 };
     showIntro();
   }
   function showIntro() {
@@ -6954,6 +7104,24 @@
       ul.appendChild(li);
     });
     card.appendChild(ul);
+    if (S.pack) {
+      function sect(it, de, arr) {
+        if (!arr || !arr.length) return;
+        card.appendChild(hl("h2", "", it, de));
+        var u = el("ul", "ls-intro");
+        arr.forEach(function (w) {
+          var li = el("li"), tx = el("span"); tx.appendChild(el("span", "it ls-it", itOf(w))); tx.appendChild(el("span", "de", deOf(w))); li.appendChild(tx);
+          if (canSpeak) { var b = el("button", "ls-spk", "Hören"); b.type = "button"; b.addEventListener("click", function () { speak(itOf(w)); }); li.appendChild(b); }
+          u.appendChild(li);
+        });
+        card.appendChild(u);
+      }
+      sect("Frasi utili", "Alltag: feste Wendungen", S.pack.ph);
+      sect("Parole nuove", "Neue Wörter: Nomen", S.pack.noun);
+      sect("Aggettivi", "Adjektive", S.pack.adj);
+      sect("Numeri", "Zahlen", S.pack.num);
+      sect("Parole utili", "Kleine Wörter (Pronomen, Präposition, Adverb, Konjunktion)", S.pack.fn);
+    }
     var fv = focusOf(S.i).filter(function (v) { return verbData(v); }), pv = prevFocus(S.i);
     if (fv.length) {
       card.appendChild(hl("h2", "", fv.length > 1 ? "Nuovi verbi" : "Nuovo verbo", fv.length > 1 ? "Neue Verben" : "Neues Verb"));
@@ -7229,16 +7397,7 @@
       });
     } catch (e) {}
   }
-  function confetti() {
-    var layer = el("div", "ls-confetti"), cols = ["#16181d", "#ea580c", "#f59e0b", "#ffb27a", "#ff8a3d"];
-    for (var i = 0; i < 70; i++) {
-      var p = el("i"); p.style.left = Math.random() * 100 + "%"; p.style.background = cols[i % cols.length];
-      p.style.animationDuration = (1.6 + Math.random() * 1.6) + "s"; p.style.animationDelay = (Math.random() * 0.5) + "s";
-      layer.appendChild(p);
-    }
-    document.body.appendChild(layer);
-    setTimeout(function () { if (layer.parentNode) layer.parentNode.removeChild(layer); }, 4000);
-  }
+  function confetti() { window.italoFx.celebrate(); }
 
   function showSummary() {
     if (S.mix) {
