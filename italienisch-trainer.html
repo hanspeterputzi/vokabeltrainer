@@ -720,7 +720,7 @@
   </div>
 
   <div class="card">
-    <h2>Abfrage</h2>
+    <h2>Abfrage <span id="vHeartsSlot"></span></h2>
     <div id="quizArea">
       <div class="empty-msg" id="noWordsMsg">Noch keine Vokabeln vorhanden. Füge unten welche hinzu.</div>
       <div id="quizContent" style="display:none;">
@@ -792,7 +792,7 @@
     </div>
 
     <div class="card">
-      <h2>Übung</h2>
+      <h2>Übung <span id="gHeartsSlot"></span></h2>
       <div class="quiz-progress" id="gProgress"></div>
       <div class="quiz-word" id="gQuestion" style="font-size:1.3rem;">—</div>
       <div class="quiz-hint" id="gHint"></div>
@@ -824,7 +824,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-09-parlare";
-  const APP_VERSION = "2026-11-09-h"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-09-j"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1121,7 +1121,7 @@
     renderToday();
   }
   function startToday() {
-    window.italoInput && window.italoInput.reset("vocab");
+    window.italoInput && window.italoInput.reset("vocab"); window.italoFx.reset("vocab");
     selectedCategory = TODAY_CAT;
     localStorage.setItem(CATEGORY_KEY, TODAY_CAT);
     buildToday();
@@ -1184,6 +1184,72 @@
 
   speakBtn.addEventListener("click", () => speakItalian(lastSpokenText));
 
+  // --- Duolingo-Elemente: Feedback-Leiste unten + Herzen (gemeinsam fuer Lektionen, Grammatik, Vokabel-Quiz) ---
+  window.italoFx = (function () {
+    var st = document.createElement("style");
+    st.textContent =
+      ".fx-bar{position:fixed;left:0;right:0;bottom:0;z-index:60;padding:16px 18px calc(18px + env(safe-area-inset-bottom));transform:translateY(115%);transition:transform .22s ease;box-shadow:0 -8px 28px rgba(0,0,0,.22);max-height:70vh;overflow:auto}" +
+      ".fx-bar.in{transform:none}.fx-bar.ok{background:#d9f7c4;color:#2d6a10}.fx-bar.no{background:#ffdede;color:#a11d1d}" +
+      "@media (prefers-color-scheme: dark){.fx-bar.ok{background:#1b3d14;color:#bdf28f}.fx-bar.no{background:#4a1a1c;color:#ffb8b8}}" +
+      ".fx-in{max-width:520px;margin:0 auto}.fx-t{font-weight:800;font-size:1.15rem;margin-bottom:6px}" +
+      ".fx-bar .feedback,.fx-bar .ls-fb,.fx-bar .g-expl,.fx-bar .ex-box{display:block!important;position:static!important;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0 0 10px!important;color:inherit!important;opacity:1!important;animation:none!important;min-height:0!important}" +
+      ".fx-bar .lw{border-bottom-color:currentColor}.fx-bar small{display:block;opacity:.9;margin-top:4px}" +
+      ".fx-next{display:block;width:100%;margin-top:6px;padding:14px;border:0;border-radius:14px;font:inherit;font-weight:800;font-size:1.05rem;cursor:pointer;color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.18)}" +
+      ".fx-bar.ok .fx-next{background:#58a700}.fx-bar.no .fx-next{background:#d33a3a}.fx-next:active{transform:translateY(3px);box-shadow:none}" +
+      "body.fx-on #lwBar{bottom:calc(var(--fxh,170px) + 12px)!important}" +
+      ".fx-hearts{display:inline-flex;gap:3px;margin-left:10px;font-size:1.15rem;line-height:1;vertical-align:middle}.fx-h{color:#e5334b;transition:transform .2s,opacity .2s}.fx-h.off{color:rgba(128,128,128,.4)}.fx-h.pop{animation:fxpop .45s}" +
+      "@keyframes fxpop{0%{transform:scale(1)}40%{transform:scale(1.6)}100%{transform:scale(1)}}";
+    document.head.appendChild(st);
+    var Actx = null, cur = null, hearts = {};
+    function tone(f) {
+      try {
+        var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return; Actx = Actx || new AC(); if (Actx.state === "suspended") Actx.resume();
+        var t0 = Actx.currentTime + 0.01;
+        f.forEach(function (fr, i) { var o = Actx.createOscillator(), g = Actx.createGain(), t = t0 + i * 0.11; o.type = "sine"; o.frequency.value = fr; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.16, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18); o.connect(g); g.connect(Actx.destination); o.start(t); o.stop(t + 0.22); });
+      } catch (e) {}
+    }
+    function undock() {
+      if (!cur) return; var c = cur; cur = null;
+      document.removeEventListener("keydown", c.key); c.bar.classList.remove("in"); document.body.classList.remove("fx-on");
+      c.nodes.forEach(function (n) { try { if (n.parent && n.parent.isConnected) n.parent.insertBefore(n.el, n.next && n.next.parentNode === n.parent ? n.next : null); } catch (e) {} });
+      setTimeout(function () { c.bar.remove(); }, 260);
+    }
+    // o: { ok, title, nodes:[Element], label, onNext }
+    function dock(o) {
+      undock();
+      var bar = document.createElement("div"); bar.className = "fx-bar " + (o.ok ? "ok" : "no");
+      var inn = document.createElement("div"); inn.className = "fx-in"; bar.appendChild(inn);
+      if (o.title) { var t = document.createElement("div"); t.className = "fx-t"; t.textContent = o.title; inn.appendChild(t); }
+      var nodes = (o.nodes || []).map(function (e) { var n = { el: e, parent: e.parentNode, next: e.nextSibling }; inn.appendChild(e); return n; });
+      var nb = document.createElement("button"); nb.type = "button"; nb.className = "fx-next"; nb.textContent = o.label || "Weiter"; inn.appendChild(nb);
+      var done = false;
+      function next() { if (done) return; done = true; undock(); if (o.onNext) o.onNext(); }
+      nb.addEventListener("click", next);
+      var key = function (e) { if (e.key === "Enter" && !(e.target && /INPUT|TEXTAREA/.test(e.target.tagName))) { e.preventDefault(); next(); } };
+      document.addEventListener("keydown", key);
+      cur = { bar: bar, nodes: nodes, key: key };
+      document.body.appendChild(bar);
+      if (window.italoLink) { try { window.italoLink(bar); } catch (e) {} }
+      document.body.classList.add("fx-on");
+      requestAnimationFrame(function () { document.documentElement.style.setProperty("--fxh", bar.offsetHeight + "px"); bar.classList.add("in"); });
+      tone(o.ok ? [660, 880] : [220, 165]);
+      setTimeout(function () { try { nb.focus({ preventScroll: true }); } catch (e) {} }, 60);
+    }
+    function paint(e) { var n = hearts[e.dataset.k]; if (n == null) n = 3; e.innerHTML = ""; for (var i = 0; i < 3; i++) { var s = document.createElement("span"); s.className = "fx-h" + (i < n ? "" : " off"); s.textContent = "♥"; e.appendChild(s); } }
+    function paintAll(k, pop) { Array.prototype.forEach.call(document.querySelectorAll('.fx-hearts[data-k="' + k + '"]'), function (e) { paint(e); if (pop) { var hs = e.querySelectorAll(".fx-h"); var lost = hs[Math.max(0, Math.min(2, (hearts[k] == null ? 3 : hearts[k])))]; if (lost) lost.classList.add("pop"); } }); }
+    function heartsEl(k) { var e = document.createElement("span"); e.className = "fx-hearts"; e.dataset.k = k; paint(e); return e; }
+    function reset(k) { hearts[k] = 3; paintAll(k); }
+    // ein Herz weniger; bei 0 gibt es 3 neue (die Fehler kommen ohnehin nochmals)
+    function lose(k) {
+      var n = (hearts[k] == null ? 3 : hearts[k]) - 1, empty = n <= 0;
+      hearts[k] = empty ? 0 : n; paintAll(k, true);
+      if (empty) { var kk = k; setTimeout(function () { hearts[kk] = 3; paintAll(kk); }, 900); }
+      return { left: n, empty: empty };
+    }
+    return { dock: dock, undock: undock, hearts: heartsEl, reset: reset, lose: lose, tone: tone };
+  })();
+
+  ["vocab", "gram"].forEach(function (k) { var sl = document.getElementById(k === "vocab" ? "vHeartsSlot" : "gHeartsSlot"); if (sl) sl.appendChild(window.italoFx.hearts(k)); });
   // --- Eingabeart: vor jeder Abfrage zuerst waehlen, ob geschrieben oder gesprochen wird (einmal pro Uebung) ---
   window.italoInput = (function () {
     var Ctor = window.SpeechRecognition || window.webkitSpeechRecognition, mode = {};
@@ -1365,7 +1431,7 @@
 
   function selectCategory(name) {
     if (name === selectedCategory) return;
-    window.italoInput && window.italoInput.reset("vocab");
+    window.italoInput && window.italoInput.reset("vocab"); window.italoFx.reset("vocab");
     selectedCategory = name;
     localStorage.setItem(CATEGORY_KEY, name);
     if (grpOfSel(name)) { grpMemory[catOfSel(name)] = grpOfSel(name); try { localStorage.setItem(GRP_MEM_KEY, JSON.stringify(grpMemory)); } catch (e) {} }
@@ -1640,8 +1706,9 @@
   function pickMode(word) {
     if (word.cat === "ABC" || word.cat === "Zahlen") return "type";
     const r = Math.random();
-    if (r < 0.5) return "type";
-    if (r < 0.82) return "choice";
+    if (r < 0.42) return "type";
+    if (r < 0.62) return "tf";
+    if (r < 0.84) return "choice";
     return ("speechSynthesis" in window) ? "listen" : "type";
   }
   function restoreModeUI() {
@@ -1688,6 +1755,30 @@
         });
         vChoiceBox.appendChild(b);
       });
+    } else if (q.mode === "tf") {
+      const right = firstForm(q.word);
+      const pool = words.filter(x => x.cat === q.word.cat && firstForm(x) !== right && x.it.indexOf("…") < 0 && String(x.it).length < 34);
+      if (!pool.length) { q.mode = "type"; return; }
+      const truth = Math.random() < 0.5, shown = truth ? right : firstForm(pool[Math.floor(Math.random() * pool.length)]);
+      quizDirection.textContent = "Stimmt das?";
+      quizWord.textContent = "Richtig oder falsch?";
+      vRow.style.display = "none"; checkBtn.style.display = "none";
+      vChoiceBox.style.display = "flex";
+      const st = document.createElement("div"); st.className = "tf-stmt"; st.style.cssText = "width:100%;text-align:center;font-weight:700;font-size:1.1rem;margin:4px 0 10px";
+      st.appendChild(document.createTextNode("«" + displayDe(q.word) + "» heisst "));
+      const itSp = document.createElement("span"); itSp.className = "ls-it"; itSp.textContent = "«" + shown + "»"; st.appendChild(itSp);
+      vChoiceBox.appendChild(st);
+      [["Richtig", true], ["Falsch", false]].forEach(pair => {
+        const b = document.createElement("button"); b.type = "button"; b.textContent = pair[0];
+        b.addEventListener("click", () => {
+          if (answered) return;
+          answerInput.value = (pair[1] === truth) ? q.word.it : (truth ? "Falsch" : shown);
+          checkAnswer();
+          Array.prototype.forEach.call(vChoiceBox.querySelectorAll("button"), c => { c.disabled = true; if ((c.textContent === "Richtig") === truth) c.classList.add("right"); else if (c === b) c.classList.add("bad"); });
+        });
+        vChoiceBox.appendChild(b);
+      });
+      if (window.italoLink) window.italoLink(vChoiceBox);
     } else if (q.mode === "listen") {
       quizDirection.textContent = "Hören → Italienisch · schreibe, was du hörst";
       quizWord.textContent = "Hör zu";
@@ -1700,6 +1791,7 @@
   }
 
   function resetQuizUI() {
+    window.italoFx.undock();
     restoreModeUI();
     quizContent.classList.remove("td-done");
     hideExample();
@@ -1821,6 +1913,8 @@
   // Nach der Antwort: Knopf "Weiter" (richtig) bzw. "Nochmals" (falsch) hervorheben, Nutzer entscheidet
   function afterAnswer(ok) {
     answered = true;
+    window.italoFx.dock({ ok: ok, nodes: exBox.hidden ? [feedback] : [feedback, exBox], onNext: () => nextBtn.click() });
+    if (!ok) { const r = window.italoFx.lose("vocab"); if (r.empty) { const sm = document.createElement("small"); sm.textContent = "Keine Herzen mehr – du bekommst 3 neue. Die Fehler kommen nochmals."; feedback.appendChild(sm); } }
     checkBtn.disabled = true;
     answerInput.disabled = true;
     micBtn.disabled = true;
@@ -3379,7 +3473,7 @@
             btn.textContent = t.title + " · " + (gRounds[t.id] || 0) + "×";
       btn.addEventListener("click", () => {
         if (t.id === gTopicId) return;
-        gTopicId = t.id; window.italoInput.reset("gram");
+        gTopicId = t.id; window.italoInput.reset("gram"); window.italoFx.reset("gram");
         lsSet(G_TOPIC_KEY, gTopicId);
         gCurrent = null;
         gRepeat = false;
@@ -3411,7 +3505,21 @@
     else { gEl.answer.readOnly = true; gEl.answer.placeholder = "Tippe auf «Sprechen» ..."; gInSlot.appendChild(window.italoInput.micButton(gEl.answer)); }
     gInSlot.appendChild(window.italoInput.swap("gram", gApplyInput));
   }
+  // Richtig/Falsch-Variante: Lueckensatz oder Umwandlung mit eingesetzter (richtiger oder falscher) Loesung
+  function gMaybeTf() {
+    const c = gCurrent, ex0 = c.ex;
+    if (Math.random() > 0.22) return;
+    const truth = Math.random() < 0.5, wrongs = (ex0.options || []).filter(o => ex0.a.indexOf(o) < 0);
+    const cand = truth ? ex0.a[0] : (wrongs.length ? wrongs[Math.floor(Math.random() * wrongs.length)] : null);
+    if (cand == null) return;
+    let text = null;
+    if (/___/.test(ex0.q) && ex0.q.indexOf("(") < 0 && ex0.q.length < 60) text = ex0.q.replace("___", cand);
+    else if (/→\s*\?\s*$/.test(ex0.q)) text = ex0.q.replace(/→\s*\?\s*$/, "→ " + cand);
+    if (!text) return;
+    gCurrent = { ex: { q: "Stimmt das? «" + text + "»", options: ["Richtig", "Falsch"], a: [truth ? "Richtig" : "Falsch"], why: ex0.why, hint: "" }, idx: c.idx };
+  }
   function gNext() {
+    window.italoFx.undock();
     gAnswered = false;
     gInSlot.innerHTML = "";
     gEl.feedback.className = "feedback";
@@ -3432,6 +3540,7 @@
       gCurrent = { ex: topic.exercises[idx], idx };
       gProgress[topic.id] = (idx + 1) % total;
       lsSet(G_PROGRESS_KEY, gProgress);
+      gMaybeTf();
     }
 
     const ex = gCurrent.ex;
@@ -3507,10 +3616,8 @@
     gEl.check.disabled = true;
     if (optBtn && window.italoLink) { Array.prototype.forEach.call(gEl.options.children, b => b.classList.add("lk")); window.italoLink(gEl.options); } // nach der Antwort sind auch die Antwortwoerter antippbar
     lsSet(G_STATS_KEY, gStats);
-    if (ok) {
-      const gRef = gCurrent;
-      setTimeout(() => { if (gCurrent === gRef && gAnswered && gEl.view.style.display !== "none") gNext(); }, ex.why ? 2200 : 1300);
-    }
+    window.italoFx.dock({ ok: ok, nodes: ex.why ? [gEl.feedback, gEl.expl] : [gEl.feedback], onNext: gNext });
+    if (!ok) { const r = window.italoFx.lose("gram"); if (r.empty) { const sm = document.createElement("small"); sm.textContent = "Keine Herzen mehr – du bekommst 3 neue. Die Fehler kommen nochmals."; gEl.feedback.appendChild(sm); } }
   }
 
   gEl.check.addEventListener("click", () => gCheck());
@@ -6526,7 +6633,7 @@
   function hl(tag, cls, it, de) { var h = document.createElement(tag); if (cls) h.className = cls; var s = document.createElement("span"); s.className = "lw"; s.setAttribute("data-de", de); s.textContent = it; h.appendChild(s); return h; }
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   // Italienische Teile markieren (ls-it), damit JEDES Wort gepunktet wird
-  var DE_RE = /[äöüÄÖÜß]|\b(ich|du|er|sie|wir|ihr|der|die|das|ein|eine|einen|einem|nicht|und|oder|ja|nein|wenn|mit|von|bei|nur|nach|immer|kein|keine|hart|weich|ist|bin|bist|sind|mir|dir|wie|was|wo|woher|gibt|hier|wohne|arbeite|suche|bleibe)\b/i;
+  var DE_RE = /[äöüÄÖÜß]|\b(ich|du|er|sie|wir|ihr|der|die|das|ein|eine|einen|einem|nicht|und|oder|ja|nein|wenn|mit|von|bei|nur|nach|immer|kein|keine|hart|weich|ist|bin|bist|sind|mir|dir|wie|was|wo|woher|gibt|hier|wohne|arbeite|suche|bleibe|richtig|falsch|stimmt|heisst)\b/i;
   function qDiv(text, cls) {
     var d = el("div", cls || "ls-q"); text = String(text);
     text.split(/(«[^»]*»)/).forEach(function (seg) {
@@ -6688,6 +6795,7 @@
 
   // ---- Uebersicht ----
   function showList() {
+    window.italoFx.undock();
     view.innerHTML = "";
     var card = el("div", "ls-card");
     card.appendChild(hl("h2", "", "Lezioni", "Lektionen"));
@@ -6771,9 +6879,40 @@
 
   // ---- Lektion ----
   var S = null;
+  // Zusatzaufgaben (Duolingo-artig): Richtig/Falsch, Hoeren + waehlen, Luecke per Antippen. Jeder ganze Satz hoechstens 2x pro Lektion.
+  function nz(s) { return String(s).toLowerCase().replace(/[.!?,]/g, "").replace(/\s+/g, " ").trim(); }
+  function addExtra(ls, tl) {
+    var words = (ls.words || []).filter(function (w) { return w && w.it && w.de && String(w.it).indexOf("·") < 0 && String(w.de).indexOf("·") < 0; });
+    var cnt = {}; tl.forEach(function (t) { if (typeof t.a === "string") { var k = nz(t.a); cnt[k] = (cnt[k] || 0) + 1; } });
+    var extra = [];
+    // Richtig/Falsch
+    if (words.length >= 3) shuffle(words).slice(0, 2).forEach(function (w, idx) {
+      var truth = idx % 2 === 0, others = words.filter(function (o) { return o.de !== w.de; }), de = truth ? w.de : others[Math.floor(Math.random() * others.length)].de;
+      var tf = C("Stimmt das? «" + w.it + "» heisst „" + de + "“.", truth ? "Richtig" : "Falsch", [truth ? "Falsch" : "Richtig"]); tf.sk = "tf:" + nz(w.it) + ":" + (truth ? 1 : 0); extra.push(tf);
+    });
+    // Hoeren + waehlen
+    if (canSpeak && words.length >= 4) shuffle(words).slice(0, 2).forEach(function (w) {
+      var wr = shuffle(words.filter(function (o) { return o.it !== w.it; })).slice(0, 3).map(function (o) { return o.it; });
+      var h = C(null, w.it, wr); h.t = "hear"; extra.push(h);
+    });
+    // Luecke per Antippen: aus Saetzen, die in der Lektion hoechstens einmal vorkommen
+    var sents = []; tl.forEach(function (t) { if ((t.t === "order" || t.t === "listen" || t.t === "type") && typeof t.a === "string" && /\S+\s+\S+\s+\S+/.test(t.a) && cnt[nz(t.a)] <= 1 && sents.indexOf(t.a) < 0) sents.push(t.a); });
+    var pool = []; sents.forEach(function (sn) { sn.split(/\s+/).forEach(function (w) { var c = w.replace(/[.,!?;:«»]/g, ""); if (c.length >= 3 && pool.indexOf(c) < 0) pool.push(c); }); });
+    shuffle(sents).slice(0, 2).forEach(function (sn) {
+      var parts = sn.split(/\s+/), idxs = []; parts.forEach(function (w, i) { if (i > 0 && w.replace(/[.,!?;:«»]/g, "").length >= 3) idxs.push(i); });
+      if (!idxs.length) return;
+      var i = idxs[Math.floor(Math.random() * idxs.length)], core = parts[i].replace(/[.,!?;:«»]/g, "");
+      var wr = shuffle(pool.filter(function (p) { return p.toLowerCase() !== core.toLowerCase(); })).slice(0, 3); if (wr.length < 3) return;
+      var blank = parts.slice(); blank[i] = parts[i].replace(core, "___");
+      var f = C("Ergänze den Satz: «" + blank.join(" ") + "»", core, wr); f.sk = nz(sn); extra.push(f);
+    });
+    extra = shuffle(extra).slice(0, 6);
+    extra.forEach(function (e, k) { var pos = Math.min(tl.length, Math.round((k + 1) * tl.length / (extra.length + 1))); tl.splice(pos + k, 0, e); });
+    return tl;
+  }
   function startLesson(i) {
-    window.italoInput.reset("lesson");
-    var tl = LESSONS[i].tasks.slice();
+    window.italoInput.reset("lesson"); window.italoFx.reset("lesson");
+    var tl = addExtra(LESSONS[i], LESSONS[i].tasks.slice());
     // Jedes Verb der Lektion (kumulativ: neues Verb + alle frueheren) wird gleichmaessig verteilt komplett abgefragt
     var vs = verbsFor(i), base = tl.length;
     vs.forEach(function (v, k) { tl.splice(Math.round(base * (k + 1) / (vs.length + 1)) + k, 0, K(v)); });
@@ -6838,8 +6977,8 @@
       var seenS = {};
       S.queue = S.queue.filter(function (t) {
         if (t.t === "pairs" || t.t === "conj" || t.a == null) return true;
-        var k = String(t.a).toLowerCase().replace(/[.!?,]/g, "").replace(/\s+/g, " ").trim();
-        if (k.indexOf(" ") < 0) return true;
+        var k = t.sk ? t.sk : String(t.a).toLowerCase().replace(/[.!?,]/g, "").replace(/\s+/g, " ").trim();
+        if (!t.sk && k.indexOf(" ") < 0) return true;
         seenS[k] = (seenS[k] || 0) + 1; return seenS[k] <= 2;
       });
       S.total = S.queue.length; S.done = 0; S.firstOk = 0; nextTask();
@@ -6849,6 +6988,7 @@
   }
 
   function nextTask() {
+    window.italoFx.undock();
     // Konjugationen ohne abzufragende Formen (ab dem 3. Mal alles richtig) entfallen
     while (S.queue.length && S.queue[0].t === "conj" && !conjPersons(S.queue[0].inf).length) { S.queue.shift(); S.total = Math.max(1, S.total - 1); }
     if (!S.queue.length) return showSummary();
@@ -6859,7 +6999,7 @@
     var x = el("button", "ls-x", "✕"); x.type = "button";
     x.addEventListener("click", function () { if (confirm("Lektion abbrechen? Dein Fortschritt in dieser Lektion geht verloren.")) showList(); });
     var bar = el("div", "ls-bar"); var fill = el("i"); fill.style.width = Math.round(100 * S.done / S.total) + "%"; bar.appendChild(fill);
-    top.appendChild(x); top.appendChild(bar);
+    top.appendChild(x); top.appendChild(bar); top.appendChild(window.italoFx.hearts("lesson"));
     card.appendChild(top);
     var body = el("div"); card.appendChild(body);
     if (t.src) body.appendChild(el("span", "ls-rep ls-src", SRC_LABEL[t.src]));
@@ -6888,18 +7028,24 @@
         if (trd && /[.?!]\s*$|\s\S+\s\S+/.test(t.a)) { var trl = el("small", "tr-line", "Auf Deutsch: " + trd); fb.appendChild(trl); }
       }
       if (spokenIt) speak(spokenIt);
-      check.disabled = false; check.textContent = "Weiter";
       var moved = false;
-      function go() { if (moved) return; moved = true; clearTimeout(timer); nextTask(); }
-      var timer = null;
-      check.onclick = go; check.focus();
-      // Richtige Antwort: automatisch weiter (bei gesprochenem Italienisch etwas spaeter)
-      if (ok) timer = setTimeout(function () { if (view.contains(check)) go(); }, spokenIt ? 1700 : 1000);
+      function go() { if (moved) return; moved = true; nextTask(); }
+      // Duolingo-Stil: Leiste unten mit Ergebnis + «Weiter»; Herz verlieren bei Fehler
+      if (!ok && t.t !== "pairs" && !t.retry) {
+        var hr = window.italoFx.lose("lesson");
+        if (hr.empty) fb.appendChild(el("small", "", "Keine Herzen mehr – du bekommst 3 neue. Die Fehler kommen nochmals."));
+      }
+      foot.style.display = "none";
+      window.italoFx.dock({ ok: ok, nodes: [fb], onNext: go });
     }
     function armCheck(fn) { check.onclick = function () { if (!answered) fn(); }; }
 
-    if (t.t === "choose") {
-      body.appendChild(qDiv(t.q));
+    if (t.t === "choose" || t.t === "hear") {
+      if (t.t === "hear") {
+        body.appendChild(el("div", "ls-hint", "Hör zu und wähle, was du hörst"));
+        var hq = el("div", "ls-q"); var hb = el("button", "ls-btn", "Anhören"); hb.type = "button"; hb.addEventListener("click", function () { speak(t.a); }); hq.appendChild(hb); body.appendChild(hq);
+        setTimeout(function () { speak(t.a); }, 250);
+      } else body.appendChild(qDiv(t.q));
       var opts = el("div", "ls-opts"), sel = null, bs = [];
       shuffle([t.a].concat(t.w)).forEach(function (o) {
         var b = el("button", "ls-opt", o); b.type = "button";
@@ -7024,7 +7170,7 @@
       grid.appendChild(cols[0]); grid.appendChild(cols[1]); body.appendChild(grid);
       foot.style.display = "none";
       var origFinish = finish;
-      finish = function (ok, msg, sub) { origFinish(ok, msg, sub); if (miss && !t.retry && !t.round2) { S.firstOk -= 1; } foot.style.display = ""; check.disabled = false; };
+      finish = function (ok, msg, sub) { origFinish(ok, msg, sub); if (miss && !t.retry && !t.round2) { S.firstOk -= 1; } };
     }
   }
 
