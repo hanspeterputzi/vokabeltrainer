@@ -717,10 +717,11 @@
     <h2>Wortart</h2>
     <div class="category-bar" id="categoryBar"></div>
     <select id="groupSelect" aria-label="Gruppe wählen" style="display:none"></select>
+    <div class="category-bar" id="groupBar" style="display:none;margin-top:12px"></div>
   </div>
 
   <div class="card">
-    <h2>Abfrage <span id="vHeartsSlot"></span></h2>
+    <h2>Abfrage</h2>
     <div id="quizArea">
       <div class="empty-msg" id="noWordsMsg">Noch keine Vokabeln vorhanden. Füge unten welche hinzu.</div>
       <div id="quizContent" style="display:none;">
@@ -792,7 +793,7 @@
     </div>
 
     <div class="card">
-      <h2>Übung <span id="gHeartsSlot"></span></h2>
+      <h2>Übung</h2>
       <div class="quiz-progress" id="gProgress"></div>
       <div class="quiz-word" id="gQuestion" style="font-size:1.3rem;">—</div>
       <div class="quiz-hint" id="gHint"></div>
@@ -824,7 +825,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-09-qua";
-  const APP_VERSION = "2026-11-10-b"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-10-f"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1274,7 +1275,6 @@
     return { dock: dock, undock: undock, hearts: heartsEl, reset: reset, round: round, tone: tone, celebrate: celebrate };
   })();
 
-  ["vocab", "gram"].forEach(function (k) { var sl = document.getElementById(k === "vocab" ? "vHeartsSlot" : "gHeartsSlot"); if (sl) sl.appendChild(window.italoFx.hearts(k)); });
   // --- Eingabeart: vor jeder Abfrage zuerst waehlen, ob geschrieben oder gesprochen wird (einmal pro Uebung) ---
   window.italoInput = (function () {
     var Ctor = window.SpeechRecognition || window.webkitSpeechRecognition, mode = {};
@@ -1421,7 +1421,8 @@
       const count = name === "Alle" ? words.length : words.filter(w => w.cat === name).length;
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "cat-btn" + (name === curCat ? " active" : "");
+      const gls = name === "Alle" ? [] : groupsOf(name), lv = gls.length ? Math.min.apply(null, gls.map(g => rounds[selName(name, g)] || 0)) : 0;
+      btn.className = "cat-btn" + (name === curCat ? " active" : "") + (lv > 0 ? " done r" + Math.min(5, lv) : "");
       btn.textContent = name + " (" + count + ")";
       btn.addEventListener("click", () => {
         if (name === "Alle") return selectCategory("Alle");
@@ -1446,19 +1447,21 @@
   let grpMemory = {};
   try { grpMemory = JSON.parse(localStorage.getItem(GRP_MEM_KEY)) || {}; } catch (e) { grpMemory = {}; }
   function renderGroupBar() {
-    const sel = document.getElementById("groupSelect"), card = null;
-    if (!sel) return;
-    sel.innerHTML = "";
+    const sel = document.getElementById("groupSelect"), bar = document.getElementById("groupBar");
+    if (sel) sel.style.display = "none";
+    if (!bar) return;
+    bar.innerHTML = "";
     const cat = catOfSel(selectedCategory), gl = CATEGORIES.indexOf(cat) !== -1 ? groupsOf(cat) : [];
-    sel.style.display = gl.length > 1 ? "" : "none";
+    bar.style.display = gl.length > 1 ? "" : "none";
     if (gl.length < 2) return;
     gl.forEach((g, i) => {
-      const name = cat + SEP + g, n = words.filter(w => w.cat === cat && grpOf(w) === g).length;
-      const o = document.createElement("option");
-      o.value = name;
-      o.textContent = (i + 1) + ". " + g + " (" + n + ")" + (rounds[name] ? "  \u2713 " + rounds[name] + "\u00d7" : "");
-      if (name === selectedCategory) o.selected = true;
-      sel.appendChild(o);
+      const name = cat + SEP + g, n = words.filter(w => w.cat === cat && grpOf(w) === g).length, r = rounds[name] || 0;
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "cat-btn" + (name === selectedCategory ? " active" : "") + (r > 0 ? " done r" + Math.min(5, r) : "");
+      b.textContent = (i + 1) + ". " + g + " (" + n + ")" + (r ? " · " + r + "\u00d7" : "");
+      b.addEventListener("click", () => selectCategory(name));
+      bar.appendChild(b);
     });
   }
 
@@ -1947,8 +1950,7 @@
   // Nach der Antwort: Knopf "Weiter" (richtig) bzw. "Nochmals" (falsch) hervorheben, Nutzer entscheidet
   function afterAnswer(ok) {
     answered = true;
-    const rd = window.italoFx.round("vocab", ok, 10);
-    window.italoFx.dock({ ok: ok && rd.ended !== "fail", title: rd.msg, label: rd.label, resetKey: rd.resetKey, celebrate: rd.ended === "done", nodes: exBox.hidden ? [feedback] : [feedback, exBox], onNext: () => nextBtn.click() });
+    window.italoFx.dock({ ok: ok, nodes: exBox.hidden ? [feedback] : [feedback, exBox], onNext: () => nextBtn.click() });
     checkBtn.disabled = true;
     answerInput.disabled = true;
     micBtn.disabled = true;
@@ -3651,8 +3653,7 @@
     gEl.check.disabled = true;
     if (optBtn && window.italoLink) { Array.prototype.forEach.call(gEl.options.children, b => b.classList.add("lk")); window.italoLink(gEl.options); } // nach der Antwort sind auch die Antwortwoerter antippbar
     lsSet(G_STATS_KEY, gStats);
-    const rd = window.italoFx.round("gram", ok, 10);
-    window.italoFx.dock({ ok: ok && rd.ended !== "fail", title: rd.msg, label: rd.label, resetKey: rd.resetKey, celebrate: rd.ended === "done", nodes: ex.why ? [gEl.feedback, gEl.expl] : [gEl.feedback], onNext: gNext });
+    window.italoFx.dock({ ok: ok, nodes: ex.why ? [gEl.feedback, gEl.expl] : [gEl.feedback], onNext: gNext });
   }
 
   gEl.check.addEventListener("click", () => gCheck());
@@ -8079,18 +8080,20 @@
 </script>
 <style>
 /* Vokabeln + Grammatik: Farbe des Knopfs nach Anzahl ganz geuebter Durchgaenge: 1x dunkelrot, 2x rot, 3x gelb, 4x dunkelgruen, 5x+ hellgruen */
-#gTopicBar .cat-btn.done:not(.active), #categoryBar .cat-btn.done:not(.active) { border-color: transparent !important; color: #fff !important; }
-#gTopicBar .cat-btn.r1:not(.active), #categoryBar .cat-btn.r1:not(.active) { background: #7f1d1d !important; }
-#gTopicBar .cat-btn.r2:not(.active), #categoryBar .cat-btn.r2:not(.active) { background: #dc2626 !important; }
-#gTopicBar .cat-btn.r3:not(.active), #categoryBar .cat-btn.r3:not(.active) { background: #facc15 !important; color: #422006 !important; }
-#gTopicBar .cat-btn.r4:not(.active), #categoryBar .cat-btn.r4:not(.active) { background: #166534 !important; }
-#gTopicBar .cat-btn.r5:not(.active), #categoryBar .cat-btn.r5:not(.active) { background: #86efac !important; color: #14532d !important; }
+#gTopicBar .cat-btn.done:not(.active), #categoryBar .cat-btn.done:not(.active), #groupBar .cat-btn.done:not(.active) { border-color: transparent !important; color: #fff !important; }
+#gTopicBar .cat-btn.r1:not(.active), #categoryBar .cat-btn.r1:not(.active), #groupBar .cat-btn.r1:not(.active) { background: #7f1d1d !important; }
+#gTopicBar .cat-btn.r2:not(.active), #categoryBar .cat-btn.r2:not(.active), #groupBar .cat-btn.r2:not(.active) { background: #dc2626 !important; }
+#gTopicBar .cat-btn.r3:not(.active), #categoryBar .cat-btn.r3:not(.active), #groupBar .cat-btn.r3:not(.active) { background: #facc15 !important; color: #422006 !important; }
+#gTopicBar .cat-btn.r4:not(.active), #categoryBar .cat-btn.r4:not(.active), #groupBar .cat-btn.r4:not(.active) { background: #166534 !important; }
+#gTopicBar .cat-btn.r5:not(.active), #categoryBar .cat-btn.r5:not(.active), #groupBar .cat-btn.r5:not(.active) { background: #86efac !important; color: #14532d !important; }
+#groupBar { display: flex; flex-wrap: wrap !important; overflow: visible !important; gap: 8px; }
+#groupBar .cat-btn { flex: 0 1 auto; max-width: 100%; white-space: normal; text-align: left; }
 /* aktiver Knopf behaelt die Stufenfarbe als dicker Streifen unten */
-#gTopicBar .cat-btn.active.r1, #categoryBar .cat-btn.active.r1 { box-shadow: inset 0 -6px 0 #7f1d1d !important; }
-#gTopicBar .cat-btn.active.r2, #categoryBar .cat-btn.active.r2 { box-shadow: inset 0 -6px 0 #dc2626 !important; }
-#gTopicBar .cat-btn.active.r3, #categoryBar .cat-btn.active.r3 { box-shadow: inset 0 -6px 0 #facc15 !important; }
-#gTopicBar .cat-btn.active.r4, #categoryBar .cat-btn.active.r4 { box-shadow: inset 0 -6px 0 #166534 !important; }
-#gTopicBar .cat-btn.active.r5, #categoryBar .cat-btn.active.r5 { box-shadow: inset 0 -6px 0 #86efac !important; }
+#gTopicBar .cat-btn.active.r1, #categoryBar .cat-btn.active.r1, #groupBar .cat-btn.active.r1 { box-shadow: inset 0 -6px 0 #7f1d1d !important; }
+#gTopicBar .cat-btn.active.r2, #categoryBar .cat-btn.active.r2, #groupBar .cat-btn.active.r2 { box-shadow: inset 0 -6px 0 #dc2626 !important; }
+#gTopicBar .cat-btn.active.r3, #categoryBar .cat-btn.active.r3, #groupBar .cat-btn.active.r3 { box-shadow: inset 0 -6px 0 #facc15 !important; }
+#gTopicBar .cat-btn.active.r4, #categoryBar .cat-btn.active.r4, #groupBar .cat-btn.active.r4 { box-shadow: inset 0 -6px 0 #166534 !important; }
+#gTopicBar .cat-btn.active.r5, #categoryBar .cat-btn.active.r5, #groupBar .cat-btn.active.r5 { box-shadow: inset 0 -6px 0 #86efac !important; }
 </style>
 <!-- NAVMODERN END -->
 <!-- BEISPIELE START -->
