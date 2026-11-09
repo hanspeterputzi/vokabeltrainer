@@ -824,7 +824,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-09-qua";
-  const APP_VERSION = "2026-11-09-v"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-09-w"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1754,9 +1754,10 @@
     }
     vRow.style.display = ""; checkBtn.style.display = "";
     if (m === "write") { micBtn.style.display = "none"; answerInput.readOnly = false; answerInput.placeholder = "Übersetzung eingeben ..."; }
-    else { micBtn.style.display = ""; answerInput.readOnly = true; answerInput.placeholder = "Tippe auf «Sprechen» ..."; }
+    else { micBtn.style.display = ""; answerInput.readOnly = true; answerInput.placeholder = "Sprechen – oder hier tippen zum Schreiben"; }
     vInBox.appendChild(window.italoInput.swap("vocab", vApplyInput));
   }
+  answerInput.addEventListener("click", () => { if (answerInput.readOnly && !answered) { window.italoInput.set("vocab", "write"); vApplyInput(); try { answerInput.focus(); } catch (e) {} } });
   function applyMode() { applyMode0(); vApplyInput(); }
   function applyMode0() {
     const q = currentQuiz; if (!q) return;
@@ -2127,12 +2128,12 @@
         { q: "gentile – Wie wird das «g» gesprochen: hart (wie g) oder weich (wie dsch)?", options: HC, a: ["weich"], why: "g vor e = weich" },
         { q: "lungo – Wie wird das «g» gesprochen: hart (wie g) oder weich (wie dsch)?", options: HC, a: ["hart"], why: "g vor o = hart" },
         { q: "scena – Wie wird das «sc» gesprochen: «sch» (wie in Schule) oder «sk»?", options: ["sch", "sk"], a: ["sch"], why: "sc vor e / i = sch" },
-        { q: "Ergänze: ___ena (weiches tsch vor e)", hint: "c oder ch?", a: ["c"], why: "Weich vor e / i schreibt man einfach c" },
-        { q: "Ergänze: ami___e (hartes k vor e)", hint: "c oder ch?", a: ["ch"], why: "Hart vor e / i schreibt man ch" },
-        { q: "Ergänze: ___itarra (hartes k vor i)", hint: "c oder ch?", a: ["ch"], why: "Hart vor e/i schreibt man ch" },
-        { q: "Ergänze: lun___e (hartes g vor e)", hint: "g oder gh?", a: ["gh"], why: "Hart vor e/i schreibt man gh" },
-        { q: "Ergänze: ___ao (weiches tsch vor a)", hint: "c oder ci?", a: ["ci"], why: "Weich vor a/o/u schreibt man ci" },
-        { q: "Ergänze: ___ornale (weiches dsch vor o)", hint: "g oder gi?", a: ["gi"], why: "Weich vor a/o/u schreibt man gi" },
+        { q: "Ergänze: ___ena (weiches tsch vor e)", hint: "c oder ch?", options: ["c", "ch"], a: ["c"], why: "Weich vor e / i schreibt man einfach c" },
+        { q: "Ergänze: ami___e (hartes k vor e)", hint: "c oder ch?", options: ["c", "ch"], a: ["ch"], why: "Hart vor e / i schreibt man ch" },
+        { q: "Ergänze: ___itarra (hartes k vor i)", hint: "c oder ch?", options: ["c", "ch"], a: ["ch"], why: "Hart vor e/i schreibt man ch" },
+        { q: "Ergänze: lun___e (hartes g vor e)", hint: "g oder gh?", options: ["g", "gh"], a: ["gh"], why: "Hart vor e/i schreibt man gh" },
+        { q: "Ergänze: ___ao (weiches tsch vor a)", hint: "c oder ci?", options: ["c", "ci"], a: ["ci"], why: "Weich vor a/o/u schreibt man ci" },
+        { q: "Ergänze: ___ornale (weiches dsch vor o)", hint: "g oder gi?", options: ["g", "gi"], a: ["gi"], why: "Weich vor a/o/u schreibt man gi" },
       ],
     },
     {
@@ -3527,7 +3528,7 @@
     if (!m) { gEl.fillRow.style.display = "none"; gEl.check.style.display = "none"; gInSlot.appendChild(window.italoInput.chooser("gram", gApplyInput)); return; }
     gEl.fillRow.style.display = ""; gEl.check.style.display = "";
     if (m === "write") { gEl.answer.readOnly = false; gEl.answer.placeholder = "Antwort eingeben ..."; try { gEl.answer.focus(); } catch (e) {} }
-    else { gEl.answer.readOnly = true; gEl.answer.placeholder = "Tippe auf «Sprechen» ..."; gInSlot.appendChild(window.italoInput.micButton(gEl.answer)); }
+    else { gEl.answer.readOnly = true; gEl.answer.placeholder = "Sprechen – oder hier tippen zum Schreiben"; gInSlot.appendChild(window.italoInput.micButton(gEl.answer)); }
     gInSlot.appendChild(window.italoInput.swap("gram", gApplyInput));
   }
   // Richtig/Falsch-Variante: Lueckensatz oder Umwandlung mit eingesetzter (richtiger oder falscher) Loesung
@@ -3543,6 +3544,7 @@
     if (!text) return;
     gCurrent = { ex: { q: "Stimmt das? «" + text + "»", options: ["Richtig", "Falsch"], a: [truth ? "Richtig" : "Falsch"], why: ex0.why, hint: "" }, idx: c.idx };
   }
+  gEl.answer.addEventListener("click", () => { if (gEl.answer.readOnly && !gAnswered) { window.italoInput.set("gram", "write"); gApplyInput(); } });
   function gNext() {
     window.italoFx.undock();
     gAnswered = false;
@@ -5573,10 +5575,10 @@
         C("gentile – Wie wird das «g» gesprochen: hart (wie g) oder weich (wie dsch)?", "weich", ["hart"]),
         C("lungo – Wie wird das «g» gesprochen: hart (wie g) oder weich (wie dsch)?", "hart", ["weich"]),
         C("scena – Wie wird das «sc» gesprochen: «sch» (wie in Schule) oder «sk»?", "sch", ["sk"]),
-        Y("Ergänze: ___ena (weiches tsch vor e) – c oder ch?", "c"),
-        Y("Ergänze: ami___e (hartes k vor e) – c oder ch?", "ch"),
-        Y("Ergänze: ___ao (weiches tsch vor a) – c oder ci?", "ci"),
-        Y("Ergänze: ___e cosa prendi? (hartes k vor e) – c oder ch?", "ch"),
+        C("Ergänze: ___ena (weiches tsch vor e) – c oder ch?", "c", ["ch"]),
+        C("Ergänze: ami___e (hartes k vor e) – c oder ch?", "ch", ["c"]),
+        C("Ergänze: ___ao (weiches tsch vor a) – c oder ci?", "ci", ["c"]),
+        C("Ergänze: ___e cosa prendi? (hartes k vor e) – c oder ch?", "ch", ["c"]),
         P([["il burro", "Butter"], ["il miele", "Honig"], ["la senape", "Senf"], ["l'aceto (männlich)", "Essig"], ["l'olio (männlich)", "Öl"]]),
         Y("Übersetze: Ich nehme einen Kaffee.", "Prendo un caffè.", ["Io prendo un caffè.", "Prendo un caffè, per favore."]),
         O("Für mich einen Orangensaft.", "Per me un succo d'arancia.", ["Un succo d'arancia per me."]),
@@ -7266,10 +7268,11 @@
         if (!m) { inp.style.display = "none"; check.disabled = true; inSlot.appendChild(window.italoInput.chooser("lesson", applyIn)); return; }
         inp.style.display = "";
         if (m === "write") { inp.readOnly = false; inp.placeholder = "Italienisch …"; try { inp.focus(); } catch (e) {} }
-        else { inp.readOnly = true; inp.placeholder = "Tippe auf «Sprechen» …"; inSlot.appendChild(window.italoInput.micButton(inp)); }
+        else { inp.readOnly = true; inp.placeholder = "Sprechen – oder hier tippen zum Schreiben"; inSlot.appendChild(window.italoInput.micButton(inp)); }
         inSlot.appendChild(window.italoInput.swap("lesson", applyIn));
         if (!answered) check.disabled = !inp.value.trim();
       }
+      inp.addEventListener("click", function () { if (inp.readOnly && !answered) { window.italoInput.set("lesson", "write"); applyIn(); } });
       applyIn();
       armCheck(function () {
         var v = norm(inp.value), all = [t.a].concat(t.alts);
