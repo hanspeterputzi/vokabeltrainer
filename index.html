@@ -824,7 +824,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-09-ausnahmen-c";
-  const APP_VERSION = "2026-11-09-b"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-09-c"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4774,7 +4774,7 @@
         const text = t.nodeValue;
         const toks = [];
         text.replace(WORD, (tok, off) => { toks.push({ tok, off }); return tok; });
-        const inIt = !!(t.parentNode.closest && t.parentNode.closest(".ep, .ex"));
+        const inIt = !!(t.parentNode.closest && t.parentNode.closest(".ep, .ex, .ls-it"));
         let last = 0, changed = false;
         const frag = document.createDocumentFragment();
         toks.forEach((tk, ti) => {
@@ -6524,6 +6524,22 @@
   window.italoLessons = LESSONS;
   function hl(tag, cls, it, de) { var h = document.createElement(tag); if (cls) h.className = cls; var s = document.createElement("span"); s.className = "lw"; s.setAttribute("data-de", de); s.textContent = it; h.appendChild(s); return h; }
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  // Italienische Teile markieren (ls-it), damit JEDES Wort gepunktet wird
+  var DE_RE = /[äöüÄÖÜß]|\b(ich|du|er|sie|wir|ihr|der|die|das|ein|eine|einen|einem|nicht|und|oder|ja|nein|wenn|mit|von|bei|nur|nach|immer|kein|keine|hart|weich|ist|bin|bist|sind|mir|dir|wie|was|wo|woher|gibt|hier|wohne|arbeite|suche|bleibe)\b/i;
+  function qDiv(text, cls) {
+    var d = el("div", cls || "ls-q"); text = String(text);
+    text.split(/(«[^»]*»)/).forEach(function (seg) {
+      if (!seg) return;
+      if (seg.charAt(0) === "«" && !DE_RE.test(seg)) { d.appendChild(document.createTextNode("«")); d.appendChild(el("span", "ls-it", seg.slice(1, -1))); d.appendChild(document.createTextNode("»")); }
+      else d.appendChild(document.createTextNode(seg));
+    });
+    return d;
+  }
+  function subEl(sub, isIt) {
+    var sm = el("small", ""), m = /^(Richtig ist: |Genau: )([\s\S]*)$/.exec(sub);
+    if (m && isIt) { sm.appendChild(document.createTextNode(m[1])); sm.appendChild(el("span", "ls-it", m[2])); } else sm.textContent = sub;
+    return sm;
+  }
   function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   function norm(s) {
     return String(s).toLowerCase().replace(/[’‘`]/g, "'").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "");
@@ -6773,7 +6789,7 @@
     var ul = el("ul", "ls-intro");
     S.ls.words.forEach(function (w) {
       var li = el("li"); var tx = el("span");
-      tx.appendChild(el("span", "it", w.it)); tx.appendChild(el("span", "de", w.de));
+      tx.appendChild(el("span", "it ls-it", w.it)); tx.appendChild(el("span", "de", w.de));
       li.appendChild(tx);
       if (canSpeak) { var b = el("button", "ls-spk", "Hören"); b.type = "button"; b.addEventListener("click", function () { speak(w.it); }); li.appendChild(b); }
       ul.appendChild(li);
@@ -6789,7 +6805,7 @@
         var vl = el("ul", "ls-intro");
         vd.f.forEach(function (f, i) {
           if (f === null) return;
-          var li = el("li"); var tx = el("span"); tx.appendChild(el("span", "it", PRON[i] + " " + f)); li.appendChild(tx);
+          var li = el("li"); var tx = el("span"); tx.appendChild(el("span", "it ls-it", PRON[i] + " " + f)); li.appendChild(tx);
           if (canSpeak) { var vb = el("button", "ls-spk", "Hören"); vb.type = "button"; vb.addEventListener("click", function () { speak(f); }); li.appendChild(vb); }
           vl.appendChild(li);
         });
@@ -6864,7 +6880,7 @@
       }
       Array.prototype.forEach.call(body.querySelectorAll("button.ls-opt, button.ls-chip"), function (b) { b.classList.add("lk"); }); // nach der Antwort sind auch die Woerter in den Antwortknoepfen antippbar
       fb.className = "ls-fb " + (ok ? "ok" : "no"); fb.textContent = msg;
-      if (sub) fb.appendChild(el("small", "", sub));
+      if (sub) fb.appendChild(subEl(sub, t.t !== "choose" || !DE_RE.test(String(t.a))));
       // Ganze Saetze: deutsche Uebersetzung der richtigen Antwort (Tippen / Hoeren)
       if ((t.t === "type" || t.t === "listen") && typeof window.italoTrans === "function") {
         var trd = window.italoTrans(t.a);
@@ -6882,7 +6898,7 @@
     function armCheck(fn) { check.onclick = function () { if (!answered) fn(); }; }
 
     if (t.t === "choose") {
-      body.appendChild(el("div", "ls-q", t.q));
+      body.appendChild(qDiv(t.q));
       var opts = el("div", "ls-opts"), sel = null, bs = [];
       shuffle([t.a].concat(t.w)).forEach(function (o) {
         var b = el("button", "ls-opt", o); b.type = "button";
@@ -6897,10 +6913,10 @@
     } else if (t.t === "type" || t.t === "listen") {
       if (t.t === "listen") {
         body.appendChild(el("div", "ls-hint", canSpeak ? "Hör zu und schreibe, was du hörst" : "Schreibe den Satz ab"));
-        var q = el("div", "ls-q", canSpeak ? "" : t.a);
+        var q = el("div", "ls-q", canSpeak ? "" : t.a); if (!canSpeak) q.className += " ls-it";
         if (canSpeak) { var sb = el("button", "ls-btn", "Anhören"); sb.type = "button"; sb.addEventListener("click", function () { speak(t.a); }); q.appendChild(sb); setTimeout(function () { speak(t.a); }, 250); }
         body.appendChild(q);
-      } else body.appendChild(el("div", "ls-q", t.q));
+      } else body.appendChild(qDiv(t.q));
       var inp = el("input", "ls-in"); inp.type = "text"; inp.autocomplete = "off"; inp.setAttribute("autocapitalize", "off"); inp.spellcheck = false;
       inp.placeholder = "Italienisch …";
       var inSlot = el("div"); body.appendChild(inSlot); body.appendChild(inp);
@@ -6928,7 +6944,7 @@
       });
     } else if (t.t === "order") {
       body.appendChild(el("div", "ls-hint", "Setze den Satz zusammen"));
-      body.appendChild(el("div", "ls-q", t.q));
+      body.appendChild(qDiv(t.q));
       var ans = el("div", "ls-ans"), bank = el("div", "ls-bank");
       var toks = t.a.replace(/[.?!]+$/, "").split(/\s+/).map(function (w, i) { return { w: w, id: i }; });
       var chips = shuffle(toks).map(function (tk) {
@@ -6950,7 +6966,7 @@
       var vd2 = verbData(t.inf);
       var cst = conjStat(t.inf), persons = conjPersons(t.inf);
       body.appendChild(el("div", "ls-hint", cst.n >= 2 ? "Konjugiere – nur die Formen, die noch nicht sitzen" : "Konjugiere im Präsens"));
-      body.appendChild(el("div", "ls-q", vd2.inf + " (" + vd2.de + ")"));
+      var cq = el("div", "ls-q"); cq.appendChild(el("span", "ls-it", vd2.inf)); cq.appendChild(document.createTextNode(" (" + vd2.de + ")")); body.appendChild(cq);
       var grid2 = el("div", "ls-conj"), ins = [];
       vd2.f.forEach(function (f, i) {
         if (f === null || persons.indexOf(i) === -1) return;
@@ -7077,7 +7093,7 @@
       var nl = el("ul", "ls-intro");
       LESSONS[ni].nw.forEach(function (w) {
         var li = el("li"); var tx = el("span");
-        tx.appendChild(el("span", "it", w[0])); tx.appendChild(el("span", "de", w[1]));
+        tx.appendChild(el("span", "it ls-it", w[0])); tx.appendChild(el("span", "de", w[1]));
         li.appendChild(tx);
         if (canSpeak) { var b = el("button", "ls-spk", "Hören"); b.type = "button"; b.addEventListener("click", function () { speak(w[0]); }); li.appendChild(b); }
         nl.appendChild(li);
