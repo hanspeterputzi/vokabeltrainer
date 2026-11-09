@@ -825,7 +825,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-09-qua";
-  const APP_VERSION = "2026-11-10-f"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-10-g"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1404,18 +1404,20 @@
   function grpOfSel(name) { const i = String(name).indexOf(SEP); return i < 0 ? null : name.slice(i + SEP.length); }
   function selName(cat, grp) { return groupsOf(cat).length > 1 ? cat + SEP + grp : cat; }
   // gueltige Auswahl herstellen (alte Namen, geloeschte Gruppen)
+  function firstSel() { const c = CATEGORIES.find(x => groupsOf(x).length) || CATEGORIES[0]; return c ? selName(c, groupsOf(c)[0]) : "Alle"; }
   function fixSelection(name) {
-    if (name === "Alle" || name === TODAY_CAT || isConj(name)) return name;
+    if (name === TODAY_CAT || isConj(name)) return name;
+    if (name === "Alle") return firstSel();
     const cat = catOfSel(name);
-    if (CATEGORIES.indexOf(cat) === -1) return "Alle";
+    if (CATEGORIES.indexOf(cat) === -1) return firstSel();
     const gl = groupsOf(cat);
-    if (!gl.length) return "Alle";
+    if (!gl.length) return firstSel();
     const g = grpOfSel(name);
     return selName(cat, g && gl.indexOf(g) !== -1 ? g : gl[0]);
   }
   function renderCategoryBar() {
     categoryBar.innerHTML = "";
-    const names = ["Alle"].concat(CATEGORIES);
+    const names = CATEGORIES.slice();
     const curCat = catOfSel(selectedCategory);
     names.forEach(name => {
       const count = name === "Alle" ? words.length : words.filter(w => w.cat === name).length;
