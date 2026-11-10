@@ -825,7 +825,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-10-hauptverben2";
-  const APP_VERSION = "2026-11-10-j"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-10-k"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -5067,6 +5067,8 @@
         "#dictList .dform{padding:2px 0}#dictList .dform b{display:inline-block;min-width:52px;font-weight:600;color:var(--muted,var(--ink-muted,#666))}" +
         "#dictList .dspk{float:right;margin:0 0 4px 8px;width:36px;height:36px;padding:0;border-radius:50%;border:1px solid var(--border,var(--line,#ccc));background:var(--bg,#f5f7fa);color:var(--accent,var(--blue,#2563eb));display:inline-flex;align-items:center;justify-content:center;cursor:pointer}" +
         "#dictList .dspk svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}" +
+        "#dictList .dform{display:flex;align-items:center;gap:6px}#dictList .dform .dspk{float:none;margin:0 0 0 auto;width:32px;height:32px}" +
+        "#dictList .dspkall{display:block;margin:6px 0 8px;padding:8px 14px;border-radius:999px;border:1px solid var(--border,var(--line,#ccc));background:var(--bg,#f5f7fa);color:inherit;font:inherit;font-size:.9rem;cursor:pointer}#dictList .dspkall.on{background:var(--accent,var(--blue,#2563eb));color:#fff;border-color:transparent}" +
         "#dictList .dspk.on{background:var(--accent,var(--blue,#2563eb));color:#fff;border-color:transparent}" +
         "#dictList .dw::after{content:'';display:block;clear:both}";
       document.head.appendChild(st2);
@@ -5124,13 +5126,19 @@
           catsEl.appendChild(b);
         });
       }
-      function formsHtml(w) {
-        const v = CONJ_VERBS.find(x => x.inf === w.it);
-        if (!v) return "";
-        const rows = v.f.map((f, i) => f === null ? "" : "<div class='dform'><b>" + CONJ_PRON[i] + "</b> " + escapeHtml(f) + "</div>").join("");
-        return "<details><summary>Formen (Präsens)</summary>" + rows + "</details>";
-      }
       const canSpeakDict = "speechSynthesis" in window;
+      const SPK_SVG = "<svg viewBox='0 0 24 24'><path d='M11 5 6 9H3v6h3l5 4z'/><path d='M15.5 8.5a5 5 0 0 1 0 7'/><path d='M18.5 5.5a9 9 0 0 1 0 13'/></svg>";
+      function formsHtml(w) {
+        let v = CONJ_VERBS.find(x => x.inf === w.it);
+        if (!v && /^esserci/.test(w.it)) v = CONJ_VERBS.find(x => x.inf === "esserci");
+        if (!v && /^sono nato/.test(w.it)) v = { inf: "essere nato", f: ["sono nato/a", "sei nato/a", "è nato/a", "siamo nati/e", "siete nati/e", "sono nati/e"], pass: true };
+        if (!v) return "";
+        const say = (f, i) => (CONJ_PRON[i].split("/")[0] + " " + String(f).replace(/\/[ae]\b/g, "")).trim();
+        const all = [];
+        const rows = v.f.map((f, i) => { if (f === null) return ""; const t = say(f, i); all.push(t); return "<div class='dform'><b>" + CONJ_PRON[i] + "</b> " + escapeHtml(f) + (canSpeakDict ? "<button type='button' class='dspk dspk-f' data-s='" + escapeHtml(t) + "' aria-label='Form anhören'>" + SPK_SVG + "</button>" : "") + "</div>"; }).join("");
+        const allBtn = canSpeakDict && all.length > 1 ? "<button type='button' class='dspkall' data-all='" + escapeHtml(JSON.stringify(all)) + "'>Alle Formen anhören</button>" : "";
+        return "<details><summary>Formen (" + (v.pass ? "Passato prossimo" : "Präsens") + ")</summary>" + allBtn + rows + "</details>";
+      }
       function speakDict(text, el) {
         try {
           const ss = window.speechSynthesis; ss.cancel();
@@ -5143,7 +5151,26 @@
           ss.speak(u);
         } catch (e) { el.classList.remove("on"); }
       }
+      // alle Formen nacheinander sprechen
+      function speakAll(list, btn) {
+        try {
+          const ss = window.speechSynthesis; ss.cancel();
+          if (btn.classList.contains("on")) { btn.classList.remove("on"); return; }
+          listEl.querySelectorAll(".dspkall.on").forEach(x => x.classList.remove("on"));
+          btn.classList.add("on");
+          const vs = ss.getVoices().filter(v => v.lang && v.lang.toLowerCase().replace("_", "-").startsWith("it")), voice = vs.find(x => x.localService) || vs[0];
+          let k = 0;
+          const next = () => {
+            if (!btn.classList.contains("on") || k >= list.length) { btn.classList.remove("on"); return; }
+            const u = new SpeechSynthesisUtterance(list[k++]); u.lang = "it-IT"; u.rate = 0.85; if (voice) u.voice = voice;
+            u.onend = () => setTimeout(next, 250); u.onerror = () => btn.classList.remove("on");
+            ss.speak(u);
+          };
+          next();
+        } catch (e) { btn.classList.remove("on"); }
+      }
       listEl.addEventListener("click", e => {
+        const a = e.target.closest(".dspkall"); if (a) { try { speakAll(JSON.parse(a.dataset.all), a); } catch (x) {} return; }
         const b = e.target.closest(".dspk"); if (b) speakDict(b.dataset.s, b);
       });
       function entryHtml(w, note) {
