@@ -824,8 +824,8 @@
   const CATEGORY_KEY = "vokabeltrainer_selected_category";
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
-  const SEED_VERSION = "2026-11-11-vprueche2";
-  const APP_VERSION = "2026-11-11-v"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const SEED_VERSION = "2026-11-11-yprueche2";
+  const APP_VERSION = "2026-11-11-y"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -6041,12 +6041,12 @@
         C("«___ cameriere» – welcher Artikel?", "il", ["la", "lo", "l'"]),
         C("l'ufficio (Büro) – männlich oder weiblich?", "männlich", ["weiblich"]),
         C("l'agenzia (Agentur) – männlich oder weiblich?", "weiblich", ["männlich"]),
-        Y("Weibliche Form von «il commesso»?", "la commessa"),
+        Y("Weibliche Form von «il calciatore»?", "la calciatrice"),
         Y("Weibliche Form von «lo studente»?", "la studentessa"),
         Y("Weibliche Form von «il traduttore»?", "la traduttrice"),
         Y("Weibliche Form von «il collega»?", "la collega"),
         Y("Weibliche Form von «il cliente»?", "la cliente"),
-        P([["il professore", "Professor"], ["la professoressa", "Professorin"], ["il dottore", "Doktor"], ["la dottoressa", "Doktorin"], ["il commesso", "Verkäufer"]]),
+        P([["il professore", "Professor"], ["la professoressa", "Professorin"], ["il dottore", "Doktor"], ["la dottoressa", "Doktorin"], ["il calciatore", "Fussballer"]]),
         C("Wie fragst du «Was machst du beruflich?»", "Che lavoro fai?", ["Dove lavori?", "Come ti chiami?", "Quanti anni hai?"]),
         Y("Übersetze: Wo arbeitest du?", "Dove lavori?", ["Dove lavori tu?", "Tu dove lavori?"]),
         O("Ich arbeite in einer Fabrik in Mailand.", "Lavoro in una fabbrica a Milano.", ["A Milano lavoro in una fabbrica."]),
@@ -7147,7 +7147,7 @@
   // ---- Lernpaket je Lektion: Alltags-Wendungen, neue Woerter (Nomen, Adjektive, Zahlen, Funktionswoerter, Verben),
   //      Grammatik-Uebungen und Wiederholung frueherer Lektionen. Alles aus dem Vokabular, sequentiell und ohne Wiederholung. ----
   // Handverlesene Zusatzwoerter je Lektion (Italienisch wie im Vokabular): Nomen, Adjektive, Zahlen, kleine Woerter
-  var CURATED = {"aussprache": {"noun": [], "adj": ["caldo", "freddo", "buono", "fresco", "delizioso"]}, "satzbau": {"noun": ["il padre", "la madre", "il fratello", "la sorella", "lo zio", "la zia"], "adj": ["giovane", "vecchio", "grande", "piccolo", "simpatico"], "total": 8}, "vorstellen": {"noun": ["il nome", "il cognome", "la signora", "il signore", "la signorina"], "adj": ["americano", "tedesco", "francese", "italiano", "spagnolo"], "fn": ["io", "tu", "lui", "lei", "noi"]}, "regelmaessig": {"noun": ["la mattina", "il pomeriggio", "la sera", "la notte", "il giorno"], "adj": ["stanco", "felice", "tranquillo", "contento", "triste"]}, "isc": {"noun": ["il caffè", "il tè", "la musica", "il film", "il libro", "il cinema", "la pizza"], "adj": ["buono", "bello", "interessante", "simpatico", "cattivo"]}, "reg_unreg": {"noun": ["il calcio", "lo sport", "il conto", "la pizza", "la festa", "il pranzo", "la cena"], "adj": ["buono", "ottimo", "cattivo", "giusto", "perfetto"]}, "reg_unreg2": {"noun": ["il libro", "il giornale", "la penna", "la lettera", "la pagina", "il quaderno", "la lezione"], "adj": ["interessante", "famoso", "simpatico", "nuovo", "strano"]}, "unregelmaessig": {"noun": ["la casa", "la scuola", "l'ufficio", "il cinema", "la città"], "adj": ["stanco", "felice", "contento", "tranquillo", "malato"]}, "unreg2": {"noun": ["il viaggio", "la vacanza", "il fine settimana", "il cinema", "l'appuntamento"], "adj": ["libero", "occupato", "stanco", "contento", "felice"]}, "piacere": {"noun": ["il pane", "la pasta", "il vino", "la musica", "il gelato"], "adj": ["buono", "bello", "delizioso", "interessante", "simpatico"]}, "geschlecht": {"noun": ["il professore", "la professoressa", "il dottore", "la dottoressa", "il calciatore", "la calciatrice", "lo psicologo", "la psicologa"], "adj": ["stanco", "occupato", "gentile", "bravo", "simpatico"], "total": 8}, "plural": {"noun": ["la settimana", "il fine settimana", "il mese", "l'anno", "il lunedì"], "adj": ["libero", "occupato", "aperto", "chiuso", "prossimo"], "fn": ["adesso", "sempre"], "total": 7}, "unbestimmt": {"noun": ["la camera", "la chiave"], "adj": ["libero", "occupato", "tranquillo", "silenzioso", "grande"], "total": 8}, "bestimmt": {"noun": ["l'Italia", "la Svizzera", "la Germania", "la Francia", "la Spagna", "l'Austria", "l'Inghilterra", "la Grecia", "la Russia"], "adj": ["tedesco", "francese", "italiano", "spagnolo", "americano"], "num": ["uno", "due", "tre", "dieci", "venti"]}, "verneinung": {"noun": ["il tempo", "la pioggia", "il caffè", "la camera", "il problema", "il numero"], "adj": ["vero", "falso", "giusto", "scorretto", "esatto"], "fn": ["non", "mai", "niente", "più", "nessuno"]}, "questo": {"noun": ["la giacca", "la camicia", "i pantaloni", "la gonna", "la borsa"], "adj": ["rosso", "verde", "blu", "nero", "bianco"], "fn": ["questo", "questa", "quello", "questi", "queste"]}, "fragen": {"noun": ["la domanda", "la risposta", "il nome", "l'indirizzo", "il numero di telefono"], "adj": ["vero", "giusto", "strano", "interessante", "simpatico"], "fn": ["chi", "cosa", "quale", "quanto", "perché"]}, "wohnen": {"noun": ["l'ufficio"], "adj": ["grande", "piccolo", "nuovo", "vecchio", "tranquillo"], "total": 8}, "adjektive": {"noun": ["il museo", "la chiesa", "il palazzo", "il ristorante", "la trattoria", "il negozio", "il bar", "il cinema"], "adj": ["famoso", "antico", "tipico", "interessante", "turistico"]}, "stellung": {"noun": ["la camera", "il bambino", "la bambina", "il ragazzo", "la ragazza", "la casa"], "adj": ["tranquillo", "caro", "piccolo", "rotondo", "rumoroso"]}, "indirekt": {"noun": ["il vestito", "la giacca", "la taglia", "il colore", "il regalo"], "adj": ["caro", "economico", "bello", "stretto", "costoso"]}, "praeposition": {"noun": ["il museo", "la chiesa", "la stazione", "la scuola", "l'albergo", "il cinema", "il bar"], "adj": ["vicino", "lontano", "alto", "lungo", "aperto"], "fn": ["su", "in", "tra", "con", "senza"]}, "konjunktion": {"noun": ["la fame", "la sete", "la radio", "il tempo", "la fine", "la lezione", "la strada"], "adj": ["stanco", "contento", "caro", "bello", "malato"], "fn": ["e", "o", "anche", "ma", "dunque", "perché", "mentre", "se"], "fnmax": 8}, "di": {"noun": ["il chilo", "il litro", "la bottiglia", "il formaggio", "lo zucchero"], "adj": ["grande", "piccolo", "alto", "lungo", "nuovo"], "fn": ["di", "da", "più", "meno", "molto"]}, "a": {"noun": ["la casa", "la scuola", "il cinema", "il teatro", "il bar"], "adj": ["aperto", "chiuso", "libero", "vicino", "lontano"], "fn": ["a", "al", "alla", "alle", "qui"]}, "orte": {"noun": ["la chiesa", "il museo"], "adj": ["aperto", "chiuso", "vicino", "lontano", "libero"], "fn": ["qui", "là", "ecco", "dove", "a destra"], "total": 8}, "fussball": {"noun": ["il calcio", "la vittoria"], "adj": ["forte", "bravo", "bravissimo", "fortissimo", "fantastico"], "total": 8}, "arzt": {"noun": ["la ricetta", "la testa"], "adj": ["malato", "sano", "stanco", "forte", "triste"]}, "bahnhof": {"noun": ["il biglietto", "la passeggera"], "adj": ["veloce", "lungo", "breve", "vicino", "lontano"], "total": 8}, "wetter": {"noun": ["la nuvola"], "adj": ["caldo", "freddo", "fresco", "chiaro", "scuro"], "total": 8}, "geburtstag": {"noun": ["il gelato", "il dolce"], "adj": ["felice", "contento", "bello", "buono", "delizioso"], "total": 8}, "imperativ": {"noun": ["il momento", "il caffè", "la casa", "il bar", "il biglietto"], "adj": ["gentile", "tranquillo", "veloce", "libero", "silenzioso"], "fn": ["qui", "piano", "presto", "subito", "ecco"]}};
+  var CURATED = {"aussprache": {"noun": [], "adj": ["caldo", "freddo", "buono", "fresco", "delizioso"]}, "satzbau": {"noun": ["il padre", "la madre", "il fratello", "la sorella", "lo zio", "la zia"], "adj": ["giovane", "vecchio", "grande", "piccolo", "simpatico"], "total": 8}, "vorstellen": {"noun": ["il nome", "il cognome", "la signora", "il signore", "la signorina"], "adj": ["americano", "tedesco", "francese", "italiano", "spagnolo"], "fn": ["io", "tu", "lui", "lei", "noi"]}, "regelmaessig": {"noun": ["la mattina", "il pomeriggio", "la sera", "la notte", "l'età"], "adj": ["stanco", "felice", "tranquillo", "contento", "triste"]}, "isc": {"noun": ["la musica", "il film", "il libro", "il cinema", "la pizza"], "adj": ["bello", "interessante", "cattivo", "caro", "stupendo"]}, "reg_unreg": {"noun": ["il calcio", "la partita", "la palla", "il pranzo", "la cena"], "adj": ["ottimo", "perfetto", "giusto", "forte", "bravo"]}, "reg_unreg2": {"noun": ["la penna", "la lettera", "la pagina", "il quaderno", "la lezione"], "adj": ["famoso", "nuovo", "strano", "spiritoso", "gentile"]}, "unregelmaessig": {"noun": ["la scuola", "l'ufficio", "la strada", "la finestra", "il tavolo"], "adj": ["silenzioso", "rumoroso"]}, "unreg2": {"noun": ["il viaggio", "la vacanza", "il fine settimana", "l'appuntamento", "il progetto"], "adj": ["libero", "occupato", "utile", "veloce", "attivo"]}, "piacere": {"noun": ["il pane", "la pasta", "il vino", "il gelato", "la cioccolata"], "adj": ["fantastico", "bravissimo", "fortissimo", "cool", "tipico"]}, "geschlecht": {"noun": ["il professore", "la professoressa", "il dottore", "la dottoressa", "il calciatore", "la calciatrice", "lo psicologo", "la psicologa"], "adj": ["industriale", "straniero", "normale", "personale", "valido"], "total": 8}, "plural": {"noun": ["la settimana", "il mese", "l'anno", "il lunedì", "la domenica"], "adj": ["prossimo", "scorso", "primo", "ultimo", "quotidiano"], "fn": ["adesso", "sempre"], "total": 7}, "unbestimmt": {"noun": ["la camera", "la chiave"], "adj": ["indeterminativo", "doppio", "singolo", "chiaro", "scuro"], "total": 8}, "bestimmt": {"noun": ["la Germania", "la Francia", "la Spagna", "l'Austria", "l'Inghilterra"], "adj": ["determinativo", "greco", "russo", "svedese", "olandese"], "num": ["uno", "due", "tre", "dieci", "venti"]}, "verneinung": {"noun": ["il tempo", "il caffè", "il problema", "il numero", "il motivo"], "adj": ["falso", "scorretto", "esatto", "vero", "semplice"], "fn": ["non", "mai", "niente", "più", "nessuno"]}, "questo": {"noun": ["la giacca", "la camicia", "i pantaloni", "la gonna", "la borsa"], "adj": ["rosso", "verde", "blu", "nero", "bianco"], "fn": ["questo", "questa", "quello", "questi", "queste"]}, "fragen": {"noun": ["la domanda", "la risposta", "l'indirizzo", "il numero di telefono", "la persona"], "adj": ["interrogativo"], "fn": ["chi", "cosa", "quale", "quanto", "perché"]}, "wohnen": {"noun": ["il giardino"], "adj": ["partitivo"], "total": 8}, "adjektive": {"noun": ["il ristorante", "il negozio", "il bar", "il mercato", "il supermercato"], "adj": ["antico", "turistico", "storico", "tradizionale", "inglese"]}, "stellung": {"noun": ["il bambino", "la bambina", "il ragazzo", "la ragazza", "la bici"], "adj": ["giallo", "grigio", "marrone", "turchese", "viola"]}, "indirekt": {"noun": ["il vestito", "la taglia", "il colore", "la seta", "la lana"], "adj": ["stretto", "arancione", "economico", "costoso"]}, "praeposition": {"noun": ["il museo", "la chiesa", "l'albergo", "la polizia", "la fabbrica"], "adj": ["lontano", "alto"], "fn": ["su", "in", "tra", "con", "senza"]}, "konjunktion": {"noun": ["la fame", "la sete", "la fine", "il chiosco", "la radio"], "adj": [], "fn": ["e", "o", "anche", "ma", "dunque", "perché", "mentre", "se"], "fnmax": 8}, "di": {"noun": ["il chilo", "il litro", "la bottiglia", "il formaggio", "lo zucchero"], "adj": ["massimo"], "fn": ["di", "da", "più", "meno", "molto"]}, "a": {"noun": ["il teatro", "il mare", "la spiaggia", "la montagna", "il lago"], "adj": ["aperto", "chiuso"], "fn": ["a", "al", "alla", "alle", "qui"]}, "orte": {"noun": ["la palestra", "il monumento"], "adj": ["vicino"], "fn": ["qui", "là", "ecco", "dove", "a destra"], "total": 8}, "fussball": {"noun": ["la vittoria", "il campione"], "adj": [], "total": 8}, "arzt": {"noun": ["la testa", "la mano"], "adj": ["malato", "sano"]}, "bahnhof": {"noun": ["il biglietto", "la passeggera"], "adj": ["lungo", "breve"], "total": 8}, "wetter": {"noun": ["la nuvola"], "adj": [], "total": 8}, "geburtstag": {"noun": ["il dolce", "il tiramisù"], "adj": [], "total": 8}, "imperativ": {"noun": ["il momento", "la tazza", "il menù", "il conto", "il bicchiere"], "adj": [], "fn": ["qui", "piano", "presto", "subito", "ecco"]}};
   var _packs = null;
   function allWords() { return window.italoWordsRef ? window.italoWordsRef() : []; }
   var ADJ_BAD = ["nato", "ripieno", "scritto", "evidenziate", "venduto", "fatto", "rimasto", "migliori", "molti", "poco", "massimo", "chiaro", "usato", "stretto", "mezzo", "doppio", "maschile", "femminile", "storico", "industriale", "scorretto", "falso", "esatto", "straniero", "stesso", "altro", "semplice", "fresco"];
@@ -7226,23 +7226,68 @@
     }
     return null;
   }
+  // Themengruppe (Nomen) je Lektion fuer das Auffuellen, wenn handverlesene Woerter schon vergeben sind
+  var NOUNG = { aussprache: "Getränke", satzbau: "Familie", vorstellen: "Personen & Anreden", regelmaessig: "Zeit & Tageszeiten", isc: "Sprache & Texte", reg_unreg: "Freizeit, Sport & Feste",
+    reg_unreg2: "Schule & Lernen", unregelmaessig: "Haus & Wohnen", unreg2: "Technik & Medien", piacere: "Brot, Pasta & Pizza", geschlecht: "Berufe", plural: "Wochentage, Monate, Jahreszeiten",
+    unbestimmt: "Reisen & Dokumente", bestimmt: "Länder & Kontinente", verneinung: "Mengen & Allgemeines", questo: "Kleidung & Farbe", fragen: "Personen & Anreden", wohnen: "Zutaten, Fleisch & Fisch",
+    adjektive: "Städte & Sprachen", stellung: "Verkehr & Bahn", indirekt: "Kleidung & Farbe", praeposition: "Gebäude & Einrichtungen", konjunktion: "Geschäfte & Dienstleister", di: "Obst & Gemüse",
+    a: "Stadt, Landschaft & Wetter", orte: "Gebäude & Einrichtungen", fussball: "Freizeit, Sport & Feste", arzt: "Körper & Gesundheit", bahnhof: "Verkehr & Bahn", wetter: "Stadt, Landschaft & Wetter",
+    geburtstag: "Süsses & Glace", imperativ: "Mahlzeiten & Restaurant" };
+  var ADJG = { vorstellen: ["Nationalitäten"], bestimmt: ["Nationalitäten"], questo: ["Farben"], stellung: ["Farben", "Grösse, Alter & Form"], indirekt: ["Farben"], adjektive: ["Grammatik", "Gefühle & Charakter"] };
   function buildPacks() {
     if (_packs) return _packs;
-    var W = allWords(), packs = [], byKey = {};
-    W.forEach(function (w) { var k = w.cat + "|" + String(w.it).split(/\s*\/\s*/)[0].replace(/\s*\(.*?\)/g, "").trim().toLowerCase(); if (!byKey[k]) byKey[k] = w; });
+    var W = allWords(), packs = [], byKey = {}, used = { noun: {}, adj: {}, num: {}, fn: {} };
+    var keyOf = function (w) { return String(w.it).split(/\s*\/\s*/)[0].replace(/\s*\(.*?\)/g, "").trim().toLowerCase(); };
+    var bareK = function (t) { return String(t).toLowerCase().replace(/\s*\(.*?\)/g, "").replace(/^(uno|una|un'|un|il|lo|la|l'|le|i|gli)\s*/, "").trim(); };
+    W.forEach(function (w) { var k = w.cat + "|" + keyOf(w); if (!byKey[k]) byKey[k] = w; });
     function find(cats, it) {
       for (var c = 0; c < cats.length; c++) { var w = byKey[cats[c] + "|" + it.toLowerCase()]; if (w) return w; }
       if (window.console) console.warn("Lektion: Wort nicht im Vokabular: " + it);
       return null;
     }
+    var E = window.italoExamples || {}, ek = function (w) { return bareK(keyOf(w)); };
+    function pool(cat, grp, kind) {
+      var all = W.filter(function (w) { return w.cat === cat && packOk(w, kind); });
+      all.sort(function (x, y) { return (E[ek(x)] ? 0 : 1) - (E[ek(y)] ? 0 : 1) || ek(x).length - ek(y).length; });
+      return grp ? all.filter(function (w) { return (Array.isArray(grp) ? grp : [grp]).indexOf(w.grp) >= 0; }) : all;
+    }
+    // Woerter, die in den eigenen Listen einer Lektion stehen, gehoeren dieser Lektion (andere Lektionen duerfen sie nicht nochmals nehmen)
+    var owner = {};
+    LESSONS.forEach(function (l) { var q = lessonParts(l); q.nouns.concat(q.nums, q.advs).forEach(function (w) { var k = bareK(w.it); if (owner[k] == null) owner[k] = l.id; }); });
     LESSONS.forEach(function (ls) {
       var c = CURATED[ls.id] || {}, P = {}, lp = lessonParts(ls);
-      var nn = (c.noun || []).map(function (x) { return find(["Nomen"], x); }).filter(Boolean).filter(function (w) { return !inLesson(ls, w); });
-      var total = Math.min(8, c.total || (lp.nouns.length >= 5 ? 8 : 5)); // Nomen: je Lektion 5 (hoechstens 8) inkl. eigener Listen
-      P.noun = nn.slice(0, Math.max(0, total - lp.nouns.length));
-      P.adj = (c.adj || []).map(function (x) { return find(["Adjektive"], x); }).filter(Boolean).slice(0, 5);
-      P.num = (c.num || []).map(function (x) { return find(["Zahlen"], x); }).filter(Boolean).slice(0, Math.max(0, 5 - lp.nums.length));
-      P.fn = (c.fn || []).map(function (x) { return find(["Pronomen", "Präpositionen", "Adverbien", "Konjunktionen"], x); }).filter(Boolean).slice(0, Math.max(0, (c.fnmax || 5) - lp.advs.length));
+      var notOther = function (w) { var o = owner[ek(w)]; return o == null || o === ls.id; };
+      // eigene Listenwoerter der Lektion zaehlen als vergeben
+      lp.nouns.forEach(function (w) { used.noun[bareK(w.it)] = 1; });
+      lp.nums.forEach(function (w) { used.num[bareK(w.it)] = 1; });
+      lp.advs.forEach(function (w) { used.fn[bareK(w.it)] = 1; });
+      var okLesson = function (w) { return !inLesson(ls, w); };
+      // ---- Nomen: 5 je Lektion (hoechstens 8 inkl. eigener Listen); Paare (lo zio / la zia) nur komplett ----
+      var total = Math.min(8, c.total || (lp.nouns.length >= 5 ? 8 : 5)), nn = [];
+      var cand = (c.noun || []).map(function (x) { return find(["Nomen"], x); }).filter(Boolean);
+      cand.forEach(function (w) {
+        if (lp.nouns.length + nn.length >= total || nn.indexOf(w) >= 0 || used.noun[ek(w)] || !okLesson(w) || !notOther(w)) return;
+        var pr = partnerOf(w, W), need = [w];
+        if (pr && !used.noun[ek(pr)] && nn.indexOf(pr) < 0 && okLesson(pr) && notOther(pr)) need.push(pr);
+        if (lp.nouns.length + nn.length + need.length > 8) return;
+        if (lp.nouns.length + nn.length + need.length > total && need.length > 1 && !c.total) return;
+        need.forEach(function (x) { nn.push(x); used.noun[ek(x)] = 1; });
+      });
+      P.noun = nn;
+      // ---- Adjektive: bis 5 neue ----
+      var ag = ADJG[ls.id] || ["Gefühle & Charakter", "Zustand & Verwendung", "Grösse, Alter & Form", "Gut, schlecht & richtig"];
+      var acand = (c.adj || []).map(function (x) { return find(["Adjektive"], x); }).filter(Boolean);
+      P.adj = [];
+      acand.forEach(function (w) { if (P.adj.length >= 5 || used.adj[ek(w)] || P.adj.indexOf(w) >= 0) return; P.adj.push(w); used.adj[ek(w)] = 1; });
+      // ---- Zahlen: nur in Lektionen, die welche vorsehen ----
+      var wantN = c.num ? Math.max(0, 5 - lp.nums.length) : 0, ncand = (c.num || []).map(function (x) { return find(["Zahlen"], x); }).filter(Boolean).concat(c.num ? pool("Zahlen", null, "num") : []);
+      P.num = [];
+      ncand.forEach(function (w) { if (P.num.length >= wantN || used.num[ek(w)] || P.num.indexOf(w) >= 0 || !notOther(w)) return; P.num.push(w); used.num[ek(w)] = 1; });
+      // ---- Kleine Woerter: nur in Lektionen, die welche vorsehen ----
+      var fmax = c.fnmax || 5, wantF = c.fn ? Math.max(0, fmax - lp.advs.length) : 0, fcats = ["Pronomen", "Präpositionen", "Adverbien", "Konjunktionen"];
+      var fcand = (c.fn || []).map(function (x) { return find(fcats, x); }).filter(Boolean);
+      P.fn = [];
+      fcand.forEach(function (w) { if (P.fn.length >= wantF || used.fn[ek(w)] || P.fn.indexOf(w) >= 0 || !notOther(w)) return; P.fn.push(w); used.fn[ek(w)] = 1; });
       P.ph = []; P.verbs = [];
       packs.push(P);
     });
