@@ -825,7 +825,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-11-ziprueche2";
-  const APP_VERSION = "2026-11-11-zk"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-11-zl"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -894,6 +894,40 @@
     return btn;
   };
   window.italoSetBtn = function (btn, it) { var de = window.italoNavDe[it]; if (de) window.italoTwoLine(btn, it, de); else btn.textContent = it; };
+  // Deutsche Schaltflaechen automatisch italienisch beschriften (Italienisch oben fett, Deutsch duenn darunter)
+  (function () {
+    var MAP = {
+      "Zurück": "Indietro", "Weiss nicht": "Non so", "Weiter": "Avanti", "Prüfen": "Controlla", "Zeigen": "Mostra", "Nächstes Verb": "Prossimo verbo",
+      "Nächste Aufgabe": "Prossimo esercizio", "Hinzufügen": "Aggiungi", "Los": "Via!", "Sprechen": "Parla", "Aussprache wiederholen": "Ripeti la pronuncia",
+      "Anhören": "Ascolta", "Alle Formen anhören": "Ascolta tutte le forme", "Löschen": "Elimina", "Meine Antwort war auch richtig": "Anche la mia risposta era giusta",
+      "Nochmals": "Ancora una volta", "Nochmal": "Ancora", "Nächster Dialog": "Prossimo dialogo", "Zu den Themen": "Agli argomenti", "Tipp": "Suggerimento",
+      "Überspringen": "Salta", "Sprechen: Italienisch": "Parla: italiano", "Sprechen: Deutsch": "Parla: tedesco", "Fertig": "Fatto", "Schliessen": "Chiudi",
+      "Abbrechen": "Annulla", "Speichern": "Salva", "Weiter!": "Avanti!", "Nochmals versuchen": "Riprova", "Neu starten": "Ricomincia", "Zeig mir die Lösung": "Mostrami la soluzione",
+      "Lösung zeigen": "Mostra la soluzione", "Antwort sprechen": "Rispondi a voce", "Satz anhören": "Ascolta la frase", "Suchfeld leeren": "Svuota la ricerca"
+    };
+    function conv(b) {
+      if (b.dataset && b.dataset.itx) return;
+      if (b.children.length) return;
+      var t = (b.textContent || "").trim(), it = MAP[t];
+      if (!it) return;
+      if (window.italoTwoLine) { b.dataset.itx = "1"; window.italoTwoLine(b, it, t); }
+    }
+    function scan(root) { if (root.nodeType !== 1) return; if (root.tagName === "BUTTON") conv(root); if (root.querySelectorAll) Array.prototype.forEach.call(root.querySelectorAll("button"), conv); }
+    var busy = false;
+    function run() {
+      scan(document.body);
+      new MutationObserver(function (muts) {
+        if (busy) return; busy = true;
+        try {
+          muts.forEach(function (m) {
+            if (m.type === "childList") { m.addedNodes.forEach(scan); if (m.target && m.target.tagName === "BUTTON") { delete m.target.dataset.itx; conv(m.target); } }
+          });
+        } catch (e) {}
+        busy = false;
+      }).observe(document.body, { childList: true, subtree: true });
+    }
+    if (document.body) run(); else document.addEventListener("DOMContentLoaded", run);
+  })();
   // Aussprache-Korrektur fuer die Sprachausgabe: ein einzelner Akzent-Buchstabe (z. B. Verbform «è») wird von den Stimmen als «e accento grave» BUCHSTABIERT.
   // Mit einem Punkt dahinter lesen sie ihn als Wort (nur «e»). Platzhalter (…, XY) und Abkuerzungen werden angepasst.
   window.italoSpeechFix = function (t) {
@@ -1260,6 +1294,7 @@
       ".fx-bar .feedback,.fx-bar .ls-fb,.fx-bar .g-expl,.fx-bar .ex-box{display:block!important;position:static!important;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0 0 10px!important;color:inherit!important;opacity:1!important;animation:none!important;min-height:0!important}" +
       ".fx-bar .lw{border-bottom-color:currentColor}.fx-bar small{display:block;opacity:.9;margin-top:4px}" +
       ".fx-next{display:block;width:100%;margin-top:6px;padding:14px;border:0;border-radius:14px;font:inherit;font-weight:800;font-size:1.05rem;cursor:pointer;color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.18)}" +
+      "button.two{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1.2}button.two .b-de{font-size:.74rem;font-weight:500;opacity:.85}" +
       ".ins-it{display:block}.ins-de{display:block;font-size:.8em;font-weight:400;letter-spacing:0;opacity:.72;text-transform:none;margin:1px 0 4px}.ins-ct{display:block;margin-top:2px}" +
       ".fx-next.two{display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.2}.fx-next .b-de{font-size:.74rem;font-weight:500;opacity:.88}" +
       ".fx-bar.ok .fx-next{background:#58a700}.fx-bar.no .fx-next{background:#d33a3a}.fx-next:active{transform:translateY(3px);box-shadow:none}" +
