@@ -824,8 +824,8 @@
   const CATEGORY_KEY = "vokabeltrainer_selected_category";
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
-  const SEED_VERSION = "2026-11-11-sprueche2";
-  const APP_VERSION = "2026-11-11-q"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const SEED_VERSION = "2026-11-11-vprueche2";
+  const APP_VERSION = "2026-11-11-v"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1204,7 +1204,7 @@
       ".fx-hearts{display:inline-flex;align-items:center;gap:4px;margin-left:10px;padding:5px 9px;border-radius:999px;background:#e0661f;vertical-align:middle}.fx-h{width:16px;height:16px;display:block;transition:transform .2s,opacity .2s}.fx-h.off{opacity:.5}.fx-h.pop{animation:fxpop .45s}" +
       ".fx-oranges{position:fixed;inset:0;pointer-events:none;z-index:400;overflow:hidden}.fx-or{position:absolute;top:-50px;animation:fxfall linear forwards}" +
       "@keyframes fxfall{to{transform:translateY(112vh) rotate(540deg)}}" +
-      ".fx-hint{position:absolute;top:84px;left:50%;transform:translateX(-50%);pointer-events:auto;background:rgba(255,255,255,.97);color:#c2410c;font-weight:800;font-size:1.15rem;padding:8px 16px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.22);white-space:nowrap;z-index:2}" +
+      ".fx-hint{position:fixed;left:50%;top:42%;transform:translate(-50%,-50%) rotate(-45deg);pointer-events:auto;color:#111;font-weight:900;font-size:1.9rem;letter-spacing:.01em;white-space:nowrap;z-index:2;text-shadow:0 0 6px #fff,0 0 12px #fff,0 0 3px #fff;animation:fxhint 5.4s ease-out forwards}@keyframes fxhint{0%{opacity:0;transform:translate(-50%,-50%) rotate(-45deg) scale(.6)}12%{opacity:1;transform:translate(-50%,-50%) rotate(-45deg) scale(1.05)}18%{transform:translate(-50%,-50%) rotate(-45deg) scale(1)}85%{opacity:1}100%{opacity:0}}" +
       ".fx-big{position:absolute;top:-150px;left:calc(50% - 62px);width:124px;height:124px;pointer-events:auto;cursor:pointer;touch-action:manipulation;animation:fxbig 3s linear .3s forwards;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}" +
       "@keyframes fxbig{to{transform:translateY(calc(100vh + 170px)) rotate(14deg)}}" +
       ".fx-fun{position:fixed;left:0;right:0;top:34%;z-index:420;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:auto;animation:fxfun 2.9s ease-out forwards;font-weight:800;text-align:center;padding:0 16px}" +
@@ -1286,31 +1286,37 @@
     var ORANGE_BIG = OCOLS[0];
     function celebrate() {
       if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      var layer = document.createElement("div"); layer.className = "fx-oranges";
-      for (var i = 0; i < 40; i++) {
-        var c = OCOLS[i % OCOLS.length], sz = 22 + Math.random() * 22, sp = document.createElement("span");
-        sp.className = "fx-or"; sp.style.left = (Math.random() * 96) + "%"; sp.style.width = sp.style.height = sz + "px";
-        sp.style.animationDuration = (2 + Math.random() * 1.8) + "s"; sp.style.animationDelay = (Math.random() * 0.8) + "s";
-        sp.innerHTML = orangeSvg(c);
-        layer.appendChild(sp);
-      }
-      // die grosse orange Orange in der Mitte: wer sie erwischt, sieht etwas Lustiges
-      var big = document.createElement("div"); big.className = "fx-big"; big.setAttribute("role", "button"); big.setAttribute("aria-label", "Grosse Orange");
-      big.innerHTML = orangeSvg(ORANGE_BIG).replace("</svg>", GLASSES2 + "</svg>");
-      var hit = false;
-      function catchIt(ev) {
-        if (hit) return; hit = true;
-        try { ev.preventDefault(); } catch (e) {}
-        var r = big.getBoundingClientRect();
-        big.parentNode && big.parentNode.removeChild(big);
-        funny(r.left + r.width / 2, r.top + r.height / 2);
-      }
-      big.addEventListener("pointerdown", catchIt); big.addEventListener("click", catchIt);
-      layer.appendChild(big);
-      var hint = document.createElement("div"); hint.className = "fx-hint ls-it"; hint.textContent = "Prendi l'arancia cool!"; layer.appendChild(hint);
-      document.body.appendChild(layer);
+      // 1. zuerst der Hinweis (schwarz, 45 Grad), 2. nach ca. 1,4 Sekunden fallen die Orangen
+      var hl_ = document.createElement("div"); hl_.className = "fx-oranges";
+      var hint = document.createElement("div"); hint.className = "fx-hint ls-it"; hint.textContent = "Prendi l'arancia cool!"; hl_.appendChild(hint);
+      document.body.appendChild(hl_);
       if (window.italoLink) { try { window.italoLink(hint); } catch (e) {} }
-      setTimeout(function () { if (layer.parentNode) layer.parentNode.removeChild(layer); }, 4000);
+      setTimeout(function () { if (hl_.parentNode) hl_.parentNode.removeChild(hl_); }, 5600);
+      setTimeout(function () {
+        var layer = document.createElement("div"); layer.className = "fx-oranges";
+        for (var i = 0; i < 40; i++) {
+          var c = OCOLS[i % OCOLS.length], sz = 22 + Math.random() * 22, sp = document.createElement("span");
+          sp.className = "fx-or"; sp.style.left = (Math.random() * 96) + "%"; sp.style.width = sp.style.height = sz + "px";
+          sp.style.animationDuration = (2 + Math.random() * 1.8) + "s"; sp.style.animationDelay = (Math.random() * 0.8) + "s";
+          sp.innerHTML = orangeSvg(c);
+          layer.appendChild(sp);
+        }
+        // die grosse orange Orange in der Mitte: wer sie erwischt, sieht etwas Lustiges
+        var big = document.createElement("div"); big.className = "fx-big"; big.setAttribute("role", "button"); big.setAttribute("aria-label", "Grosse Orange");
+        big.innerHTML = orangeSvg(ORANGE_BIG).replace("</svg>", GLASSES2 + "</svg>");
+        var hit = false;
+        function catchIt(ev) {
+          if (hit) return; hit = true;
+          try { ev.preventDefault(); } catch (e) {}
+          var r = big.getBoundingClientRect();
+          big.parentNode && big.parentNode.removeChild(big);
+          funny(r.left + r.width / 2, r.top + r.height / 2);
+        }
+        big.addEventListener("pointerdown", catchIt); big.addEventListener("click", catchIt);
+        layer.appendChild(big);
+        document.body.appendChild(layer);
+        setTimeout(function () { if (layer.parentNode) layer.parentNode.removeChild(layer); }, 4000);
+      }, 1400);
     }
     function paint(e) { var s = st_(e.dataset.k); e.innerHTML = ""; e.setAttribute("aria-label", (MAX - s.errors) + " von " + MAX + " Fehlern übrig"); for (var i = 0; i < MAX; i++) { var sp = document.createElement("span"); var lost = i >= MAX - s.errors; sp.className = "fx-h" + (lost ? " off" : ""); sp.innerHTML = lost ? LOST : ORANGE; e.appendChild(sp); } }
     function paintAll(k, pop) { Array.prototype.forEach.call(document.querySelectorAll('.fx-hearts[data-k="' + k + '"]'), function (e) { paint(e); if (pop) { var hs = e.querySelectorAll(".fx-h"), l = hs[MAX - st_(k).errors]; if (l) l.classList.add("pop"); } }); }
@@ -5712,7 +5718,7 @@
         C("Ergänze: ami___e (hartes k vor e) – c oder ch?", "ch", ["c"]),
         C("Ergänze: ___ao (weiches tsch vor a) – c oder ci?", "ci", ["c"]),
         C("Ergänze: ___e cosa prendi? (hartes k vor e) – c oder ch?", "ch", ["c"]),
-        P([["il burro", "Butter"], ["il miele", "Honig"], ["la senape", "Senf"], ["l'aceto (männlich)", "Essig"], ["l'olio (männlich)", "Öl"]]),
+        P([["il burro", "Butter"], ["il miele", "Honig"], ["la senape", "Senf"], ["l'olio (männlich)", "Öl"]]),
         Y("Übersetze: Ich nehme einen Kaffee.", "Prendo un caffè.", ["Io prendo un caffè.", "Prendo un caffè, per favore."]),
         O("Für mich einen Orangensaft.", "Per me un succo d'arancia.", ["Un succo d'arancia per me."]),
         L("Vorrei una limonata, per favore."),
@@ -5793,17 +5799,18 @@
       ]
     },
     {
-      id: "regelmaessig", topic: "regelmaessig", focus: ["prendere", "dormire"], title: "Tagesablauf - lerne die regelmässigen Verben", sub: "Grammatik-Block «Regelmässige Verben»",
+      id: "regelmaessig", topic: "regelmaessig", focus: ["abitare", "prendere", "dormire"], title: "Tagesablauf - lerne die regelmässigen Verben", sub: "Grammatik-Block «Regelmässige Verben»",
       nw: [["prendere", "nehmen"], ["dormire", "schlafen"], ["abitare", "wohnen"]],
       words: [
+        W("Dormi bene?", "Schläfst du gut?"),
         W("Abito a Coira.", "Ich wohne in Chur."),
         W("Che cosa prendi?", "Was nimmst du?"),
         W("Prendo un caffè.", "Ich nehme einen Kaffee."),
         W("Dormo otto ore.", "Ich schlafe acht Stunden."),
         W("Abitiamo a Coira.", "Wir wohnen in Chur."),
-        W("prendere · dormire", "nehmen · schlafen")
       ],
       tasks: [
+        Y("Übersetze: Schläfst du gut?", "Dormi bene?", ["Tu dormi bene?"]),
         C("Zu welcher Gruppe gehört «prendere»?", "-ere", ["-are", "-ire"]),
         C("Zu welcher Gruppe gehört «dormire»?", "-ire", ["-are", "-ere"]),
         C("Welche Endungen haben -are-Verben bei io / tu / lui (abito, abiti, abita)?", "-o / -i / -a", ["-o / -i / -e", "-o / -e / -a"]),
@@ -5834,7 +5841,6 @@
         W("Capisci?", "Verstehst du?"),
         W("Preferiamo il tè.", "Wir bevorzugen Tee."),
         W("Capite?", "Versteht ihr?"),
-        W("preferire · capire", "bevorzugen · verstehen")
       ],
       tasks: [
         C("«preferire» – io-Form: Welche Form ist richtig?", "preferisco", ["prefero"]),
@@ -5858,18 +5864,21 @@
     },
     {
       id: "reg_unreg", topic: "reg_unreg", focus: ["pagare", "giocare", "mangiare"], title: "Freizeit + Essen - lerne die unregelmässig regelmässigen Verben 2", sub: "Grammatik-Block «Unregelmässig regelmässige Verben 2»",
-      nw: [["pagare", "bezahlen"], ["giocare", "spielen"], ["cercare", "suchen"], ["mangiare", "essen"]],
+      nw: [["pagare", "bezahlen"], ["giocare", "spielen"], ["mangiare", "essen"]],
       words: [
+        W("Paghi tu?", "Zahlst du?"),
+        W("Giochiamo a calcio.", "Wir spielen Fussball."),
+        W("Mangiamo insieme.", "Wir essen zusammen."),
         W("Pago il conto.", "Ich bezahle die Rechnung."),
         W("Giochi a calcio?", "Spielst du Fussball?"),
-        W("Cerchiamo un hotel.", "Wir suchen ein Hotel."),
         W("Mangio una pizza.", "Ich esse eine Pizza."),
-        W("pagare · giocare · cercare · mangiare", "bezahlen · spielen · suchen · essen")
       ],
       tasks: [
+        Y("Übersetze: Zahlst du?", "Paghi tu?", ["Tu paghi?"]),
+        O("Wir spielen Fussball.", "Giochiamo a calcio.", ["Noi giochiamo a calcio."]),
+        Y("Übersetze: Wir essen zusammen.", "Mangiamo insieme.", ["Noi mangiamo insieme."]),
         C("pagare – tu: Welche Form ist richtig?", "paghi", ["pagi", "pago", "paga"]),
         C("giocare – noi: Welche Form ist richtig?", "giochiamo", ["giociamo", "giocate", "giocano"]),
-        C("cercare – tu: Welche Form ist richtig?", "cerchi", ["cerci", "cerco", "cerca"]),
         C("Wozu dient das h in «paghi»?", "Das g bleibt hart", ["Das g wird weich", "Das g wird stumm"]),
         C("Bei pagare steht ein h in paghi und paghiamo. Zu welchen Personen gehören diese Formen?", "tu / noi", ["io / lui", "voi / loro"]),
         Y("giocare – io:", "gioco"),
@@ -5877,24 +5886,26 @@
         Y("mangiare – noi:", "mangiamo"),
         C("Wie viele «i» stehen in «mangiamo» direkt hinter dem «g»?", "1", ["2"]),
         C("«Io ___ il conto.» (pagare)", "pago", ["paghi", "paga", "pagano"]),
-        C("«Noi ___ un hotel.» (cercare)", "cerchiamo", ["cerciamo", "cercate", "cerco"]),
-        P([["pagare", "bezahlen"], ["giocare", "spielen"], ["cercare", "suchen"], ["mangiare", "essen"]]),
+        P([["pagare", "bezahlen"], ["giocare", "spielen"], ["mangiare", "essen"]]),
         Y("Übersetze: Ich bezahle die Rechnung.", "Pago il conto.", ["Io pago il conto."]),
-        O("Wir suchen ein Hotel.", "Cerchiamo un hotel.", ["Noi cerchiamo un hotel."]),
         L("Giochi a calcio?")
       ]
     },
     {
-      id: "reg_unreg2", topic: "reg_unreg2", focus: ["leggere", "conoscere"], title: "Lesen + Kennen - lerne die unregelmässig regelmässigen Verben 3", sub: "Grammatik-Block «Unregelmässig regelmässige Verben 3»",
-      nw: [["leggere", "lesen"], ["conoscere", "kennen"], ["venire", "kommen"], ["uscire", "ausgehen"]],
+      id: "reg_unreg2", topic: "reg_unreg2", focus: ["leggere", "conoscere", "venire"], title: "Lesen + Kennen - lerne die unregelmässig regelmässigen Verben 3", sub: "Grammatik-Block «Unregelmässig regelmässige Verben 3»",
+      nw: [["leggere", "lesen"], ["conoscere", "kennen"], ["venire", "kommen"]],
       words: [
+        W("Leggi un libro?", "Liest du ein Buch?"),
+        W("Non conosco Gigi.", "Ich kenne Gigi nicht."),
+        W("Venite con noi?", "Kommt ihr mit uns?"),
         W("Leggo il giornale.", "Ich lese die Zeitung."),
         W("Conosci Gigi?", "Kennst du Gigi?"),
         W("Vengo da Coira.", "Ich komme aus Chur."),
-        W("Esco con Gigi.", "Ich gehe mit Gigi aus."),
-        W("leggere · conoscere · venire · uscire", "lesen · kennen · kommen · ausgehen")
       ],
       tasks: [
+        Y("Übersetze: Liest du ein Buch?", "Leggi un libro?", ["Tu leggi un libro?"]),
+        Y("Übersetze: Ich kenne Gigi nicht.", "Non conosco Gigi.", ["Io non conosco Gigi."]),
+        O("Kommt ihr mit uns?", "Venite con noi?", ["Voi venite con noi?"]),
         C("leggi – Wie wird das «gg» gesprochen: hart (wie g) oder weich (wie dsch)?", "weich", ["hart"]),
         C("leggo – Wie wird das «gg» gesprochen: hart (wie g) oder weich (wie dsch)?", "hart", ["weich"]),
         C("conosco – Wie wird das «sc» gesprochen: «sch» (wie in Schule) oder «sk»?", "sk", ["sch"]),
@@ -5903,36 +5914,38 @@
         Y("conoscere – io:", "conosco"),
         Y("conoscere – loro:", "conoscono"),
         Y("venire – io:", "vengo"),
-        Y("uscire – io:", "esco"),
         C("«Tu ___ Gigi?» (conoscere)", "conosci", ["conosco", "conosce", "conoscono"]),
-        P([["leggere", "lesen"], ["conoscere", "kennen"], ["venire", "kommen"], ["uscire", "ausgehen"]]),
+        P([["leggere", "lesen"], ["conoscere", "kennen"], ["venire", "kommen"]]),
         Y("Übersetze: Kennst du Gigi?", "Conosci Gigi?", ["Tu conosci Gigi?"]),
         O("Ich lese die Zeitung.", "Leggo il giornale.", ["Io leggo il giornale."]),
         L("Conosci Gigi?")
       ]
     },
     {
-      id: "unregelmaessig", topic: "unregelmaessig", focus: ["andare", "sapere"], title: "Alltag - lerne die unregelmässigen Verben 1", sub: "Grammatik-Block «Unregelmässige Verben 1»",
-      nw: [["andare", "gehen / fahren"], ["fare", "machen / tun"], ["sapere", "wissen"], ["stare", "bleiben / sich fühlen"]],
+      id: "unregelmaessig", topic: "unregelmaessig", focus: ["andare", "sapere", "stare"], title: "Alltag - lerne die unregelmässigen Verben 1", sub: "Grammatik-Block «Unregelmässige Verben 1»",
+      nw: [["andare", "gehen / fahren"], ["sapere", "wissen"], ["stare", "bleiben / sich fühlen"]],
       words: [
+        W("Andiamo a casa.", "Wir gehen nach Hause."),
+        W("Sto bene, grazie.", "Mir geht es gut, danke."),
+        W("Sai dov'è la stazione?", "Weisst du, wo der Bahnhof ist?"),
         W("Vado a Coira.", "Ich gehe nach Chur."),
         W("Che cosa fai?", "Was machst du?"),
         W("Non so.", "Ich weiss nicht."),
         W("Come stai?", "Wie geht es dir?"),
-        W("andare · fare · sapere · stare", "gehen · machen · wissen · bleiben")
       ],
       tasks: [
+        Y("Übersetze: Wir gehen nach Hause.", "Andiamo a casa.", ["Noi andiamo a casa."]),
+        Y("Übersetze: Mir geht es gut, danke.", "Sto bene, grazie.", ["Io sto bene, grazie."]),
+        Y("Übersetze: Weisst du, wo der Bahnhof ist?", "Sai dov'è la stazione?", ["Sai dove è la stazione?"]),
         C("andare – io: Welche Form ist richtig?", "vado", ["vai", "va"]),
-        C("fare – lui / lei: Welche Form ist richtig?", "fa", ["fai", "faccio"]),
         C("Bildung der loro-Form: lui-Form «sta» + «nno» ergibt …", "stanno", ["stano", "stiamo"]),
         C("sapere – lui / lei: Welche Form ist richtig?", "sa", ["sai", "so"]),
         C("Bei welchem Verb lautet die Form für «io» gleich wie die Form für «loro»?", "essere", ["avere", "fare"]),
         Y("andare – tu:", "vai"),
-        Y("fare – io:", "faccio"),
         Y("sapere – io:", "so"),
         Y("stare – tu:", "stai"),
         C("«Io ___ a Coira.» (andare)", "vado", ["vai", "va", "vanno"]),
-        P([["andare", "gehen / fahren"], ["fare", "machen / tun"], ["sapere", "wissen"], ["stare", "bleiben / sich fühlen"]]),
+        P([["andare", "gehen / fahren"], ["sapere", "wissen"], ["stare", "bleiben / sich fühlen"]]),
         Y("Übersetze: Ich weiss nicht.", "Non so.", ["Io non so."]),
         O("Ich gehe nach Chur.", "Vado a Coira.", ["Io vado a Coira."]),
         L("Come stai?")
@@ -5940,29 +5953,28 @@
     },
     {
       id: "unreg2", topic: "unreg2", focus: ["dovere", "potere", "volere"], title: "Pläne - lerne die unregelmässigen Verben 2", sub: "Grammatik-Block «Unregelmässige Verben 2»",
-      nw: [["dire", "sagen"], ["dovere", "müssen / sollen"], ["potere", "können / dürfen"], ["volere", "wollen"], ["rimanere", "bleiben"]],
+      nw: [["dovere", "müssen / sollen"], ["potere", "können / dürfen"], ["volere", "wollen"]],
       words: [
-        W("Che cosa dici?", "Was sagst du?"),
+        W("Dobbiamo andare.", "Wir müssen gehen."),
+        W("Puoi venire?", "Kannst du kommen?"),
+        W("Vogliamo mangiare.", "Wir wollen essen."),
         W("Devo lavorare.", "Ich muss arbeiten."),
         W("Posso prendere un caffè?", "Darf ich einen Kaffee nehmen?"),
         W("Voglio un caffè.", "Ich will einen Kaffee."),
-        W("Rimango a Coira.", "Ich bleibe in Chur."),
-        W("dire · dovere · potere · volere", "sagen · müssen · können · wollen")
       ],
       tasks: [
-        Y("dire – io:", "dico"),
+        Y("Übersetze: Wir müssen gehen.", "Dobbiamo andare.", ["Noi dobbiamo andare."]),
+        Y("Übersetze: Kannst du kommen?", "Puoi venire?", ["Tu puoi venire?"]),
+        Y("Übersetze: Wir wollen essen.", "Vogliamo mangiare.", ["Noi vogliamo mangiare."]),
         Y("dovere – noi:", "dobbiamo"),
         Y("potere – tu:", "puoi"),
         Y("volere – loro:", "vogliono"),
-        Y("rimanere – io:", "rimango"),
         C("«Noi ___ lavorare.» (dovere)", "dobbiamo", ["dovete", "devono", "devo"]),
         C("«Loro ___ parlare italiano.» (potere)", "possono", ["possiamo", "posso", "potete"]),
         C("«Tu ___ un caffè?» (volere)", "vuoi", ["voglio", "vuole", "volete"]),
-        P([["dire", "sagen"], ["dovere", "müssen / sollen"], ["potere", "können / dürfen"], ["volere", "wollen"], ["rimanere", "bleiben"]]),
+        P([["dovere", "müssen / sollen"], ["potere", "können / dürfen"], ["volere", "wollen"]]),
         Y("Übersetze: Ich muss arbeiten.", "Devo lavorare.", ["Io devo lavorare."]),
         O("Ich will einen Kaffee.", "Voglio un caffè.", ["Io voglio un caffè."]),
-        O("Ich bleibe in Chur.", "Rimango a Coira.", ["Io rimango a Coira."]),
-        L("Che cosa dici?")
       ]
     },
     {
@@ -5998,7 +6010,7 @@
         C("«___ il ristorante «Al sole»?» (Wo ist …?)", "Dov'è", ["C'è", "Ci sono"]),
         C("Was fragst du mit «C'è un ristorante …?»", "Ob es irgendein Restaurant gibt", ["Wo ein bestimmtes Restaurant ist"]),
         C("Esserci gibt es nur in der … Person.", "3.", ["1.", "2."]),
-        P([["il parcheggio", "Parkplatz"], ["la camera", "Zimmer"], ["il ristorante", "Restaurant"], ["libero", "frei"], ["la musica", "Musik"]]),
+        P([["il pane", "Brot"], ["la pasta", "Pasta"], ["il vino", "Wein"], ["la musica", "Musik"], ["il gelato", "Eis"]]),
         Y("Übersetze: Gibt es hier in der Nähe einen Parkplatz?", "C'è un parcheggio qui vicino?", ["C'è un parcheggio qua vicino?", "C'è un parcheggio vicino?"]),
         Y("Übersetze: Wo ist das Restaurant «Al sole»?", "Dov'è il ristorante «Al sole»?", ["Dove è il ristorante «Al sole»?"]),
         O("Gibt es für morgen zwei freie Zimmer?", "Ci sono due camere libere per domani?"),
@@ -6034,18 +6046,19 @@
         Y("Weibliche Form von «il traduttore»?", "la traduttrice"),
         Y("Weibliche Form von «il collega»?", "la collega"),
         Y("Weibliche Form von «il cliente»?", "la cliente"),
-        P([["il cameriere", "Kellner"], ["il commesso", "Verkäufer"], ["l'infermiere (männlich)", "Krankenpfleger"], ["il medico", "Arzt"], ["la cuoca", "Köchin"]]),
+        P([["il professore", "Professor"], ["la professoressa", "Professorin"], ["il dottore", "Doktor"], ["la dottoressa", "Doktorin"], ["il commesso", "Verkäufer"]]),
         C("Wie fragst du «Was machst du beruflich?»", "Che lavoro fai?", ["Dove lavori?", "Come ti chiami?", "Quanti anni hai?"]),
         Y("Übersetze: Wo arbeitest du?", "Dove lavori?", ["Dove lavori tu?", "Tu dove lavori?"]),
         O("Ich arbeite in einer Fabrik in Mailand.", "Lavoro in una fabbrica a Milano.", ["A Milano lavoro in una fabbrica."]),
         L("Che lavoro fai?"),
-        Y("Übersetze: Ich bin Bankangestellter.", "Lavoro in banca.", ["Io lavoro in banca.", "Lavoro in una banca.", "Lavoro presso una banca."])
+        Y("Übersetze: Ich arbeite bei einer Bank.", "Lavoro in banca.", ["Io lavoro in banca.", "Lavoro in una banca.", "Lavoro presso una banca."])
       ]
     },
     {
-      id: "plural", topic: "plural", focus: ["andare"], title: "Zeit + Tage - lerne den Plural der Nomen", sub: "Grammatik-Block «Nomen – Plural»",
-      nw: [["ieri", "gestern"], ["domani", "morgen"], ["il giorno", "der Tag"], ["la giornata", "der Verlauf des Tages"], ["la settimana", "die Woche"], ["il mese", "der Monat"]],
+      id: "plural", topic: "plural", focus: ["uscire"], title: "Zeit + Tage - lerne den Plural der Nomen", sub: "Grammatik-Block «Nomen – Plural»",
+      nw: [["uscire", "ausgehen"], ["ieri", "gestern"], ["domani", "morgen"], ["il giorno", "der Tag"], ["la giornata", "der Verlauf des Tages"], ["la settimana", "die Woche"], ["il mese", "der Monat"]],
       words: [
+        W("Esco con Gigi.", "Ich gehe mit Gigi aus."),
         W("Oggi è martedì.", "Heute ist Dienstag."),
         W("Domani lavoro.", "Morgen arbeite ich."),
         W("Che bella giornata oggi!", "Was für ein schöner Tag heute!"),
@@ -6074,7 +6087,7 @@
         C("Plural von «la giornata»:", "le giornate", ["i giornate", "le giornati", "la giornate"]),
         C("Was heisst «ieri»?", "gestern", ["morgen", "heute", "jetzt"]),
         C("Was heisst «domani»?", "morgen", ["gestern", "heute", "später"]),
-        P([["la settimana", "Woche"], ["il mese", "Monat"], ["il giorno", "Tag"], ["la sera", "Abend"], ["il pomeriggio", "Nachmittag"]]),
+        P([["la settimana", "Woche"], ["il mese", "Monat"], ["il giorno", "Tag"], ["il fine settimana", "Wochenende"], ["l'anno", "Jahr"]]),
         O("Bis morgen!", "A domani!", ["Ci vediamo domani!"]),
         O("Wir sehen uns morgen.", "Ci vediamo domani.", ["Domani ci vediamo."]),
         L("Buon pomeriggio."),
@@ -6146,7 +6159,7 @@
         C("«___ martedì vado alla partita.» (nächsten Dienstag) – welcher Artikel?", "kein Artikel", ["Il", "Lo", "La"]),
         C("«___ agosto è un mese molto caldo.» – welcher Artikel?", "kein Artikel", ["Il", "Lo", "L'"]),
         C("«___ scorso luglio sono stato in Svezia.» – welcher Artikel?", "Lo", ["Il", "kein Artikel", "La"]),
-        P([["il tedesco", "Deutsch"], ["lo spagnolo", "Spanisch"], ["il paese", "Land"], ["il teatro", "Theater"], ["la partita", "Spiel"]]),
+        P([["la Germania", "Deutschland"], ["la Francia", "Frankreich"], ["la Spagna", "Spanien"], ["l'Austria", "Österreich"], ["l'Inghilterra", "England"]]),
         Y("Übersetze: Ich lerne Deutsch.", "Studio il tedesco.", ["Io studio il tedesco."]),
         Y("Übersetze: Ich gehe oft nach Italien.", "Vado spesso in Italia.", ["Io vado spesso in Italia."]),
         O("Samstags gehe ich ins Theater.", "Il sabato vado a teatro.", ["Vado a teatro il sabato."]),
@@ -6180,7 +6193,7 @@
         C("Was heisst «non … niente»?", "nichts", ["nie", "nicht mehr"]),
         C("Darf bei «Non ho fatto niente» das «non» wegfallen?", "Nein", ["Ja"]),
         C("Wo steht «non» im Satz «Non vai mai a ballare?»", "vor dem Verb", ["nach dem Verb"]),
-        P([["niente", "nichts"], ["più", "mehr"], ["mai", "nie"], ["ballare", "tanzen"], ["piovere", "regnen"]]),
+        P([["non", "nicht"], ["mai", "nie"], ["niente", "nichts"], ["più", "mehr"], ["nessuno", "niemand"]]),
         Y("Übersetze: Das Zimmer ist nicht frei.", "La stanza non è libera.", ["La camera non è libera."]),
         Y("Übersetze: Ich weiss es nicht.", "Non lo so.", ["Io non lo so.", "Non so."]),
         Y("Übersetze: Jetzt regnet es nicht mehr.", "Adesso non piove più.", ["Ora non piove più.", "Non piove più adesso."]),
@@ -6216,7 +6229,7 @@
         C("«Questa ___ Maria.» – è oder sono?", "è", ["sono"]),
         C("«Questi ___ Giovanni Pietro e Maria.» – è oder sono?", "sono", ["è"]),
         C("Steht bei «questo vestito» ein Artikel?", "Nein", ["Ja"]),
-        P([["il vestito", "Kleid / Anzug"], ["stretto", "eng"], ["caro", "teuer"], ["la casa", "Haus"], ["il libro", "Buch"]]),
+        P([["la giacca", "Jacke"], ["la camicia", "Hemd"], ["i pantaloni", "Hose"], ["la gonna", "Rock"], ["la borsa", "Tasche"]]),
         Y("Übersetze: Dieses Kleid ist eng.", "Questo vestito è stretto.", ["Il vestito è stretto.", "Questo abito è stretto."]),
         Y("Übersetze: Dieses Haus ist teuer.", "Questa casa è cara.", ["La casa è cara."]),
         Y("Übersetze: Das ist Maria.", "Questa è Maria."),
@@ -6229,9 +6242,10 @@
     }
     ,
     {
-      id: "fragen", topic: "fragen", title: "Fragen + Antworten - lerne die Fragewörter", sub: "Grammatik-Block «Fragewörter»",
-      nw: [["chi", "wer"], ["come", "wie"], ["dove", "wo"], ["quando", "wann"], ["perché", "warum"], ["quanto", "wie viel"], ["l'indirizzo (männlich)", "die Adresse"]],
+      id: "fragen", topic: "fragen", focus: ["dire"], title: "Fragen + Antworten - lerne die Fragewörter", sub: "Grammatik-Block «Fragewörter»",
+      nw: [["dire", "sagen"], ["chi", "wer"], ["come", "wie"], ["dove", "wo"], ["quando", "wann"], ["perché", "warum"], ["quanto", "wie viel"], ["l'indirizzo (männlich)", "die Adresse"]],
       words: [
+        W("Che cosa dici?", "Was sagst du?"),
         W("Chi sei?", "Wer bist du?"),
         W("Cosa studi?", "Was lernst du?"),
         W("Come sta?", "Wie geht es Ihnen?"),
@@ -6278,9 +6292,10 @@
     }
     ,
     {
-      id: "wohnen", topic: "teilung", focus: ["abitare"], title: "Wohnen + Essen - lerne den Teilungsartikel", sub: "Grammatik-Block «Teilungsartikel»",
-      nw: [["la città", "die Stadt"], ["la casa", "das Haus"], ["l'appartamento (männlich)", "die Wohnung"], ["l'ufficio (männlich)", "das Büro"], ["Dov'è …?", "Wo ist …?"]],
+      id: "wohnen", topic: "teilung", focus: ["cercare"], title: "Wohnen + Essen - lerne den Teilungsartikel", sub: "Grammatik-Block «Teilungsartikel»",
+      nw: [["cercare", "suchen"], ["la città", "die Stadt"], ["la casa", "das Haus"], ["l'appartamento (männlich)", "die Wohnung"], ["l'ufficio (männlich)", "das Büro"], ["Dov'è …?", "Wo ist …?"]],
       words: [
+        W("Cerchiamo un hotel.", "Wir suchen ein Hotel."),
         W("Dove abiti?", "Wo wohnst du?"),
         W("Abito a Coira.", "Ich wohne in Chur."),
         W("Abito in un appartamento.", "Ich wohne in einer Wohnung."),
@@ -6293,6 +6308,7 @@
         W("Lui invita degli amici.", "Er lädt (einige) Freunde ein.")
       ],
       tasks: [
+        O("Wir suchen ein Hotel.", "Cerchiamo un hotel.", ["Noi cerchiamo un hotel."]),
         C("Was heisst «la casa»?", "Haus", ["Wohnung", "Stadt", "Büro"]),
         C("Was heisst «l'ufficio (männlich)»?", "Büro", ["Wohnung", "Haus", "Hotel"]),
         C("Was heisst «l'appartamento (männlich)»?", "Wohnung", ["Haus", "Büro", "Hotel"]),
@@ -6494,7 +6510,7 @@
         C("Wie heisst «weil» auf Italienisch?", "perché", ["quando", "se", "mentre"]),
         C("Wie heisst «während» auf Italienisch?", "mentre", ["quando", "perché", "dunque"]),
         C("Wie heisst «ob» auf Italienisch?", "se", ["quando", "perché", "mentre"]),
-        P([["e", "und"], ["o", "oder"], ["ma", "aber"], ["perché", "weil"], ["quando", "wenn / als"], ["mentre", "während"]]),
+        P([["e", "und"], ["o", "oder"], ["ma", "aber"], ["perché", "weil"], ["mentre", "während"]]),
         C("«Il vestito è bello, ___ caro.» (aber)", "ma", ["e", "perché", "se"]),
         C("«Non è rosso, ___ blu.» (sondern)", "ma", ["però", "dunque", "mentre"]),
         C("«Vado a casa ___ sono stanco.»", "perché", ["quando", "se", "ma"]),
@@ -6533,9 +6549,6 @@
         C("«Il figlio ___ Rita.» (Genitiv)", "di", ["da", "a", "per"]),
         C("«Gli orari ___ negozi.» (di + i)", "dei", ["di", "delle", "degli"]),
         C("«Roma è più grande ___ Milano.»", "di", ["da", "per", "a"]),
-        C("Wie heisst «morgens» auf Italienisch?", "di mattina", ["a mattina", "da mattina"]),
-        C("Wie heisst «nachts» auf Italienisch?", "di notte", ["a notte", "per notte"]),
-        C("Wie heisst «sonntags» auf Italienisch?", "di domenica", ["a domenica", "in domenica"]),
         C("«Un corso ___ italiano.» (Thema)", "d'", ["dell'", "della"]),
         C("«Una cravatta ___ seta.» (Material)", "di", ["con", "su"]),
         C("«Una bottiglia ___ vino.» (Inhalt)", "di", ["su", "tra"]),
@@ -6543,7 +6556,7 @@
         C("«Vorrei ___ pesce.» (etwas Fisch)", "del", ["di", "al", "nel"]),
         C("«Ho intenzione ___ andare in Italia.»", "di", ["a", "per"]),
         C("«Finisco ___ lavorare alle 18.»", "di", ["a", "per"]),
-        P([["di mattina", "morgens"], ["di notte", "nachts"], ["di domenica", "sonntags"], ["un chilo di", "ein Kilo"], ["del pesce", "etwas Fisch"]]),
+        P([["il chilo", "Kilo"], ["il litro", "Liter"], ["la bottiglia", "Flasche"], ["il formaggio", "Käse"], ["lo zucchero", "Zucker"]]),
         Y("Übersetze: Ich bin aus Mailand.", "Sono di Milano.", ["Io sono di Milano."]),
         Y("Übersetze: Ein Kilo Zucker.", "Un chilo di zucchero."),
         Y("Übersetze: Rom ist grösser als Mailand.", "Roma è più grande di Milano."),
@@ -6584,12 +6597,11 @@
         C("«Vieni ___ Pasqua?»", "a", ["di", "da", "per"]),
         C("«Ho scritto ___ mia madre.» (Dativ)", "a", ["di", "da", "per"]),
         C("«Un tè ___ limone.»", "al", ["del", "nel", "sul"]),
-        C("Was heisst «a piedi»?", "zu Fuss", ["im Stehen", "zu Hause"]),
         C("«due volte ___ giorno»", "al", ["del", "nel", "sul"]),
         C("«a 10 chilometri ___ Roma»", "da", ["di", "a", "per"]),
         C("«Vado spesso ___ ballare.»", "a", ["di", "per", "da"]),
         C("«Adesso comincio ___ studiare.»", "a", ["di", "per", "da"]),
-        P([["a casa", "nach Hause"], ["a scuola", "in die Schule"], ["al cinema", "ins Kino"], ["alle due", "um zwei Uhr"], ["a piedi", "zu Fuss"]]),
+        P([["la casa", "Haus"], ["la scuola", "Schule"], ["il cinema", "Kino"], ["il teatro", "Theater"], ["il bar", "Bar"]]),
         Y("Übersetze: Ich gehe nach Hause.", "Vado a casa.", ["Io vado a casa."]),
         Y("Übersetze: Bis morgen!", "A domani!", ["Ci vediamo domani!"]),
         Y("Übersetze: Ich gehe ins Kino.", "Vado al cinema.", ["Io vado al cinema."]),
@@ -6603,6 +6615,8 @@
       id: "orte", topic: null, focus: ["esserci"], title: "Was gibt es? - Wortschatz und Verben", sub: "Noch ohne Grammatik-Block",
       nw: [["la farmacia", "die Apotheke"], ["la banca", "die Bank"], ["la stazione", "der Bahnhof"], ["l'ospedale (männlich)", "das Krankenhaus"], ["la piscina", "das Schwimmbad"], ["la fermata", "die Haltestelle"], ["C'è …?", "Gibt es …?"]],
       words: [
+        W("Non c'è una banca qui.", "Hier gibt es keine Bank."),
+        W("Ci sono molte chiese.", "Es gibt viele Kirchen."),
         W("C'è una farmacia?", "Gibt es eine Apotheke?"),
         W("Sì, c'è una banca.", "Ja, es gibt eine Bank."),
         W("Ci sono due ospedali.", "Es gibt zwei Krankenhäuser."),
@@ -6611,6 +6625,8 @@
         W("l'ospedale (männlich) · la piscina · la fermata", "Krankenhaus · Schwimmbad · Haltestelle")
       ],
       tasks: [
+        Y("Übersetze: Hier gibt es keine Bank.", "Non c'è una banca qui.", ["Qui non c'è una banca."]),
+        Y("Übersetze: Es gibt viele Kirchen.", "Ci sono molte chiese.", ["Ci sono tante chiese."]),
         C("Was heisst «la farmacia»?", "Apotheke", ["Bank", "Bahnhof", "Schwimmbad"]),
         C("Was heisst «la banca»?", "Bank", ["Apotheke", "Bahnhof", "Haltestelle"]),
         C("Was heisst «la stazione»?", "Bahnhof", ["Haltestelle", "Bank", "Apotheke"]),
@@ -6741,7 +6757,6 @@
         C("Was heisst «la nuvola»?", "Wolke", ["Sommer", "Winter", "Regen"]),
         C("Was heisst «l'estate (weiblich)»?", "Sommer", ["Winter", "Regen", "Schnee"]),
         C("Was heisst «l'inverno (männlich)»?", "Winter", ["Regen", "Schnee", "Wind"]),
-        C("Was heisst «nevicare»?", "schneien", ["Regen", "Schnee", "Wind"]),
         P([["la pioggia", "Regen"], ["la neve", "Schnee"], ["il vento", "Wind"], ["la nuvola", "Wolke"], ["l'estate (weiblich)", "Sommer"]]),
         Y("Übersetze: Heute ist es heiss.", "Oggi fa caldo.", ["Fa caldo oggi."]),
         Y("Übersetze: Die Sonne scheint.", "C'è il sole.", ["Il sole splende.", "Splende il sole."]),
@@ -7131,25 +7146,8 @@
   }
   // ---- Lernpaket je Lektion: Alltags-Wendungen, neue Woerter (Nomen, Adjektive, Zahlen, Funktionswoerter, Verben),
   //      Grammatik-Uebungen und Wiederholung frueherer Lektionen. Alles aus dem Vokabular, sequentiell und ohne Wiederholung. ----
-  var PACK_MAP = {
-    aussprache: ["Getränke", "Gefühle & Charakter", "Restaurant & Bestellen"], satzbau: ["Familie", "Grösse, Alter & Form", "Fragen zur Person"],
-    vorstellen: ["Personen & Anreden", "Nationalitäten", "Sich vorstellen"], regelmaessig: ["Zeit & Tageszeiten", "Gefühle & Charakter", "Begrüssen & Verabschieden"],
-    isc: ["Sprache & Texte", "Gefühle & Charakter", "Verstehen & Nachfragen"], reg_unreg: ["Freizeit, Sport & Feste", "Gut, schlecht & richtig", "Restaurant & Bestellen"],
-    reg_unreg2: ["Schule & Lernen", "Gefühle & Charakter", "Sich vorstellen"], unregelmaessig: ["Haus & Wohnen", "Gefühle & Charakter", "Höfliche Anweisungen & Sonstiges"],
-    unreg2: ["Technik & Medien", "Gut, schlecht & richtig", "Meinung & Gefühle"], piacere: ["Brot, Pasta & Pizza", "Gefühle & Charakter", "Meinung & Gefühle"],
-    geschlecht: ["Berufe", "Gefühle & Charakter", "Fragen zur Person"], plural: ["Wochentage, Monate, Jahreszeiten", "Gefühle & Charakter", "Begrüssen & Verabschieden"],
-    unbestimmt: ["Reisen & Dokumente", "Grösse, Alter & Form", "Höfliche Anweisungen & Sonstiges"], bestimmt: ["Länder & Kontinente", "Nationalitäten", "Fragen zur Person"],
-    verneinung: ["Mengen & Allgemeines", "Gut, schlecht & richtig", "Verstehen & Nachfragen"], questo: ["Kleidung & Farbe", "Farben", "Meinung & Gefühle"],
-    fragen: ["Personen & Anreden", "Gefühle & Charakter", "Fragen zur Person"], wohnen: ["Zutaten, Fleisch & Fisch", "Grösse, Alter & Form", "Restaurant & Bestellen"],
-    adjektive: ["Städte & Sprachen", "Grösse, Alter & Form", "Höfliche Anweisungen & Sonstiges"], stellung: ["Verkehr & Bahn", "Gefühle & Charakter", "Meinung & Gefühle"],
-    indirekt: ["Kleidung & Farbe", "Farben", "Meinung & Gefühle"], praeposition: ["Gebäude & Einrichtungen", "Grösse, Alter & Form", "Höfliche Anweisungen & Sonstiges"],
-    konjunktion: ["Geschäfte & Dienstleister", "Gefühle & Charakter", "Meinung & Gefühle"], di: ["Obst & Gemüse", "Gefühle & Charakter", "Restaurant & Bestellen"],
-    a: ["Stadt, Landschaft & Wetter", "Gut, schlecht & richtig", "Begrüssen & Verabschieden"], orte: ["Gebäude & Einrichtungen", "Gefühle & Charakter", "Höfliche Anweisungen & Sonstiges"],
-    fussball: ["Freizeit, Sport & Feste", "Gefühle & Charakter", "Meinung & Gefühle"], arzt: ["Körper & Gesundheit", "Gefühle & Charakter", "Verstehen & Nachfragen"],
-    bahnhof: ["Verkehr & Bahn", "Gefühle & Charakter", "Höfliche Anweisungen & Sonstiges"], wetter: ["Stadt, Landschaft & Wetter", "Grösse, Alter & Form", "Begrüssen & Verabschieden"],
-    geburtstag: ["Süsses & Glace", "Gefühle & Charakter", "Meinung & Gefühle"],
-    imperativ: ["Mahlzeiten & Restaurant", "Gefühle & Charakter", "Höfliche Anweisungen & Sonstiges"]
-  };
+  // Handverlesene Zusatzwoerter je Lektion (Italienisch wie im Vokabular): Nomen, Adjektive, Zahlen, kleine Woerter
+  var CURATED = {"aussprache": {"noun": [], "adj": ["caldo", "freddo", "buono", "fresco", "delizioso"]}, "satzbau": {"noun": ["il padre", "la madre", "il fratello", "la sorella", "lo zio", "la zia"], "adj": ["giovane", "vecchio", "grande", "piccolo", "simpatico"], "total": 8}, "vorstellen": {"noun": ["il nome", "il cognome", "la signora", "il signore", "la signorina"], "adj": ["americano", "tedesco", "francese", "italiano", "spagnolo"], "fn": ["io", "tu", "lui", "lei", "noi"]}, "regelmaessig": {"noun": ["la mattina", "il pomeriggio", "la sera", "la notte", "il giorno"], "adj": ["stanco", "felice", "tranquillo", "contento", "triste"]}, "isc": {"noun": ["il caffè", "il tè", "la musica", "il film", "il libro", "il cinema", "la pizza"], "adj": ["buono", "bello", "interessante", "simpatico", "cattivo"]}, "reg_unreg": {"noun": ["il calcio", "lo sport", "il conto", "la pizza", "la festa", "il pranzo", "la cena"], "adj": ["buono", "ottimo", "cattivo", "giusto", "perfetto"]}, "reg_unreg2": {"noun": ["il libro", "il giornale", "la penna", "la lettera", "la pagina", "il quaderno", "la lezione"], "adj": ["interessante", "famoso", "simpatico", "nuovo", "strano"]}, "unregelmaessig": {"noun": ["la casa", "la scuola", "l'ufficio", "il cinema", "la città"], "adj": ["stanco", "felice", "contento", "tranquillo", "malato"]}, "unreg2": {"noun": ["il viaggio", "la vacanza", "il fine settimana", "il cinema", "l'appuntamento"], "adj": ["libero", "occupato", "stanco", "contento", "felice"]}, "piacere": {"noun": ["il pane", "la pasta", "il vino", "la musica", "il gelato"], "adj": ["buono", "bello", "delizioso", "interessante", "simpatico"]}, "geschlecht": {"noun": ["il professore", "la professoressa", "il dottore", "la dottoressa", "il calciatore", "la calciatrice", "lo psicologo", "la psicologa"], "adj": ["stanco", "occupato", "gentile", "bravo", "simpatico"], "total": 8}, "plural": {"noun": ["la settimana", "il fine settimana", "il mese", "l'anno", "il lunedì"], "adj": ["libero", "occupato", "aperto", "chiuso", "prossimo"], "fn": ["adesso", "sempre"], "total": 7}, "unbestimmt": {"noun": ["la camera", "la chiave"], "adj": ["libero", "occupato", "tranquillo", "silenzioso", "grande"], "total": 8}, "bestimmt": {"noun": ["l'Italia", "la Svizzera", "la Germania", "la Francia", "la Spagna", "l'Austria", "l'Inghilterra", "la Grecia", "la Russia"], "adj": ["tedesco", "francese", "italiano", "spagnolo", "americano"], "num": ["uno", "due", "tre", "dieci", "venti"]}, "verneinung": {"noun": ["il tempo", "la pioggia", "il caffè", "la camera", "il problema", "il numero"], "adj": ["vero", "falso", "giusto", "scorretto", "esatto"], "fn": ["non", "mai", "niente", "più", "nessuno"]}, "questo": {"noun": ["la giacca", "la camicia", "i pantaloni", "la gonna", "la borsa"], "adj": ["rosso", "verde", "blu", "nero", "bianco"], "fn": ["questo", "questa", "quello", "questi", "queste"]}, "fragen": {"noun": ["la domanda", "la risposta", "il nome", "l'indirizzo", "il numero di telefono"], "adj": ["vero", "giusto", "strano", "interessante", "simpatico"], "fn": ["chi", "cosa", "quale", "quanto", "perché"]}, "wohnen": {"noun": ["l'ufficio"], "adj": ["grande", "piccolo", "nuovo", "vecchio", "tranquillo"], "total": 8}, "adjektive": {"noun": ["il museo", "la chiesa", "il palazzo", "il ristorante", "la trattoria", "il negozio", "il bar", "il cinema"], "adj": ["famoso", "antico", "tipico", "interessante", "turistico"]}, "stellung": {"noun": ["la camera", "il bambino", "la bambina", "il ragazzo", "la ragazza", "la casa"], "adj": ["tranquillo", "caro", "piccolo", "rotondo", "rumoroso"]}, "indirekt": {"noun": ["il vestito", "la giacca", "la taglia", "il colore", "il regalo"], "adj": ["caro", "economico", "bello", "stretto", "costoso"]}, "praeposition": {"noun": ["il museo", "la chiesa", "la stazione", "la scuola", "l'albergo", "il cinema", "il bar"], "adj": ["vicino", "lontano", "alto", "lungo", "aperto"], "fn": ["su", "in", "tra", "con", "senza"]}, "konjunktion": {"noun": ["la fame", "la sete", "la radio", "il tempo", "la fine", "la lezione", "la strada"], "adj": ["stanco", "contento", "caro", "bello", "malato"], "fn": ["e", "o", "anche", "ma", "dunque", "perché", "mentre", "se"], "fnmax": 8}, "di": {"noun": ["il chilo", "il litro", "la bottiglia", "il formaggio", "lo zucchero"], "adj": ["grande", "piccolo", "alto", "lungo", "nuovo"], "fn": ["di", "da", "più", "meno", "molto"]}, "a": {"noun": ["la casa", "la scuola", "il cinema", "il teatro", "il bar"], "adj": ["aperto", "chiuso", "libero", "vicino", "lontano"], "fn": ["a", "al", "alla", "alle", "qui"]}, "orte": {"noun": ["la chiesa", "il museo"], "adj": ["aperto", "chiuso", "vicino", "lontano", "libero"], "fn": ["qui", "là", "ecco", "dove", "a destra"], "total": 8}, "fussball": {"noun": ["il calcio", "la vittoria"], "adj": ["forte", "bravo", "bravissimo", "fortissimo", "fantastico"], "total": 8}, "arzt": {"noun": ["la ricetta", "la testa"], "adj": ["malato", "sano", "stanco", "forte", "triste"]}, "bahnhof": {"noun": ["il biglietto", "la passeggera"], "adj": ["veloce", "lungo", "breve", "vicino", "lontano"], "total": 8}, "wetter": {"noun": ["la nuvola"], "adj": ["caldo", "freddo", "fresco", "chiaro", "scuro"], "total": 8}, "geburtstag": {"noun": ["il gelato", "il dolce"], "adj": ["felice", "contento", "bello", "buono", "delizioso"], "total": 8}, "imperativ": {"noun": ["il momento", "il caffè", "la casa", "il bar", "il biglietto"], "adj": ["gentile", "tranquillo", "veloce", "libero", "silenzioso"], "fn": ["qui", "piano", "presto", "subito", "ecco"]}};
   var _packs = null;
   function allWords() { return window.italoWordsRef ? window.italoWordsRef() : []; }
   var ADJ_BAD = ["nato", "ripieno", "scritto", "evidenziate", "venduto", "fatto", "rimasto", "migliori", "molti", "poco", "massimo", "chiaro", "usato", "stretto", "mezzo", "doppio", "maschile", "femminile", "storico", "industriale", "scorretto", "falso", "esatto", "straniero", "stesso", "altro", "semplice", "fresco"];
@@ -7176,17 +7174,44 @@
     out.forEach(function (w) { seen[w.it] = 1; });
     return out;
   }
-  // Lektions-eigene Wortlisten («il succo · la mela …») einzeln: Nomen (mit Artikel) / uebrige Woerter (Adjektive …)
-  function lessonListWords(ls) {
-    var nouns = [], others = [];
-    (ls.words || []).forEach(function (w) {
-      if (String(w.it).indexOf("·") < 0) return;
-      var a = String(w.it).split(/\s*·\s*/), b = String(w.de).split(/\s*·\s*/);
-      a.forEach(function (x, k) { var o = { it: x, de: b.length === a.length ? b[k] : w.de }; (/^(il|lo|la|l'|le|i|gli|un|una)\b|^l'/i.test(x) ? nouns : others).push(o); });
-    });
-    return { nouns: nouns, others: others };
+  // Lektions-eigene Wortlisten («il succo · la mela …») einzeln und nach Wortart sortiert; Saetze und Wendungen getrennt
+  var NUMW = /^(\d+|zero|uno|due|tre|quattro|cinque|sei|sette|otto|nove|dieci|undici|dodici|tredici|quattordici|quindici|sedici|diciassette|diciotto|diciannove|venti|trenta|quaranta|cinquanta|sessanta|settanta|ottanta|novanta|cento|mille)$/i;
+  var ADVW = /^(ieri|oggi|domani|adesso|ora|sempre|mai|spesso|presto|tardi|qui|qua|lì|là|molto|poco|bene|male|già|ancora|dopo|prima|subito|insieme)$/i;
+  function classifyItem(x) {
+    var t = String(x).trim();
+    if (/^[a-zàèéìòù]+(?:are|ere|ire|rre|arsi|ersi|irsi)$/i.test(t) && !/\s/.test(t) && verbData(t.toLowerCase())) return "verb";
+    if (NUMW.test(t)) return "num";
+    if (ADVW.test(t)) return "adv";
+    var w = t.split(/\s+/);
+    if (/^(il|lo|la|l'|le|i|gli|un|uno|una|un')/i.test(t) && w.length <= 2 + (/'/.test(w[0]) ? -1 : 0)) return "noun";
+    if (/^[A-ZÀÈÉÌÒÙ][a-zàèéìòù]+$/.test(t)) return "noun";
+    if (/^(il|lo|la|l'|le|i|gli|un|uno|una)\b/i.test(t) && w.length === 2) return "noun";
+    return "phrase";
   }
-  function lessonSentences(ls) { return (ls.words || []).filter(function (w) { return String(w.it).indexOf("·") < 0; }); }
+  function lessonParts(ls) {
+    var o = { nouns: [], nums: [], advs: [], phrases: [], sentences: [] };
+    (ls.words || []).forEach(function (w) {
+      if (String(w.it).indexOf("·") < 0) { o.sentences.push({ it: w.it, de: w.de }); return; }
+      var a = String(w.it).split(/\s*·\s*/), b = String(w.de).split(/\s*·\s*/);
+      a.forEach(function (x, k) {
+        var it = { it: x, de: b.length === a.length ? b[k] : w.de }, c = classifyItem(x);
+        if (c === "noun") o.nouns.push(it); else if (c === "num") o.nums.push(it); else if (c === "adv") o.advs.push(it); else if (c === "phrase") o.phrases.push(it);
+      });
+    });
+    // Saetze, die in den Aufgaben (Uebersetzen / Satz bauen) vorkommen, gehoeren auch in die Liste, damit nichts Unbekanntes abgefragt wird
+    var have = {}, nzs = function (x) { return String(x).toLowerCase().replace(/[.!?,«»]/g, "").replace(/\s+/g, " ").trim(); };
+    o.sentences.concat(o.phrases).forEach(function (w) { have[nzs(w.it)] = 1; });
+    o.fromTasks = [];
+    (ls.tasks || []).forEach(function (t) {
+      if ((t.t !== "type" && t.t !== "order") || typeof t.a !== "string") return;
+      if (!/[.!?]$/.test(t.a) || !/\S+\s+\S+/.test(t.a) || /[–:]/.test(t.a) || have[nzs(t.a)]) return;
+      var de = String(t.q || "").replace(/^Übersetze:\s*/, ""); if (!de || /[–:]/.test(de) || /Sage auf|Mach|Setze|Ergänze|Welche|Wie /.test(de)) return;
+      have[nzs(t.a)] = 1; o.fromTasks.push({ it: t.a, de: de });
+    });
+    o.all = o.sentences.concat(o.phrases, o.fromTasks);
+    return o;
+  }
+  function lessonSentences(ls) { return lessonParts(ls).all; }
   // Gegenstueck (lo zio <-> la zia): nur bei Personen / Tieren und nur, wenn es im Vokabular steht
   var PERSON_GRP = { "Familie": 1, "Personen & Anreden": 1, "Berufe": 1, "Tiere": 1 };
   function bareIt(s) { return cleanIt(s).replace(/^(il|lo|la|l'|le|i|gli)\s*/i, "").toLowerCase(); }
@@ -7203,30 +7228,22 @@
   }
   function buildPacks() {
     if (_packs) return _packs;
-    var W = allWords(), used = {}, packs = [], focusAll = [], order = {};
-    W.forEach(function (w, ix) { if ((w.cat === "Hauptverben" || w.cat === "Übrige Verben") && order[w.it] == null) order[w.it] = ix; });
-    LESSONS.forEach(function (l) { (l.focus || []).forEach(function (v) { focusAll.push(v); }); });
-    var CV = (window.italoConj || []).filter(function (v) { return v.inf.indexOf(" ") < 0 && focusAll.indexOf(v.inf) < 0 && order[v.inf] != null && v.f && v.f.length === 6 && v.f.every(function (x) { return x; }); });
-    CV.sort(function (a, b) { return order[a.inf] - order[b.inf]; });
-    var vUsed = 0;
-    LESSONS.forEach(function (ls, i) {
-      var m = PACK_MAP[ls.id] || ["Mengen & Allgemeines", "Gefühle & Charakter", "Begrüssen & Verabschieden"], P = {};
-      function pools(cat, grp, kind) { var all = W.filter(function (w) { return w.cat === cat && packOk(w, kind) && !inLesson(ls, w); }); return [all.filter(function (w) { return w.grp === grp; }), all]; }
-      var lwd = lessonListWords(ls), nL = lwd.nouns.length, aL = lwd.others.length, nS = lessonSentences(ls).length;
-      // je Wortart eine Rubrik: Nomen hoechstens 8 (inkl. Lektionslisten), sonst je 5
-      var nNoun = Math.max(0, Math.min(8, Math.max(5, nL)) - nL), got = takeUnused(used, "n", pools("Nomen", m[0], "noun"), nNoun), nn = [];
-      got.forEach(function (w) {
-        if (nn.indexOf(w) < 0 && nL + nn.length < 8) nn.push(w);
-        var pr = partnerOf(w, W);
-        if (pr && nn.indexOf(pr) < 0 && !inLesson(ls, pr) && nL + nn.length < 8) { nn.push(pr); (used.n = used.n || {})[pr.it] = 1; }
-      });
-      P.noun = nn;
-      P.adj = takeUnused(used, "a", pools("Adjektive", m[1], "adj"), Math.max(0, Math.max(5, aL) - aL));
-      P.num = takeUnused(used, "z", pools("Zahlen", null, "num"), 5);
-      P.ph = takeUnused(used, "p", pools("Feste Wendungen", m[2], "ph"), Math.max(0, Math.min(4, 10 - Math.min(10, nS))));
-      P.fn = []; [["Pronomen", 2], ["Präpositionen", 1], ["Adverbien", 1], ["Konjunktionen", 1]].forEach(function (c) { P.fn = P.fn.concat(takeUnused(used, "f" + c[0], pools(c[0], null, "fn"), c[1])); });
-      var room = Math.max(0, 3 - (ls.focus || []).length); // nie mehr als drei neue Verben pro Lektion
-      P.verbs = [CV[vUsed % CV.length], CV[(vUsed + 1) % CV.length]].slice(0, Math.min(2, room)).filter(Boolean).map(function (v) { return v.inf; }); vUsed += P.verbs.length;
+    var W = allWords(), packs = [], byKey = {};
+    W.forEach(function (w) { var k = w.cat + "|" + String(w.it).split(/\s*\/\s*/)[0].replace(/\s*\(.*?\)/g, "").trim().toLowerCase(); if (!byKey[k]) byKey[k] = w; });
+    function find(cats, it) {
+      for (var c = 0; c < cats.length; c++) { var w = byKey[cats[c] + "|" + it.toLowerCase()]; if (w) return w; }
+      if (window.console) console.warn("Lektion: Wort nicht im Vokabular: " + it);
+      return null;
+    }
+    LESSONS.forEach(function (ls) {
+      var c = CURATED[ls.id] || {}, P = {}, lp = lessonParts(ls);
+      var nn = (c.noun || []).map(function (x) { return find(["Nomen"], x); }).filter(Boolean).filter(function (w) { return !inLesson(ls, w); });
+      var total = Math.min(8, c.total || (lp.nouns.length >= 5 ? 8 : 5)); // Nomen: je Lektion 5 (hoechstens 8) inkl. eigener Listen
+      P.noun = nn.slice(0, Math.max(0, total - lp.nouns.length));
+      P.adj = (c.adj || []).map(function (x) { return find(["Adjektive"], x); }).filter(Boolean).slice(0, 5);
+      P.num = (c.num || []).map(function (x) { return find(["Zahlen"], x); }).filter(Boolean).slice(0, Math.max(0, 5 - lp.nums.length));
+      P.fn = (c.fn || []).map(function (x) { return find(["Pronomen", "Präpositionen", "Adverbien", "Konjunktionen"], x); }).filter(Boolean).slice(0, Math.max(0, (c.fnmax || 5) - lp.advs.length));
+      P.ph = []; P.verbs = [];
       packs.push(P);
     });
     _packs = packs; return packs;
@@ -7275,23 +7292,36 @@
     var tp = (window.italoGrammar || []).filter(function (g) { return g.id === ls_topic(i); })[0], gt = [];
     if (tp) shuffle(tp.exercises.filter(function (e) { return e.options && e.options.length >= 2 && e.a && e.a.length && !/Stimmt das/.test(e.q); })).slice(0, 4).forEach(function (e) { var wr = e.options.filter(function (o) { return e.a.indexOf(o) < 0; }); if (wr.length) gt.push(C(e.q, e.a[0], wr.slice(0, 3))); });
     out = out.concat(tag(gt, "g"));
-    // Wiederholung frueherer Lektionen
+    // Wiederholung frueherer Lektionen: Verben (ganze Konjugation + Einzelformen), Saetze und Woerter frueherer Lektionen
     if (i > 0) {
-      var prevW = [], prevV = [];
-      for (var k = 0; k < i; k++) { var pk = packs[k]; prevW = prevW.concat(pk.noun, pk.adj, pk.ph, pk.fn); prevV = prevV.concat(pk.verbs, LESSONS[k].focus || []); }
-      prevW = shuffle(prevW.filter(Boolean)); prevV = shuffle(prevV.filter(function (v, x) { return prevV.indexOf(v) === x; }));
+      var prevW = [], prevV = [], prevS = [], prevN = [];
+      for (var k = 0; k < i; k++) {
+        var pk = packs[k], lk = lessonParts(LESSONS[k]);
+        prevW = prevW.concat(pk.noun, pk.adj, pk.ph, pk.fn); prevV = prevV.concat(LESSONS[k].focus || []);
+        prevS = prevS.concat(lk.sentences.filter(function (x) { return /\S+\s+\S+/.test(x.it) && x.it.length <= 48; }));
+        prevN = prevN.concat(lk.nouns);
+      }
+      prevW = shuffle(prevW.filter(Boolean)); prevV = shuffle(prevV.filter(function (v, x) { return prevV.indexOf(v) === x && verbData(v); })); prevS = shuffle(prevS); prevN = shuffle(prevN);
       var rv = [];
       if (prevW.length >= 5) rv.push(P_(prevW.slice(0, 5)));
       for (var q = 5; q < Math.min(prevW.length, 8); q++) { var w = prevW[q]; rv.push(q % 2 ? C("Wie heisst „" + deOf(w) + "“ auf Italienisch?", itOf(w), sameCat(w, W, 3, itOf)) : C("Was heisst «" + itOf(w) + "»?", deOf(w), sameCat(w, W, 3, deOf))); }
-      for (var h = 8; h < Math.min(prevW.length, 10) && canSpeak; h++) rv.push(mkHearTask(prevW[h], W));
-      prevV.slice(0, 2).forEach(function (inf) { rv.push(verbForm(inf)); });
+      prevV.slice(0, 2).forEach(function (inf) { rv.push(K(inf)); });        // frueheres Verb: ganze Konjugation
+      prevV.slice(2, 5).forEach(function (inf) { rv.push(verbForm(inf)); }); // weitere fruehere Verben: einzelne Formen
+      prevS.slice(0, 4).forEach(function (x) { rv.push(Y("Übersetze: " + x.de, x.it)); }); // Saetze frueherer Lektionen
+      prevN.slice(0, 2).forEach(function (x) { rv.push(Y("„" + x.de + "“ auf Italienisch (mit Artikel):", x.it)); });
       out = out.concat(tag(rv, "r"));
     }
-    out = out.filter(function (x) { return x && (x.t === "pairs" || x.a); });
+    out = out.filter(function (x) { return x && (x.t === "pairs" || x.t === "conj" || x.a); });
     // gleichmaessig zwischen die bisherigen Aufgaben mischen
     var m = out.length; out.forEach(function (e, k) { var pos = Math.min(tl.length, Math.round((k + 1) * tl.length / (m + 1))); tl.splice(pos + k, 0, e); });
     return tl;
   }
+  window.italoIntroDebug = function (i) {
+    var pk = buildPacks()[i], lp = lessonParts(LESSONS[i]), asObj = function (w) { return { it: itOf(w), de: deOf(w) }; };
+    function uniq(a) { var seen = {}; return a.filter(function (w) { var k = String(w.it).toLowerCase(); if (seen[k]) return false; seen[k] = 1; return true; }); }
+    var sents = lp.all.slice(0, 10), phs = (pk.ph || []).map(asObj).slice(0, Math.max(0, 10 - sents.length));
+    return { id: LESSONS[i].id, focus: LESSONS[i].focus || [], nouns: uniq(lp.nouns.concat((pk.noun || []).map(asObj))).slice(0, 8), adj: uniq((pk.adj || []).map(asObj)).slice(0, 5), num: uniq(lp.nums.concat((pk.num || []).map(asObj))).slice(0, 5), fn: uniq(lp.advs.concat((pk.fn || []).map(asObj))).slice(0, (CURATED[LESSONS[i].id] || {}).fnmax || 5), sentences: sents.concat(phs) };
+  };
   window.italoLessonDebug = function (i) { var tl = addPack(i, LESSONS[i].tasks.slice()); return { pack: buildPacks()[i], tasks: tl, orig: LESSONS[i].tasks.length }; };
   function ls_topic(i) { return LESSONS[i] && LESSONS[i].topic; }
   function P_(ws) { var seen = {}, pairs = []; ws.forEach(function (w) { var a = itOf(w), b = deOf(w); if (!seen[b] && !seen[a] && pairs.length < 5) { seen[a] = seen[b] = 1; pairs.push([a, b]); } }); return pairs.length >= 3 ? P(pairs) : null; }
@@ -7377,7 +7407,7 @@
     window.italoInput.reset("lesson"); window.italoFx.reset("lesson");
     var tl = addExtra(LESSONS[i], addPack(i, LESSONS[i].tasks.slice()));
     tl = tl.filter(function (t) { return t.t !== "listen" && t.t !== "hear"; }); // keine «Hör zu»-Aufgaben mehr
-    var hid = lessonSentences(LESSONS[i]).slice(10).map(function (w) { return nz(w.it); }); // mehr als 10 Saetze werden nicht gezeigt, also auch nicht abgefragt
+    var hid = lessonParts(LESSONS[i]).all.slice(10).map(function (w) { return nz(w.it); }); // mehr als 10 Saetze werden nicht gezeigt, also auch nicht abgefragt
     if (hid.length) tl = tl.filter(function (t) { return typeof t.a !== "string" || hid.indexOf(nz(t.a)) < 0; });
     tl = addTalk(i, tl);
     tl = addNew(i, tl);
@@ -7433,15 +7463,15 @@
       return u;
     }
     function uniq(a) { var seen = {}; return a.filter(function (w) { var k = String(w.it).toLowerCase(); if (seen[k]) return false; seen[k] = 1; return true; }); }
-    var pk = S.pack || {}, lwd = lessonListWords(S.ls), asObj = function (w) { return { it: itOf(w), de: deOf(w) }; };
-    [["Sostantivi", "Nomen", uniq(lwd.nouns.concat((pk.noun || []).map(asObj))).slice(0, 8)],
-     ["Aggettivi", "Adjektive", uniq(lwd.others.concat((pk.adj || []).map(asObj))).slice(0, 5)],
-     ["Numeri", "Zahlen", (pk.num || []).map(asObj).slice(0, 5)],
-     ["Parole utili", "Kleine Wörter (Pronomen, Präposition, Adverb, Konjunktion)", (pk.fn || []).map(asObj).slice(0, 5)]].forEach(function (g) {
+    var pk = S.pack || {}, lp = lessonParts(S.ls), asObj = function (w) { return { it: itOf(w), de: deOf(w) }; };
+    [["Sostantivi", "Nomen", uniq(lp.nouns.concat((pk.noun || []).map(asObj))).slice(0, 8)],
+     ["Aggettivi", "Adjektive", uniq((pk.adj || []).map(asObj)).slice(0, 5)],
+     ["Numeri", "Zahlen", uniq(lp.nums.concat((pk.num || []).map(asObj))).slice(0, 5)],
+     ["Parole utili", "Kleine Wörter (Pronomen, Präposition, Adverb, Konjunktion)", uniq(lp.advs.concat((pk.fn || []).map(asObj))).slice(0, (CURATED[S.ls.id] || {}).fnmax || 5)]].forEach(function (g) {
       if (!g[2].length) return;
       card.appendChild(hl("h2", "", g[0], g[1])); card.appendChild(introList(g[2]));
     });
-    var sents = lessonSentences(S.ls).slice(0, 10), phs = (pk.ph || []).map(asObj).slice(0, Math.max(0, 10 - sents.length));
+    var sents = lp.all.slice(0, 10), phs = (pk.ph || []).map(asObj).slice(0, Math.max(0, 10 - sents.length));
     if (sents.length + phs.length) { card.appendChild(hl("h2", "", "Frasi brevi", "Kurze Sätze")); card.appendChild(introList(sents.concat(phs))); }
     var go = el("button", "ls-btn pri big", "Andiamo!"); go.type = "button";
     go.addEventListener("click", function () {
