@@ -824,8 +824,8 @@
   const CATEGORY_KEY = "vokabeltrainer_selected_category";
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
-  const SEED_VERSION = "2026-11-11-zfprueche2";
-  const APP_VERSION = "2026-11-11-zf"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const SEED_VERSION = "2026-11-11-ziprueche2";
+  const APP_VERSION = "2026-11-11-zi"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -877,6 +877,23 @@
   // --- Gleichwertige Schreibweisen: Subjektpronomen und "per favore" sind optional, Ziffern = Zahlwoerter ---
   var EQ_U = ["zero","uno","due","tre","quattro","cinque","sei","sette","otto","nove","dieci","undici","dodici","tredici","quattordici","quindici","sedici","diciassette","diciotto","diciannove"];
   var EQ_T = ["","","venti","trenta","quaranta","cinquanta","sessanta","settanta","ottanta","novanta"];
+  // Schaltflaechen mit italienischer Beschriftung: darunter die deutsche Uebersetzung des GANZEN Textes (zweite, kleinere Zeile)
+  window.italoNavDe = {
+    "Allenamento misto": "Gemischtes Training", "Caccia agli oggetti": "Gegenstands-Jagd mit der Kamera", "Avvia la fotocamera": "Kamera starten",
+    "Guardati ancora intorno": "Nochmals umschauen", "Indietro": "Zurück", "Risultato": "Auswertung", "Avanti": "Weiter",
+    "Non è giusto (riconosciuto male)": "Das stimmt nicht (falsch erkannt)", "Non ce l'ho più": "Habe ich nicht mehr", "Fatto": "Fertig",
+    "Ricomincia la lezione": "Lektion nochmals starten", "Alle lezioni": "Zur Lektionsliste", "Andiamo!": "Los geht's!", "Controlla": "Prüfen",
+    "Ascolta il modello": "Vorbild anhören", "Registra": "Aufnehmen", "Salta": "Überspringen", "Ancora": "Nochmal", "Mescola ancora": "Nochmals mischen",
+    "Nuovo giro": "Neue Runde", "Scrivere": "Schreiben", "Parlare": "Sprechen", "Parla": "Sprechen"
+  };
+  window.italoTwoLine = function (btn, it, de) {
+    btn.textContent = "";
+    var a = document.createElement("span"); a.className = "b-it"; a.textContent = it;
+    var b = document.createElement("span"); b.className = "b-de"; b.textContent = de;
+    btn.appendChild(a); btn.appendChild(b); btn.classList.remove("lk", "ls-it"); btn.classList.add("two");
+    return btn;
+  };
+  window.italoSetBtn = function (btn, it) { var de = window.italoNavDe[it]; if (de) window.italoTwoLine(btn, it, de); else btn.textContent = it; };
   window.italoNum = function (n) { return eqNum(n); };
   function eqNum(n) {
     if (n < 20) return EQ_U[n];
@@ -1200,6 +1217,7 @@
       ".fx-bar .feedback,.fx-bar .ls-fb,.fx-bar .g-expl,.fx-bar .ex-box{display:block!important;position:static!important;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0 0 10px!important;color:inherit!important;opacity:1!important;animation:none!important;min-height:0!important}" +
       ".fx-bar .lw{border-bottom-color:currentColor}.fx-bar small{display:block;opacity:.9;margin-top:4px}" +
       ".fx-next{display:block;width:100%;margin-top:6px;padding:14px;border:0;border-radius:14px;font:inherit;font-weight:800;font-size:1.05rem;cursor:pointer;color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.18)}" +
+      ".fx-next.two{display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.2}.fx-next .b-de{font-size:.74rem;font-weight:500;opacity:.88}" +
       ".fx-bar.ok .fx-next{background:#58a700}.fx-bar.no .fx-next{background:#d33a3a}.fx-next:active{transform:translateY(3px);box-shadow:none}" +
       "body.fx-on #lwBar{bottom:calc(var(--fxh,170px) + 12px)!important}" +
       ".fx-hearts{display:inline-flex;align-items:center;gap:4px;margin-left:10px;padding:5px 9px;border-radius:999px;background:#e0661f;vertical-align:middle}.fx-h{width:16px;height:16px;display:block;transition:transform .2s,opacity .2s}.fx-h.off{opacity:.5}.fx-h.pop{animation:fxpop .45s}" +
@@ -1238,7 +1256,7 @@
       var inn = document.createElement("div"); inn.className = "fx-in"; bar.appendChild(inn);
       if (o.title) { var t = document.createElement("div"); t.className = "fx-t ls-it"; t.textContent = o.title; inn.appendChild(t); }
       var nodes = (o.nodes || []).map(function (e) { var n = { el: e, parent: e.parentNode, next: e.nextSibling }; inn.appendChild(e); return n; });
-      var nb = document.createElement("button"); nb.type = "button"; nb.className = "fx-next lk ls-it"; nb.textContent = o.label || "Avanti"; inn.appendChild(nb);
+      var nb = document.createElement("button"); nb.type = "button"; nb.className = "fx-next"; window.italoSetBtn(nb, o.label || "Avanti"); inn.appendChild(nb);
       var done = false;
       function next() { if (done) return; done = true; undock(); if (o.resetKey) reset(o.resetKey); if (o.onNext) o.onNext(); }
       nb.addEventListener("click", next);
@@ -1340,7 +1358,7 @@
     var Ctor = window.SpeechRecognition || window.webkitSpeechRecognition, mode = {};
     var st = document.createElement("style");
     st.textContent = ".in-choose{margin:6px 0 14px;text-align:center}.in-q{font-weight:600;margin-bottom:10px}.in-btns{display:flex;gap:10px}" +
-      ".in-btns button{flex:1;padding:14px 10px;border-radius:14px;font-size:1rem;font-weight:600;border:1.5px solid #ea580c;background:transparent;color:#ea580c;cursor:pointer}" +
+      ".in-btns button.two,.in-micbtn.two{display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.2}.in-btns .b-de,.in-micbtn .b-de{font-size:.74rem;font-weight:500;opacity:.85}.in-btns button{flex:1;padding:14px 10px;border-radius:14px;font-size:1rem;font-weight:600;border:1.5px solid #ea580c;background:transparent;color:#ea580c;cursor:pointer}" +
       ".in-btns button:disabled{opacity:.4;border-color:rgba(128,128,128,.5);color:inherit}.in-note{font-size:.85rem;opacity:.7;margin-top:8px}" +
       ".in-swap{display:block;margin:0 0 8px auto;background:none;border:0;padding:2px 0;font-size:.85rem;color:#ea580c;cursor:pointer;text-decoration:underline;width:auto;box-shadow:none}" +
       ".in-mic{margin:0 0 10px}.in-micbtn{width:100%;padding:14px;border-radius:14px;font-size:1rem;font-weight:600;border:1.5px solid #ea580c;background:transparent;color:#ea580c;cursor:pointer}" +
@@ -1351,7 +1369,7 @@
     function reset(k) { mode[k] = null; }
     function chooser(k, cb) {
       var box = document.createElement("div"); box.className = "in-choose";
-      box.innerHTML = "<div class='in-q ls-it'>Come vuoi rispondere?</div><div class='in-btns'><button type='button' class='lk ls-it' data-m='write'>Scrivere</button><button type='button' class='lk ls-it' data-m='speak'>Parlare</button></div>" + (Ctor ? "" : "<div class='in-note'>Parlare non funziona in questo browser.</div>");
+      box.innerHTML = "<div class='in-q ls-it'>Come vuoi rispondere?</div><div class='in-btns'><button type='button' class='two' data-m='write'><span class='b-it'>Scrivere</span><span class='b-de'>Schreiben</span></button><button type='button' class='two' data-m='speak'><span class='b-it'>Parlare</span><span class='b-de'>Sprechen</span></button></div>" + (Ctor ? "" : "<div class='in-note'>Parlare non funziona in questo browser.</div>");
       Array.prototype.forEach.call(box.querySelectorAll("button"), function (b) {
         if (b.dataset.m === "speak" && !Ctor) b.disabled = true;
         b.addEventListener("click", function () { if (b.disabled) return; set(k, b.dataset.m); cb(); });
@@ -1368,7 +1386,7 @@
     }
     function micButton(input, onText) {
       var wrap = document.createElement("div"); wrap.className = "in-mic";
-      var b = document.createElement("button"); b.type = "button"; b.className = "in-micbtn lk ls-it"; b.textContent = "Parla";
+      var b = document.createElement("button"); b.type = "button"; b.className = "in-micbtn"; window.italoTwoLine(b, "Parla", "Sprechen");
       var stt = document.createElement("div"); stt.className = "in-status"; var busy = false;
       b.addEventListener("click", function () {
         if (!Ctor || busy || input.disabled) return;
@@ -5649,6 +5667,11 @@
   #lessonView .ls-glink .gl-btn:active { transform: translateY(3px); box-shadow: none; }
   #lessonView .ls-glink .gl-main { font-size: 1.12rem; font-weight: 800; }
   #lessonView .ls-glink .gl-sub { font-size: .84rem; font-weight: 500; color: var(--k-muted, #666); }
+  #lessonView .ls-btn.two { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; line-height: 1.25; text-align: center; }
+  #lessonView .ls-btn.two .b-it { font-weight: 800; }
+  #lessonView .ls-btn.two .b-de { font-size: .78rem; font-weight: 500; opacity: .88; }
+  #lessonView .ls-row .tx .dl { display: block; font-size: .8rem; color: var(--k-muted, #666); margin-top: 2px; }
+  .tab-btn .tb-de { font-size: .5rem; font-weight: 500; opacity: .85; letter-spacing: 0; margin-top: -3px; }
   #lessonView .ls-gram { margin: 0 0 16px; }
   #lessonView .ls-pre .ls-q small { display: block; font-weight: 500; opacity: .8; margin-top: 3px; }
   #lessonView .ls-gt { font-weight: 700; margin: 8px 0 6px; }
@@ -6867,7 +6890,7 @@
   // Ueberschrift mit deutscher Uebersetzung (orange gepunktet, antippen)
   window.italoLessons = LESSONS;
   function hl(tag, cls, it, de) { var h = document.createElement(tag); if (cls) h.className = cls; var s = document.createElement("span"); s.className = "lw"; s.setAttribute("data-de", de); s.textContent = it; h.appendChild(s); return h; }
-  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (tag === "button" && /\bls-btn\b/.test(cls || "")) e.className += " lk ls-it"; if (text != null) e.textContent = text; return e; }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; if (tag === "button" && /\bls-btn\b/.test(cls || "")) { e.className += " lk ls-it"; if (text != null && window.italoNavDe && window.italoNavDe[text]) window.italoTwoLine(e, text, window.italoNavDe[text]); } return e; }
   // Italienische Teile markieren (ls-it), damit JEDES Wort gepunktet wird
   var DE_RE = /[äöüÄÖÜß]|\b(ich|du|er|sie|wir|ihr|der|die|das|ein|eine|einen|einem|nicht|und|oder|ja|nein|wenn|mit|von|bei|nur|nach|immer|kein|keine|hart|weich|ist|bin|bist|sind|mir|dir|wie|was|wo|woher|gibt|hier|wohne|arbeite|suche|bleibe|richtig|falsch|stimmt|heisst)\b/i;
   function qDiv(text, cls) {
@@ -7049,14 +7072,16 @@
     var card = el("div", "ls-card");
     card.appendChild(hl("h2", "", "Lezioni", "Lektionen"));
     var mixBox = el("div", "ls-mixbox");
-    var mb = el("div", "ls-btn pri big", "Allenamento misto"); mb.setAttribute("role", "button"); mb.tabIndex = 0; mb.style.textAlign = "center"; mb.style.boxSizing = "border-box"; mb.className += " ls-it"; mb.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".lw")) return; startMix(); });
+    var mb = el("button", "ls-btn pri big"); mb.type = "button"; mb.style.boxSizing = "border-box"; mb.style.width = "100%";
+    window.italoTwoLine(mb, "Allenamento misto", "Gemischtes Training: Vokabeln, Grammatik und Lektionen im Wechsel" + (mixCount() ? " · " + mixCount() + "× geübt" : ""));
+    mb.addEventListener("click", function () { startMix(); });
     mixBox.appendChild(mb);
-    mixBox.appendChild(el("p", "ls-sub ls-it", "Esercizi misti: vocaboli, grammatica e lezioni a rotazione" + (mixCount() ? " · " + mixCount() + (mixCount() === 1 ? " volta" : " volte") : "")));
     card.appendChild(mixBox);
     if (window.italoKamera && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      var kb = el("div", "ls-btn big", "Caccia agli oggetti"); kb.setAttribute("role", "button"); kb.tabIndex = 0; kb.style.cssText = "text-align:center;box-sizing:border-box;margin-top:10px"; kb.className += " ls-it";
-      kb.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".lw")) return; window.italoKamera.open(view, showList); });
-      mixBox.appendChild(kb); mixBox.appendChild(el("p", "ls-sub ls-it", "Caccia agli oggetti con la fotocamera: la app guarda cosa hai intorno"));
+      var kb = el("button", "ls-btn big"); kb.type = "button"; kb.style.cssText = "box-sizing:border-box;margin-top:10px;width:100%";
+      window.italoTwoLine(kb, "Caccia agli oggetti", "Kamera-Jagd: Die App schaut, was um dich ist, und fragt die Wörter dazu");
+      kb.addEventListener("click", function () { window.italoKamera.open(view, showList); });
+      mixBox.appendChild(kb);
     }
     var ni = targetIndex();
     var path = el("div", "ls-tl");
@@ -7068,7 +7093,9 @@
       var ss = el("span", "ss"); ss.appendChild(el("span", "tag ls-it", tagOf(ls)));
       if (done) ss.appendChild(el("span", "cnt", " · " + countOf(ls.id) + "× geübt"));
       tx.appendChild(ss);
-      if (cur) tx.appendChild(el("span", "go", done ? "Ripeti" : "Andiamo!"));
+      var gt_ = (window.italoGrammar || []).filter(function (g) { return g.id === ls.topic; })[0];
+      tx.appendChild(el("span", "dl", headDe(ls) + (gt_ ? " · " + gt_.title : "")));
+      if (cur) tx.appendChild(el("span", "go", done ? "Ripeti · Wiederholen" : "Andiamo! · Los geht's"));
       n.appendChild(tx);
       if (!lock) n.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".lw")) return; startLesson(i); });
       path.appendChild(n);
@@ -7383,6 +7410,12 @@
   }
   // In welcher Lektion steht ein Wort (Sostantivi / Aggettivi / Numeri / Parole utili / Verbi)? -> fuer die Nachschlage-Leiste
   var _lessonOf = null;
+  // Untere Navigation: deutsche Unterzeile unter jedem italienischen Namen
+  (function () {
+    var DE = { "Lezioni": "Lektionen", "Parlare": "Sprechen", "Vocabolario": "Vokabeln", "Grammatica": "Grammatik", "Dizionario": "Wörterbuch" };
+    function run() { Array.prototype.forEach.call(document.querySelectorAll(".tabs .tab-btn"), function (b) { if (b.querySelector(".tb-de")) return; var sp = b.querySelectorAll("span"), lab = sp.length ? sp[sp.length - 1] : null, k = lab ? lab.textContent.trim() : b.textContent.trim(); if (!DE[k]) return; var d = document.createElement("span"); d.className = "tb-de"; d.textContent = DE[k]; b.appendChild(d); }); }
+    run(); setTimeout(run, 400); setTimeout(run, 1500);
+  })();
   window.italoLessonOf = function (it) {
     try {
       if (!_lessonOf) {
@@ -7746,7 +7779,7 @@
         mstat.textContent = (win ? "Duello vinto! " : "Quasi – ") + res.score + " % Übereinstimmung" + (res.hint ? " · " + res.hint : "");
         var again = el("button", "ls-btn", "Ancora"), go2 = el("button", "ls-btn pri", "Avanti");
         again.type = "button"; go2.type = "button";
-        again.addEventListener("click", function () { mrow.innerHTML = ""; [bHear, bRec].forEach(function (b) { mrow.appendChild(b); }); bRec.textContent = "Registra"; mstat.textContent = ""; MM.draw(cv, tpl, null); });
+        again.addEventListener("click", function () { mrow.innerHTML = ""; [bHear, bRec].forEach(function (b) { mrow.appendChild(b); }); window.italoSetBtn(bRec, "Registra"); mstat.textContent = ""; MM.draw(cv, tpl, null); });
         go2.addEventListener("click", function () { if (!answered) finish(true, win ? "Duello vinto! " + res.score + " %" : "Ancora un po' di esercizio – " + res.score + " %", res.hint || null, t.a); });
         if (!win && mtries < 3) mrow.appendChild(again);
         mrow.appendChild(go2);
@@ -7755,17 +7788,17 @@
         if (answered) return;
         if (rec) { rec.stop(); return; }
         try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
-        mtries++; bRec.textContent = "Fatto"; mstat.textContent = "Mikrofon wird aktiviert …"; bHear.disabled = true;
+        mtries++; window.italoSetBtn(bRec, "Fatto"); mstat.textContent = "Mikrofon wird aktiviert …"; bHear.disabled = true;
         var live = [];
         rec = MM.record({
           onFrame: function (f, n) { if (n >= 1) mstat.textContent = "Ich höre zu … sprich den Satz (Pause = fertig)"; live.push({ f: f }); var c = MM.contour(live.slice()); if (c && live.length % 6 === 0) MM.draw(cv, tpl, c); },
           onDone: function (frames) {
-            rec = null; bHear.disabled = false; bRec.textContent = "Registra";
+            rec = null; bHear.disabled = false; window.italoSetBtn(bRec, "Registra");
             var c = MM.contour(frames);
             if (!c) { mstat.textContent = "Ich habe zu wenig Stimme gehört. Sprich lauter und näher am Mikrofon – oder überspringe."; return; }
             userPts = c; MM.draw(cv, tpl, c); showResult(MM.score(c, tpl));
           },
-          onError: function () { rec = null; bHear.disabled = false; bRec.textContent = "Registra"; mstat.textContent = "Kein Mikrofon-Zugriff. Erlaube das Mikrofon im Browser – oder überspringe."; }
+          onError: function () { rec = null; bHear.disabled = false; window.italoSetBtn(bRec, "Registra"); mstat.textContent = "Kein Mikrofon-Zugriff. Erlaube das Mikrofon im Browser – oder überspringe."; }
         });
       });
       foot.style.display = "none";
@@ -7969,7 +8002,8 @@
       box.appendChild(nl); card.appendChild(box);
     }
     if (ni !== -1) {
-      var nb = el("button", "ls-btn pri big", (isDone(LESSONS[ni].id) ? "Ripeti ora: " : "Prossima lezione: ") + headOf(LESSONS[ni])); nb.type = "button";
+      var nb = el("button", "ls-btn pri big"); nb.type = "button";
+      window.italoTwoLine(nb, (isDone(LESSONS[ni].id) ? "Ripeti ora: " : "Prossima lezione: ") + headOf(LESSONS[ni]), (isDone(LESSONS[ni].id) ? "Jetzt wiederholen: " : "Nächste Lektion: ") + headDe(LESSONS[ni]));
       nb.addEventListener("click", function () { startLesson(ni); });
       card.appendChild(nb);
     } else {
@@ -8993,7 +9027,7 @@
     if (!modelP) { modelP = (window.cocoSsd ? Promise.resolve() : loadScript(TFJS).then(function () { return loadScript(COCO); })).then(function () { return window.cocoSsd.load({ base: "lite_mobilenet_v2" }); }); modelP.catch(function () { modelP = null; }); }
     return modelP;
   }
-  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (tag === "button" && /\bls-btn\b/.test(cls || "")) e.className += " lk ls-it"; if (text != null) e.textContent = text; return e; }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; if (tag === "button" && /\bls-btn\b/.test(cls || "")) { e.className += " lk ls-it"; if (text != null && window.italoNavDe && window.italoNavDe[text]) window.italoTwoLine(e, text, window.italoNavDe[text]); } return e; }
   function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   function speak(t) { try { if (!window.speechSynthesis) return; window.speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(t); u.lang = "it-IT"; u.rate = 0.92; window.speechSynthesis.speak(u); } catch (e) {} }
   function bare(it) { return it.replace(/^(il|lo|la|l'|le|i|gli) ?/, ""); }
