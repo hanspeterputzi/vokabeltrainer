@@ -825,7 +825,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-11-ziprueche2";
-  const APP_VERSION = "2026-11-11-zl"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-11-zn"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -927,6 +927,33 @@
       }).observe(document.body, { childList: true, subtree: true });
     }
     if (document.body) run(); else document.addEventListener("DOMContentLoaded", run);
+  })();
+  // Anzeige-Namen (nur Beschriftung, die gespeicherten Namen bleiben deutsch): Kategorien, Gruppen, Grammatik-Themen auf Italienisch
+  window.italoCatIt = (function () {
+    var M = {
+      "Alle": "Tutti", "Feste Wendungen": "Frasi fatte", "Nomen": "Sostantivi", "Hauptverben": "Verbi principali", "Übrige Verben": "Altri verbi", "Adjektive": "Aggettivi", "ABC": "ABC",
+      "Zahlen": "Numeri", "Präpositionen": "Preposizioni", "Pronomen": "Pronomi", "Adverbien": "Avverbi", "Konjunktionen": "Congiunzioni", "Interjektionen": "Interiezioni",
+      "Konjugation Hauptverben": "Coniugazione verbi principali", "Konjugation Übrige Verben": "Coniugazione altri verbi", "Konjugation unregelmässige Verben": "Coniugazione verbi irregolari",
+      "0 bis 20": "Da 0 a 20", "21 bis 58": "Da 21 a 58", "60 bis 1000": "Da 60 a 1000", "Antworten & Füllwörter": "Risposte e intercalari", "Art & Menge": "Modo e quantità",
+      "Begrüssen & Verabschieden": "Saluti", "Berufe": "Professioni", "Brot, Pasta & Pizza": "Pane, pasta e pizza", "Familie": "Famiglia", "Farben": "Colori", "Fragen zur Person": "Domande sulla persona",
+      "Fragewörter & Hinweise": "Parole interrogative e indicazioni", "Freizeit, Sport & Feste": "Tempo libero, sport e feste", "Gebäude & Einrichtungen": "Edifici e strutture", "Gefühle & Charakter": "Sentimenti e carattere",
+      "Geld & Einkauf": "Soldi e acquisti", "Geschäfte & Dienstleister": "Negozi e servizi", "Getränke": "Bevande", "Grammatik": "Grammatica", "Grammatik-Begriffe": "Termini grammaticali",
+      "Grösse, Alter & Form": "Misura, età e forma", "Gut, schlecht & richtig": "Buono, cattivo e giusto", "Hauptverben 1": "Verbi principali 1", "Hauptverben 2": "Verbi principali 2",
+      "Haus & Wohnen": "Casa e abitare", "Höfliche Anweisungen & Sonstiges": "Istruzioni cortesi e altro", "Kleidung & Farbe": "Abbigliamento e colore", "Körper & Gesundheit": "Corpo e salute",
+      "Länder & Kontinente": "Paesi e continenti", "Mahlzeiten & Restaurant": "Pasti e ristorante", "Meinung & Gefühle": "Opinioni e sentimenti", "Mengen & Allgemeines": "Quantità e generale",
+      "Nationalitäten": "Nazionalità", "Obst & Gemüse": "Frutta e verdura", "Ort & Richtung": "Luogo e direzione", "Personen & Anreden": "Persone e appellativi", "Personen & Besitz": "Persone e possesso",
+      "Reisen & Dokumente": "Viaggi e documenti", "Restaurant & Bestellen": "Ristorante e ordinare", "Schule & Lernen": "Scuola e imparare", "Sich vorstellen": "Presentarsi", "Sprache & Texte": "Lingua e testi",
+      "Stadt, Landschaft & Wetter": "Città, paesaggio e tempo", "Städte & Sprachen": "Città e lingue", "Süsses & Glace": "Dolci e gelato", "Technik & Medien": "Tecnica e media", "Tiere": "Animali",
+      "Verben 1 (am wichtigsten)": "Verbi 1 (i più importanti)", "Verben 2": "Verbi 2", "Verben 3": "Verbi 3", "Verben 4": "Verbi 4", "Verben 5": "Verbi 5", "Verben 6 (seltener)": "Verbi 6 (più rari)",
+      "Verben 7 (seltener)": "Verbi 7 (più rari)", "Verkehr & Bahn": "Traffico e ferrovia", "Verstehen & Nachfragen": "Capire e chiedere", "Wochentage, Monate, Jahreszeiten": "Giorni, mesi, stagioni",
+      "Zeit": "Tempo", "Zeit & Tageszeiten": "Tempo e momenti del giorno", "Zustand & Verwendung": "Stato e uso", "Zutaten, Fleisch & Fisch": "Ingredienti, carne e pesce", "falsche Antwort": "risposta sbagliata", "Hilfswort": "parola ausiliaria", "Kleinwort": "parolina", "Verben": "Verbi"
+    };
+    function gram(t) { try { return window.italoGramIt ? window.italoGramIt(t) : null; } catch (e) { return null; } }
+    return function (name) {
+      name = String(name); if (M[name]) return M[name];
+      var g = gram(name); if (g) return g;
+      return name;
+    };
   })();
   // Aussprache-Korrektur fuer die Sprachausgabe: ein einzelner Akzent-Buchstabe (z. B. Verbform «è») wird von den Stimmen als «e accento grave» BUCHSTABIERT.
   // Mit einem Punkt dahinter lesen sie ihn als Wort (nur «e»). Platzhalter (…, XY) und Abkuerzungen werden angepasst.
@@ -1305,10 +1332,11 @@
       ".fx-hint{position:fixed;left:50%;top:42%;transform:translate(-50%,-50%) rotate(-45deg);pointer-events:auto;color:#111;font-weight:900;font-size:1.9rem;letter-spacing:.01em;white-space:nowrap;z-index:2;text-shadow:0 0 6px #fff,0 0 12px #fff,0 0 3px #fff;animation:fxhint 5.4s ease-out forwards}@keyframes fxhint{0%{opacity:0;transform:translate(-50%,-50%) rotate(-45deg) scale(.6)}12%{opacity:1;transform:translate(-50%,-50%) rotate(-45deg) scale(1.05)}18%{transform:translate(-50%,-50%) rotate(-45deg) scale(1)}85%{opacity:1}100%{opacity:0}}" +
       ".fx-big{position:absolute;top:-150px;left:calc(50% - 62px);width:124px;height:124px;pointer-events:auto;cursor:pointer;touch-action:manipulation;animation:fxbig 3s linear .3s forwards;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}" +
       "@keyframes fxbig{to{transform:translateY(calc(100vh + 170px)) rotate(14deg)}}" +
-      ".fx-fun{position:fixed;left:0;right:0;top:34%;z-index:420;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:auto;animation:fxfun 2.9s ease-out forwards;font-weight:800;text-align:center;padding:0 16px}" +
+      ".fx-fun{position:fixed;left:0;right:0;top:34%;z-index:420;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:auto;animation:fxfun .7s ease-out forwards;font-weight:800;text-align:center;padding:0 16px}" +
       ".fx-fun .t{font-size:1.35rem;color:#c2410c;background:rgba(255,255,255,.94);padding:6px 14px;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.18)}.fx-fun .s.n{background:#ea580c;color:#fff;font-size:.85rem}.fx-fun .s{font-size:1rem;font-weight:600;color:#16181d;background:rgba(255,255,255,.9);padding:4px 12px;border-radius:999px}" +
+      ".fx-fun-x{margin-top:6px;padding:10px 28px;border-radius:14px;border:0;background:#ea580c;color:#fff;font:inherit;font-weight:700;cursor:pointer;box-shadow:0 3px 0 #9a3412}.fx-fun-x .b-de{font-weight:500}" +
       ".fx-fun svg.o{width:150px;height:150px}.fx-fun.spin svg.o{animation:fxspin .9s ease-in-out 2}.fx-fun.hic svg.o{animation:fxhic .22s linear 8}.fx-fun.pop svg.o{animation:fxsplat .5s ease-out forwards}" +
-      "@keyframes fxfun{0%{opacity:0;transform:scale(.4)}12%{opacity:1;transform:scale(1.08)}22%{transform:scale(1)}82%{opacity:1}100%{opacity:0;transform:scale(1.04)}}" +
+      "@keyframes fxfun{0%{opacity:0;transform:scale(.4)}60%{opacity:1;transform:scale(1.08)}100%{opacity:1;transform:scale(1)}}" +
       "@keyframes fxspin{to{transform:rotate(360deg) scale(1.15)}}@keyframes fxhic{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}@keyframes fxsplat{0%{transform:scale(1)}60%{transform:scale(1.5)}100%{transform:scale(.0);opacity:0}}" +
       ".fx-drop{position:fixed;width:14px;height:20px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#ff9a2e;z-index:421;pointer-events:none;animation:fxdrop .9s ease-out forwards}" +
       "@keyframes fxdrop{to{transform:translate(var(--dx),var(--dy)) scale(.4);opacity:0}}" +
@@ -1379,7 +1407,12 @@
       if (window.italoLink) { try { window.italoLink(box); } catch (e) {} }
       tone([523, 784, 1047]);
       try { if (window.speechSynthesis) { var u = new SpeechSynthesisUtterance(sv[0]); u.lang = "it-IT"; u.rate = 0.95; window.speechSynthesis.speak(u); } } catch (e) {}
-      setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 2900);
+      // bleibt stehen, bis man ihn wegklickt (Tippen auf die Karte oder «Chiudi»; Woerter bleiben antippbar)
+      var cl = document.createElement("button"); cl.type = "button"; cl.className = "fx-fun-x"; cl.dataset.itx = "1"; window.italoTwoLine(cl, "Chiudi", "Schliessen");
+      box.appendChild(cl);
+      function closeBox() { if (box.parentNode) box.parentNode.removeChild(box); }
+      cl.addEventListener("click", function (e) { e.stopPropagation(); closeBox(); });
+      box.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".lw")) return; closeBox(); });
     }
     var ORANGE_BIG = OCOLS[0];
     function celebrate() {
@@ -1619,7 +1652,7 @@
       const b = document.createElement("button");
       b.type = "button";
       b.className = "cat-btn" + (name === selectedCategory ? " active" : "") + (r > 0 ? " done r" + Math.min(5, r) : "");
-      b.textContent = (i + 1) + ". " + g + " (" + n + ")" + (r ? " · " + r + "\u00d7" : "");
+      b.textContent = (i + 1) + ". " + window.italoCatIt(g) + " (" + n + ")" + (r ? " · " + r + "\u00d7" : "");
       b.addEventListener("click", () => selectCategory(name));
       bar.appendChild(b);
     });
@@ -1644,7 +1677,7 @@
     CATEGORIES.forEach(name => {
       const opt = document.createElement("option");
       opt.value = name;
-      opt.textContent = name;
+      opt.textContent = window.italoCatIt(name);
       categorySelectAdd.appendChild(opt);
     });
   }
@@ -3762,7 +3795,7 @@
     }
 
     const ex = gCurrent.ex;
-    gEl.progress.textContent = ""; { const tt = document.createElement("span"); tt.className = "de"; tt.textContent = topic.title; gEl.progress.appendChild(tt); } gEl.progress.appendChild(window.italoInsBlock("span", "", "Esercizio " + (gCurrent.idx + 1) + " / " + total + " · completato: " + (gRounds[topic.id] || 0) + "× · giro attuale: " + gDoneCount(topic) + " / " + total, "Aufgabe " + (gCurrent.idx + 1) + " / " + total + " · ganz geübt: " + (gRounds[topic.id] || 0) + "× · aktueller Durchgang: " + gDoneCount(topic) + " / " + total));
+    gEl.progress.textContent = ""; { const tt = document.createElement("span"); tt.className = "ls-it"; tt.textContent = window.italoCatIt(topic.title); gEl.progress.appendChild(tt); } gEl.progress.appendChild(window.italoInsBlock("span", "", "Esercizio " + (gCurrent.idx + 1) + " / " + total + " · completato: " + (gRounds[topic.id] || 0) + "× · giro attuale: " + gDoneCount(topic) + " / " + total, "Aufgabe " + (gCurrent.idx + 1) + " / " + total + " · ganz geübt: " + (gRounds[topic.id] || 0) + "× · aktueller Durchgang: " + gDoneCount(topic) + " / " + total));
     window.italoSetQuestion(gEl.question, ex.q);
     gEl.hint.textContent = ex.hint || "";
 
@@ -5198,7 +5231,7 @@
     function line(h) {
       return "<span class='it'>" + escapeHtml(h.it) + "</span> = " + escapeHtml(h.de) +
         (h.note ? " <span class='note'>(" + escapeHtml(h.note) + ")</span>" : "") +
-        (h.cat ? " <span class='note'>· " + escapeHtml(h.cat) + "</span>" : "") +
+        (h.cat ? " <span class='note'>· " + escapeHtml(window.italoCatIt(h.cat)) + "</span>" : "") +
         (function () { var n = window.italoLessonOf && window.italoLessonOf(h.it); return n ? " <span class='note'>· Lezione " + n + "</span>" : ""; })();
     }
     function show(tok, asPl, sp_de) {
@@ -5355,7 +5388,7 @@
           const n = name === "Alle" ? words.length : words.filter(w => w.cat === name).length;
           const b = document.createElement("button");
           b.type = "button"; b.className = "cat-btn" + (name === dcat ? " active" : "");
-          b.textContent = name + " (" + n + ")";
+          b.textContent = window.italoCatIt(name) + " (" + n + ")";
           b.addEventListener("click", () => { dcat = name; renderCats(); render(); });
           catsEl.appendChild(b);
         });
@@ -5502,15 +5535,17 @@
 
   function deco(bar) {
     $$("#" + bar.id + " button").forEach(function (b) {
-      if (b.querySelector(".nm")) return;
+      var nm0 = b.querySelector(".nm");
+      if (nm0) { if (nm0.dataset.n != null) { var g0 = nm0.dataset.n.match(/^(.*?)(\s*·\s*\d+×)$/), v0 = g0 ? window.italoCatIt(g0[1]) + g0[2] : window.italoCatIt(nm0.dataset.n); if (nm0.textContent !== v0) nm0.textContent = v0; } return; }
       var t = b.textContent.trim(), m = t.match(/^(.*?)\s*\((\d+)\)$/);
       var name = m ? m[1] : t;
       b.innerHTML = '<span class="ico">' + emo(name) + '</span><span class="nm"></span>' + (m ? '<span class="ct">' + m[2] + '</span>' : '');
-      b.querySelector(".nm").textContent = name;
+      b.querySelector(".nm").dataset.n = name; var gm = name.match(/^(.*?)(\s*·\s*\d+×)$/); b.querySelector(".nm").textContent = gm ? window.italoCatIt(gm[1]) + gm[2] : window.italoCatIt(name);
     });
     var a = bar.querySelector(".active");
     if (a && bar._act !== a) { bar._act = a; bar.scrollTo({ left: a.offsetLeft - bar.clientWidth / 2 + a.offsetWidth / 2, behavior: "smooth" }); }
   }
+  window.italoRedeco = function () { ["categoryBar", "gTopicBar"].forEach(function (id) { var bar = document.getElementById(id); if (bar) deco(bar); }); };
   ["categoryBar", "gTopicBar"].forEach(function (id) {
     var bar = document.getElementById(id);
     if (!bar) return;
@@ -7191,6 +7226,15 @@
 
   // Titel ohne «- lerne …»-Zusatz; das Thema steht darunter in Orange
   var LS_IT = {"imperativ": ["Richieste e ordini", "Imperativo"], "aussprache": ["Al caffè", "Pronuncia"], "satzbau": ["Età + famiglia", "Struttura della frase"], "vorstellen": ["Presentarsi", "Pronomi soggetto"], "regelmaessig": ["Giornata tipo", "Verbi regolari"], "isc": ["Preferenze + comprensione", "Verbi regolari con particolarità 1"], "reg_unreg": ["Tempo libero + cibo", "Verbi regolari con particolarità 2"], "reg_unreg2": ["Leggere + conoscere", "Verbi regolari con particolarità 3"], "unregelmaessig": ["Quotidiano", "Verbi irregolari 1"], "unreg2": ["Progetti", "Verbi irregolari 2"], "piacere": ["Preferenze + luoghi", "Piacere e esserci"], "geschlecht": ["Professione + lavoro", "Nomi – genere"], "plural": ["Tempo + giorni", "Nomi – plurale"], "unbestimmt": ["In albergo", "Articolo indeterminativo"], "bestimmt": ["Paesi + tempo", "Articolo determinativo"], "verneinung": ["Appuntamento + disdetta", "Negazione"], "questo": ["Abbigliamento + persone", "Questo"], "fragen": ["Domande + risposte", "Parole interrogative"], "wohnen": ["Abitare + cibo", "Articolo partitivo"], "adjektive": ["Città + monumenti", "Aggettivi – basi"], "stellung": ["Macchina + camera", "Posizione dell'aggettivo"], "indirekt": ["Abiti + colori", "Pronomi indiretti"], "praeposition": ["Luoghi + direzioni", "Preposizioni"], "konjunktion": ["Motivi + progetti", "Congiunzioni"], "di": ["Origine + quantità", "La preposizione di"], "a": ["Luoghi + tempi", "La preposizione a"], "orte": ["Che cosa c'è?", "Vocabolario e verbi"], "fussball": ["Calcio", "Vocabolario e verbi"], "arzt": ["Dal medico", "Vocabolario e verbi"], "bahnhof": ["In stazione", "Vocabolario e verbi"], "wetter": ["Tempo + stagioni", "Vocabolario e verbi"], "geburtstag": ["Compleanno + feste", "Vocabolario e verbi"]};
+  // Italienischer Name eines Grammatik-Themas (fuer Chips im Tab Grammatica): deutscher Titel -> Italienisch
+  window.italoGramIt = function (title) {
+    for (var i = 0; i < LESSONS.length; i++) {
+      var tp = (window.italoGrammar || []).filter(function (g) { return g.id === LESSONS[i].topic; })[0];
+      if (tp && tp.title === title && LS_IT[LESSONS[i].id]) return LS_IT[LESSONS[i].id][1];
+    }
+    return null;
+  };
+  if (window.italoRedeco) window.italoRedeco();
   function headDe(ls) { return String(ls.title).replace(/\s+-\s+.*$/, ""); }
   function headOf(ls) { return LS_IT[ls.id] ? LS_IT[ls.id][0] : String(ls.title).replace(/\s+-\s+.*$/, ""); }
   function tagOf(ls) {
