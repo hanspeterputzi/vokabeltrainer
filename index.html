@@ -825,7 +825,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-11-ziprueche2";
-  const APP_VERSION = "2026-11-11-zp"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-11-zq"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -2925,62 +2925,6 @@
       ],
     },
     {
-      id: "unbestimmt",
-      title: "Unbestimmter Artikel",
-      explain:
-        "<h3>1 · männlich</h3>" +
-        "<ul>" +
-        "<li><b>un</b> (Normalfall)<span class='nt'>Egal ob das Nomen mit Konsonant, Vokal oder h beginnt.</span><span class='ex'><span class='ep'>un gelato</span></span></li>" +
-        "</ul>" +
-        "<p class='sub'>Ausnahme: <b>uno</b> statt <b>un</b> vor</p>" +
-        "<ul>" +
-        "<li><b>häufig</b> (s + Konsonant, z)<span class='ex'><span class='ep'>uno straniero,</span> <span class='ep'>uno sport,</span> <span class='ep'>uno studente,</span> <span class='ep'>uno zaino,</span> <span class='ep'>uno zio,</span> <span class='ep'>uno zucchino</span></span></li>" +
-        "<li><b>selten</b> (gn, pn, ps, x, y)<span class='ex'><span class='ep'>uno gnocco,</span> <span class='ep'>uno pneumatico,</span> <span class='ep'>uno psicologo,</span> <span class='ep'>uno xilofono,</span> <span class='ep'>uno yogurt</span></span></li>" +
-        "</ul>" +
-        "<p class='sub'>Dazu der bestimmte Artikel</p>" +
-        "<ul>" +
-        "<li>Wo <b>uno</b> steht, heisst er <b>lo</b> (Plural: <b>gli</b>)<span class='ex'><span class='ep'>uno straniero → lo straniero</span></span></li>" +
-        "</ul>" +
-        "<h3>2 · weiblich</h3>" +
-        "<ul>" +
-        "<li><b>una</b> vor Konsonant<span class='ex'>una camera</span></li>" +
-        "<li><b>un'</b> vor Vokal<span class='ex'>un'amica</span></li>" +
-        "</ul>" +
-        "<p>Keine Ausnahmen.</p>" +
-        "<p class='merk'>Merkhilfe: <b>lo</b> → <b>uno</b>, <b>la</b> → <b>una</b> (gleicher Endvokal). Vor Vokal: <b>una</b> → <b>un'</b>, <b>la</b> → <b>l'</b>.</p>",
-      exercises: [
-        { q: "___ gelato", hint: "un, uno, una oder un'?", a: ["un"], why: "vor Konsonant, männlich: un" },
-        { q: "___ camera", hint: "un, uno, una oder un'?", a: ["una"], why: "vor Konsonant, weiblich: una" },
-        { q: "___ amico", hint: "un, uno, una oder un'?", a: ["un"], why: "vor Vokal, männlich: un" },
-        { q: "___ amica", hint: "un, uno, una oder un'?", a: ["un'"], why: "vor Vokal, weiblich: un' (mit Apostroph)" },
-        { q: "___ hotel", hint: "un, uno, una oder un'?", a: ["un"], why: "vor h: un" },
-        { q: "___ straniero", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor s + Konsonant steht uno" },
-        { q: "___ sport", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor s + Konsonant steht uno" },
-        { q: "___ zucchino", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor z steht uno" },
-        { q: "___ psicologo", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor ps steht uno" },
-        { q: "___ yogurt", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor y steht uno" },
-        { q: "___ gnocco", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor gn steht uno" },
-        { q: "___ pneumatico", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor pn steht uno" },
-        { q: "___ xilofono", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor x steht uno" },
-        { q: "Welcher Artikel steht vor einem männlichen Nomen mit s + Konsonant?", options: ["un", "uno", "una"], a: ["uno"], why: "Ausnahme: uno straniero, uno sport" },
-        { q: "Welcher Artikel steht vor einem weiblichen Nomen mit Konsonant?", options: ["un", "uno", "una"], a: ["una"], why: "una camera" },
-        { q: "Welcher Artikel steht vor einem weiblichen Nomen mit Vokal?", options: ["una", "un'", "uno"], a: ["un'"], why: "un'amica" },
-        { q: "Welcher Artikel steht vor einem männlichen Nomen mit h?", options: ["un", "uno", "una"], a: ["un"], why: "un hotel" },
-        { q: "Welcher bestimmte Artikel gehört zu «uno zucchino»?", options: ["il", "lo", "la"], a: ["lo"], why: "Wo uno steht, heisst der bestimmte Artikel lo" },
-        { q: "uno psicologo → ___ psicologo", hint: "il, lo oder la?", a: ["lo"], why: "Wo uno steht, heisst der bestimmte Artikel lo" },
-        { q: "Gibt es bei weiblichen Nomen Ausnahmen mit uno?", options: ["Ja", "Nein"], a: ["Nein"], why: "uno gibt es nur bei männlichen Nomen" },
-        { q: "Steht bei «un amico» ein Apostroph?", options: ["Ja", "Nein"], a: ["Nein"], why: "Der Apostroph steht nur bei weiblichen Nomen: un'amica" },
-        { q: "___ zaino", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor z steht uno" },
-        { q: "___ studente", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor s + Konsonant steht uno" },
-        { q: "___ zio", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor z steht uno" },
-        { q: "___ gnocco", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor gn steht uno" },
-        { q: "___ pneumatico", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor pn steht uno" },
-        { q: "___ psicologo", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor ps steht uno" },
-        { q: "___ xilofono", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor x steht uno" },
-        { q: "___ yogurt", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor y steht uno" },
-      ],
-    },
-    {
       id: "bestimmt",
       title: "Bestimmter Artikel",
       explain:
@@ -3067,6 +3011,62 @@
         { q: "Wie heisst «Ich werde sie in England treffen.» auf Italienisch?", options: ["La incontrerò in Inghilterra.", "La Svizzera è una destinazione turistica.", "Martedì vado alla partita di calcio.", "Ci rechiamo spesso in Svezia."], a: ["La incontrerò in Inghilterra."], why: "Beispiel zur Regel: La incontrerò in Inghilterra." },
         { q: "Wie heisst «Nächsten Dezember fahren wir in die Karibik.» auf Italienisch?", options: ["Vado spesso in Italia.", "La incontrerò in Inghilterra.", "Il prossimo dicembre andremo ai Caraibi.", "La Germania è un paese industriale."], a: ["Il prossimo dicembre andremo ai Caraibi."], why: "Beispiel zur Regel: Il prossimo dicembre andremo ai Caraibi." },
         { q: "Wie heisst «Am 1. Mai bin ich zu Hause.» auf Italienisch?", options: ["Il primo maggio sono a casa.", "Ogni sabato vado a teatro.", "Agosto è un mese molto caldo.", "La Germania è un paese industriale."], a: ["Il primo maggio sono a casa."], why: "Beispiel zur Regel: Il primo maggio sono a casa." },
+      ],
+    },
+    {
+      id: "unbestimmt",
+      title: "Unbestimmter Artikel",
+      explain:
+        "<h3>1 · männlich</h3>" +
+        "<ul>" +
+        "<li><b>un</b> (Normalfall)<span class='nt'>Egal ob das Nomen mit Konsonant, Vokal oder h beginnt.</span><span class='ex'><span class='ep'>un gelato</span></span></li>" +
+        "</ul>" +
+        "<p class='sub'>Ausnahme: <b>uno</b> statt <b>un</b> vor</p>" +
+        "<ul>" +
+        "<li><b>häufig</b> (s + Konsonant, z)<span class='ex'><span class='ep'>uno straniero,</span> <span class='ep'>uno sport,</span> <span class='ep'>uno studente,</span> <span class='ep'>uno zaino,</span> <span class='ep'>uno zio,</span> <span class='ep'>uno zucchino</span></span></li>" +
+        "<li><b>selten</b> (gn, pn, ps, x, y)<span class='ex'><span class='ep'>uno gnocco,</span> <span class='ep'>uno pneumatico,</span> <span class='ep'>uno psicologo,</span> <span class='ep'>uno xilofono,</span> <span class='ep'>uno yogurt</span></span></li>" +
+        "</ul>" +
+        "<p class='sub'>Dazu der bestimmte Artikel</p>" +
+        "<ul>" +
+        "<li>Wo <b>uno</b> steht, heisst er <b>lo</b> (Plural: <b>gli</b>)<span class='ex'><span class='ep'>uno straniero → lo straniero</span></span></li>" +
+        "</ul>" +
+        "<h3>2 · weiblich</h3>" +
+        "<ul>" +
+        "<li><b>una</b> vor Konsonant<span class='ex'>una camera</span></li>" +
+        "<li><b>un'</b> vor Vokal<span class='ex'>un'amica</span></li>" +
+        "</ul>" +
+        "<p>Keine Ausnahmen.</p>" +
+        "<p class='merk'>Merkhilfe: <b>lo</b> → <b>uno</b>, <b>la</b> → <b>una</b> (gleicher Endvokal). Vor Vokal: <b>una</b> → <b>un'</b>, <b>la</b> → <b>l'</b>.</p>",
+      exercises: [
+        { q: "___ gelato", hint: "un, uno, una oder un'?", a: ["un"], why: "vor Konsonant, männlich: un" },
+        { q: "___ camera", hint: "un, uno, una oder un'?", a: ["una"], why: "vor Konsonant, weiblich: una" },
+        { q: "___ amico", hint: "un, uno, una oder un'?", a: ["un"], why: "vor Vokal, männlich: un" },
+        { q: "___ amica", hint: "un, uno, una oder un'?", a: ["un'"], why: "vor Vokal, weiblich: un' (mit Apostroph)" },
+        { q: "___ hotel", hint: "un, uno, una oder un'?", a: ["un"], why: "vor h: un" },
+        { q: "___ straniero", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor s + Konsonant steht uno" },
+        { q: "___ sport", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor s + Konsonant steht uno" },
+        { q: "___ zucchino", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor z steht uno" },
+        { q: "___ psicologo", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor ps steht uno" },
+        { q: "___ yogurt", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor y steht uno" },
+        { q: "___ gnocco", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor gn steht uno" },
+        { q: "___ pneumatico", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor pn steht uno" },
+        { q: "___ xilofono", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor x steht uno" },
+        { q: "Welcher Artikel steht vor einem männlichen Nomen mit s + Konsonant?", options: ["un", "uno", "una"], a: ["uno"], why: "Ausnahme: uno straniero, uno sport" },
+        { q: "Welcher Artikel steht vor einem weiblichen Nomen mit Konsonant?", options: ["un", "uno", "una"], a: ["una"], why: "una camera" },
+        { q: "Welcher Artikel steht vor einem weiblichen Nomen mit Vokal?", options: ["una", "un'", "uno"], a: ["un'"], why: "un'amica" },
+        { q: "Welcher Artikel steht vor einem männlichen Nomen mit h?", options: ["un", "uno", "una"], a: ["un"], why: "un hotel" },
+        { q: "Welcher bestimmte Artikel gehört zu «uno zucchino»?", options: ["il", "lo", "la"], a: ["lo"], why: "Wo uno steht, heisst der bestimmte Artikel lo" },
+        { q: "uno psicologo → ___ psicologo", hint: "il, lo oder la?", a: ["lo"], why: "Wo uno steht, heisst der bestimmte Artikel lo" },
+        { q: "Gibt es bei weiblichen Nomen Ausnahmen mit uno?", options: ["Ja", "Nein"], a: ["Nein"], why: "uno gibt es nur bei männlichen Nomen" },
+        { q: "Steht bei «un amico» ein Apostroph?", options: ["Ja", "Nein"], a: ["Nein"], why: "Der Apostroph steht nur bei weiblichen Nomen: un'amica" },
+        { q: "___ zaino", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor z steht uno" },
+        { q: "___ studente", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor s + Konsonant steht uno" },
+        { q: "___ zio", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor z steht uno" },
+        { q: "___ gnocco", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor gn steht uno" },
+        { q: "___ pneumatico", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor pn steht uno" },
+        { q: "___ psicologo", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor ps steht uno" },
+        { q: "___ xilofono", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor x steht uno" },
+        { q: "___ yogurt", hint: "un, uno, una oder un'?", a: ["uno"], why: "Ausnahme: vor y steht uno" },
       ],
     },
     {
@@ -6297,6 +6297,42 @@
     }
     ,
     {
+      id: "bestimmt", topic: "bestimmt", title: "Länder + Zeit - lerne den bestimmten Artikel", sub: "Grammatik-Block «Bestimmter Artikel»",
+      nw: [["la Germania", "Deutschland"], ["la Svizzera", "die Schweiz"], ["il paese", "das Land"], ["il tedesco", "Deutsch"], ["lo spagnolo", "Spanisch"], ["il teatro", "das Theater"], ["la partita", "das Spiel"]],
+      words: [
+        W("Studio l'italiano (männlich).", "Ich lerne Italienisch."),
+        W("Studio il tedesco.", "Ich lerne Deutsch."),
+        W("La Svizzera è una destinazione turistica.", "Die Schweiz ist ein touristisches Reiseziel."),
+        W("Vado spesso in Italia.", "Ich gehe oft nach Italien."),
+        W("Il sabato vado a teatro.", "Samstags gehe ich ins Theater."),
+        W("Sono le dieci.", "Es ist zehn Uhr."),
+        W("Agosto è un mese molto caldo.", "Der August ist ein sehr heisser Monat.")
+      ],
+      tasks: [
+        C("«Studio ___ tedesco.» – welcher Artikel?", "il", ["lo", "l'", "kein Artikel"]),
+        C("«Studio ___ spagnolo.» – welcher Artikel?", "lo", ["il", "l'", "kein Artikel"]),
+        C("«Studio ___ italiano.» – welcher Artikel?", "l'", ["il", "lo", "kein Artikel"]),
+        C("«Le presento ___ dottor Rossi.» – welcher Artikel?", "il", ["kein Artikel", "la", "lo"]),
+        C("«Buongiorno, ___ signor Carli.» – welcher Artikel?", "kein Artikel", ["il", "lo", "la"]),
+        C("«___ Germania è un paese industriale.» – welcher Artikel?", "La", ["kein Artikel", "Il", "L'"]),
+        C("«Vado spesso in ___ Italia.» – welcher Artikel?", "kein Artikel", ["la", "l'", "il"]),
+        C("«Ci rechiamo spesso in ___ Svezia.» – welcher Artikel?", "kein Artikel", ["la", "il", "le"]),
+        C("«Sono ___ dieci.» – welcher Artikel?", "le", ["il", "la", "i"]),
+        C("«___ sabato vado a teatro.» (jeden Samstag) – welcher Artikel?", "Il", ["kein Artikel", "Lo", "La"]),
+        C("«___ martedì vado alla partita.» (nächsten Dienstag) – welcher Artikel?", "kein Artikel", ["Il", "Lo", "La"]),
+        C("«___ agosto è un mese molto caldo.» – welcher Artikel?", "kein Artikel", ["Il", "Lo", "L'"]),
+        C("«___ scorso luglio sono stato in Svezia.» – welcher Artikel?", "Lo", ["Il", "kein Artikel", "La"]),
+        P([["la Germania", "Deutschland"], ["la Francia", "Frankreich"], ["la Spagna", "Spanien"], ["l'Austria", "Österreich"], ["l'Inghilterra", "England"]]),
+        Y("Übersetze: Ich lerne Deutsch.", "Studio il tedesco.", ["Io studio il tedesco."]),
+        Y("Übersetze: Ich gehe oft nach Italien.", "Vado spesso in Italia.", ["Io vado spesso in Italia."]),
+        O("Samstags gehe ich ins Theater.", "Il sabato vado a teatro.", ["Vado a teatro il sabato."]),
+        O("Es ist zehn Uhr.", "Sono le dieci."),
+        L("Agosto è un mese molto caldo."),
+        L("Vado spesso in Italia.")
+      ]
+    }
+    ,
+    {
       id: "unbestimmt", topic: "unbestimmt", focus: ["parlare"], title: "Im Hotel - lerne den unbestimmten Artikel", sub: "Grammatik-Block «Unbestimmter Artikel»",
       nw: [["la camera", "das Zimmer"], ["l'hotel (männlich)", "das Hotel"], ["l'amico (männlich) / l'amica (weiblich)", "Freund / Freundin"], ["lo straniero", "der Ausländer"], ["lo psicologo", "der Psychologe"], ["lo yogurt", "der Joghurt"], ["il gelato", "die Glace"]],
       words: [
@@ -6331,42 +6367,6 @@
         O("Ich hätte gern ein Zimmer, bitte.", "Vorrei una camera, per favore.", ["Per favore, vorrei una camera."]),
         L("Un gelato, per favore."),
         Y("Übersetze: Eine Glace, bitte.", "Un gelato, per favore.", ["Un gelato."])
-      ]
-    }
-    ,
-    {
-      id: "bestimmt", topic: "bestimmt", title: "Länder + Zeit - lerne den bestimmten Artikel", sub: "Grammatik-Block «Bestimmter Artikel»",
-      nw: [["la Germania", "Deutschland"], ["la Svizzera", "die Schweiz"], ["il paese", "das Land"], ["il tedesco", "Deutsch"], ["lo spagnolo", "Spanisch"], ["il teatro", "das Theater"], ["la partita", "das Spiel"]],
-      words: [
-        W("Studio l'italiano (männlich).", "Ich lerne Italienisch."),
-        W("Studio il tedesco.", "Ich lerne Deutsch."),
-        W("La Svizzera è una destinazione turistica.", "Die Schweiz ist ein touristisches Reiseziel."),
-        W("Vado spesso in Italia.", "Ich gehe oft nach Italien."),
-        W("Il sabato vado a teatro.", "Samstags gehe ich ins Theater."),
-        W("Sono le dieci.", "Es ist zehn Uhr."),
-        W("Agosto è un mese molto caldo.", "Der August ist ein sehr heisser Monat.")
-      ],
-      tasks: [
-        C("«Studio ___ tedesco.» – welcher Artikel?", "il", ["lo", "l'", "kein Artikel"]),
-        C("«Studio ___ spagnolo.» – welcher Artikel?", "lo", ["il", "l'", "kein Artikel"]),
-        C("«Studio ___ italiano.» – welcher Artikel?", "l'", ["il", "lo", "kein Artikel"]),
-        C("«Le presento ___ dottor Rossi.» – welcher Artikel?", "il", ["kein Artikel", "la", "lo"]),
-        C("«Buongiorno, ___ signor Carli.» – welcher Artikel?", "kein Artikel", ["il", "lo", "la"]),
-        C("«___ Germania è un paese industriale.» – welcher Artikel?", "La", ["kein Artikel", "Il", "L'"]),
-        C("«Vado spesso in ___ Italia.» – welcher Artikel?", "kein Artikel", ["la", "l'", "il"]),
-        C("«Ci rechiamo spesso in ___ Svezia.» – welcher Artikel?", "kein Artikel", ["la", "il", "le"]),
-        C("«Sono ___ dieci.» – welcher Artikel?", "le", ["il", "la", "i"]),
-        C("«___ sabato vado a teatro.» (jeden Samstag) – welcher Artikel?", "Il", ["kein Artikel", "Lo", "La"]),
-        C("«___ martedì vado alla partita.» (nächsten Dienstag) – welcher Artikel?", "kein Artikel", ["Il", "Lo", "La"]),
-        C("«___ agosto è un mese molto caldo.» – welcher Artikel?", "kein Artikel", ["Il", "Lo", "L'"]),
-        C("«___ scorso luglio sono stato in Svezia.» – welcher Artikel?", "Lo", ["Il", "kein Artikel", "La"]),
-        P([["la Germania", "Deutschland"], ["la Francia", "Frankreich"], ["la Spagna", "Spanien"], ["l'Austria", "Österreich"], ["l'Inghilterra", "England"]]),
-        Y("Übersetze: Ich lerne Deutsch.", "Studio il tedesco.", ["Io studio il tedesco."]),
-        Y("Übersetze: Ich gehe oft nach Italien.", "Vado spesso in Italia.", ["Io vado spesso in Italia."]),
-        O("Samstags gehe ich ins Theater.", "Il sabato vado a teatro.", ["Vado a teatro il sabato."]),
-        O("Es ist zehn Uhr.", "Sono le dieci."),
-        L("Agosto è un mese molto caldo."),
-        L("Vado spesso in Italia.")
       ]
     }
     ,
