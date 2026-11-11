@@ -825,7 +825,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-11-sprueche";
-  const APP_VERSION = "2026-11-11-e"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-11-f"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -5591,6 +5591,10 @@
   #lessonView .ls-slot.ok { border-style: solid; border-color: var(--k-blue, #2563eb); }
   #lessonView .ls-chip.gone { visibility: hidden; }
   #lessonView .ls-chip.bad { border-color: var(--k-orange, #ea580c); background: color-mix(in srgb, var(--k-orange, #ea580c) 14%, var(--k-card, #fff)); }
+  #lessonView .ls-mel { display: block; width: 100%; height: 120px; margin: 10px 0; border-radius: 12px; background: color-mix(in srgb, var(--k-orange, #ea580c) 6%, var(--k-card, #fff)); }
+  #lessonView .ls-mrow { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+  #lessonView .ls-mrow .ls-btn { flex: 1 1 auto; }
+  #lessonView .ls-leg { font-size: .8rem; color: var(--k-muted, #666); margin: 0 0 6px; }
   #lessonView .ls-gram { margin: 0 0 16px; }
   #lessonView .ls-pre .ls-q small { display: block; font-weight: 500; opacity: .8; margin-top: 3px; }
   #lessonView .ls-gt { font-weight: 700; margin: 8px 0 6px; }
@@ -7235,12 +7239,22 @@
     if (other) shuffle(other.f.slice()).forEach(function (f) { if (dis.length < 2 && vd.f.map(norm).indexOf(norm(f)) < 0 && dis.map(norm).indexOf(norm(f)) < 0) dis.push(f); });
     return { t: "chain", inf: inf, de: vd.de, ps: ps, bank: ps.map(function (q) { return vd.f[q]; }).concat(dis) };
   }
+  // Melodie-Duell: ein Satz pro Lektion; Satzart wechselt (Frage / Aussage / Ausruf)
+  function mkMelody(i) {
+    var M = window.italoMelody; if (!M || !M.canRecord()) return null;
+    var want = ["q", "s", "e"][i % 3], pool = [];
+    (window.italoHvSatz || []).forEach(function (s) { pool.push({ a: s[2], de: s[1] }); });
+    (window.italoSprueche || []).forEach(function (s) { pool.push({ a: s[0], de: s[1] }); });
+    pool = shuffle(pool.filter(function (x) { var tp = M.template(x.a); return tp && tp.kind === want && tp.syllables >= 4 && tp.syllables <= 12; }));
+    return pool.length ? { t: "melody", a: pool[0].a, de: pool[0].de } : null;
+  }
   function addNew(i, tl) {
     var vs = verbsFor(i).concat((buildPacks()[i] || {}).verbs || []), extra = [];
     var pool = shuffle(errPool()), pref = pool.filter(function (e) { return vs.indexOf(e.inf) >= 0; }), rest = pool.filter(function (e) { return vs.indexOf(e.inf) < 0; });
     var used = {}; pref.concat(rest).forEach(function (e) { if (extra.length < 2 && !used[e.inf]) { used[e.inf] = 1; extra.push(mkErr(e)); } });
     var cv = vs.filter(function (v, k) { return vs.indexOf(v) === k; }), cn = 0;
     shuffle(cv).forEach(function (v) { if (cn < 2) { var c = mkChain(v); if (c) { extra.push(c); cn++; } } });
+    var mel = mkMelody(i); if (mel) extra.push(mel);
     extra = shuffle(extra);
     extra.forEach(function (e, k) { var pos = Math.min(tl.length, Math.round((k + 1) * tl.length / (extra.length + 1))); tl.splice(pos + k, 0, e); });
     // Satz-Domino: bis zu 2 Satzbau-Aufgaben (ab 4 Woertern) werden zu Dominos
@@ -7376,7 +7390,7 @@
     function finish(ok, msg, sub, spokenIt) {
       answered = true;
       if (ok) { S.done++; if (!t.retry && !t.round2) S.firstOk++; fill.style.width = Math.round(100 * S.done / S.total) + "%"; }
-      else if (t.t !== "pairs") {
+      else if (t.t !== "pairs" && t.t !== "melody") {
         // Falsch: dieselbe Frage sofort nochmals (bis sie stimmt) und zusaetzlich am Schluss der Lektion
         S.queue.unshift(Object.assign({}, t, { retry: true, endAsk: false }));
         if (!t.endQueued) { S.queue.push(Object.assign({}, t, { retry: true, endAsk: true, endQueued: true })); S.total++; }
@@ -7489,6 +7503,49 @@
         if ([t.a].concat(t.alts || []).some(function (a) { return norm(a) === norm(got); })) finish(true, "Richtig!");
         else finish(false, "Nicht ganz.", "Richtig ist: " + t.a, t.a);
       });
+    } else if (t.t === "melody") {
+      var MM = window.italoMelody, tpl = MM.template(t.a), mtries = 0, rec = null, userPts = null;
+      body.appendChild(el("div", "ls-hint", "Melodie-Duell: Sprich den Satz mit der richtigen Satzmelodie"));
+      var mq = el("div", "ls-q"); mq.appendChild(el("span", "ls-it", t.a)); body.appendChild(mq);
+      body.appendChild(el("div", "ls-leg", t.de));
+      var cv = el("canvas", "ls-mel"); body.appendChild(cv);
+      body.appendChild(el("div", "ls-leg", "Orange gestrichelt: Zielmelodie · Blau: deine Stimme" + (tpl.kind === "q" ? " · Frage: am Schluss nach oben" : tpl.kind === "e" ? " · Ausruf: Spitze, dann runter" : " · Aussage: am Schluss nach unten")));
+      var mrow = el("div", "ls-mrow"); body.appendChild(mrow);
+      var mstat = el("div", "ls-leg"); body.appendChild(mstat);
+      var bHear = el("button", "ls-btn", "Vorbild anhören"), bRec = el("button", "ls-btn pri", "Aufnehmen"), bSkip = el("button", "ls-btn", "Überspringen");
+      [bHear, bRec, bSkip].forEach(function (b) { b.type = "button"; mrow.appendChild(b); });
+      setTimeout(function () { MM.draw(cv, tpl, null); }, 30);
+      bHear.addEventListener("click", function () { speak(t.a); });
+      bSkip.addEventListener("click", function () { if (rec) { rec.stop = function () {}; } if (!answered) finish(true, "Übersprungen"); });
+      function showResult(res) {
+        mrow.innerHTML = "";
+        var win = res.score >= 55;
+        mstat.textContent = (win ? "Duell gewonnen! " : "Fast – ") + res.score + " % Übereinstimmung" + (res.hint ? " · " + res.hint : "");
+        var again = el("button", "ls-btn", "Nochmal"), go2 = el("button", "ls-btn pri", "Weiter");
+        again.type = "button"; go2.type = "button";
+        again.addEventListener("click", function () { mrow.innerHTML = ""; [bHear, bRec].forEach(function (b) { mrow.appendChild(b); }); bRec.textContent = "Aufnehmen"; mstat.textContent = ""; MM.draw(cv, tpl, null); });
+        go2.addEventListener("click", function () { if (!answered) finish(true, win ? "Duell gewonnen! " + res.score + " %" : "Weiter üben – " + res.score + " %", res.hint || null, t.a); });
+        if (!win && mtries < 3) mrow.appendChild(again);
+        mrow.appendChild(go2);
+      }
+      bRec.addEventListener("click", function () {
+        if (answered) return;
+        if (rec) { rec.stop(); return; }
+        try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
+        mtries++; bRec.textContent = "Fertig"; mstat.textContent = "Mikrofon wird aktiviert …"; bHear.disabled = true;
+        var live = [];
+        rec = MM.record({
+          onFrame: function (f, n) { if (n >= 1) mstat.textContent = "Ich höre zu … sprich den Satz (Pause = fertig)"; live.push({ f: f }); var c = MM.contour(live.slice()); if (c && live.length % 6 === 0) MM.draw(cv, tpl, c); },
+          onDone: function (frames) {
+            rec = null; bHear.disabled = false; bRec.textContent = "Aufnehmen";
+            var c = MM.contour(frames);
+            if (!c) { mstat.textContent = "Ich habe zu wenig Stimme gehört. Sprich lauter und näher am Mikrofon – oder überspringe."; return; }
+            userPts = c; MM.draw(cv, tpl, c); showResult(MM.score(c, tpl));
+          },
+          onError: function () { rec = null; bHear.disabled = false; bRec.textContent = "Aufnehmen"; mstat.textContent = "Kein Mikrofon-Zugriff. Erlaube das Mikrofon im Browser – oder überspringe."; }
+        });
+      });
+      foot.style.display = "none";
     } else if (t.t === "err") {
       body.appendChild(el("div", "ls-hint", "Fehlersuche: In diesem Satz ist ein Wort falsch – tippe es an"));
       body.appendChild(el("div", "ls-q", "Gemeint ist: " + t.de));
@@ -8512,5 +8569,188 @@
 })();
 </script>
 <!-- SPRUECHE END -->
+<!-- MELODIE START -->
+<script>
+/* Melodie-Duell: Satzmelodie (Tonhoehe) statt nur Woerter.
+   - template(satz): vereinfachte Zielmelodie aus Silben, Betonung (vorletzte Silbe) und Satzzeichen (. fallend, ? steigend, ! Spitze dann fallend)
+   - detectPitch / contour: Grundton aus dem Mikrofon (Autokorrelation), geglaettet, auf 60 Punkte normiert
+   - score: Vergleich der Kurven (Form, nicht Stimmlage) mit DTW; draw: Zeichnung beider Kurven
+   Alles laeuft auf dem Geraet, es wird nichts aufgenommen oder gesendet. */
+(function () {
+  "use strict";
+  var N = 60;
+  var VOW = "aeiouàèéìòù", WEAK = "iu";
+  var CLITIC = { il: 1, lo: 1, la: 1, le: 1, i: 1, gli: 1, un: 1, uno: 1, una: 1, di: 1, a: 1, da: 1, in: 1, con: 1, su: 1, per: 1, e: 1, ed: 1, o: 1, ma: 1, mi: 1, ti: 1, si: 1, ci: 1, vi: 1, li: 1, che: 1, non: 1, del: 1, al: 1, dal: 1, nel: 1, sul: 1, dei: 1, ai: 1, ne: 1 };
+
+  // ---- Zielmelodie ----
+  function syllables(sentence) {
+    var out = [];
+    String(sentence).split(/\s+/).forEach(function (raw, wi) {
+      var w = raw.toLowerCase().replace(/[’‘`]/g, "'").replace(/[^a-zàèéìòùç']/g, "");
+      if (!w) return;
+      if (w.indexOf("'") >= 0) { var parts = w.split("'"); w = parts[parts.length - 1] || parts[0]; }
+      var n = 0, prev = false, prevCh = "";
+      for (var k = 0; k < w.length; k++) {
+        var ch = w.charAt(k), v = VOW.indexOf(ch) >= 0;
+        if (v) { if (!prev) n++; else if (!(WEAK.indexOf(ch) >= 0 || WEAK.indexOf(prevCh) >= 0)) n++; prev = true; } else prev = false;
+        prevCh = ch;
+      }
+      if (!n) return;
+      var accent = /[àèéìòù]$/.test(w), stressAt = accent ? n - 1 : (n >= 2 ? n - 2 : 0);
+      for (var s = 0; s < n; s++) out.push({ w: wi, stress: (n === 1 ? !CLITIC[w] : s === stressAt) });
+    });
+    return out;
+  }
+  function kindOf(sentence) { var m = /([.?!…]+)\s*$/.exec(String(sentence)); return !m ? "s" : (m[1].indexOf("?") >= 0 ? "q" : (m[1].indexOf("!") >= 0 ? "e" : "s")); }
+  function template(sentence) {
+    var syl = syllables(sentence), m = syl.length, kind = kindOf(sentence);
+    if (m < 3) return null;
+    var p = syl.map(function (s, i) { return -0.3 * i + (s.stress ? 3 : 0); });
+    var lastStress = -1; syl.forEach(function (s, i) { if (s.stress) lastStress = i; });
+    if (kind === "s") { p[m - 1] = -0.3 * (m - 1) - 4.5; }
+    else if (kind === "q") { if (m > 1) p[m - 2] = Math.min(p[m - 2], -0.3 * (m - 2) + 0.5); p[m - 1] = -0.3 * (m - 1) + 5; }
+    else { if (lastStress >= 0) p[lastStress] += 2.5; p[m - 1] = -0.3 * (m - 1) - 2.5; }
+    var pts = [];
+    for (var i = 0; i < N; i++) {
+      var x = (i + 0.5) / N * m - 0.5, a = Math.max(0, Math.min(m - 1, Math.floor(x))), b = Math.min(m - 1, a + 1), f = Math.max(0, Math.min(1, x - a));
+      var u = (1 - Math.cos(f * Math.PI)) / 2;
+      pts.push(p[a] * (1 - u) + p[b] * u);
+    }
+    return { pts: pts, kind: kind, syllables: m };
+  }
+
+  // ---- Grundton (McLeod-aehnliche normierte Autokorrelation) ----
+  function detectPitch(buf, sr) {
+    var n = buf.length, e = 0, i;
+    for (i = 0; i < n; i++) e += buf[i] * buf[i];
+    if (Math.sqrt(e / n) < 0.01) return { f: 0, c: 0 };
+    var minLag = Math.floor(sr / 400), maxLag = Math.min(Math.floor(sr / 70), n - 2), nsdf = new Float32Array(maxLag + 2), lag;
+    for (lag = minLag - 1; lag <= maxLag + 1; lag++) {
+      var ac = 0, sq = 0;
+      for (i = 0; i < n - lag; i++) { ac += buf[i] * buf[i + lag]; sq += buf[i] * buf[i] + buf[i + lag] * buf[i + lag]; }
+      nsdf[lag] = sq > 0 ? 2 * ac / sq : 0;
+    }
+    var peaks = [], best = 0;
+    for (lag = minLag; lag <= maxLag; lag++) {
+      if (nsdf[lag] > 0.5 && nsdf[lag] >= nsdf[lag - 1] && nsdf[lag] > nsdf[lag + 1]) { peaks.push(lag); if (nsdf[lag] > best) best = nsdf[lag]; }
+    }
+    if (!peaks.length || best < 0.6) return { f: 0, c: best };
+    var pick = peaks[0];
+    for (i = 0; i < peaks.length; i++) { if (nsdf[peaks[i]] >= 0.9 * best) { pick = peaks[i]; break; } }
+    var a = nsdf[pick - 1], b = nsdf[pick], c = nsdf[pick + 1], d = a - 2 * b + c, shift = d !== 0 ? 0.5 * (a - c) / d : 0;
+    return { f: sr / (pick + shift), c: nsdf[pick] };
+  }
+
+  // ---- Kurve aus Frames: [{f}] (f = 0 stimmlos) -> 60 Halbtonwerte oder null ----
+  function median(a) { var s = a.slice().sort(function (x, y) { return x - y; }); return s[Math.floor(s.length / 2)]; }
+  function contour(frames) {
+    var fs = frames.map(function (x) { return x.f || 0; }), voiced = fs.filter(function (f) { return f > 0; });
+    if (voiced.length < 10) return null;
+    var ref = median(voiced), st = fs.map(function (f) { return f > 0 ? 12 * Math.log(f / ref) / Math.LN2 : null; }), i, j;
+    // Ausreisser (Oktavspruenge) entfernen
+    var clean = st.map(function (v, k) {
+      if (v === null) return null;
+      var nb = []; for (j = Math.max(0, k - 4); j <= Math.min(st.length - 1, k + 4); j++) if (st[j] !== null) nb.push(st[j]);
+      return Math.abs(v - median(nb)) > 4 ? null : v;
+    });
+    var first = -1, last = -1; clean.forEach(function (v, k) { if (v !== null) { if (first < 0) first = k; last = k; } });
+    if (last - first < 9) return null;
+    var seg = clean.slice(first, last + 1);
+    // Luecken linear fuellen
+    for (i = 0; i < seg.length; i++) {
+      if (seg[i] === null) {
+        var a = i - 1, b = i; while (b < seg.length && seg[b] === null) b++;
+        var va = seg[a], vb = seg[b], len = b - a;
+        for (j = i; j < b; j++) seg[j] = va + (vb - va) * (j - a) / len;
+        i = b;
+      }
+    }
+    // leichte Glaettung (gleitender Mittelwert 5)
+    var sm = seg.map(function (v, k) { var s = 0, c = 0; for (var q = k - 2; q <= k + 2; q++) if (q >= 0 && q < seg.length) { s += seg[q]; c++; } return s / c; });
+    var pts = [];
+    for (i = 0; i < N; i++) {
+      var x = i / (N - 1) * (sm.length - 1), lo = Math.floor(x), hi = Math.min(sm.length - 1, lo + 1);
+      pts.push(sm[lo] + (sm[hi] - sm[lo]) * (x - lo));
+    }
+    return pts;
+  }
+
+  // ---- Vergleich ----
+  function znorm(a, minSd) {
+    var m = 0, i; for (i = 0; i < a.length; i++) m += a[i]; m /= a.length;
+    var v = 0; for (i = 0; i < a.length; i++) v += (a[i] - m) * (a[i] - m);
+    var sd = Math.max(minSd, Math.sqrt(v / a.length));
+    return a.map(function (x) { return (x - m) / sd; });
+  }
+  function dtw(a, b, band) {
+    var n = a.length, m = b.length, INF = 1e9, D = [], i, j;
+    for (i = 0; i <= n; i++) { D.push(new Array(m + 1).fill(INF)); }
+    D[0][0] = 0;
+    for (i = 1; i <= n; i++) for (j = Math.max(1, i - band); j <= Math.min(m, i + band); j++) {
+      var c = Math.abs(a[i - 1] - b[j - 1]);
+      D[i][j] = c + Math.min(D[i - 1][j], D[i][j - 1], D[i - 1][j - 1]);
+    }
+    return D[n][m] / (n + m);
+  }
+  function score(user, tpl) {
+    var zu = znorm(user, 1.0), zt = znorm(tpl.pts, 0.8), cost = dtw(zu, zt, 15);
+    var s = 100 * Math.max(0, 1 - cost / 0.7);
+    var mean = function (arr, from, to) { var t = 0, c = 0; for (var i = from; i < to; i++) { t += arr[i]; c++; } return t / c; };
+    var dEnd = mean(user, N - 10, N) - mean(user, 30, N - 10), endOk = true, hint = "";
+    if (tpl.kind === "q" && dEnd < 0.8) { endOk = false; hint = "Bei einer Frage geht die Stimme am Schluss nach oben."; }
+    if (tpl.kind !== "q" && dEnd > 1.2) { endOk = false; hint = tpl.kind === "e" ? "Beim Ausruf fällt die Stimme am Schluss." : "Bei einer Aussage fällt die Stimme am Schluss."; }
+    if (!endOk) s -= 15;
+    return { score: Math.round(Math.max(0, Math.min(100, s))), endOk: endOk, hint: hint, dEnd: dEnd };
+  }
+
+  // ---- Zeichnen: Ziel (gestrichelt orange) und deine Kurve (blau) in gleicher Form-Skala ----
+  function draw(canvas, tpl, user) {
+    var dpr = window.devicePixelRatio || 1, w = canvas.clientWidth || 300, h = canvas.clientHeight || 120;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    var g = canvas.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+    g.strokeStyle = "rgba(128,128,128,.28)"; g.lineWidth = 1; g.beginPath(); g.moveTo(0, h / 2); g.lineTo(w, h / 2); g.stroke();
+    function line(pts, color, dash, wd) {
+      if (!pts) return; var z = pts;
+      g.strokeStyle = color; g.lineWidth = wd; g.setLineDash(dash); g.lineJoin = "round"; g.lineCap = "round"; g.beginPath();
+      z.forEach(function (v, i) { var x = 6 + i / (z.length - 1) * (w - 12), y = h / 2 - Math.max(-2.6, Math.min(2.6, v)) / 2.6 * (h / 2 - 10); if (i) g.lineTo(x, y); else g.moveTo(x, y); });
+      g.stroke(); g.setLineDash([]);
+    }
+    if (tpl) line(znorm(tpl.pts, 0.8), "#ea580c", [7, 6], 3);
+    if (user) line(znorm(user, 1.0), "#2563eb", [], 3);
+  }
+
+  // ---- Aufnahme ----
+  function canRecord() { return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && (window.AudioContext || window.webkitAudioContext)); }
+  // opts: { onFrame(f, c), onDone(frames) }; liefert { stop() }
+  function record(opts) {
+    var AC = window.AudioContext || window.webkitAudioContext, ctx = new AC(), stream = null, timer = null, done = false, frames = [], t0 = Date.now(), voicedN = 0, lastVoiced = 0;
+    function finish() {
+      if (done) return; done = true; clearInterval(timer);
+      try { stream && stream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
+      try { ctx.close(); } catch (e) {}
+      opts.onDone(frames);
+    }
+    navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } }).then(function (s) {
+      if (done) { s.getTracks().forEach(function (t) { t.stop(); }); return; }
+      stream = s;
+      var an = ctx.createAnalyser(); an.fftSize = 2048; ctx.createMediaStreamSource(s).connect(an);
+      var buf = new Float32Array(an.fftSize);
+      if (ctx.state === "suspended") ctx.resume();
+      timer = setInterval(function () {
+        an.getFloatTimeDomainData(buf);
+        var r = detectPitch(buf, ctx.sampleRate), now = Date.now();
+        frames.push({ f: r.f, t: now - t0 });
+        if (r.f > 0) { voicedN++; lastVoiced = now; }
+        if (opts.onFrame) opts.onFrame(r.f, voicedN);
+        if ((voicedN >= 10 && now - lastVoiced > 1400) || now - t0 > 9000) finish();
+      }, 25);
+    }).catch(function (e) { done = true; try { ctx.close(); } catch (x) {} if (opts.onError) opts.onError(e); });
+    return { stop: finish };
+  }
+
+  window.italoMelody = { template: template, syllables: syllables, detectPitch: detectPitch, contour: contour, score: score, draw: draw, canRecord: canRecord, record: record, kindOf: kindOf };
+})();
+</script>
+<!-- MELODIE END -->
 </body>
 </html>
