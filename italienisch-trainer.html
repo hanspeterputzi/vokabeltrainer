@@ -705,8 +705,8 @@
     <h2>Heute</h2>
     <div class="today-row">
       <div class="today-nums">
-        <div><b id="tdDue">0</b><span>Wiederholen</span></div>
-        <div><b id="tdNew">0</b><span>Neue Wörter</span></div>
+        <div><b id="tdDue">0</b><span><span class="ins-it">Da ripassare</span><span class="ins-de">Wiederholen</span></span></div>
+        <div><b id="tdNew">0</b><span><span class="ins-it">Parole nuove</span><span class="ins-de">Neue Wörter</span></span></div>
       </div>
       <button id="todayGo" type="button">Los</button>
     </div>
@@ -723,7 +723,7 @@
   <div class="card">
     <h2>Abfrage</h2>
     <div id="quizArea">
-      <div class="empty-msg" id="noWordsMsg">Noch keine Vokabeln vorhanden. Füge unten welche hinzu.</div>
+      <div class="empty-msg" id="noWordsMsg"><span class="ins-it">Ancora nessuna parola. Aggiungine qui sotto.</span><span class="ins-de">Noch keine Vokabeln vorhanden. Füge unten welche hinzu.</span></div>
       <div id="quizContent" style="display:none;">
         <div class="quiz-hint" id="quizDirection"><span class="ins-it ls-it">Tedesco → italiano</span><span class="ins-de">Deutsch → Italienisch</span></div>
         <div class="quiz-progress" id="quizProgress"></div>
@@ -825,7 +825,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-11-ziprueche2";
-  const APP_VERSION = "2026-11-11-zq"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-11-zy"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -912,15 +912,33 @@
       if (!it) return;
       if (window.italoTwoLine) { b.dataset.itx = "1"; window.italoTwoLine(b, it, t); }
     }
-    function scan(root) { if (root.nodeType !== 1) return; if (root.tagName === "BUTTON") conv(root); if (root.querySelectorAll) Array.prototype.forEach.call(root.querySelectorAll("button"), conv); }
+    // Abschnitts-Ueberschriften und Platzhalter ebenfalls italienisch (Italienisch fett, Deutsch duenn darunter)
+    var LMAP = { "Heute": "Oggi", "Wortart": "Categoria", "Abfrage": "Interrogazione", "Vokabel hinzufügen": "Aggiungi una parola", "Wortliste": "Elenco delle parole", "Thema": "Argomento", "Übung": "Esercizio",
+      "Erklärung": "Spiegazione", "Alle Wörter": "Tutte le parole", "Konjugiere im Präsens": "Coniuga al presente", "Formen (Präsens)": "Forme (presente)", "Formen (Passato prossimo)": "Forme (passato prossimo)" };
+    var PH = { "Übersetzung eingeben oder sprechen...": "Scrivi o pronuncia la traduzione...", "Deutsch": "Tedesco", "Italienisch": "Italiano", "Wort nachschlagen (italienisch oder deutsch)": "Cerca una parola (italiano o tedesco)",
+      "Antwort eingeben ...": "Scrivi la risposta ...", "Italienisch oder Deutsch suchen …": "Cerca in italiano o in tedesco …" };
+    function convLabel(e) {
+      if (e.dataset && e.dataset.itx) return;
+      if (e.children.length) return;
+      var t = (e.textContent || "").trim(), it = LMAP[t], m;
+      if (!it && (m = /^Alle Wörter \((\d+)\)$/.exec(t))) it = "Tutte le parole (" + m[1] + ")";
+      if (!it) return;
+      e.dataset.itx = "1"; e.textContent = "";
+      var a = document.createElement("span"); a.className = "ins-it"; a.textContent = it;
+      var b = document.createElement("span"); b.className = "ins-de"; b.textContent = t;
+      e.appendChild(a); e.appendChild(b);
+    }
+    function convPH(root) { if (!root.querySelectorAll) return; Array.prototype.forEach.call(root.querySelectorAll("input[placeholder], textarea[placeholder]"), function (i) { var n = PH[i.placeholder] || (/Italienisch oder Deutsch suchen/.test(i.placeholder) ? "Cerca in italiano o in tedesco …" : null); if (n) i.placeholder = n; }); }
+    function scan(root) { if (root.nodeType !== 1) return; if (root.tagName === "BUTTON") conv(root); if (root.tagName === "H2" || root.tagName === "SUMMARY" || root.id === "dictTitle" || (root.classList && root.classList.contains("quiz-hint"))) convLabel(root); if (root.querySelectorAll) { Array.prototype.forEach.call(root.querySelectorAll("button"), conv); Array.prototype.forEach.call(root.querySelectorAll("h2, summary, .quiz-hint, #dictTitle"), convLabel); convPH(root); } }
     var busy = false;
     function run() {
       scan(document.body);
       new MutationObserver(function (muts) {
         if (busy) return; busy = true;
         try {
+          convPH(document.body);
           muts.forEach(function (m) {
-            if (m.type === "childList") { m.addedNodes.forEach(scan); if (m.target && m.target.tagName === "BUTTON") { delete m.target.dataset.itx; conv(m.target); } }
+            if (m.type === "childList") { m.addedNodes.forEach(scan); if (m.target && m.target.tagName === "BUTTON") { delete m.target.dataset.itx; conv(m.target); } else if (m.target && (m.target.tagName === "H2" || m.target.tagName === "SUMMARY" || m.target.id === "dictTitle" || (m.target.classList && m.target.classList.contains("quiz-hint")))) { delete m.target.dataset.itx; convLabel(m.target); } }
           });
         } catch (e) {}
         busy = false;
@@ -970,16 +988,201 @@
       window.speechSynthesis.__italoFix = true;
     }
   } catch (e) {}
+
+  // ===== Italienische Fassung aller Aufgabenstellungen (Italienisch oben, deutsches Original duenn darunter) =====
+  // Marker im Ergebnis: «…» = italienisches Zitat (antippbar), ‹…› = deutsches Zitat (nie gepunktet)
+  (function () {
+    var EXACT = {
+      "Woran erkennt man im Italienischen eine Frage (ohne Fragewort)?": "Come si riconosce una domanda in italiano (senza parola interrogativa)?",
+      "Muss man im Italienischen für eine Frage die Wörter umstellen?": "In italiano bisogna cambiare l'ordine delle parole per fare una domanda?",
+      "Was passiert mit der Stimme bei einer Frage?": "Che cosa succede alla voce in una domanda?",
+      "Zu welcher Gruppe gehört «prendere»?": "A quale gruppo appartiene «prendere»?",
+      "Welche Endungen haben -are-Verben bei io / tu / lui (abito, abiti, abita)?": "Quali desinenze hanno i verbi in -are con io / tu / lui (abito, abiti, abita)?",
+      "Welche Endungen haben -ere- und -ire-Verben bei io / tu / lui (prendo, prendi, prende)?": "Quali desinenze hanno i verbi in -ere e -ire con io / tu / lui (prendo, prendi, prende)?",
+      "Mit welchem Buchstaben endet die Form bei noi, voi und loro (abitiamo, abitate, abitano)? Reihenfolge: noi – voi – loro": "Con quale lettera finisce la forma per noi, voi e loro (abitiamo, abitate, abitano)? Ordine: noi – voi – loro",
+      "Welche Silbe ist bei «noi abitiamo» betont? (Grossbuchstaben = betonte Silbe)": "Quale sillaba è accentata in «noi abitiamo»? (lettere maiuscole = sillaba accentata)",
+      "Bei preferire steht -isc- in preferisco, preferisci, preferisce, preferiscono. Zu welchen Personen gehören diese Formen?": "Con preferire c'è -isc- in preferisco, preferisci, preferisce, preferiscono. A quali persone appartengono queste forme?",
+      "Bei preferire fehlt -isc- in preferiamo und preferite. Zu welchen Personen gehören diese Formen?": "Con preferire manca -isc- in preferiamo e preferite. A quali persone appartengono queste forme?",
+      "Wozu dient das h in «paghi»?": "A che cosa serve la h in «paghi»?",
+      "Bei pagare steht ein h in paghi und paghiamo. Zu welchen Personen gehören diese Formen?": "Con pagare c'è una h in paghi e paghiamo. A quali persone appartengono queste forme?",
+      "Wie viele «i» stehen in «mangiamo» direkt hinter dem «g»?": "Quante «i» ci sono in «mangiamo» subito dopo la «g»?",
+      "Bildung der loro-Form: lui-Form «sta» + «nno» ergibt …": "Formazione della forma loro: forma lui «sta» + «nno» dà …",
+      "Bei welchem Verb lautet die Form für «io» gleich wie die Form für «loro»?": "Con quale verbo la forma per «io» è uguale a quella per «loro»?",
+      "«Tu mi piaci.» heisst …": "«Tu mi piaci.» significa …",
+      "Was fragst du mit «C'è un ristorante …?»": "Che cosa chiedi con «C'è un ristorante …?»",
+      "Was fragst du mit «Dov'è il ristorante «Al sole»?»": "Che cosa chiedi con «Dov'è il ristorante «Al sole»?»",
+      "Esserci gibt es nur in der … Person.": "Esserci esiste solo alla … persona.",
+      "Esserci gibt es nur in der ___ Person.": "Esserci esiste solo alla ___ persona.",
+      "Weibliche Form von «il bambino»?": "Qual è il femminile di «il bambino»?",
+      "Plural von «la giornata»:": "Plurale di «la giornata»:",
+      "Darf bei «Non ho fatto niente» das «non» wegfallen?": "In «Non ho fatto niente» si può omettere «non»?",
+      "Wo steht «non» im Satz «Non vai mai a ballare?»": "Dove sta «non» nella frase «Non vai mai a ballare?»",
+      "Wo steht «non» in «Non vai mai a ballare?»": "Dove sta «non» in «Non vai mai a ballare?»",
+      "Steht bei «questo vestito» ein Artikel?": "In «questo vestito» c'è un articolo?",
+      "Welche Adjektive haben männlich und weiblich dieselbe Form (z. B. interessante)?": "Quali aggettivi hanno la stessa forma al maschile e al femminile (per es. interessante)?",
+      "Farben stehen …": "I colori stanno …", "Nationalitäten stehen …": "Le nazionalità stanno …", "Mehrere Adjektive stehen …": "Più aggettivi stanno …",
+      "Kurze, häufige Adjektive (bello, grande) stehen meist …": "Gli aggettivi brevi e frequenti (bello, grande) stanno di solito …",
+      "Das unbetonte Pronomen steht …": "Il pronome atono sta …", "Das betonte Pronomen steht …": "Il pronome tonico sta …",
+      "Im üblichen Fall (ohne besondere Betonung) steht …": "Nel caso normale (senza enfasi) sta …",
+      "Welche Präposition verschmilzt NICHT mit dem Artikel?": "Quale preposizione NON si fonde con l'articolo?",
+      "Welche Präposition verschmilzt mit dem Artikel?": "Quale preposizione si fonde con l'articolo?",
+      "«in» + «un» (unbestimmter Artikel) – verschmilzt das?": "«in» + «un» (articolo indeterminativo) – si fonde?",
+      "Verschmilzt «in» mit «un»?": "«in» si fonde con «un»?",
+      "Du sprichst mit deinem Bruder. Wie sagst du «Sprich langsamer!»?": "Parli con tuo fratello. Come dici ‹Sprich langsamer!›?",
+      "Du sprichst mit deiner Chefin. Wie sagst du «Sprechen Sie langsamer!»?": "Parli con la tua capa. Come dici ‹Sprechen Sie langsamer!›?",
+      "Wer wird mit «Prendi!» angesprochen?": "Chi viene interpellato con «Prendi!»?",
+      "Bei Verben auf -are endet der du-Befehl auf …": "Con i verbi in -are l'imperativo di tu finisce in …",
+      "Bei Verben auf -ere und -ire endet der du-Befehl auf …": "Con i verbi in -ere e -ire l'imperativo di tu finisce in …",
+      "Bei Verben auf -ere und -ire endet der Sie-Befehl auf …": "Con i verbi in -ere e -ire l'imperativo di Lei finisce in …",
+      "Bei Verben auf -are endet der Sie-Befehl auf …": "Con i verbi in -are l'imperativo di Lei finisce in …",
+      "Wie lautet der du-Befehl «Geh!» von andare?": "Qual è l'imperativo di tu ‹Geh!› di andare?",
+      "Wie lautet der Sie-Befehl «Machen Sie!» von fare?": "Qual è l'imperativo di Lei ‹Machen Sie!› di fare?",
+      "Wie lautet der du-Befehl «Hör zu!»?": "Qual è l'imperativo di tu ‹Hör zu!›?",
+      "Wie lautet der Sie-Befehl «Nehmen Sie!»?": "Qual è l'imperativo di Lei ‹Nehmen Sie!›?",
+      "Wie lautet der du-Befehl «Sei!» von essere?": "Qual è l'imperativo di tu ‹Sei!› di essere?",
+      "Wie sagst du zu einem Freund «Sprich nicht!»?": "Come dici a un amico ‹Sprich nicht!›?",
+      "Wie sagst du zu mehreren Freunden «Sprecht!»?": "Come dici a più amici ‹Sprecht!›?",
+      "Wie sagst du zu einer fremden Person «Sprechen Sie nicht!»?": "Come dici a una persona sconosciuta ‹Sprechen Sie nicht!›?",
+      "Woran hörst du bei «Hai una penna?», dass es eine Frage ist?": "Come senti in «Hai una penna?» che è una domanda?",
+      "Wie schreibt man «Sie» (höflich): Lei / Loro gross oder klein?": "Come si scrive ‹Sie› (formale): Lei / Loro con la maiuscola o la minuscola?",
+      "Wann lässt man das Pronomen (io, tu, lui …) normalerweise weg, z. B. in «Sono di Coira»?": "Quando di solito si omette il pronome (io, tu, lui …), per es. in «Sono di Coira»?",
+      "Wann setzt man das Pronomen (io, tu, lui …) trotzdem?": "Quando si usa comunque il pronome (io, tu, lui …)?",
+      "Bei welchen Personen ist die Endung betont, z. B. abiTIAmo, abiTAte?": "In quali persone la desinenza è accentata, per es. abiTIAmo, abiTAte?",
+      "Hat «finire» ein -isc-?": "«finire» ha -isc-?",
+      "Bei leggere ist das «gg» hart in leggo und leggono (weich in leggi, legge …). Zu welchen Personen gehören die harten Formen?": "Con leggere la «gg» è dura in leggo e leggono (dolce in leggi, legge …). A quali persone appartengono le forme dure?",
+      "andare – loro (sie, Plural): Wie heisst die Form?": "andare – loro: Qual è la forma?",
+      "cinema ist die Kurzform von …?": "cinema è la forma breve di …?",
+      "Nomen auf Konsonant sind meist …": "I nomi che finiscono in consonante sono per lo più …",
+      "Welcher Artikel steht vor einem männlichen Nomen mit s + Konsonant?": "Quale articolo sta davanti a un nome maschile con s + consonante?",
+      "Welcher Artikel steht vor einem weiblichen Nomen mit Konsonant?": "Quale articolo sta davanti a un nome femminile con consonante?",
+      "Welcher Artikel steht vor einem weiblichen Nomen mit Vokal?": "Quale articolo sta davanti a un nome femminile con vocale?",
+      "Welcher Artikel steht vor einem männlichen Nomen mit h?": "Quale articolo sta davanti a un nome maschile con h?",
+      "Welcher bestimmte Artikel gehört zu «uno zucchino»?": "Quale articolo determinativo corrisponde a «uno zucchino»?",
+      "Gibt es bei weiblichen Nomen Ausnahmen mit uno?": "Ci sono eccezioni con uno nei nomi femminili?",
+      "Steht bei «un amico» ein Apostroph?": "In «un amico» c'è un apostrofo?",
+      "Steht bei Sprachen der Artikel?": "Con le lingue c'è l'articolo?",
+      "Wie schreibt man «quale» vor «è»?": "Come si scrive «quale» davanti a «è»?",
+      "Welches Fragewort fragt nach einer Person?": "Quale parola interrogativa chiede di una persona?",
+      "Was fragt «che cos'è?»": "Che cosa chiede «che cos'è?»",
+      "Ändert sich «che» im Plural (che giorno / che giorni)?": "«che» cambia al plurale (che giorno / che giorni)?",
+      "Gibt es den Teilungsartikel im Deutschen?": "Esiste l'articolo partitivo in tedesco?",
+      "Welche Form passt zu «il libro»?": "Quale forma va con «il libro»?",
+      "«molto bello» (genauer beschrieben) steht …": "«molto bello» (descritto meglio) sta …",
+      "Welcher Satz ist richtig?": "Quale frase è giusta?",
+      "«A me non ha detto niente» – «a me» ist …": "«A me non ha detto niente» – «a me» è …",
+      "Tra und fra bedeuten …": "Tra e fra significano …",
+      "«Anche» und «pure» bedeuten …": "«Anche» e «pure» significano …",
+      "«Perché» in der Frage heisst …": "«Perché» nella domanda significa …",
+      "Welches Wort passt für «wenn», wenn «falls» möglich ist?": "Quale parola va bene per ‹wenn› quando ‹falls› è possibile?",
+      "Welches Wort passt für «wenn», wenn «falls» nicht möglich ist?": "Quale parola va bene per ‹wenn› quando ‹falls› non è possibile?",
+      "Nach einem Komparativ steht …": "Dopo un comparativo sta …",
+      "Was gibt «di» in «una bottiglia di vino» an?": "Che cosa indica «di» in «una bottiglia di vino»?",
+      "«a» gilt für …": "«a» vale per …",
+      "Plural von «antico»?": "Plurale di «antico»?",
+      "Wie endet ein Adjektiv auf -a im Plural?": "Come finisce al plurale un aggettivo in -a?",
+      "Wie endet ein Adjektiv auf -e im Plural?": "Come finisce al plurale un aggettivo in -e?",
+      "Wie sagst du «Ich hätte gern»?": "Come si dice ‹Ich hätte gern›?"
+    };
+    // Schluss-/Zwischenstuecke (Reihenfolge wichtig)
+    var GLUE = [
+      [/ – welcher Artikel\?/g, " – quale articolo?"], [/ – welche Form\?/g, " – quale forma?"], [/ – welches Fragewort\?/g, " – quale parola interrogativa?"],
+      [/ – männlich oder weiblich\?/g, " – maschile o femminile?"], [/ – mit oder ohne Teilungsartikel\?/g, " – con o senza articolo partitivo?"],
+      [/ – wie schreibt man «Sie»\?/g, " – come si scrive ‹Sie›?"], [/: Welche Form ist richtig\?/g, ": qual è la forma giusta?"], [/ Welche Form ist richtig\?/g, " Qual è la forma giusta?"],
+      [/: Wie heisst die Form\?/g, ": qual è la forma?"], [/ – (.+?) oder (.+?)\?$/, " – $1 o $2?"], [/ – nichts$/, " – niente"], [/ – nicht mehr$/, " – non più"],
+      [/\(Plural mit Artikel\)/g, "(plurale con articolo)"], [/ bedeutet …/g, " significa …"], [/ heisst …/g, " significa …"]
+    ];
+    function isDe(inner) {
+      if (/[äöüß]/i.test(inner) || /^[A-ZÄÖÜ]/.test(inner)) return true;
+      var DE = window.italoDeOnlySet ? window.italoDeOnlySet() : {};
+      var toks = inner.match(/[A-Za-zÀ-ÿ]+/g) || []; if (!toks.length) return false;
+      return toks.some(function (t) { return DE[t.toLowerCase()] && !(window.italoLookupWord && window.italoLookupWord(t) && /^[a-zà-ÿ]+$/.test(t) && !DE[t.toLowerCase()]); }) && !/^[a-zà-ÿ' ]+ ?\+ ?[a-zà-ÿ' ]+$/.test(inner);
+    }
+    window.italoQIt = function (q) {
+      q = String(q || "");
+      if (EXACT[q]) return { it: EXACT[q], de: q };
+      var m;
+      // Wie sagst/fragst du [Zusatz] «X» [(Zusatz)]? / Wie sagt man «X»?
+      if ((m = /^Wie (sagst|fragst|sagt man) (?:du )?((?:höflich|zu [^«]*?)\s)?«([^»]*)»(?: \(([^)]*)\))?\??$/.exec(q))) {
+        var verb = m[1] === "fragst" ? "Come chiedi" : (m[1] === "sagt man" ? "Come si dice" : "Come si dice");
+        var extra = m[2] ? " " + (m[2].trim() === "höflich" ? "in modo formale" : m[2].trim().replace(/^zu einem Freund$/, "a un amico").replace(/^zu mehreren Freunden$/, "a più amici").replace(/^zu einer fremden Person$/, "a una persona sconosciuta")) : "";
+        var par = m[4] ? " (" + ({ "eine Sache": "una cosa", "mehrere Sachen": "più cose", "männlich": "maschile", "weiblich": "femminile", "eine Frau": "una donna" }[m[4]] || m[4]) + ")" : "";
+        return { it: verb + extra + " ‹" + m[3] + "›" + par + "?", de: q };
+      }
+      // Aussprache: «Wort – Wie wird das «c» gesprochen: hart (wie k) oder weich (wie tsch)?»
+      if ((m = /^(.+?) – Wie wird das (erste )?(«[^»]*») gesprochen: (.+)$/.exec(q))) {
+        var tail = m[4].replace(/hart \(wie ([^)]*)\)/, "dura (come $1)").replace(/weich \(wie ([^)]*)\)/, "dolce (come $1)").replace(/ oder /, " o ").replace(/\(wie in (\w+)\)/, "(come in ‹$1›)").replace(/«sch» \(come in ‹Schule›\) o «sk»/, "«sch» (come in ‹Schule›) o «sk»");
+        return { it: m[1] + " – Come si pronuncia la " + (m[2] ? "prima " : "") + m[3] + ": " + tail, de: q };
+      }
+      var FAM = [
+        [/^Zu welcher Gruppe gehört («[^»]*»)\?$/, "A quale gruppo appartiene $1?"], [/^Weibliche Form von («[^»]*»)\?$/, "Qual è il femminile di $1?"],
+        [/^Wer wird mit («[^»]*») angesprochen\?$/, "Chi viene interpellato con $1?"], [/^Hat («[^»]*») ein -isc-\?$/, "$1 ha -isc-?"],
+        [/^Was fragst du mit («[^»]*»)\??$/, "Che cosa chiedi con $1?"], [/^Welche Form passt zu («[^»]*»)\?$/, "Quale forma va con $1?"],
+        [/^(.+) → Plural\?$/, "$1 → plurale?"], [/^Plural von («[^»]*»)\?$/, "Plurale di $1?"],
+        [/^Was gibt («[^»]*») in («[^»]*») an\?$/, "Che cosa indica $1 in $2?"],
+        [/^Ich mag den Wein nicht: ___ mi piace il vino\.$/, "Completa: ___ mi piace il vino. (‹Ich mag den Wein nicht›)"]
+      ];
+      for (var fi = 0; fi < FAM.length; fi++) { if (FAM[fi][0].test(q)) return { it: q.replace(FAM[fi][0], FAM[fi][1]), de: q }; }
+      // Fragen mit ganzem deutschem Satz ohne Italienisch: nur Uebersetzungsaufgabe
+      if (!/«|___|→|[a-zàèéìòù]+ – /.test(q) && /^[A-ZÄÖÜ]/.test(q) && /[äöüß]|\b(Ich|Du|Er|Sie|Wir|Ihr|Der|Die|Das|Ein|Eine|Einen|Dieses|Diese|Ihr)\b/.test(q) && !/\?$/.test(q.replace(/ → \?$/, "")) ) {
+        return { it: "Traduci in italiano:", de: "Übersetze ins Italienische:", content: q.replace(/ → \?$/, "") };
+      }
+      if (/^[A-ZÄÖÜ][^«»_]*? → \?$/.test(q)) {
+        return { it: "Traduci in italiano:", de: "Übersetze ins Italienische:", content: q.replace(/ → \?$/, "") };
+      }
+      // Rest: deutsche Klammer-Hinweise ausblenden, Glue anwenden
+      var r = q, changed = false;
+      GLUE.forEach(function (g) { var n = r.replace(g[0], g[1]); if (n !== r) { changed = true; r = n; } });
+      var r2 = r.replace(/\s*\(([^()]*)\)/g, function (all, inner) { return isDe(inner) ? (changed = true, "") : all; });
+      if (r2 !== r) r = r2;
+      if (!changed) return null;
+      return { it: r.replace(/\s{2,}/g, " ").trim(), de: q };
+    };
+  })();
+  // Hinweiszeile unter der Frage auf Italienisch ("c oder ch?" -> "c o ch?", "ich" -> "io" ...)
+  window.italoHintIt = function (h) {
+    h = String(h || ""); if (!h) return null;
+    var P = { "ich": "io", "du": "tu", "er / sie": "lui / lei", "wir": "noi", "ihr": "voi", "sie (Plural)": "loro" };
+    if (P[h]) return P[h];
+    var m;
+    if ((m = /^Form von (\S+)$/.exec(h))) return "Forma di " + m[1];
+    if (h === "Plural mit Artikel") return "Plurale con articolo";
+    if (/ oder /.test(h)) return h.replace(/ oder /g, " o ");
+    return null;
+  };
+  // Antwortoptionen mit deutschem Begriffs-Inhalt (bei Grammatik-Fragen): Italienisch fett, Deutsch duenn darunter
+  window.italoOptIt = (function () {
+    var M = { "weich": "dolce", "hart": "dura", "An der Wortstellung": "Dall'ordine delle parole", "An einer besonderen Endung": "Da una desinenza particolare", "An einem Hilfswort": "Da una parola ausiliaria",
+      "An der Melodie": "Dall'intonazione", "an der Melodie": "dall'intonazione", "an der Wortstellung": "dall'ordine delle parole", "an der Verbform": "dalla forma del verbo", "Ja": "Sì", "Nein": "No",
+      "Sie geht am Ende runter": "Scende alla fine", "Sie bleibt gleich": "Resta uguale", "Sie geht am Ende hoch": "Sale alla fine", "Das g wird weich": "La g diventa dolce", "Das g wird stumm": "La g diventa muta",
+      "Das g bleibt hart": "La g resta dura", "Wo ein bestimmtes Restaurant ist": "Dove si trova un ristorante preciso", "Ob es irgendein Restaurant gibt": "Se esiste un ristorante qualsiasi", "männlich": "maschile", "weiblich": "femminile",
+      "nach dem Verb": "dopo il verbo", "vor dem Verb": "prima del verbo", "Vor dem Verb": "Prima del verbo", "Nach dem Verb": "Dopo il verbo", "mit «della»": "con «della»", "mit «delle»": "con «delle»", "mit": "con", "ohne": "senza",
+      "vor dem Nomen": "davanti al nome", "hinter dem Nomen": "dopo il nome", "vor oder hinter dem Verb": "prima o dopo il verbo", "nur vor dem Verb": "solo prima del verbo", "eine fremde Person (Sie)": "una persona sconosciuta (Lei)",
+      "ein Freund (du)": "un amico (tu)", "Sie (höflich)": "Lei (formale)", "Sie (höflich, Plural)": "Loro (formale, plurale)", "Wenn das Verb da ist": "Quando il verbo c'è", "Wenn das Verb fehlt": "Quando il verbo manca",
+      "Zum Betonen und wenn das Verb fehlt": "Per enfatizzare e quando il verbo manca", "Immer": "Sempre", "nach einer Erklärung": "dopo una spiegazione", "nach einer Auswahl": "dopo una scelta",
+      "das unbetonte Pronomen": "il pronome atono", "das betonte Pronomen": "il pronome tonico", "Verschiedenes": "Altro", "das Material": "il materiale", "die Herkunft": "l'origine", "das Thema": "l'argomento",
+      "die Zeit": "il tempo", "die Menge": "la quantità", "wo? und wohin?": "dove? e verso dove?", "die Entfernung": "la distanza", "die Art": "il tipo", "die Art und Weise": "il modo", "immer": "sempre", "nie": "mai",
+      "Mehrzahl": "plurale", "Einzahl": "singolare", "ja": "sì", "nein": "no", "oder": "o", "und": "e" };
+    return function (o, q) { if (!M[o] || !window.italoQIt || !window.italoQIt(q || "")) return null; return M[o]; };
+  })();
+  window.italoFillOpt = function (btn, o, q) {
+    var it = window.italoOptIt(o, q); btn._v = o; if (!it) return btn;
+    btn.textContent = "";
+    var a = document.createElement("span"); a.className = "ins-it ls-it"; a.textContent = it;
+    var b = document.createElement("span"); b.className = "ins-de"; b.textContent = o;
+    btn.appendChild(a); btn.appendChild(b); return btn;
+  };
   // Anweisungen in Uebungen: ITALIENISCH oben, darunter die deutsche Uebersetzung in duenner Schrift (wie bei allen anderen Woertern)
   window.italoInstr = function (q) {
     q = String(q || ""); var m;
     var KIND = { "Frage": "domanda", "Aussage": "affermazione", "du": "tu", "Sie": "Lei", "verneint": "negata", "ihr": "voi" };
     if ((m = /^Übersetze: ([\s\S]+)$/.exec(q))) return { it: "Traduci:", de: "Übersetze:", content: m[1] };
     if ((m = /^Sage auf Italienisch \(([^)]*)\): ([\s\S]+)$/.exec(q))) return { it: "Dillo in italiano (" + (KIND[m[1]] || m[1]) + "):", de: "Sage auf Italienisch (" + m[1] + "):", content: m[2] };
+    if ((m = /^Sage auf Italienisch: ([\s\S]+)$/.exec(q))) return { it: "Dillo in italiano:", de: "Sage auf Italienisch:", content: m[1] };
     if ((m = /^Ergänze: ([\s\S]+)$/.exec(q))) return { it: "Completa:", de: "Ergänze:", content: m[1] };
     if ((m = /^Was heisst («[^»]*»)[^?]*\?$/.exec(q))) return { it: "Che cosa significa " + m[1] + "?", de: q, qIt: true };
     if ((m = /^Was bedeutet («[^»]*»)(?: in («[^»]*»))?\??$/.exec(q))) return { it: "Che cosa significa " + m[1] + (m[2] ? " in " + m[2] : "") + "?", de: q, qIt: true };
-    if ((m = /^Wie heisst («[^»]*»)[^?]*?\?$/.exec(q))) return { it: "Come si dice " + m[1] + " in italiano?", de: q };
+    if ((m = /^Wie heisst («[^»]*»)[^?]*?\?$/.exec(q))) return { it: "Come si dice ‹" + m[1].slice(1, -1) + "› in italiano?", de: q, qIt: true };
+    var qi = window.italoQIt && window.italoQIt(q); if (qi) { qi.qIt = true; return qi; }
     return null;
   };
   // fester Anweisungstext (Hinweiszeile): Italienisch oben, Deutsch duenn darunter
@@ -990,10 +1193,19 @@
     d.appendChild(a); d.appendChild(b); return d;
   };
   // Frage in ein Element schreiben (Grammatik, Vokabeln): bekannte Anweisung -> Italienisch + Deutsch darunter
+  // Italienische Zeile fuellen: «…» italienisch (antippbar), ‹…› deutsch (nie gepunktet), Rest italienisch
+  window.italoFillIt = function (parent, str, qIt) {
+    String(str).split(/(«[^»]*»|‹[^›]*›)/).forEach(function (seg) {
+      if (!seg) return;
+      var c = seg.charAt(0);
+      if (c === "«" || c === "‹") { parent.appendChild(document.createTextNode("«")); var sp = document.createElement("span"); sp.className = (c === "‹" || qIt === false) ? "de" : "ls-it"; sp.textContent = seg.slice(1, -1); parent.appendChild(sp); parent.appendChild(document.createTextNode("»")); }
+      else { var t = document.createElement("span"); t.className = "ls-it"; t.textContent = seg; parent.appendChild(t); }
+    });
+  };
   window.italoSetQuestion = function (el, q) {
     var r = window.italoInstr(q); el.textContent = "";
     if (!r) { el.textContent = q; return; }
-    var a = document.createElement("span"); a.className = "ins-it ls-it"; a.textContent = r.it; el.appendChild(a);
+    var a = document.createElement("span"); a.className = "ins-it"; window.italoFillIt(a, r.it, r.qIt === false ? false : true); el.appendChild(a);
     var b = document.createElement("span"); b.className = "ins-de"; b.textContent = r.de; el.appendChild(b);
     if (r.content) { var c = document.createElement("span"); c.className = "ins-ct"; c.textContent = r.content; el.appendChild(c); }
   };
@@ -1212,13 +1424,27 @@
   }
   function exFor(w) { const E = window.italoExamples; return E && w ? E[exKey(w.it)] || null : null; }
   // Rueckmeldung in drei Zeilen: Kopf, Antwort, Hinweis
+  // Rueckmeldung: Italienisch fett, deutsche Fassung duenn darunter
+  function fbIt(t) {
+    t = String(t || ""); var m;
+    var H = { "Richtig!": "Giusto!", "Falsch": "Sbagliato", "Lösung": "Soluzione", "Gespeichert": "Salvato", "kommt nochmals": "ritorna", "kommt sofort nochmals": "ritorna subito", "Auch eine gute Formulierung": "Anche una buona formulazione" };
+    if (H[t]) return H[t];
+    if ((m = /^Erkannt: (.*)$/.exec(t))) return "Riconosciuto: " + m[1];
+    if ((m = /^Deine Antwort: (.*) · kommt sofort nochmals$/.exec(t))) return "La tua risposta: " + m[1] + " · ritorna subito";
+    if ((m = /^(.*) gilt jetzt auch als richtig$/.exec(t))) return m[1] + " vale ora come giusta";
+    if ((m = /^Richtig! ✓ Ganzer Block geübt \((\d+)×\)!$/.exec(t))) return "Giusto! ✓ Blocco completato (" + m[1] + "×)!";
+    return null;
+  }
+  window.italoFbIt = fbIt;
   function fbSet(el, head, ans, note, extra) {
     el.textContent = "";
     [["fb-h", head], ["fb-a", ans], ["fb-n", note]].concat((extra || []).map(t => ["fb-n", t])).forEach(p => {
       if (!p[1]) return;
       const d = document.createElement("div");
       d.className = p[0];
-      d.textContent = p[1];
+      const it = (p[0] === "fb-a" || (extra || []).indexOf(p[1]) >= 0) ? null : fbIt(p[1]);
+      if (it) { const a = document.createElement("span"); a.className = "ins-it"; a.textContent = it; const b = document.createElement("span"); b.className = "ins-de"; b.textContent = p[1]; d.appendChild(a); d.appendChild(b); }
+      else d.textContent = p[1];
       el.appendChild(d);
     });
   }
@@ -1242,7 +1468,7 @@
     quizContent.classList.add("td-done");
     quizWord.textContent = "Heute fertig ✓";
     window.italoFx.celebrate();
-    quizProgress.textContent = left ? "Noch " + left + " Wörter zum Wiederholen" : "";
+    progSet(left ? "Ancora " + left + " parole da ripassare\u0001Noch " + left + " Wörter zum Wiederholen" : "");
     renderToday();
   }
   function startToday() {
@@ -1275,6 +1501,7 @@
   const quizContent = document.getElementById("quizContent");
   const quizWord = document.getElementById("quizWord");
   const quizDirection = document.getElementById("quizDirection");
+  function progSet(txt) { quizProgress.textContent = ""; const p = String(txt || "").split("\u0001"); if (!p[0]) return; const a = document.createElement("span"); a.className = "ins-it"; a.textContent = p[0]; quizProgress.appendChild(a); if (p[1]) { const b = document.createElement("span"); b.className = "ins-de"; b.textContent = p[1]; quizProgress.appendChild(b); } }
   function setDir(it, de) { quizDirection.textContent = ""; const a = document.createElement("span"); a.className = "ins-it ls-it"; a.textContent = it; const b = document.createElement("span"); b.className = "ins-de"; b.textContent = de; quizDirection.appendChild(a); quizDirection.appendChild(b); }
   const quizProgress = document.getElementById("quizProgress");
   const answerInput = document.getElementById("answerInput");
@@ -1992,7 +2219,7 @@
       if (!pool.length) { q.mode = "type"; return; }
       const truth = Math.random() < 0.5, shown = truth ? right : firstForm(pool[Math.floor(Math.random() * pool.length)]);
       setDir("È giusto?", "Stimmt das?");
-      quizWord.textContent = "Richtig oder falsch?";
+      quizWord.textContent = ""; quizWord.appendChild(window.italoInsBlock("span", "", "Giusto o sbagliato?", "Richtig oder falsch?"));
       vRow.style.display = "none"; checkBtn.style.display = "none";
       vChoiceBox.style.display = "flex";
       const st = document.createElement("div"); st.className = "tf-stmt"; st.style.cssText = "width:100%;text-align:center;font-weight:700;font-size:1.1rem;margin:4px 0 10px";
@@ -2048,7 +2275,7 @@
     qBaseLabel = label;
     setDir("Tedesco → italiano", "Deutsch → Italienisch");
     quizWord.textContent = displayDe(word);
-    quizProgress.textContent = label;
+    progSet(label);
     applyMode();
     if (backBtn) backBtn.disabled = qPos <= 0;
     try { answerInput.focus(); } catch (e) {}
@@ -2056,8 +2283,9 @@
 
   function wordLabel(pool, w) {
     const k = pool.findIndex(x => sameWord(x, w)) + 1;
-    return selectedCategory === TODAY_CAT ? "Heute: Wort " + k + " von " + pool.length
-      : selectedCategory + " · Vokabel " + k + " / " + pool.length + " · " + (rounds[selectedCategory] || 0) + "× komplett geübt";
+    const catIt = String(selectedCategory).split(" › ").map(x => window.italoCatIt(x)).join(" › ");
+    return selectedCategory === TODAY_CAT ? "Oggi: parola " + k + " di " + pool.length + "\u0001Heute: Wort " + k + " von " + pool.length
+      : catIt + " · Parola " + k + " / " + pool.length + " · " + (rounds[selectedCategory] || 0) + "× completata\u0001" + selectedCategory + " · Vokabel " + k + " / " + pool.length + " · " + (rounds[selectedCategory] || 0) + "× komplett geübt";
   }
 
   function nextQuiz() {
@@ -2070,7 +2298,7 @@
       if (selectedCategory === TODAY_CAT) { todayDone(); return; }
       currentQuiz = null;
       repeatQueued = false;
-      quizWord.textContent = words.length === 0 ? "—" : "Keine Vokabeln in dieser Gruppe";
+      quizWord.textContent = words.length === 0 ? "—" : "Nessuna parola in questo gruppo";
       quizProgress.textContent = "";
       return;
     }
@@ -2080,7 +2308,7 @@
       resetQuizUI();
       quizWord.textContent = displayDe(currentQuiz.word);
       applyMode();
-      quizProgress.textContent = qBaseLabel.split(" · nochmals")[0] + " · nochmals";
+      { const bp = qBaseLabel.split("\u0001"); progSet(bp[0].split(" · ancora")[0] + " · ancora\u0001" + (bp[1] || bp[0]).split(" · nochmals")[0] + " · nochmals"); }
       try { answerInput.focus(); } catch (e) {}
       return;
     }
@@ -3797,7 +4025,7 @@
     const ex = gCurrent.ex;
     gEl.progress.textContent = ""; { const tt = document.createElement("span"); tt.className = "ls-it"; tt.textContent = window.italoCatIt(topic.title); gEl.progress.appendChild(tt); } gEl.progress.appendChild(window.italoInsBlock("span", "", "Esercizio " + (gCurrent.idx + 1) + " / " + total + " · completato: " + (gRounds[topic.id] || 0) + "× · giro attuale: " + gDoneCount(topic) + " / " + total, "Aufgabe " + (gCurrent.idx + 1) + " / " + total + " · ganz geübt: " + (gRounds[topic.id] || 0) + "× · aktueller Durchgang: " + gDoneCount(topic) + " / " + total));
     window.italoSetQuestion(gEl.question, ex.q);
-    gEl.hint.textContent = ex.hint || "";
+    gEl.hint.textContent = ""; { const hi = window.italoHintIt(ex.hint); if (hi) gEl.hint.appendChild(window.italoInsBlock("span", "", hi, ex.hint)); else gEl.hint.textContent = ex.hint || ""; }
 
     // Abwechslung: Umwandlungs-Aufgaben («il negozio → ?») manchmal zum Eintippen statt Auswahl
     const typeMode = /→\s*\?\s*$/.test(ex.q) && ex.a[0].split(/\s+/).length <= 3 && Math.random() < 0.45;
@@ -3806,7 +4034,7 @@
       gEl.options.innerHTML = "";
       gEl.fillRow.style.display = "";
       gEl.check.style.display = "";
-      gEl.hint.textContent = (ex.hint ? ex.hint + " · " : ""); gEl.hint.appendChild(window.italoInsBlock("span", "", "Scrivi la soluzione", "Gib die Lösung ein"));
+      gEl.hint.textContent = ""; { const hi2 = window.italoHintIt(ex.hint); if (hi2) gEl.hint.appendChild(window.italoInsBlock("span", "", hi2, ex.hint)); else if (ex.hint) gEl.hint.appendChild(document.createTextNode(ex.hint + " · ")); } gEl.hint.appendChild(window.italoInsBlock("span", "", "Scrivi la soluzione", "Gib die Lösung ein"));
       gApplyInput();
     } else {
       gEl.options.style.display = "flex";
@@ -3816,7 +4044,7 @@
       gChoices(topic, ex).forEach(opt => {
         const b = document.createElement("button");
         b.type = "button";
-        b.textContent = opt;
+        b.textContent = opt; window.italoFillOpt(b, opt, ex.q);
         b.addEventListener("click", () => gCheck(opt, b));
         gEl.options.appendChild(b);
       });
@@ -3845,7 +4073,7 @@
       }
       gRepeat = false;
       gEl.feedback.className = "feedback show correct";
-      gEl.feedback.textContent = (gDoneCount(gTopic()) >= gTopic().exercises.length && !gWasDone) ? "Richtig! ✓ Ganzer Block geübt (" + gRounds[gTopicId] + "×)!" : "Richtig!";
+      { const fbTxt = (gDoneCount(gTopic()) >= gTopic().exercises.length && !gWasDone) ? "Richtig! ✓ Ganzer Block geübt (" + gRounds[gTopicId] + "×)!" : "Richtig!"; fbSet(gEl.feedback, fbTxt); }
     } else {
       st.wrong++;
       gRepeat = true;
@@ -3859,7 +4087,7 @@
     if (optBtn) {
       Array.prototype.forEach.call(gEl.options.children, b => {
         b.disabled = true;
-        if (ex.a.some(a => a.trim() === b.textContent.trim())) b.classList.add("right");
+        if (ex.a.some(a => a.trim() === (b._v != null ? b._v : b.textContent).trim())) b.classList.add("right");
         else if (b === optBtn) b.classList.add("bad");
       });
     }
@@ -5600,7 +5828,7 @@
   function fmt(s) { var m = Math.floor(s / 60), r = s % 60; return m + ":" + (r < 10 ? "0" : "") + r; }
   function paintGoal() {
     var pct = Math.min(100, g.sec / GOAL * 100);
-    goalEl.innerHTML = '<div class="gl"><span>Tagesziel</span><b>' + (g.done ? "Geschafft" : fmt(g.sec) + " / 45:00") + '</b></div><div class="gb"><i style="width:' + pct + '%"></i></div>';
+    goalEl.innerHTML = '<div class="gl"><span>Obiettivo del giorno</span><b>' + (g.done ? "Fatto" : fmt(g.sec) + " / 45:00") + '</b></div><div class="gb"><i style="width:' + pct + '%"></i></div>';
     goalEl.classList.toggle("done", !!g.done);
   }
   var lastAct = Date.now();
@@ -5633,7 +5861,7 @@
 
   function render(bump) {
     var s = load(), days = (s.last === today() || s.last === yest()) ? (s.days || 0) : 0;
-    sbar.innerHTML = '<div class="sb f" title="Tage in Serie: an wie vielen Tagen hintereinander du das Tagesziel (45 Minuten üben) erreicht hast">' + svg("flame") + '<b>' + days + '</b><span>Tage in Serie</span></div>';
+    sbar.innerHTML = '<div class="sb f" title="Giorni di fila: per quanti giorni consecutivi hai raggiunto l'obiettivo (45 minuti di esercizio)">' + svg("flame") + '<b>' + days + '</b><span>' + (days === 1 ? "giorno di fila" : "giorni di fila") + '</span></div>';
     sbar.appendChild(goalEl); paintGoal();
   }
   render();
@@ -7065,11 +7293,7 @@
     var ir = window.italoInstr && window.italoInstr(text);
     if (ir) {
       var ia = el("span", "ins-it");
-      ir.it.split(/(«[^»]*»)/).forEach(function (seg) {
-        if (!seg) return;
-        if (seg.charAt(0) === "«") { ia.appendChild(document.createTextNode("«")); ia.appendChild(el("span", ir.qIt ? "ls-it" : "de", seg.slice(1, -1))); ia.appendChild(document.createTextNode("»")); }
-        else ia.appendChild(el("span", "ls-it", seg));
-      });
+      window.italoFillIt(ia, ir.it, ir.qIt === false ? false : true);
       d.appendChild(ia); d.appendChild(el("span", "ins-de", ir.de));
       if (ir.content) { var ic = el("span", "ins-ct"); fillQ(ic, ir.content); d.appendChild(ic); }
       return d;
@@ -7884,13 +8108,13 @@
       } else body.appendChild(qDiv(t.q));
       var opts = el("div", "ls-opts"), sel = null, bs = [];
       shuffle([t.a].concat(t.w)).forEach(function (o) {
-        var b = el("button", "ls-opt", o); b.type = "button";
+        var b = el("button", "ls-opt", o); b.type = "button"; window.italoFillOpt(b, o, t.q);
         b.addEventListener("click", function () { if (answered) return; sel = o; bs.forEach(function (x) { x.classList.toggle("sel", x === b); }); check.disabled = false; });
         bs.push(b); opts.appendChild(b);
       });
       body.appendChild(opts);
       armCheck(function () {
-        bs.forEach(function (b) { b.classList.remove("sel"); if (b.textContent === t.a) b.classList.add("right"); else if (b.textContent === sel) b.classList.add("bad"); });
+        bs.forEach(function (b) { b.classList.remove("sel"); var bv = b._v != null ? b._v : b.textContent; if (bv === t.a) b.classList.add("right"); else if (bv === sel) b.classList.add("bad"); });
         if (sel === t.a) finish(true, "Giusto!"); else finish(false, "Non proprio.", "Giusto: " + t.a);
       });
     } else if (t.t === "type" || t.t === "listen") {
