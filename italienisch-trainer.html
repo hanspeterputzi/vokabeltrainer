@@ -824,8 +824,8 @@
   const CATEGORY_KEY = "vokabeltrainer_selected_category";
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
-  const SEED_VERSION = "2026-11-11-zaprueche2";
-  const APP_VERSION = "2026-11-11-za"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const SEED_VERSION = "2026-11-11-zdprueche2";
+  const APP_VERSION = "2026-11-11-zd"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -877,6 +877,7 @@
   // --- Gleichwertige Schreibweisen: Subjektpronomen und "per favore" sind optional, Ziffern = Zahlwoerter ---
   var EQ_U = ["zero","uno","due","tre","quattro","cinque","sei","sette","otto","nove","dieci","undici","dodici","tredici","quattordici","quindici","sedici","diciassette","diciotto","diciannove"];
   var EQ_T = ["","","venti","trenta","quaranta","cinquanta","sessanta","settanta","ottanta","novanta"];
+  window.italoNum = function (n) { return eqNum(n); };
   function eqNum(n) {
     if (n < 20) return EQ_U[n];
     if (n < 100) {
@@ -4998,14 +4999,15 @@
       nodes.forEach(t => {
         const text = t.nodeValue;
         const toks = [];
-        text.replace(WORD, (tok, off) => { toks.push({ tok, off }); return tok; });
+        text.replace(/[A-Za-zÀ-ÿ]+(?:'[A-Za-zÀ-ÿ]+)?|\d+/g, (tok, off) => { toks.push({ tok, off }); return tok; });
         const inIt = !!(t.parentNode.closest && t.parentNode.closest(".ep, .ex, .ls-it"));
         let last = 0, changed = false;
         const frag = document.createDocumentFragment();
         toks.forEach((tk, ti) => {
           const tok = tk.tok, off = tk.off;
           let hits, nameDe = null;
-          if (NAME_INFO[tok] && (inIt || tok.length >= 4)) { nameDe = NAME_INFO[tok]; hits = [{ it: tok, de: nameDe }]; }
+          if (/^\d+$/.test(tok)) { if (!inIt || tok.length > 3 || !window.italoNum) return; nameDe = window.italoNum(parseInt(tok, 10)) + " (Zahl)"; hits = [{ it: tok, de: nameDe }]; }
+          else if (NAME_INFO[tok] && (inIt || tok.length >= 4)) { nameDe = NAME_INFO[tok]; hits = [{ it: tok, de: nameDe }]; }
           else {
             if (NAMES.has(tok)) return;
             hits = lookupWord(tok);
@@ -5028,6 +5030,17 @@
           if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
           t.parentNode.replaceChild(frag, t);
         }
+      });
+      // verkuerzte Artikel vor einem gepunkteten Wort (l'albergo, un'amica, dell'ufficio ...) ebenfalls punkten
+      if (root.querySelectorAll) root.querySelectorAll(".lw").forEach(sp => {
+        const prev = sp.previousSibling;
+        if (!prev || prev.nodeType !== 3) return;
+        const m = /(^|[^A-Za-zÀ-ÿ])(l|un|dell|all|dall|nell|sull|c|d)'$/i.exec(prev.nodeValue);
+        if (!m) return;
+        const frag = m[2] + "'", rest = prev.nodeValue.slice(0, prev.nodeValue.length - frag.length);
+        const DEF = { l: "der / die / das (vor Vokal verkürzt)", un: "ein / eine (vor Vokal verkürzt)", dell: "von + dem / der (vor Vokal verkürzt)", all: "zu + dem / der (vor Vokal verkürzt)", dall: "von / aus + dem / der (vor Vokal verkürzt)", nell: "in + dem / der (vor Vokal verkürzt)", sull: "auf + dem / der (vor Vokal verkürzt)", c: "da (c'è = da ist)", d: "di = von (vor Vokal verkürzt)" };
+        const w = document.createElement("span"); w.className = "lw"; w.dataset.de = DEF[m[2].toLowerCase()] || "verkürzter Artikel"; w.textContent = frag;
+        prev.nodeValue = rest; sp.parentNode.insertBefore(w, sp);
       });
     }
     // CSS + UI
@@ -6849,7 +6862,7 @@
   // Ueberschrift mit deutscher Uebersetzung (orange gepunktet, antippen)
   window.italoLessons = LESSONS;
   function hl(tag, cls, it, de) { var h = document.createElement(tag); if (cls) h.className = cls; var s = document.createElement("span"); s.className = "lw"; s.setAttribute("data-de", de); s.textContent = it; h.appendChild(s); return h; }
-  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (tag === "button" && /\bls-(btn|spk)\b/.test(cls || "")) e.className += " lk ls-it"; if (text != null) e.textContent = text; return e; }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (tag === "button" && /\bls-btn\b/.test(cls || "")) e.className += " lk ls-it"; if (text != null) e.textContent = text; return e; }
   // Italienische Teile markieren (ls-it), damit JEDES Wort gepunktet wird
   var DE_RE = /[äöüÄÖÜß]|\b(ich|du|er|sie|wir|ihr|der|die|das|ein|eine|einen|einem|nicht|und|oder|ja|nein|wenn|mit|von|bei|nur|nach|immer|kein|keine|hart|weich|ist|bin|bist|sind|mir|dir|wie|was|wo|woher|gibt|hier|wohne|arbeite|suche|bleibe|richtig|falsch|stimmt|heisst)\b/i;
   function qDiv(text, cls) {
@@ -7492,9 +7505,10 @@
     if (topic && typeof window.italoGoGrammar === "function") {
       var gl = el("div", "ls-glink");
       gl.appendChild(hl("div", "ls-gt ls-it", "Prima gli esercizi di grammatica", "Zuerst die Grammatik-Übungen"));
-      var gb = el("button", "ls-btn big nav", "Vai a «" + (LS_IT[S.ls.id] ? LS_IT[S.ls.id][1] : topic.title) + "»"); gb.type = "button";
+      gl.appendChild(el("div", "ls-leg", "Zuerst die Grammatik-Übungen"));
+      var gb = el("button", "ls-btn big", "Vai a «" + (LS_IT[S.ls.id] ? LS_IT[S.ls.id][1] : topic.title) + "»"); gb.type = "button"; gb.classList.remove("lk"); gb.classList.remove("ls-it");
       gb.addEventListener("click", function () { window.italoGoGrammar(topic.id); });
-      gl.appendChild(gb); card.appendChild(gl);
+      gl.appendChild(gb); gl.appendChild(el("div", "ls-leg", "Gehe zu «" + topic.title + "»")); card.appendChild(gl);
     }
     var fv = focusOf(S.i).filter(function (v) { return verbData(v); }).slice(0, 3), pv = prevFocus(S.i);
     if (fv.length) {
@@ -7597,7 +7611,7 @@
         S.queue.unshift(Object.assign({}, t, { retry: true, endAsk: false }));
         if (!t.endQueued) { S.queue.push(Object.assign({}, t, { retry: true, endAsk: true, endQueued: true })); S.total++; }
       }
-      Array.prototype.forEach.call(body.querySelectorAll("button.ls-opt, button.ls-chip, button.ls-tile"), function (b) { b.classList.add("lk"); }); // nach der Antwort sind auch die Woerter in den Antwortknoepfen antippbar
+      Array.prototype.forEach.call(body.querySelectorAll("button.ls-opt, button.ls-chip, button.ls-tile"), function (b) { b.classList.add("lk"); if (!DE_RE.test(b.textContent)) b.classList.add("ls-it"); }); // nach der Antwort sind auch die Woerter in den Antwortknoepfen antippbar
       fb.className = "ls-fb ls-it " + (ok ? "ok" : "no"); fb.textContent = msg;
       if (sub) fb.appendChild(subEl(sub, t.t !== "choose" || !DE_RE.test(String(t.a))));
       // Ganze Saetze: deutsche Uebersetzung der richtigen Antwort (Tippen / Hoeren)
@@ -8972,7 +8986,7 @@
     if (!modelP) { modelP = (window.cocoSsd ? Promise.resolve() : loadScript(TFJS).then(function () { return loadScript(COCO); })).then(function () { return window.cocoSsd.load({ base: "lite_mobilenet_v2" }); }); modelP.catch(function () { modelP = null; }); }
     return modelP;
   }
-  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (tag === "button" && /\bls-(btn|spk)\b/.test(cls || "")) e.className += " lk ls-it"; if (text != null) e.textContent = text; return e; }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (tag === "button" && /\bls-btn\b/.test(cls || "")) e.className += " lk ls-it"; if (text != null) e.textContent = text; return e; }
   function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   function speak(t) { try { if (!window.speechSynthesis) return; window.speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(t); u.lang = "it-IT"; u.rate = 0.92; window.speechSynthesis.speak(u); } catch (e) {} }
   function bare(it) { return it.replace(/^(il|lo|la|l'|le|i|gli) ?/, ""); }
