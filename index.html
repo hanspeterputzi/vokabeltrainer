@@ -824,8 +824,8 @@
   const CATEGORY_KEY = "vokabeltrainer_selected_category";
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
-  const SEED_VERSION = "2026-11-11-zdprueche2";
-  const APP_VERSION = "2026-11-11-zd"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const SEED_VERSION = "2026-11-11-zeprueche2";
+  const APP_VERSION = "2026-11-11-ze"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -7505,7 +7505,6 @@
     if (topic && typeof window.italoGoGrammar === "function") {
       var gl = el("div", "ls-glink");
       gl.appendChild(hl("div", "ls-gt ls-it", "Prima gli esercizi di grammatica", "Zuerst die Grammatik-Übungen"));
-      gl.appendChild(el("div", "ls-leg", "Zuerst die Grammatik-Übungen"));
       var gb = el("button", "ls-btn big", "Vai a «" + (LS_IT[S.ls.id] ? LS_IT[S.ls.id][1] : topic.title) + "»"); gb.type = "button"; gb.classList.remove("lk"); gb.classList.remove("ls-it");
       gb.addEventListener("click", function () { window.italoGoGrammar(topic.id); });
       gl.appendChild(gb); gl.appendChild(el("div", "ls-leg", "Gehe zu «" + topic.title + "»")); card.appendChild(gl);
