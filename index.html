@@ -825,7 +825,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-10-hauptverben2";
-  const APP_VERSION = "2026-11-11-b"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-11-d"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1204,10 +1204,10 @@
       ".fx-hearts{display:inline-flex;align-items:center;gap:4px;margin-left:10px;padding:5px 9px;border-radius:999px;background:#e0661f;vertical-align:middle}.fx-h{width:16px;height:16px;display:block;transition:transform .2s,opacity .2s}.fx-h.off{opacity:.5}.fx-h.pop{animation:fxpop .45s}" +
       ".fx-oranges{position:fixed;inset:0;pointer-events:none;z-index:400;overflow:hidden}.fx-or{position:absolute;top:-50px;animation:fxfall linear forwards}" +
       "@keyframes fxfall{to{transform:translateY(112vh) rotate(540deg)}}" +
-      ".fx-big{position:absolute;top:-150px;left:calc(50% - 62px);width:124px;height:124px;pointer-events:auto;cursor:pointer;touch-action:manipulation;animation:fxbig 4.6s linear .35s forwards;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}" +
+      ".fx-big{position:absolute;top:-150px;left:calc(50% - 62px);width:124px;height:124px;pointer-events:auto;cursor:pointer;touch-action:manipulation;animation:fxbig 3s linear .3s forwards;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}" +
       "@keyframes fxbig{to{transform:translateY(calc(100vh + 170px)) rotate(14deg)}}" +
-      ".fx-fun{position:fixed;left:0;right:0;top:34%;z-index:420;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;animation:fxfun 1.9s ease-out forwards;font-weight:800;text-align:center;padding:0 16px}" +
-      ".fx-fun .t{font-size:1.5rem;color:#ea580c;text-shadow:0 2px 0 #fff,0 0 8px #fff}.fx-fun .s{font-size:1rem;font-weight:600;color:#16181d;background:rgba(255,255,255,.9);padding:4px 12px;border-radius:999px}" +
+      ".fx-fun{position:fixed;left:0;right:0;top:34%;z-index:420;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:auto;animation:fxfun 2.9s ease-out forwards;font-weight:800;text-align:center;padding:0 16px}" +
+      ".fx-fun .t{font-size:1.35rem;color:#c2410c;background:rgba(255,255,255,.94);padding:6px 14px;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.18)}.fx-fun .s.n{background:#ea580c;color:#fff;font-size:.85rem}.fx-fun .s{font-size:1rem;font-weight:600;color:#16181d;background:rgba(255,255,255,.9);padding:4px 12px;border-radius:999px}" +
       ".fx-fun svg.o{width:150px;height:150px}.fx-fun.spin svg.o{animation:fxspin .9s ease-in-out 2}.fx-fun.hic svg.o{animation:fxhic .22s linear 8}.fx-fun.pop svg.o{animation:fxsplat .5s ease-out forwards}" +
       "@keyframes fxfun{0%{opacity:0;transform:scale(.4)}12%{opacity:1;transform:scale(1.08)}22%{transform:scale(1)}82%{opacity:1}100%{opacity:0;transform:scale(1.04)}}" +
       "@keyframes fxspin{to{transform:rotate(360deg) scale(1.15)}}@keyframes fxhic{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}@keyframes fxsplat{0%{transform:scale(1)}60%{transform:scale(1.5)}100%{transform:scale(.0);opacity:0}}" +
@@ -1262,28 +1262,25 @@
     }
     var GLASSES = '<g><rect x="5.2" y="11.2" width="5.4" height="3.4" rx="1.4" fill="#111"/><rect x="13.4" y="11.2" width="5.4" height="3.4" rx="1.4" fill="#111"/><rect x="10.4" y="12" width="3.2" height="0.8" fill="#111"/></g>';
     var FACE = '<g><circle cx="9" cy="12.5" r="1.1" fill="#111"/><circle cx="15" cy="12.5" r="1.1" fill="#111"/><path d="M8.5 16 q3.5 3 7 0" stroke="#111" stroke-width="1.1" fill="none" stroke-linecap="round"/></g>';
-    var SAYINGS = [["Che fortuna!", "Was für ein Glück!"], ["Sei un mito!", "Du bist eine Legende!"], ["Bravissimo!", "Ganz toll gemacht!"], ["Che bella giornata!", "Was für ein schöner Tag!"], ["Buon appetito!", "Guten Appetit!"]];
+    var GLASSES2 = '<rect x="4.6" y="10.6" width="6.2" height="4" rx="1.6" fill="#111"/><rect x="13.2" y="10.6" width="6.2" height="4" rx="1.6" fill="#111"/><rect x="10.6" y="11.6" width="2.8" height="0.9" fill="#111"/><path d="M4.6 11.4 L2.6 10.6 M19.4 11.4 L21.4 10.6" stroke="#111" stroke-width="0.9"/><path d="M5.4 11.2 l2 2 M14 11.2 l2 2" stroke="rgba(255,255,255,.55)" stroke-width="0.8"/><path d="M8.6 17 q3.4 2.6 6.8 0" stroke="#111" stroke-width="1.1" fill="none" stroke-linecap="round"/>';
+    var SPR_KEY = "italienisch_sprueche_gefunden";
+    function sprGet() { try { var a = JSON.parse(localStorage.getItem(SPR_KEY) || "[]"); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+    // Die Orange sagt einen Spruch; ungesehene Sprueche kommen zuerst (Sammeln: man will alle 50 entdecken)
     function funny(x, y) {
-      var kind = Math.floor(Math.random() * 5), box = document.createElement("div"), o = ORANGE_BIG;
+      var S = window.italoSprueche || [["Che fortuna!", "Was für ein Glück!"]], seen = sprGet(), fresh = [];
+      for (var i = 0; i < S.length; i++) if (seen.indexOf(i) < 0) fresh.push(i);
+      var pool = fresh.length ? fresh : S.map(function (_, k) { return k; }), idx = pool[Math.floor(Math.random() * pool.length)], isNew = seen.indexOf(idx) < 0;
+      if (isNew) { seen.push(idx); try { localStorage.setItem(SPR_KEY, JSON.stringify(seen)); } catch (e) {} }
+      var sv = S[idx], box = document.createElement("div");
       box.className = "fx-fun";
-      function svgWith(extra) { return orangeSvg(o, "o").replace("</svg>", extra + "</svg>"); }
-      if (kind === 0) { // platzt: Saft spritzt
-        box.className += " pop"; box.innerHTML = '<div class="t">SPRITZ! Frisch gepresst 🍊</div>' + svgWith(FACE);
-        for (var i = 0; i < 14; i++) { var d = document.createElement("i"); d.className = "fx-drop"; var ang = Math.random() * 6.283, r = 70 + Math.random() * 120; d.style.left = x + "px"; d.style.top = y + "px"; d.style.setProperty("--dx", Math.cos(ang) * r + "px"); d.style.setProperty("--dy", Math.sin(ang) * r + "px"); document.body.appendChild(d); (function (e) { setTimeout(function () { if (e.parentNode) e.parentNode.removeChild(e); }, 1000); })(d); }
-      } else if (kind === 1) { // cool mit Sonnenbrille
-        box.innerHTML = '<div class="t">Cool wie ein Eiswürfel 😎</div>' + svgWith(GLASSES + '<path d="M9 17 q3 2 6 0" stroke="#111" stroke-width="1" fill="none" stroke-linecap="round"/>') + '<div class="s">Ciao, bella!</div>';
-      } else if (kind === 2) { // dreht sich
-        box.className += " spin"; box.innerHTML = '<div class="t">Dolce vita! 🎶</div>' + svgWith(FACE);
-      } else if (kind === 3) { // Glueckswort
-        var sv = SAYINGS[Math.floor(Math.random() * SAYINGS.length)];
-        box.innerHTML = '<div class="t">' + sv[0] + '</div>' + svgWith(FACE) + '<div class="s">' + sv[1] + '</div>';
-        try { if (window.speechSynthesis) { var u = new SpeechSynthesisUtterance(sv[0]); u.lang = "it-IT"; u.rate = 0.95; window.speechSynthesis.speak(u); } } catch (e) {}
-      } else { // Schluckauf
-        box.className += " hic"; box.innerHTML = '<div class="t">Hic! … Hic! 🙈</div>' + svgWith(FACE);
-      }
+      box.innerHTML = '<div class="t ls-it"></div>' + orangeSvg(ORANGE_BIG, "o").replace("</svg>", GLASSES2 + "</svg>") + '<div class="s"></div><div class="s n"></div>';
+      box.children[0].textContent = sv[0]; box.children[2].textContent = sv[1];
+      box.children[3].textContent = (isNew ? "NEU entdeckt! " : "") + seen.length + " / " + S.length + " Sprüche gesammelt";
       document.body.appendChild(box);
-      tone(kind === 0 ? [880, 440, 220] : [523, 784, 1047]);
-      setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 1950);
+      if (window.italoLink) { try { window.italoLink(box); } catch (e) {} }
+      tone([523, 784, 1047]);
+      try { if (window.speechSynthesis) { var u = new SpeechSynthesisUtterance(sv[0]); u.lang = "it-IT"; u.rate = 0.95; window.speechSynthesis.speak(u); } } catch (e) {}
+      setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 2900);
     }
     var ORANGE_BIG = OCOLS[0];
     function celebrate() {
@@ -1298,7 +1295,7 @@
       }
       // die grosse orange Orange in der Mitte: wer sie erwischt, sieht etwas Lustiges
       var big = document.createElement("div"); big.className = "fx-big"; big.setAttribute("role", "button"); big.setAttribute("aria-label", "Grosse Orange");
-      big.innerHTML = orangeSvg(ORANGE_BIG);
+      big.innerHTML = orangeSvg(ORANGE_BIG).replace("</svg>", GLASSES2 + "</svg>");
       var hit = false;
       function catchIt(ev) {
         if (hit) return; hit = true;
@@ -1310,7 +1307,7 @@
       big.addEventListener("pointerdown", catchIt); big.addEventListener("click", catchIt);
       layer.appendChild(big);
       document.body.appendChild(layer);
-      setTimeout(function () { if (layer.parentNode) layer.parentNode.removeChild(layer); }, 5600);
+      setTimeout(function () { if (layer.parentNode) layer.parentNode.removeChild(layer); }, 4000);
     }
     function paint(e) { var s = st_(e.dataset.k); e.innerHTML = ""; e.setAttribute("aria-label", (MAX - s.errors) + " von " + MAX + " Fehlern übrig"); for (var i = 0; i < MAX; i++) { var sp = document.createElement("span"); var lost = i >= MAX - s.errors; sp.className = "fx-h" + (lost ? " off" : ""); sp.innerHTML = lost ? LOST : ORANGE; e.appendChild(sp); } }
     function paintAll(k, pop) { Array.prototype.forEach.call(document.querySelectorAll('.fx-hearts[data-k="' + k + '"]'), function (e) { paint(e); if (pop) { var hs = e.querySelectorAll(".fx-h"), l = hs[MAX - st_(k).errors]; if (l) l.classList.add("pop"); } }); }
@@ -5584,6 +5581,16 @@
   #lessonView .ls-crow input.ls-in { flex: 1; min-width: 0; }
   #lessonView input.ls-in.ok { border-color: var(--k-blue, #2563eb); background: color-mix(in srgb, var(--k-blue, #2563eb) 10%, var(--k-card, #fff)); }
   #lessonView input.ls-in.bad { border-color: var(--k-orange, #ea580c); background: color-mix(in srgb, var(--k-orange, #ea580c) 12%, var(--k-card, #fff)); }
+  #lessonView .ls-tile { display: inline-flex; font: inherit; padding: 0; border-radius: 10px; border: 1.5px solid var(--k-line, #ccc); background: var(--k-card, #fff); color: var(--k-text, #111); cursor: pointer; overflow: hidden; }
+  #lessonView .ls-tile span { padding: 9px 11px; font-weight: 700; }
+  #lessonView .ls-tile span + span { border-left: 1.5px dashed var(--k-line, #ccc); }
+  #lessonView .ls-tile.bad { border-color: var(--k-orange, #ea580c); background: color-mix(in srgb, var(--k-orange, #ea580c) 14%, var(--k-card, #fff)); }
+  #lessonView .ls-tile.put { cursor: default; border-color: var(--k-blue, #2563eb); }
+  #lessonView .ls-slot { flex: 1; min-height: 42px; box-sizing: border-box; border: 1.5px dashed var(--k-line, #ccc); border-radius: 12px; padding: 9px 12px; font-weight: 700; }
+  #lessonView .ls-slot.cur { border-color: var(--k-orange, #ea580c); }
+  #lessonView .ls-slot.ok { border-style: solid; border-color: var(--k-blue, #2563eb); }
+  #lessonView .ls-chip.gone { visibility: hidden; }
+  #lessonView .ls-chip.bad { border-color: var(--k-orange, #ea580c); background: color-mix(in srgb, var(--k-orange, #ea580c) 14%, var(--k-card, #fff)); }
   #lessonView .ls-gram { margin: 0 0 16px; }
   #lessonView .ls-pre .ls-q small { display: block; font-weight: 500; opacity: .8; margin-top: 3px; }
   #lessonView .ls-gt { font-weight: 700; margin: 8px 0 6px; }
@@ -7195,11 +7202,61 @@
     seq.forEach(function (t, k) { tl.splice(pos + k, 0, t); });
     return tl;
   }
+  // ---- Neue Uebungen: Fehlersuche, Wortkette, Satz-Domino ----
+  var PMAP = { io: 0, tu: 1, lui: 2, lei: 2, noi: 3, voi: 4, loro: 5 };
+  function bareW(w) { return String(w).replace(/[.,!?;:]+$/, ""); }
+  function errPool() {
+    var out = [];
+    (window.italoHvSatz || []).forEach(function (s) {
+      var vd = verbData(s[0]); if (!vd) return;
+      [s[2]].concat(s[3] || []).forEach(function (sent) {
+        var toks = sent.split(/\s+/), p = PMAP[bareW(toks[0]).toLowerCase()];
+        if (p == null || toks.length < 3 || !vd.f[p]) return;
+        var form = vd.f[p], j = -1; toks.forEach(function (w, k) { if (j < 0 && k > 0 && norm(bareW(w)) === norm(form)) j = k; });
+        if (j < 0) return;
+        var wrong = []; vd.f.forEach(function (f, q) { if (f && q !== p && norm(f) !== norm(form) && wrong.indexOf(f) < 0) wrong.push(f); });
+        if (wrong.length < 2) return;
+        out.push({ inf: s[0], de: s[1], a: sent, toks: toks, j: j, form: form, wrong: wrong });
+      });
+    });
+    return out;
+  }
+  function mkErr(e) {
+    var w = shuffle(e.wrong), bad = w[0], punct = (/[.,!?;:]+$/.exec(e.toks[e.j]) || [""])[0], toks = e.toks.slice();
+    toks[e.j] = bad + punct;
+    return { t: "err", de: e.de, a: e.a, toks: toks, bad: e.j, fix: e.form, opts: [e.form, w[1], w[2] || w[0]].filter(function (x, k, ar) { return ar.indexOf(x) === k; }), inf: e.inf };
+  }
+  function mkChain(inf) {
+    var vd = verbData(inf); if (!vd) return null;
+    var ps = []; vd.f.forEach(function (f, q) { if (f) ps.push(q); });
+    if (ps.length < 4) return null;
+    ps = shuffle(ps).slice(0, 4).sort();
+    var other = shuffle((window.italoConj || []).filter(function (v) { return v.inf !== inf && v.f && v.f.every(function (x) { return x; }); }))[0], dis = [];
+    if (other) shuffle(other.f.slice()).forEach(function (f) { if (dis.length < 2 && vd.f.map(norm).indexOf(norm(f)) < 0 && dis.map(norm).indexOf(norm(f)) < 0) dis.push(f); });
+    return { t: "chain", inf: inf, de: vd.de, ps: ps, bank: ps.map(function (q) { return vd.f[q]; }).concat(dis) };
+  }
+  function addNew(i, tl) {
+    var vs = verbsFor(i).concat((buildPacks()[i] || {}).verbs || []), extra = [];
+    var pool = shuffle(errPool()), pref = pool.filter(function (e) { return vs.indexOf(e.inf) >= 0; }), rest = pool.filter(function (e) { return vs.indexOf(e.inf) < 0; });
+    var used = {}; pref.concat(rest).forEach(function (e) { if (extra.length < 2 && !used[e.inf]) { used[e.inf] = 1; extra.push(mkErr(e)); } });
+    var cv = vs.filter(function (v, k) { return vs.indexOf(v) === k; }), cn = 0;
+    shuffle(cv).forEach(function (v) { if (cn < 2) { var c = mkChain(v); if (c) { extra.push(c); cn++; } } });
+    extra = shuffle(extra);
+    extra.forEach(function (e, k) { var pos = Math.min(tl.length, Math.round((k + 1) * tl.length / (extra.length + 1))); tl.splice(pos + k, 0, e); });
+    // Satz-Domino: bis zu 2 Satzbau-Aufgaben (ab 4 Woertern) werden zu Dominos
+    var dn = 0;
+    tl = tl.map(function (t) {
+      if (dn < 2 && t.t === "order" && typeof t.a === "string" && t.a.split(/\s+/).length >= 4 && t.a.split(/\s+/).length <= 8 && !t.src) { dn++; return { t: "domino", q: t.q, a: t.a, alts: t.alts || [] }; }
+      return t;
+    });
+    return tl;
+  }
   function startLesson(i) {
     window.italoInput.reset("lesson"); window.italoFx.reset("lesson");
     var tl = addExtra(LESSONS[i], addPack(i, LESSONS[i].tasks.slice()));
     tl = tl.filter(function (t) { return t.t !== "listen" && t.t !== "hear"; }); // keine «Hör zu»-Aufgaben mehr
     tl = addTalk(i, tl);
+    tl = addNew(i, tl);
     // Jedes Verb der Lektion (kumulativ: neues Verb + alle frueheren) wird gleichmaessig verteilt komplett abgefragt
     var vs = verbsFor(i), base = tl.length;
     vs.forEach(function (v, k) { tl.splice(Math.round(base * (k + 1) / (vs.length + 1)) + k, 0, K(v)); });
@@ -7324,7 +7381,7 @@
         S.queue.unshift(Object.assign({}, t, { retry: true, endAsk: false }));
         if (!t.endQueued) { S.queue.push(Object.assign({}, t, { retry: true, endAsk: true, endQueued: true })); S.total++; }
       }
-      Array.prototype.forEach.call(body.querySelectorAll("button.ls-opt, button.ls-chip"), function (b) { b.classList.add("lk"); }); // nach der Antwort sind auch die Woerter in den Antwortknoepfen antippbar
+      Array.prototype.forEach.call(body.querySelectorAll("button.ls-opt, button.ls-chip, button.ls-tile"), function (b) { b.classList.add("lk"); }); // nach der Antwort sind auch die Woerter in den Antwortknoepfen antippbar
       fb.className = "ls-fb " + (ok ? "ok" : "no"); fb.textContent = msg;
       if (sub) fb.appendChild(subEl(sub, t.t !== "choose" || !DE_RE.test(String(t.a))));
       // Ganze Saetze: deutsche Uebersetzung der richtigen Antwort (Tippen / Hoeren)
@@ -7432,6 +7489,76 @@
         if ([t.a].concat(t.alts || []).some(function (a) { return norm(a) === norm(got); })) finish(true, "Richtig!");
         else finish(false, "Nicht ganz.", "Richtig ist: " + t.a, t.a);
       });
+    } else if (t.t === "err") {
+      body.appendChild(el("div", "ls-hint", "Fehlersuche: In diesem Satz ist ein Wort falsch – tippe es an"));
+      body.appendChild(el("div", "ls-q", "Gemeint ist: " + t.de));
+      var erow = el("div", "ls-bank"), emiss = 0, estage = 1, echips = [], eopts = el("div", "ls-opts");
+      t.toks.forEach(function (w, k) {
+        var c = el("button", "ls-chip", w); c.type = "button"; echips.push(c);
+        c.addEventListener("click", function () {
+          if (answered || estage !== 1) return;
+          if (k === t.bad) { estage = 2; c.classList.add("bad"); body.appendChild(el("div", "ls-hint", "Wie heisst die richtige Form?")); body.appendChild(eopts); }
+          else { emiss++; c.classList.add("bad"); setTimeout(function () { c.classList.remove("bad"); }, 500); }
+        });
+        erow.appendChild(c);
+      });
+      body.appendChild(erow);
+      shuffle(t.opts).forEach(function (o) {
+        var b = el("button", "ls-opt", o); b.type = "button";
+        b.addEventListener("click", function () {
+          if (answered || estage !== 2) return;
+          if (o === t.fix) { b.classList.add("right"); echips[t.bad].classList.remove("bad"); echips[t.bad].textContent = t.a.split(/\s+/)[t.bad]; if (emiss) finish(false, "Nicht ganz – zu viele Fehlversuche.", "Richtig ist: " + t.a, t.a); else finish(true, "Richtig!", null, t.a); }
+          else { emiss++; b.classList.add("bad"); }
+        });
+        eopts.appendChild(b);
+      });
+      foot.style.display = "none";
+    } else if (t.t === "chain") {
+      var cvd = verbData(t.inf), cslots = [], cur = 0, cmiss = 0;
+      body.appendChild(el("div", "ls-hint", "Wortkette: Tippe die Formen der Reihe nach an"));
+      var cq = el("div", "ls-q"); cq.appendChild(el("span", "ls-it", cvd.inf)); cq.appendChild(document.createTextNode(" (" + cvd.de + ")")); body.appendChild(cq);
+      var cgrid = el("div", "ls-conj");
+      t.ps.forEach(function (q, k) {
+        var row = el("div", "ls-crow"); row.appendChild(el("span", "ls-cl", PRON[q]));
+        var sl = el("span", "ls-slot" + (k === 0 ? " cur" : ""), "…"); cslots.push(sl); row.appendChild(sl); cgrid.appendChild(row);
+      });
+      body.appendChild(cgrid);
+      var cbank = el("div", "ls-bank"); cbank.style.marginTop = "14px";
+      shuffle(t.bank).forEach(function (f) {
+        var c = el("button", "ls-chip", f); c.type = "button";
+        c.addEventListener("click", function () {
+          if (answered || c.classList.contains("gone")) return;
+          if (norm(f) === norm(cvd.f[t.ps[cur]])) {
+            cslots[cur].textContent = f; cslots[cur].className = "ls-slot ok"; c.classList.add("gone"); cur++;
+            if (cur < cslots.length) cslots[cur].classList.add("cur");
+            else { if (cmiss) finish(false, "Nicht ganz – zu viele Fehlversuche.", "Richtig ist: " + t.ps.map(function (q) { return cvd.f[q]; }).join(" · ")); else finish(true, "Richtig!"); }
+          } else { cmiss++; c.classList.add("bad"); setTimeout(function () { c.classList.remove("bad"); }, 500); }
+        });
+        cbank.appendChild(c);
+      });
+      body.appendChild(cbank);
+      foot.style.display = "none";
+    } else if (t.t === "domino") {
+      var dw = t.a.split(/\s+/), tiles = [], dmiss = 0, dnext = 0;
+      for (var dk = 0; dk < dw.length - 1; dk++) tiles.push({ l: dw[dk], r: dw[dk + 1], k: dk });
+      body.appendChild(el("div", "ls-hint", "Satz-Domino: Lege die Steine in die richtige Reihenfolge – der rechte Teil passt zum linken des nächsten"));
+      body.appendChild(qDiv(t.q));
+      var dans = el("div", "ls-ans"), dbank = el("div", "ls-bank");
+      body.appendChild(dans); body.appendChild(dbank);
+      var dsh = shuffle(tiles); if (dsh.length > 2 && dsh.every(function (x, y) { return x.k === y; })) dsh.reverse();
+      dsh.forEach(function (tl2) {
+        var b = el("button", "ls-tile"); b.type = "button"; b.appendChild(el("span", "", tl2.l)); b.appendChild(el("span", "", tl2.r));
+        b.addEventListener("click", function () {
+          if (answered || b.classList.contains("put")) return;
+          var want = tiles[dnext];
+          if (tl2.l === want.l && tl2.r === want.r) {
+            b.classList.add("put"); dans.appendChild(b); dnext++;
+            if (dnext === tiles.length) { if (dmiss) finish(false, "Nicht ganz – zu viele Fehlversuche.", "Richtig ist: " + t.a, t.a); else finish(true, "Richtig!", null, t.a); }
+          } else { dmiss++; b.classList.add("bad"); setTimeout(function () { b.classList.remove("bad"); }, 500); }
+        });
+        dbank.appendChild(b);
+      });
+      foot.style.display = "none";
     } else if (t.t === "conj") {
       var vd2 = verbData(t.inf);
       var cst = conjStat(t.inf), persons = conjPersons(t.inf);
@@ -8339,6 +8466,7 @@
     ["guidare", "Wer fährt?", "Chi guida?", ["Chi guida"]],
     ["guidare", "Er fährt langsam.", "Guida lentamente.", ["Guida piano.", "Lui guida lentamente.", "Lui guida piano."]]
   ];
+  window.italoHvSatz = SATZ;
   var PERS = [[0, 2, 5], [1, 3, 4], [0, 3, 5], [2, 4, 1]]; // je Verb drei verschiedene Personen, reihum
   var PRON = ["io", "tu", "lui/lei", "noi", "voi", "loro"];
   var _cache = {};
@@ -8370,5 +8498,16 @@
 })();
 </script>
 <!-- HAUPTVERBEN END -->
+<!-- SPRUECHE START -->
+<script>
+/* 50 Sprüche der grossen Orange (Italienisch + Deutsch). Wörter, die noch nicht im Vokabular stehen, sind über die Glossar-Liste antippbar. */
+(function () {
+  "use strict";
+  window.italoSprueche = [["Piano piano si va lontano.", "Langsam, langsam kommt man weit."], ["Chi va piano va sano e va lontano.", "Wer langsam geht, bleibt gesund und kommt weit."], ["Sei una stella!", "Du bist ein Star!"], ["Che bravo che sei!", "Wie gut du bist!"], ["Non mollare mai!", "Gib nie auf!"], ["Ce la fai!", "Du schaffst es!"], ["Avanti tutta!", "Volle Kraft voraus!"], ["Sei un mito!", "Du bist eine Legende!"], ["Che fortuna!", "Was für ein Glück!"], ["Bravissimo!", "Ganz toll!"], ["Che bella giornata!", "Was für ein schöner Tag!"], ["Buon appetito!", "Guten Appetit!"], ["Mamma mia, che bravo!", "Mamma mia, wie gut!"], ["Sono un'arancia cool!", "Ich bin eine coole Orange!"], ["Succo di vittoria!", "Saft des Sieges!"], ["Sei in forma!", "Du bist in Form!"], ["Un passo alla volta.", "Ein Schritt nach dem anderen."], ["L'italiano è bello!", "Italienisch ist schön!"], ["Parla, parla, parla!", "Sprich, sprich, sprich!"], ["Sbagliando s'impara.", "Aus Fehlern lernt man."], ["Dolce vita, ti aspetto!", "Dolce vita, ich warte auf dich!"], ["Oggi sei in vena!", "Heute bist du gut drauf!"], ["Che talento!", "Was für ein Talent!"], ["Sei fortissimo!", "Du bist unschlagbar!"], ["Pizza e pasta per te!", "Pizza und Pasta für dich!"], ["Un caffè per festeggiare?", "Einen Kaffee zum Feiern?"], ["Fantastico!", "Fantastisch!"], ["Che spettacolo!", "Was für eine Show!"], ["Non sono una mela, sono un'arancia!", "Ich bin kein Apfel, ich bin eine Orange!"], ["Mi hai preso!", "Du hast mich erwischt!"], ["Ahi, che solletico!", "Aua, das kitzelt!"], ["Che riflessi!", "Was für Reflexe!"], ["Domani parli ancora meglio!", "Morgen sprichst du noch besser!"], ["Ogni parola conta.", "Jedes Wort zählt."], ["Il successo parla italiano!", "Der Erfolg spricht Italienisch!"], ["Sei una forza!", "Du bist eine Kraft!"], ["Che memoria!", "Was für ein Gedächtnis!"], ["Allora, andiamo!", "Also, los geht's!"], ["Hai una testa fantastica!", "Du hast einen tollen Kopf!"], ["Più studi, più sai.", "Je mehr du lernst, desto mehr weisst du."], ["Evviva!", "Hurra!"], ["Bellissimo!", "Wunderschön!"], ["Che energia!", "Was für eine Energie!"], ["Sei sulla strada giusta.", "Du bist auf dem richtigen Weg."], ["Il tuo italiano cresce!", "Dein Italienisch wächst!"], ["Ho il succo giusto per te!", "Ich habe genau den richtigen Saft für dich!"], ["Fai paura ai verbi!", "Du machst den Verben Angst!"], ["Che bravura!", "Was für ein Können!"], ["Sei un campione!", "Du bist ein Champion!"], ["Arrivederci, a domani!", "Tschüss, bis morgen!"]];
+  var G = {"sano": "gesund", "stella": "der Stern; der Star", "bravo": "tüchtig, gut", "mollare": "aufgeben, loslassen", "ce": "«ce la fai» = du schaffst es", "avanti": "vorwärts", "mito": "die Legende", "bravissimo": "sehr gut, ganz toll", "mamma": "die Mama («Mamma mia» = Meine Güte)", "cool": "cool", "vittoria": "der Sieg", "forma": "die Form", "passo": "der Schritt", "sbagliando": "beim Fehlermachen (sbagliare = sich irren)", "vena": "die Ader («in vena» = gut drauf)", "talento": "das Talent", "fortissimo": "sehr stark, unschlagbar", "festeggiare": "feiern", "fantastico": "fantastisch", "ahi": "aua", "solletico": "das Kitzeln", "riflessi": "die Reflexe", "forza": "die Kraft", "memoria": "das Gedächtnis", "fantastica": "fantastisch (weiblich)", "evviva": "hurra", "bellissimo": "wunderschön", "energia": "die Energie", "cresce": "wächst (crescere)", "paura": "die Angst («fai paura» = du machst Angst)", "bravura": "das Können", "campione": "der Champion"}, N = window.italoNameInfo;
+  if (N) Object.keys(G).forEach(function (k) { var c = k.charAt(0).toUpperCase() + k.slice(1); if (!N[k]) N[k] = G[k]; if (!N[c]) N[c] = G[k]; });
+})();
+</script>
+<!-- SPRUECHE END -->
 </body>
 </html>
