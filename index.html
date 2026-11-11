@@ -824,8 +824,8 @@
   const CATEGORY_KEY = "vokabeltrainer_selected_category";
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
-  const SEED_VERSION = "2026-11-11-zeprueche2";
-  const APP_VERSION = "2026-11-11-ze"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const SEED_VERSION = "2026-11-11-zfprueche2";
+  const APP_VERSION = "2026-11-11-zf"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -5641,9 +5641,14 @@
   #lessonView .ls-mrow { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
   #lessonView .ls-mrow .ls-btn { flex: 1 1 auto; }
   #lessonView .ls-leg { font-size: .8rem; color: var(--k-muted, #666); margin: 0 0 6px; }
-  #lessonView .ls-glink { margin: 6px 0 20px; padding: 16px 14px 14px; border-radius: 16px; text-align: center; background: color-mix(in srgb, var(--k-orange, #ea580c) 10%, var(--k-card, #fff)); border: 1.5px solid color-mix(in srgb, var(--k-orange, #ea580c) 35%, transparent); }
-  #lessonView .ls-glink .ls-gt { text-align: center; font-size: 1.05rem; margin: 0 0 10px; }
-  #lessonView .ls-glink .ls-btn { margin-top: 2px; width: 100%; box-sizing: border-box; text-align: center; }
+  #lessonView .ls-glink { margin: 8px 0 22px; padding: 18px 14px 14px; border-radius: 20px; text-align: center; background: linear-gradient(180deg, color-mix(in srgb, var(--k-orange, #ea580c) 14%, var(--k-card, #fff)), color-mix(in srgb, var(--k-orange, #ea580c) 6%, var(--k-card, #fff))); border: 1.5px solid color-mix(in srgb, var(--k-orange, #ea580c) 40%, transparent); }
+  #lessonView .ls-glink .gl-ico { width: 42px; height: 42px; margin: 0 auto 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; background: var(--k-orange, #ea580c); box-shadow: 0 3px 0 color-mix(in srgb, var(--k-orange, #ea580c) 55%, #000); }
+  #lessonView .ls-glink .ls-gt { text-align: center; font-size: 1.08rem; font-weight: 800; margin: 0 0 12px; }
+  #lessonView .ls-glink .gl-btn { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; width: 100%; box-sizing: border-box; margin: 0; padding: 14px 44px 14px 18px; border-radius: 16px; background: var(--k-card, #fff); color: var(--k-text, #111); border: 2px solid var(--k-orange, #ea580c); box-shadow: 0 4px 0 color-mix(in srgb, var(--k-orange, #ea580c) 45%, transparent); cursor: pointer; }
+  #lessonView .ls-glink .gl-btn::after { content: "\203A"; position: absolute; right: 16px; top: 50%; transform: translateY(-52%); font-size: 2rem; line-height: 1; font-weight: 700; color: var(--k-orange, #ea580c); }
+  #lessonView .ls-glink .gl-btn:active { transform: translateY(3px); box-shadow: none; }
+  #lessonView .ls-glink .gl-main { font-size: 1.12rem; font-weight: 800; }
+  #lessonView .ls-glink .gl-sub { font-size: .84rem; font-weight: 500; color: var(--k-muted, #666); }
   #lessonView .ls-gram { margin: 0 0 16px; }
   #lessonView .ls-pre .ls-q small { display: block; font-weight: 500; opacity: .8; margin-top: 3px; }
   #lessonView .ls-gt { font-weight: 700; margin: 8px 0 6px; }
@@ -7504,10 +7509,13 @@
     var topic = (window.italoGrammar || []).filter(function (t) { return t.id === S.ls.topic; })[0];
     if (topic && typeof window.italoGoGrammar === "function") {
       var gl = el("div", "ls-glink");
+      var ico = el("div", "gl-ico"); ico.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 19V5.5"/><path d="M9 8h6M9 12h6"/></svg>'; gl.appendChild(ico);
       gl.appendChild(hl("div", "ls-gt ls-it", "Prima gli esercizi di grammatica", "Zuerst die Grammatik-Übungen"));
-      var gb = el("button", "ls-btn big", "Vai a «" + (LS_IT[S.ls.id] ? LS_IT[S.ls.id][1] : topic.title) + "»"); gb.type = "button"; gb.classList.remove("lk"); gb.classList.remove("ls-it");
+      var gb = el("button", "ls-btn gl-btn"); gb.type = "button"; gb.classList.remove("lk"); gb.classList.remove("ls-it");
+      gb.appendChild(el("span", "gl-main", "Vai a «" + (LS_IT[S.ls.id] ? LS_IT[S.ls.id][1] : topic.title) + "»"));
+      gb.appendChild(el("span", "gl-sub", "Gehe zu «" + topic.title + "»"));
       gb.addEventListener("click", function () { window.italoGoGrammar(topic.id); });
-      gl.appendChild(gb); gl.appendChild(el("div", "ls-leg", "Gehe zu «" + topic.title + "»")); card.appendChild(gl);
+      gl.appendChild(gb); card.appendChild(gl);
     }
     var fv = focusOf(S.i).filter(function (v) { return verbData(v); }).slice(0, 3), pv = prevFocus(S.i);
     if (fv.length) {
