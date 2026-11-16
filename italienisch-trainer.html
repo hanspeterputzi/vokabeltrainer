@@ -825,7 +825,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-16-weitere";
-  const APP_VERSION = "2026-11-16-n"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-16-o"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -8007,6 +8007,7 @@
       if (!ex || !ex.a || !ex.a.length || out.some(function (o) { return o.q === ex.q; })) continue;
       var right = ex.a[0], pool = (GD[tp.id + "|" + ex.q] || []).concat(ex.options || []).filter(function (x) { return ex.a.indexOf(x) < 0; });
       pool = pool.filter(function (x, i) { return pool.indexOf(x) === i; });
+      if (pool.length < 3 && window.italoGChoices) pool = window.italoGChoices(tp, ex).filter(function (x) { return ex.a.indexOf(x) < 0; });
       var typed = /→\s*\?\s*$/.test(ex.q) && right.split(/\s+/).length <= 3 && Math.random() < 0.5;
       var task;
       if (typed) task = Y(ex.q, right, ex.a.slice(1));
