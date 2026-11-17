@@ -825,7 +825,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-17-ordnung";
-  const APP_VERSION = "2026-11-17-a"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-17-b"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -4146,6 +4146,13 @@
       ],
     },
     {
+      id: "imperativ",
+      title: "Imperativ",
+      explain:
+        "<h3>1 · du oder Sie?</h3><p class='nt'>Der Befehl (Imperativ) hat für eine Person zwei Formen. Du wählst nach dem Ton: vertraut oder höflich.</p><ul><li><b>tu</b> = du<span class='nt'>Freunde, Familie, Kinder.</span><span class='ex'>Parla italiano con me!</span></li><li><b>Lei</b> = Sie<span class='nt'>Fremde, Chef, Verkäuferin. Die Lei-Form ist hier die Form von «Lei».</span><span class='ex'>Parli italiano con me!</span></li></ul><p class='nt'>Gleiche Bitte, anderer Ton: Zum Nachbarn sagst du «Sprechen Sie leiser», zu deinem Bruder «Sprich leiser».</p><h3>2 · Verben auf -are</h3><ul><li><b>tu</b>: Stamm + <b>a</b><span class='nt'>ascoltare → ascolta</span><span class='ex'>Ascolta, Marco!</span></li><li><b>Lei</b>: Stamm + <b>i</b><span class='nt'>ascoltare → ascolti</span><span class='ex'>Ascolti, signora!</span></li></ul><h3>3 · Verben auf -ere und -ire</h3><p class='nt'>Hier kippt es um, wie bei einer Wippe: Das «tu» bekommt das i, das «Lei» das a.</p><ul><li><b>tu</b>: Stamm + <b>i</b><span class='nt'>prendere → prendi, dormire → dormi</span><span class='ex'>Prendi un caffè!</span></li><li><b>Lei</b>: Stamm + <b>a</b><span class='nt'>prendere → prenda, dormire → dorma</span><span class='ex'>Prenda un caffè!</span></li><li>Verben mit <b>-isc-</b><span class='nt'>Der Zusatz -isc- bleibt: finire → finisci (tu) / finisca (Lei).</span><span class='ex'>Finisca il caffè!</span></li></ul><p class='merk'>Merkhilfe: «Alles klar, Kumpel» → <b>a</b> → du: Parla! «Ihnen» → <b>i</b> → Sie: Parli! Bei -ere / -ire kippt die Wippe: Prendi (du), Prenda (Sie).</p><h3>4 · Unregelmässige Befehle</h3><p class='nt'>Diese Verben musst du auswendig lernen. Links die du-Form, rechts die Sie-Form.</p><ul><li><b>andare</b>: du <b>Vai!</b> · Sie <b>Vada!</b><span class='ex'>Vai a casa!</span></li><li><b>fare</b>: du <b>Fai!</b> · Sie <b>Faccia!</b><span class='ex'>Fai presto!</span></li><li><b>essere</b>: du <b>Sii!</b> · Sie <b>Sia!</b><span class='ex'>Sii gentile!</span></li><li><b>dare</b>: du <b>Dai!</b> · Sie <b>Dia!</b><span class='ex'>Dai un caffè a Marco!</span></li><li><b>stare</b>: du <b>Stai!</b> · Sie <b>Stia!</b><span class='ex'>Stai bene!</span></li><li><b>dire</b>: du <b>Di'!</b> · Sie <b>Dica!</b><span class='ex'>Di' di sì!</span></li><li><b>venire</b>: du <b>Vieni!</b> · Sie <b>Venga!</b><span class='ex'>Vieni qui!</span></li></ul><h3>5 · noi und voi</h3><p class='nt'>Hier gibt es keinen Unterschied zum Präsens.</p><ul><li><b>noi</b> = lasst uns …<span class='ex'>Andiamo al bar!</span></li><li><b>voi</b> = ihr …<span class='ex'>Ascoltate, ragazzi!</span></li></ul><h3>6 · Verbot mit «non»</h3><ul><li><b>tu</b>: non + Infinitiv<span class='nt'>Nicht die du-Form!</span><span class='ex'>Non parlare!</span></li><li><b>Lei</b>: non + Lei-Form<span class='ex'>Non parli!</span></li></ul><h3>7 · «mi» beim Befehl</h3><ul><li><b>tu</b>: das Pronomen wird angehängt<span class='ex'>Parlami in italiano!</span></li><li><b>Lei</b>: das Pronomen steht davor<span class='ex'>Mi parli in italiano!</span></li></ul>",
+      exercises: [{"q": "Du sprichst mit deinem Bruder. Wie sagst du «Sprich langsamer!»?", "options": ["Parla più piano!", "Parli più piano!", "Parlare più piano!", "Parlo più piano!"], "a": ["Parla più piano!"], "why": "Zum Bruder: tu-Befehl, bei -are endet er auf -a"}, {"q": "Du sprichst mit deiner Chefin. Wie sagst du «Sprechen Sie langsamer!»?", "options": ["Parla più piano!", "Parli più piano!", "Parlare più piano!", "Parlo più piano!"], "a": ["Parli più piano!"], "why": "Zur Chefin: Lei-Befehl, bei -are endet er auf -i"}, {"q": "Wer wird mit «Ascolti!» angesprochen?", "options": ["ein Freund (du)", "eine fremde Person (Sie)", "mehrere Freunde (ihr)", "wir alle"], "a": ["eine fremde Person (Sie)"], "why": "Bei -are endet der Sie-Befehl auf -i"}, {"q": "Wer wird mit «Prendi!» angesprochen?", "options": ["ein Freund (du)", "eine fremde Person (Sie)", "mehrere Freunde (ihr)", "wir alle"], "a": ["ein Freund (du)"], "why": "Bei -ere endet der du-Befehl auf -i"}, {"q": "Wie lautet der du-Befehl «Hör zu!»?", "options": ["Ascolta!", "Ascolti!", "Ascolto!", "Ascoltare!"], "a": ["Ascolta!"], "why": "-are: du = -a"}, {"q": "Wie lautet der Sie-Befehl «Nehmen Sie!»?", "options": ["Prendi!", "Prenda!", "Prende!", "Prendere!"], "a": ["Prenda!"], "why": "-ere: Sie = -a"}, {"q": "Bei Verben auf -are endet der du-Befehl auf …", "options": ["-a", "-i", "-e", "-o"], "a": ["-a"], "why": "Parla!"}, {"q": "Bei Verben auf -ere und -ire endet der Sie-Befehl auf …", "options": ["-a", "-i", "-e", "-o"], "a": ["-a"], "why": "Prenda! Dorma!"}, {"q": "Wie lautet der du-Befehl «Geh!» von andare?", "options": ["Vai!", "Vada!", "Va!", "Andi!"], "a": ["Vai!"], "why": "andare ist unregelmässig: Vai! (du) / Vada! (Sie)"}, {"q": "Wie lautet der Sie-Befehl «Machen Sie!» von fare?", "options": ["Fai!", "Faccia!", "Fa!", "Faci!"], "a": ["Faccia!"], "why": "fare ist unregelmässig: Fai! (du) / Faccia! (Sie)"}, {"q": "Wie lautet der du-Befehl «Sei!» von essere?", "options": ["Sii!", "Sia!", "Sei!", "Siete!"], "a": ["Sii!"], "why": "essere ist unregelmässig: Sii! (du) / Sia! (Sie)"}, {"q": "Wie sagst du «Lasst uns gehen!»?", "options": ["Andiamo!", "Andate!", "Vanno!", "Vada!"], "a": ["Andiamo!"], "why": "noi-Befehl = Präsens: andiamo"}, {"q": "Wie sagst du zu mehreren Freunden «Sprecht!»?", "options": ["Parlate!", "Parlano!", "Parli!", "Parla!"], "a": ["Parlate!"], "why": "voi-Befehl = Präsens: parlate"}, {"q": "Wie sagst du zu einem Freund «Sprich nicht!»?", "options": ["Non parlare!", "Non parla!", "Non parli!", "Non parlo!"], "a": ["Non parlare!"], "why": "Verbot an «tu»: non + Infinitiv"}, {"q": "Wie sagst du zu einer fremden Person «Sprechen Sie nicht!»?", "options": ["Non parlare!", "Non parla!", "Non parli!", "Non parlo!"], "a": ["Non parli!"], "why": "Verbot an «Lei»: non + Lei-Form"}, {"q": "Wie sagst du zu einem Freund «Sprich mit mir!»?", "options": ["Parlami!", "Mi parla!", "Mi parli!", "Parli mi!"], "a": ["Parlami!"], "why": "Beim du-Befehl wird «mi» angehängt"}, {"q": "Wie sagst du zu einer fremden Person «Sprechen Sie mit mir!»?", "options": ["Parlami!", "Mi parla!", "Mi parli!", "Parli mi!"], "a": ["Mi parli!"], "why": "Beim Sie-Befehl steht «mi» davor"}, {"q": "Sage auf Italienisch (du): Höre zu!", "a": ["Ascolta!"], "why": "-are: du = -a"}, {"q": "Sage auf Italienisch (Sie): Hören Sie zu!", "a": ["Ascolti!"], "why": "-are: Sie = -i"}, {"q": "Sage auf Italienisch (du): Nimm einen Kaffee!", "a": ["Prendi un caffè!", "Prendi un caffè"], "why": "-ere: du = -i"}, {"q": "Sage auf Italienisch (Sie): Nehmen Sie einen Kaffee!", "a": ["Prenda un caffè!", "Prenda un caffè"], "why": "-ere: Sie = -a"}, {"q": "Sage auf Italienisch (du): Schlaf gut!", "a": ["Dormi bene!"], "why": "-ire: du = -i"}, {"q": "Sage auf Italienisch (Sie): Schlafen Sie gut!", "a": ["Dorma bene!"], "why": "-ire: Sie = -a"}, {"q": "Sage auf Italienisch (du): Geh nach Hause!", "a": ["Vai a casa!"], "why": "andare: Vai!"}, {"q": "Sage auf Italienisch (Sie): Gehen Sie nach Hause!", "a": ["Vada a casa!"], "why": "andare: Vada!"}, {"q": "Sage auf Italienisch (du): Sei nett!", "a": ["Sii gentile!"], "why": "essere: Sii!"}, {"q": "Sage auf Italienisch (du): Komm hierher!", "a": ["Vieni qui!"], "why": "venire: Vieni!"}, {"q": "Sage auf Italienisch (Sie): Kommen Sie hierher!", "a": ["Venga qui!"], "why": "venire: Venga!"}, {"q": "Sage auf Italienisch (du): Mach schnell!", "a": ["Fai presto!"], "why": "fare: Fai!"}, {"q": "Sage auf Italienisch (Sie): Machen Sie schnell!", "a": ["Faccia presto!"], "why": "fare: Faccia!"}, {"q": "Sage auf Italienisch (du): Geh nicht!", "a": ["Non andare!"], "why": "Verbot an «tu»: non + Infinitiv"}, {"q": "Sage auf Italienisch (Sie): Gehen Sie nicht!", "a": ["Non vada!"], "why": "Verbot an «Lei»: non + Lei-Form"}, {"q": "Sage auf Italienisch: Lasst uns einen Kaffee nehmen!", "a": ["Prendiamo un caffè!", "Prendiamo un caffè"], "why": "noi-Befehl = Präsens"}, {"q": "Sage auf Italienisch (ihr): Hört zu!", "a": ["Ascoltate!"], "why": "voi-Befehl = Präsens"}, {"q": "Sage auf Italienisch (du): Sprich Italienisch mit mir!", "a": ["Parla italiano con me!", "Parlami in italiano!", "Parla in italiano con me!", "Parlami italiano!"], "why": "du-Befehl von parlare: Parla! (oder Parlami!)"}, {"q": "Sage auf Italienisch (Sie): Sprechen Sie Italienisch mit mir!", "a": ["Parli italiano con me!", "Mi parli in italiano!", "Parli in italiano con me!", "Mi parli italiano!"], "why": "Sie-Befehl von parlare: Parli! (oder Mi parli!)"}],
+    },
+    {
       id: "zahl100",
       title: "Grundzahlen ab 100",
       explain:
@@ -4263,13 +4270,6 @@
         {"q": "Wie heisst «Er kommt am 1. März.» auf Italienisch?", "options": ["Viene il primo marzo.", "Vengo il ventisette novembre.", "La seconda traversa.", "Il terzo ponte."], "a": ["Viene il primo marzo."], "why": "Beispiel zur Regel: Viene il primo marzo."},
         {"q": "Wie heisst «Ich komme am 27. November.» auf Italienisch?", "options": ["Vengo il ventisette novembre.", "La seconda traversa.", "Il terzo ponte.", "La quinta fermata."], "a": ["Vengo il ventisette novembre."], "why": "Beispiel zur Regel: Vengo il ventisette novembre."},
       ],
-    },
-    {
-      id: "imperativ",
-      title: "Imperativ",
-      explain:
-        "<h3>1 · du oder Sie?</h3><p class='nt'>Der Befehl (Imperativ) hat für eine Person zwei Formen. Du wählst nach dem Ton: vertraut oder höflich.</p><ul><li><b>tu</b> = du<span class='nt'>Freunde, Familie, Kinder.</span><span class='ex'>Parla italiano con me!</span></li><li><b>Lei</b> = Sie<span class='nt'>Fremde, Chef, Verkäuferin. Die Lei-Form ist hier die Form von «Lei».</span><span class='ex'>Parli italiano con me!</span></li></ul><p class='nt'>Gleiche Bitte, anderer Ton: Zum Nachbarn sagst du «Sprechen Sie leiser», zu deinem Bruder «Sprich leiser».</p><h3>2 · Verben auf -are</h3><ul><li><b>tu</b>: Stamm + <b>a</b><span class='nt'>ascoltare → ascolta</span><span class='ex'>Ascolta, Marco!</span></li><li><b>Lei</b>: Stamm + <b>i</b><span class='nt'>ascoltare → ascolti</span><span class='ex'>Ascolti, signora!</span></li></ul><h3>3 · Verben auf -ere und -ire</h3><p class='nt'>Hier kippt es um, wie bei einer Wippe: Das «tu» bekommt das i, das «Lei» das a.</p><ul><li><b>tu</b>: Stamm + <b>i</b><span class='nt'>prendere → prendi, dormire → dormi</span><span class='ex'>Prendi un caffè!</span></li><li><b>Lei</b>: Stamm + <b>a</b><span class='nt'>prendere → prenda, dormire → dorma</span><span class='ex'>Prenda un caffè!</span></li><li>Verben mit <b>-isc-</b><span class='nt'>Der Zusatz -isc- bleibt: finire → finisci (tu) / finisca (Lei).</span><span class='ex'>Finisca il caffè!</span></li></ul><p class='merk'>Merkhilfe: «Alles klar, Kumpel» → <b>a</b> → du: Parla! «Ihnen» → <b>i</b> → Sie: Parli! Bei -ere / -ire kippt die Wippe: Prendi (du), Prenda (Sie).</p><h3>4 · Unregelmässige Befehle</h3><p class='nt'>Diese Verben musst du auswendig lernen. Links die du-Form, rechts die Sie-Form.</p><ul><li><b>andare</b>: du <b>Vai!</b> · Sie <b>Vada!</b><span class='ex'>Vai a casa!</span></li><li><b>fare</b>: du <b>Fai!</b> · Sie <b>Faccia!</b><span class='ex'>Fai presto!</span></li><li><b>essere</b>: du <b>Sii!</b> · Sie <b>Sia!</b><span class='ex'>Sii gentile!</span></li><li><b>dare</b>: du <b>Dai!</b> · Sie <b>Dia!</b><span class='ex'>Dai un caffè a Marco!</span></li><li><b>stare</b>: du <b>Stai!</b> · Sie <b>Stia!</b><span class='ex'>Stai bene!</span></li><li><b>dire</b>: du <b>Di'!</b> · Sie <b>Dica!</b><span class='ex'>Di' di sì!</span></li><li><b>venire</b>: du <b>Vieni!</b> · Sie <b>Venga!</b><span class='ex'>Vieni qui!</span></li></ul><h3>5 · noi und voi</h3><p class='nt'>Hier gibt es keinen Unterschied zum Präsens.</p><ul><li><b>noi</b> = lasst uns …<span class='ex'>Andiamo al bar!</span></li><li><b>voi</b> = ihr …<span class='ex'>Ascoltate, ragazzi!</span></li></ul><h3>6 · Verbot mit «non»</h3><ul><li><b>tu</b>: non + Infinitiv<span class='nt'>Nicht die du-Form!</span><span class='ex'>Non parlare!</span></li><li><b>Lei</b>: non + Lei-Form<span class='ex'>Non parli!</span></li></ul><h3>7 · «mi» beim Befehl</h3><ul><li><b>tu</b>: das Pronomen wird angehängt<span class='ex'>Parlami in italiano!</span></li><li><b>Lei</b>: das Pronomen steht davor<span class='ex'>Mi parli in italiano!</span></li></ul>",
-      exercises: [{"q": "Du sprichst mit deinem Bruder. Wie sagst du «Sprich langsamer!»?", "options": ["Parla più piano!", "Parli più piano!", "Parlare più piano!", "Parlo più piano!"], "a": ["Parla più piano!"], "why": "Zum Bruder: tu-Befehl, bei -are endet er auf -a"}, {"q": "Du sprichst mit deiner Chefin. Wie sagst du «Sprechen Sie langsamer!»?", "options": ["Parla più piano!", "Parli più piano!", "Parlare più piano!", "Parlo più piano!"], "a": ["Parli più piano!"], "why": "Zur Chefin: Lei-Befehl, bei -are endet er auf -i"}, {"q": "Wer wird mit «Ascolti!» angesprochen?", "options": ["ein Freund (du)", "eine fremde Person (Sie)", "mehrere Freunde (ihr)", "wir alle"], "a": ["eine fremde Person (Sie)"], "why": "Bei -are endet der Sie-Befehl auf -i"}, {"q": "Wer wird mit «Prendi!» angesprochen?", "options": ["ein Freund (du)", "eine fremde Person (Sie)", "mehrere Freunde (ihr)", "wir alle"], "a": ["ein Freund (du)"], "why": "Bei -ere endet der du-Befehl auf -i"}, {"q": "Wie lautet der du-Befehl «Hör zu!»?", "options": ["Ascolta!", "Ascolti!", "Ascolto!", "Ascoltare!"], "a": ["Ascolta!"], "why": "-are: du = -a"}, {"q": "Wie lautet der Sie-Befehl «Nehmen Sie!»?", "options": ["Prendi!", "Prenda!", "Prende!", "Prendere!"], "a": ["Prenda!"], "why": "-ere: Sie = -a"}, {"q": "Bei Verben auf -are endet der du-Befehl auf …", "options": ["-a", "-i", "-e", "-o"], "a": ["-a"], "why": "Parla!"}, {"q": "Bei Verben auf -ere und -ire endet der Sie-Befehl auf …", "options": ["-a", "-i", "-e", "-o"], "a": ["-a"], "why": "Prenda! Dorma!"}, {"q": "Wie lautet der du-Befehl «Geh!» von andare?", "options": ["Vai!", "Vada!", "Va!", "Andi!"], "a": ["Vai!"], "why": "andare ist unregelmässig: Vai! (du) / Vada! (Sie)"}, {"q": "Wie lautet der Sie-Befehl «Machen Sie!» von fare?", "options": ["Fai!", "Faccia!", "Fa!", "Faci!"], "a": ["Faccia!"], "why": "fare ist unregelmässig: Fai! (du) / Faccia! (Sie)"}, {"q": "Wie lautet der du-Befehl «Sei!» von essere?", "options": ["Sii!", "Sia!", "Sei!", "Siete!"], "a": ["Sii!"], "why": "essere ist unregelmässig: Sii! (du) / Sia! (Sie)"}, {"q": "Wie sagst du «Lasst uns gehen!»?", "options": ["Andiamo!", "Andate!", "Vanno!", "Vada!"], "a": ["Andiamo!"], "why": "noi-Befehl = Präsens: andiamo"}, {"q": "Wie sagst du zu mehreren Freunden «Sprecht!»?", "options": ["Parlate!", "Parlano!", "Parli!", "Parla!"], "a": ["Parlate!"], "why": "voi-Befehl = Präsens: parlate"}, {"q": "Wie sagst du zu einem Freund «Sprich nicht!»?", "options": ["Non parlare!", "Non parla!", "Non parli!", "Non parlo!"], "a": ["Non parlare!"], "why": "Verbot an «tu»: non + Infinitiv"}, {"q": "Wie sagst du zu einer fremden Person «Sprechen Sie nicht!»?", "options": ["Non parlare!", "Non parla!", "Non parli!", "Non parlo!"], "a": ["Non parli!"], "why": "Verbot an «Lei»: non + Lei-Form"}, {"q": "Wie sagst du zu einem Freund «Sprich mit mir!»?", "options": ["Parlami!", "Mi parla!", "Mi parli!", "Parli mi!"], "a": ["Parlami!"], "why": "Beim du-Befehl wird «mi» angehängt"}, {"q": "Wie sagst du zu einer fremden Person «Sprechen Sie mit mir!»?", "options": ["Parlami!", "Mi parla!", "Mi parli!", "Parli mi!"], "a": ["Mi parli!"], "why": "Beim Sie-Befehl steht «mi» davor"}, {"q": "Sage auf Italienisch (du): Höre zu!", "a": ["Ascolta!"], "why": "-are: du = -a"}, {"q": "Sage auf Italienisch (Sie): Hören Sie zu!", "a": ["Ascolti!"], "why": "-are: Sie = -i"}, {"q": "Sage auf Italienisch (du): Nimm einen Kaffee!", "a": ["Prendi un caffè!", "Prendi un caffè"], "why": "-ere: du = -i"}, {"q": "Sage auf Italienisch (Sie): Nehmen Sie einen Kaffee!", "a": ["Prenda un caffè!", "Prenda un caffè"], "why": "-ere: Sie = -a"}, {"q": "Sage auf Italienisch (du): Schlaf gut!", "a": ["Dormi bene!"], "why": "-ire: du = -i"}, {"q": "Sage auf Italienisch (Sie): Schlafen Sie gut!", "a": ["Dorma bene!"], "why": "-ire: Sie = -a"}, {"q": "Sage auf Italienisch (du): Geh nach Hause!", "a": ["Vai a casa!"], "why": "andare: Vai!"}, {"q": "Sage auf Italienisch (Sie): Gehen Sie nach Hause!", "a": ["Vada a casa!"], "why": "andare: Vada!"}, {"q": "Sage auf Italienisch (du): Sei nett!", "a": ["Sii gentile!"], "why": "essere: Sii!"}, {"q": "Sage auf Italienisch (du): Komm hierher!", "a": ["Vieni qui!"], "why": "venire: Vieni!"}, {"q": "Sage auf Italienisch (Sie): Kommen Sie hierher!", "a": ["Venga qui!"], "why": "venire: Venga!"}, {"q": "Sage auf Italienisch (du): Mach schnell!", "a": ["Fai presto!"], "why": "fare: Fai!"}, {"q": "Sage auf Italienisch (Sie): Machen Sie schnell!", "a": ["Faccia presto!"], "why": "fare: Faccia!"}, {"q": "Sage auf Italienisch (du): Geh nicht!", "a": ["Non andare!"], "why": "Verbot an «tu»: non + Infinitiv"}, {"q": "Sage auf Italienisch (Sie): Gehen Sie nicht!", "a": ["Non vada!"], "why": "Verbot an «Lei»: non + Lei-Form"}, {"q": "Sage auf Italienisch: Lasst uns einen Kaffee nehmen!", "a": ["Prendiamo un caffè!", "Prendiamo un caffè"], "why": "noi-Befehl = Präsens"}, {"q": "Sage auf Italienisch (ihr): Hört zu!", "a": ["Ascoltate!"], "why": "voi-Befehl = Präsens"}, {"q": "Sage auf Italienisch (du): Sprich Italienisch mit mir!", "a": ["Parla italiano con me!", "Parlami in italiano!", "Parla in italiano con me!", "Parlami italiano!"], "why": "du-Befehl von parlare: Parla! (oder Parlami!)"}, {"q": "Sage auf Italienisch (Sie): Sprechen Sie Italienisch mit mir!", "a": ["Parli italiano con me!", "Mi parli in italiano!", "Parli in italiano con me!", "Mi parli italiano!"], "why": "Sie-Befehl von parlare: Parli! (oder Mi parli!)"}],
     },
   ];
   // Zusatzaufgaben mit Woertern, die nicht in den Erklaerungen vorkommen
@@ -7709,6 +7709,47 @@
       ]
     },
     {
+      id: "imperativ", topic: "imperativ", title: "Bitten + Befehle - lerne den Imperativ", sub: "Grammatik-Block «Imperativ»",
+      words: [
+        W("Ascolta!", "Hör zu!"),
+        W("Aspetta un momento!", "Warte einen Moment!"),
+        W("Prendi un caffè!", "Nimm einen Kaffee!"),
+        W("Vieni qui!", "Komm hierher!"),
+        W("Parla più piano!", "Sprich langsamer!"),
+        W("Prenda un caffè!", "Nehmen Sie einen Kaffee!"),
+        W("Parli più piano!", "Sprechen Sie langsamer!"),
+        W("Non parlare!", "Sprich nicht!"),
+        W("Mi parli in italiano!", "Sprechen Sie Italienisch mit mir!"),
+        W("Andiamo!", "Gehen wir!")
+      ],
+      tasks: [
+        C("Du sprichst mit deinem Bruder. Wie sagst du «Sprich langsamer!»?", "Parla più piano!", ["Parli più piano!", "Parlare più piano!", "Parlo più piano!"]),
+        C("Du sprichst mit deiner Chefin. Wie sagst du «Sprechen Sie langsamer!»?", "Parli più piano!", ["Parla più piano!", "Parlare più piano!", "Parlo più piano!"]),
+        C("Wer wird mit «Prendi!» angesprochen?", "ein Freund (du)", ["eine fremde Person (Sie)", "mehrere Freunde (ihr)"]),
+        C("Wer wird mit «Prenda!» angesprochen?", "eine fremde Person (Sie)", ["ein Freund (du)", "mehrere Freunde (ihr)"]),
+        C("Bei Verben auf -are endet der du-Befehl auf …", "-a", ["-i", "-e", "-o"]),
+        C("Bei Verben auf -ere und -ire endet der du-Befehl auf …", "-i", ["-a", "-e", "-o"]),
+        C("Wie lautet der du-Befehl «Geh!» von andare?", "Vai!", ["Vada!", "Va!", "Andi!"]),
+        C("Wie lautet der Sie-Befehl «Machen Sie!» von fare?", "Faccia!", ["Fai!", "Fa!", "Faci!"]),
+        C("Wie sagst du «Lasst uns gehen!»?", "Andiamo!", ["Andate!", "Vanno!", "Vada!"]),
+        C("Wie sagst du zu einem Freund «Sprich nicht!»?", "Non parlare!", ["Non parla!", "Non parli!", "Non parlo!"]),
+        C("Wie sagst du zu einem Freund «Sprich mit mir!»?", "Parlami!", ["Mi parla!", "Mi parli!", "Parli mi!"]),
+        Y("Sage auf Italienisch (du): Höre zu!", "Ascolta!", []),
+        Y("Sage auf Italienisch (Sie): Nehmen Sie einen Kaffee!", "Prenda un caffè!", ["Prenda un caffè"]),
+        Y("Sage auf Italienisch (du): Komm hierher!", "Vieni qui!", []),
+        Y("Sage auf Italienisch (Sie): Gehen Sie nach Hause!", "Vada a casa!", []),
+        Y("Sage auf Italienisch (du): Warte einen Moment!", "Aspetta un momento!", []),
+        Y("Sage auf Italienisch (du): Sei nett!", "Sii gentile!", []),
+        Y("Sage auf Italienisch (Sie): Sprechen Sie Italienisch mit mir!", "Parli italiano con me!", ["Mi parli in italiano!", "Parli in italiano con me!"]),
+        Y("Sage auf Italienisch (du): Geh nicht!", "Non andare!", []),
+        O("Nimm einen Kaffee!", "Prendi un caffè!", []),
+        O("Sprich langsamer!", "Parla più piano!", []),
+        O("Sprechen Sie langsamer!", "Parli più piano!", []),
+        P([["Ascolta!", "Hör zu!"], ["Vieni qui!", "Komm hierher!"], ["Andiamo!", "Gehen wir!"], ["Non parlare!", "Sprich nicht!"], ["Prendi un caffè!", "Nimm einen Kaffee!"]]),
+        P([["Prenda!", "Nehmen Sie!"], ["Parli!", "Sprechen Sie!"], ["Vada!", "Gehen Sie!"], ["Faccia!", "Machen Sie!"], ["Venga!", "Kommen Sie!"]])
+      ]
+    },
+    {
       id: "zahl100", topic: "zahl100", focus: ["costare", "vincere"], title: "Preise + Mengen - lerne die Zahlen ab 100", sub: "Grammatik-Block «Grundzahlen ab 100»",
       nw: [["il milione", "die Million"], ["il miliardo", "die Milliarde"], ["duecento", "200"], ["mille", "1000"]],
       words: [
@@ -7769,47 +7810,6 @@
         O("Er kommt am 1. März.", "Viene il primo marzo."),
         L("La seconda traversa."),
         L("Oggi è il ventuno marzo.")
-      ]
-    },
-    {
-      id: "imperativ", topic: "imperativ", title: "Bitten + Befehle - lerne den Imperativ", sub: "Grammatik-Block «Imperativ»",
-      words: [
-        W("Ascolta!", "Hör zu!"),
-        W("Aspetta un momento!", "Warte einen Moment!"),
-        W("Prendi un caffè!", "Nimm einen Kaffee!"),
-        W("Vieni qui!", "Komm hierher!"),
-        W("Parla più piano!", "Sprich langsamer!"),
-        W("Prenda un caffè!", "Nehmen Sie einen Kaffee!"),
-        W("Parli più piano!", "Sprechen Sie langsamer!"),
-        W("Non parlare!", "Sprich nicht!"),
-        W("Mi parli in italiano!", "Sprechen Sie Italienisch mit mir!"),
-        W("Andiamo!", "Gehen wir!")
-      ],
-      tasks: [
-        C("Du sprichst mit deinem Bruder. Wie sagst du «Sprich langsamer!»?", "Parla più piano!", ["Parli più piano!", "Parlare più piano!", "Parlo più piano!"]),
-        C("Du sprichst mit deiner Chefin. Wie sagst du «Sprechen Sie langsamer!»?", "Parli più piano!", ["Parla più piano!", "Parlare più piano!", "Parlo più piano!"]),
-        C("Wer wird mit «Prendi!» angesprochen?", "ein Freund (du)", ["eine fremde Person (Sie)", "mehrere Freunde (ihr)"]),
-        C("Wer wird mit «Prenda!» angesprochen?", "eine fremde Person (Sie)", ["ein Freund (du)", "mehrere Freunde (ihr)"]),
-        C("Bei Verben auf -are endet der du-Befehl auf …", "-a", ["-i", "-e", "-o"]),
-        C("Bei Verben auf -ere und -ire endet der du-Befehl auf …", "-i", ["-a", "-e", "-o"]),
-        C("Wie lautet der du-Befehl «Geh!» von andare?", "Vai!", ["Vada!", "Va!", "Andi!"]),
-        C("Wie lautet der Sie-Befehl «Machen Sie!» von fare?", "Faccia!", ["Fai!", "Fa!", "Faci!"]),
-        C("Wie sagst du «Lasst uns gehen!»?", "Andiamo!", ["Andate!", "Vanno!", "Vada!"]),
-        C("Wie sagst du zu einem Freund «Sprich nicht!»?", "Non parlare!", ["Non parla!", "Non parli!", "Non parlo!"]),
-        C("Wie sagst du zu einem Freund «Sprich mit mir!»?", "Parlami!", ["Mi parla!", "Mi parli!", "Parli mi!"]),
-        Y("Sage auf Italienisch (du): Höre zu!", "Ascolta!", []),
-        Y("Sage auf Italienisch (Sie): Nehmen Sie einen Kaffee!", "Prenda un caffè!", ["Prenda un caffè"]),
-        Y("Sage auf Italienisch (du): Komm hierher!", "Vieni qui!", []),
-        Y("Sage auf Italienisch (Sie): Gehen Sie nach Hause!", "Vada a casa!", []),
-        Y("Sage auf Italienisch (du): Warte einen Moment!", "Aspetta un momento!", []),
-        Y("Sage auf Italienisch (du): Sei nett!", "Sii gentile!", []),
-        Y("Sage auf Italienisch (Sie): Sprechen Sie Italienisch mit mir!", "Parli italiano con me!", ["Mi parli in italiano!", "Parli in italiano con me!"]),
-        Y("Sage auf Italienisch (du): Geh nicht!", "Non andare!", []),
-        O("Nimm einen Kaffee!", "Prendi un caffè!", []),
-        O("Sprich langsamer!", "Parla più piano!", []),
-        O("Sprechen Sie langsamer!", "Parli più piano!", []),
-        P([["Ascolta!", "Hör zu!"], ["Vieni qui!", "Komm hierher!"], ["Andiamo!", "Gehen wir!"], ["Non parlare!", "Sprich nicht!"], ["Prendi un caffè!", "Nimm einen Kaffee!"]]),
-        P([["Prenda!", "Nehmen Sie!"], ["Parli!", "Sprechen Sie!"], ["Vada!", "Gehen Sie!"], ["Faccia!", "Machen Sie!"], ["Venga!", "Kommen Sie!"]])
       ]
     },
     {
