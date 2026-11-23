@@ -825,7 +825,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-19-steigerung";
-  const APP_VERSION = "2026-11-23-a"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-23-e"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1121,6 +1121,13 @@
         [/^Was fragst du mit («[^»]*»)\??$/, "Che cosa chiedi con $1?"], [/^Welche Form passt zu («[^»]*»)\?$/, "Quale forma va con $1?"],
         [/^(.+) → Plural\?$/, "$1 → plurale?"], [/^Plural von («[^»]*»)\?$/, "Plurale di $1?"],
         [/^Was gibt («[^»]*») in («[^»]*») an\?$/, "Che cosa indica $1 in $2?"],
+        [/^In («[^»]*») steht ein («[^»]*»)\. Wozu\?$/, "In $1 c'è una $2. A che cosa serve?"], [/^Wie sagt man «([^»]*)» mit Wiederholung\?$/, "Come si dice ‹$1› con la ripetizione?"],
+        [/^Welcher Satz ist eine Frage\?$/, "Quale frase è una domanda?"], [/^Welcher Satz ist eine Aussage\?$/, "Quale frase è un'affermazione?"],
+        [/^Mach aus der Aussage eine Frage: («[^»]*»)$/, "Trasforma l'affermazione in domanda: $1"], [/^Mach aus der Frage eine Aussage: («[^»]*»)$/, "Trasforma la domanda in affermazione: $1"],
+        [/^(«[^»]*») heisst immer …$/, "$1 significa sempre …"], [/^(«[^»]*») ist dasselbe wie …$/, "$1 è lo stesso di …"],
+        [/^Was ist das Gegenteil von («[^»]*»)\?$/, "Qual è il contrario di $1?"],
+        [/^Wie sagt man «([^»]*)» auf Italienisch\?$/, "Come si dice ‹$1› in italiano?"],
+        [/^Welche Antwort passt auf («[^»]*»)$/, "Quale risposta va bene per $1"],
         [/^Ich mag den Wein nicht: ___ mi piace il vino\.$/, "Completa: ___ mi piace il vino. (‹Ich mag den Wein nicht›)"]
       ];
       for (var fi = 0; fi < FAM.length; fi++) { if (FAM[fi][0].test(q)) return { it: q.replace(FAM[fi][0], FAM[fi][1]), de: q }; }
@@ -1160,10 +1167,10 @@
       "nach dem Verb": "dopo il verbo", "vor dem Verb": "prima del verbo", "Vor dem Verb": "Prima del verbo", "Nach dem Verb": "Dopo il verbo", "mit «della»": "con «della»", "mit «delle»": "con «delle»", "mit": "con", "ohne": "senza",
       "vor dem Nomen": "davanti al nome", "hinter dem Nomen": "dopo il nome", "vor oder hinter dem Verb": "prima o dopo il verbo", "hinter dem Verb": "dopo il verbo", "nur vor dem Verb": "solo prima del verbo", "nur hinter dem Verb": "solo dopo il verbo", "betont": "tonico", "unbetont": "atono", "eine fremde Person (Sie)": "una persona sconosciuta (Lei)",
       "ein Freund (du)": "un amico (tu)", "Sie (höflich)": "Lei (formale)", "Sie (höflich, Plural)": "Loro (formale, plurale)", "Wenn das Verb da ist": "Quando il verbo c'è", "Wenn das Verb fehlt": "Quando il verbo manca",
-      "Zum Betonen und wenn das Verb fehlt": "Per enfatizzare e quando il verbo manca", "Immer": "Sempre", "nach einer Erklärung": "dopo una spiegazione", "nach einer Auswahl": "dopo una scelta",
+      "Zum Betonen und wenn das Verb fehlt": "Per enfatizzare e quando il verbo manca", "Immer": "Sempre", "nach einer Erklärung": "una spiegazione", "nach einer Auswahl": "una scelta",
       "das unbetonte Pronomen": "il pronome atono", "das betonte Pronomen": "il pronome tonico", "Verschiedenes": "Altro", "das Material": "il materiale", "die Herkunft": "l'origine", "das Thema": "l'argomento",
       "die Zeit": "il tempo", "die Menge": "la quantità", "wo? und wohin?": "dove? e verso dove?", "die Entfernung": "la distanza", "die Art": "il tipo", "die Art und Weise": "il modo", "immer": "sempre", "nie": "mai",
-      "Mehrzahl": "plurale", "Einzahl": "singolare", "ja": "sì", "nein": "no", "oder": "o", "und": "e" };
+      "wie sch": "come «sch»", "wie s": "come «s»", "wie k": "come «k»", "ihr": "voi", "wir": "noi", "kein Pronomen": "nessun pronome", "immer mit Bindestrich": "sempre con il trattino", "Nur bei Fragen": "Solo nelle domande", "Nur bei Verneinung": "Solo nella negazione", "Nie": "Mai", "alle Formen": "tutte le forme", "Das g wird zu sch": "La g diventa «sch»", "unveränderlich": "invariabile", "immer weiblich": "sempre femminile", "immer männlich": "sempre maschile", "kein Artikel": "nessun articolo", "Nur bei Deutsch": "Solo con il tedesco", "Nur nach «parlare»": "Solo dopo «parlare»", "Ja, vor s + Konsonant": "Sì, davanti a s + consonante", "Ja, vor z": "Sì, davanti a z", "Ja, wie bei una": "Sì, come con una", "Nur im Plural": "Solo al plurale", "Ja, bei niente": "Sì, con niente", "Nur in der Umgangssprache": "Solo nella lingua parlata", "Am Satzende": "Alla fine della frase", "Nach dem Subjekt": "Dopo il soggetto", "nach einer Person": "una persona", "nach einem Ort": "un luogo", "Ja, im Plural «chi»": "Sì, al plurale «chi»", "Ja, im Plural «che» + -i": "Sì, al plurale «che» + -i", "Ja, wie «ein»": "Sì, come «ein»", "auf -e": "in -e", "auf -o": "in -o", "auf -a": "in -a", "auf -i": "in -i", "den Inhalt": "il contenuto", "nur wo?": "solo dove?", "nur wohin?": "solo verso dove?", "den Ort": "il luogo", "den Dativ": "il dativo", "Präsens": "presente", "die Person": "la persona", "den Zweck": "lo scopo", "die Begleitung": "la compagnia", "das Mittel": "il mezzo", "die Eigenschaft": "la caratteristica", "mehrere Freunde (ihr)": "più amici (voi)", "wir alle": "tutti noi", "Wie viele Restaurants es gibt": "Quanti ristoranti ci sono", "Wann das Restaurant öffnet": "Quando apre il ristorante", "Die harte Aussprache (k) bleibt": "La pronuncia dura (k) resta", "Es zeigt die Mehrzahl": "Indica il plurale", "Es zeigt weiblich": "Indica il femminile", "Man spricht es aus": "Si pronuncia", "Mehrzahl": "plurale", "Einzahl": "singolare", "ja": "sì", "nein": "no", "oder": "o", "und": "e" };
     return function (o, q) { if (!M[o] || !window.italoQIt || !window.italoQIt(q || "")) return null; return M[o]; };
   })();
   window.italoFillOpt = function (btn, o, q) {
