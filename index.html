@@ -825,7 +825,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-24-direkt";
-  const APP_VERSION = "2026-11-24-a"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-24-o"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -6091,16 +6091,23 @@
       check: "check (aus check-in: Einchecken)", Katia: "Vorname (weiblich)", Mario: "Vorname (männlich)", Corina: "Vorname (weiblich)", gmail: "E-Mail-Dienst (Name)", com: "«.com» (Endung der E-Mail-Adresse)", PostAuto: "PostAuto (Name des Unternehmens)", Rossi: "Familienname", Bianchi: "Familienname", Neri: "Familienname", Verdi: "Familienname", Conti: "Familienname", Carli: "Familienname", Bruni: "Familienname", Ferrari: "Familienname", Russo: "Familienname", Romano: "Familienname" };
     // Kurzes Wort steht in italienischem Text, wenn ein Nachbarwort (durch Leerzeichen getrennt) ein erkanntes, nicht-deutsches Wort ist
     function itNeighbour(text, toks, i) {
-      const near = j => {
-        if (j < 0 || j >= toks.length) return false;
-        const a = toks[Math.min(i, j)], b = toks[Math.max(i, j)];
-        if (!/^[\s_.,;:!?–—→\-]*$/.test(text.slice(a.off + a.tok.length, b.off)) || /[()«»„“"]/.test(text.slice(a.off + a.tok.length, b.off))) return false;
-        const t = toks[j].tok;
-        if (t.length < 3 || /[äöüß]/i.test(t) || DE_CTX.test(t) || DE_AMBIG.has(t.toLowerCase())) return false;
-        const h = lookupWord(t);
-        return !!(h && h.length);
-      };
-      return near(i - 1) || near(i + 1);
+      // Nachbar in Richtung dir (durch Leerzeichen / ___ getrennt): ein erkanntes, nicht-deutsches Wort ab 3 Buchstaben.
+      // Kurze italienische Woerter (la, a, il …) duerfen dazwischen stehen («Mi ___ la birra», «Io ___ a Coira»), max. 3 Schritte.
+      const gapOk = (a, b) => { const g = text.slice(a.off + a.tok.length, b.off); return /^[\s_.,;:!?–—→\-]*$/.test(g) && !/[()«»„“"]/.test(g); };
+      const known = t => { const h = lookupWord(t); return !!(h && h.length); };
+      for (const dir of [-1, 1]) {
+        let k = i;
+        for (let step = 0; step < 3; step++) {
+          const j = k + dir;
+          if (j < 0 || j >= toks.length) break;
+          if (!gapOk(toks[Math.min(k, j)], toks[Math.max(k, j)])) break;
+          const t = toks[j].tok;
+          if (/[äöüß]/i.test(t) || DE_CTX.test(t) || DE_AMBIG.has(t.toLowerCase()) || !known(t)) break;
+          if (t.length >= 3) return true;
+          k = j; // kurzes italienisches Wort: einen Schritt weiter schauen
+        }
+      }
+      return false;
     }
     // Wortmarken, an denen man einen deutschen Satz erkennt
     const DE_NODE = /[äöüÄÖÜß]|\b(ich|du|er|sie|wir|ihr|der|die|das|den|dem|des|ein|eine|einen|einem|einer|nicht|und|oder|ist|sind|bin|bist|mit|für|von|wie|was|welche|welcher|welches|welchen|wird|auf|zu|bei|sage|sagst|übersetze|ergänze|heisst|bedeutet|mir|dir|uns|euch|ihm|ihnen|hier|nur|auch|sehr|jetzt|heute|bitte|danke|gibt|habe|hast|hat|haben|wohne|esse|mache|nehme|suche|kenne|höre|trage|herr|frau|es|kostet|zehn|ganz|rotes|schönes|ihnen|stelle)\b/i;
@@ -6132,6 +6139,8 @@
         const EX = window.italoExamples || {};
         Object.keys(EX).forEach(k => { addDe(EX[k][1]); });
       } catch (e) { return {}; }
+      // Italienische Woerter, die nur in deutschen Hinweisen vorkommen (nicht deutsch): aus der Liste «ist deutsch» entfernen, sonst bleiben sie ungepunktet
+      ["il", "la", "le", "lei", "bene", "tutto", "tutta", "tutti", "tutte", "giorno", "giorni", "mattina", "mattine", "normale", "bella", "media", "tante", "liberamente", "tranquillamente", "normalmente", "regolarmente", "tranquillissimo", "bellissimo", "lunghissimo", "interessantissimo", "giovanissimo", "esse", "coira"].forEach(w => { delete DE[w]; });
       return (_deOnly = DE);
     }
     window.italoDeOnlySet = italoDeOnlySet;
@@ -6151,33 +6160,47 @@
       const nodes = [];
       let n;
       while ((n = walker.nextNode())) {
-        if (n.parentNode.closest && n.parentNode.closest(".lw, .sy, button:not(.lk):not(:disabled), .tr, .tr-line, span.de, .b-de, .ins-de, .gl-sub, input, textarea, select, option, script, style, #lwBar, #dictView, #gSearch")) continue;
+        if (n.parentNode.closest && n.parentNode.closest(".lw, .sy, button:not(.lk):not(:disabled), .tr, .tr-line, span.de, .b-de, .gap-de, .gl-sub, input, textarea, select, option, script, style, #lwBar, #dictView, #gSearch")) continue;
         nodes.push(n);
       }
       nodes.forEach(t => {
         const text = t.nodeValue;
         const toks = [];
-        if (!(t.parentNode.closest && t.parentNode.closest(".ep, .ex, .ls-it")) && isPureDe(text)) return; // ganzer deutscher Text (Uebersetzung): nie punkten
+        if (!(t.parentNode.closest && t.parentNode.closest(".ep, .ex, .ls-it, .ins-de")) && isPureDe(text)) return; // ganzer deutscher Text (Uebersetzung): nie punkten
         text.replace(/[A-Za-zÀ-ÿ]+(?:'[A-Za-zÀ-ÿ]+)?|\d+/g, (tok, off) => { toks.push({ tok, off }); return tok; });
         const inIt = !!(t.parentNode.closest && t.parentNode.closest(".ep, .ex, .ls-it"));
+        const inDeLine = !inIt && !!(t.parentNode.closest && t.parentNode.closest(".ins-de"));
+        const sibIt = new Set(); // Woerter der italienischen Zeile (ins-it / ins-ct) im selben Aufgabenkasten
+        if (inDeLine) { const box = t.parentNode.closest(".ins-de").parentNode; if (box && box.querySelectorAll) box.querySelectorAll(".ins-it, .ins-ct").forEach(e => { (e.textContent.replace(/«[^»]*»/g, q => DE_NODE.test(q.replace(/\s*\([^)]*\)/g, "")) ? " " : q).match(/[A-Za-zÀ-ÿ]+(?:'[A-Za-zÀ-ÿ]+)?/g) || []).forEach(w => sibIt.add(w.toLowerCase())); }); }
+        // Lueckenformel ohne deutsche Wortmarken («di + la = ___», «___ lo so.»): lauter bekannte kurze Woerter = italienisch
+        const chunkIt = !inIt && (/___|[+=]/.test(text) || /^[\s·\/+,\-–—«»'"().….:→=?!;_]*[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ\s·\/+,\-–—«»'"().….:→=?!;_]*$/.test(text) && toks.every(tk => tk.tok.length <= 3)) && !DE_NODE.test(text) && toks.length > 0 && toks.every(tk => /^\d+$/.test(tk.tok) || (lookupWord(tk.tok) || []).length > 0);
         const deOnly = (!inIt && DE_NODE.test(text)) ? italoDeOnlySet() : null; // deutscher Text (nicht italienisch, nicht gemischt ohne deutsche Wortmarken)
         let last = 0, changed = false;
         const frag = document.createDocumentFragment();
         toks.forEach((tk, ti) => {
           const tok = tk.tok, off = tk.off;
           let hits, nameDe = null;
+          if (inDeLine && !/^\d+$/.test(tok)) { // dünne Zeile unter der Frage: Buchstabe in «c» und deutsche Hauptwörter (gross mitten im Satz) nie punkten
+            if (tok.length === 1 && text.charAt(off - 1) === "«" && text.charAt(off + tok.length) === "»") return;
+            if (/^[A-ZÄÖÜ]/.test(tok) && /^-[A-ZÄÖÜ]/.test(text.slice(off + tok.length, off + tok.length + 2))) return; // deutsches Kompositum (Melodie-Duell)
+            if (/^[A-ZÄÖÜ]/.test(tok) && text.charAt(off - 1) === "(" && !NAME_INFO[tok]) return; // deutscher Hinweis in Klammern: (Film)
+            if (tok.toLowerCase() === "in" && !inQuote(text, off) && DE_NODE.test(text)) return; // «in» in deutschem Satz
+            { const qa = text.lastIndexOf("«", off), qb = text.lastIndexOf("»", off); if (qa > qb) { const qe = text.indexOf("»", qa), seg = qe < 0 ? text.slice(qa + 1) : text.slice(qa + 1, qe); if (DE_NODE.test(seg.replace(/\s*\([^)]*\)/g, ""))) return; } } // Wort in deutschem Zitat (Klammer-Hinweis zaehlt nicht)
+            if (/^[A-ZÄÖÜ]/.test(tok) && /[a-zäöüß,]\s$/.test(text.slice(0, off)) && !NAME_INFO[tok] && !sibIt.has(tok.toLowerCase())) return;
+          }
           if (/^\d+$/.test(tok)) { if (!inIt || tok.length > 3 || !window.italoNum) return; nameDe = window.italoNum(parseInt(tok, 10)) + " (Zahl)"; hits = [{ it: tok, de: nameDe }]; }
           else if (NAME_INFO[tok] && (inIt || inQuote(text, off) || (!deOnly && tok.length >= 4))) { nameDe = NAME_INFO[tok]; hits = [{ it: tok, de: nameDe }]; }
           else if (NAME_INFO[tok]) return; // Name in deutschem Text: nie punkten
           else {
             if (NAMES.has(tok)) return;
             // DEUTSCHE Woerter werden NIE gepunktet: ausserhalb von italienischem Text und «Anfuehrungszeichen» nur Woerter, die in keinem deutschen Feld vorkommen
-            if (deOnly && deOnly[tok.toLowerCase()] && !inQuote(text, off)) return;
+            const sibHit = inDeLine && sibIt.has(tok.toLowerCase());
+            if (deOnly && deOnly[tok.toLowerCase()] && !inQuote(text, off) && !sibHit) return;
             hits = lookupWord(tok);
             if (!hits) return;
-            const itCtx = inIt || (tok.length < 3 && itNeighbour(text, toks, ti));
+            const itCtx = inIt || sibHit || chunkIt || (tok.length < 3 && (itNeighbour(text, toks, ti) || inQuote(text, off) || !italoDeOnlySet()[tok.toLowerCase()]));
             if (!okToken(tok, hits, itCtx)) return;
-            if (!inIt && DE_AMBIG.has(tok.toLowerCase()) && DE_CTX.test(text)) return; // deutsches Wort, das auch italienisch vorkommt (z. B. «Alle»)
+            if (!inIt && !sibHit && !inQuote(text, off) && DE_AMBIG.has(tok.toLowerCase()) && DE_CTX.test(text)) return; // deutsches Wort, das auch italienisch vorkommt (z. B. «Alle»)
           }
           if (off > last) frag.appendChild(document.createTextNode(text.slice(last, off)));
           const sp = document.createElement("span");
@@ -9471,7 +9494,7 @@
       var cq = el("div", "ls-q"); cq.appendChild(el("span", "ls-it", cvd.inf)); cq.appendChild(el("span", "vde", cvd.de)); body.appendChild(cq);
       var cgrid = el("div", "ls-conj");
       t.ps.forEach(function (q, k) {
-        var row = el("div", "ls-crow"); row.appendChild(el("span", "ls-cl", PRON[q]));
+        var row = el("div", "ls-crow"); row.appendChild(el("span", "ls-cl ls-it", PRON[q]));
         var sl = el("span", "ls-slot" + (k === 0 ? " cur" : ""), "…"); cslots.push(sl); row.appendChild(sl); cgrid.appendChild(row);
       });
       body.appendChild(cgrid);
@@ -9519,7 +9542,7 @@
       var grid2 = el("div", "ls-conj"), ins = [];
       vd2.f.forEach(function (f, i) {
         if (f === null || persons.indexOf(i) === -1) return;
-        var row = el("label", "ls-crow"); row.appendChild(el("span", "ls-cl", PRON[i]));
+        var row = el("label", "ls-crow"); row.appendChild(el("span", "ls-cl ls-it", PRON[i]));
         var inp2 = el("input", "ls-in"); inp2.type = "text"; inp2.autocomplete = "off"; inp2.setAttribute("autocapitalize", "off"); inp2.spellcheck = false;
         inp2._i = i; ins.push(inp2); row.appendChild(inp2); grid2.appendChild(row);
         inp2.addEventListener("input", function () { if (!answered) check.disabled = !ins.some(function (x) { return x.value.trim(); }); });
