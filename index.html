@@ -825,7 +825,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-25-fix2";
-  const APP_VERSION = "2026-11-25-d"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-25-e"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -9284,8 +9284,8 @@
       var gl = el("div", "ls-glink");
       var ico = el("div", "gl-ico"); ico.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 19V5.5"/><path d="M9 8h6M9 12h6"/></svg>'; gl.appendChild(ico);
       gl.appendChild(hl("div", "ls-gt ls-it", "Prima gli esercizi di grammatica", "Zuerst die Grammatik-Übungen"));
-      var gb = el("button", "ls-btn gl-btn"); gb.type = "button"; gb.classList.remove("lk"); gb.classList.remove("ls-it");
-      gb.appendChild(el("span", "gl-main", "Vai a «" + (LS_IT[S.ls.id] ? LS_IT[S.ls.id][1] : topic.title) + "»"));
+      var gb = el("button", "ls-btn gl-btn"); gb.type = "button"; gb.classList.add("lk"); gb.classList.remove("ls-it");
+      gb.appendChild(el("span", "gl-main lk ls-it", "Vai a «" + (LS_IT[S.ls.id] ? LS_IT[S.ls.id][1] : topic.title) + "»"));
       gb.appendChild(el("span", "gl-sub", "Gehe zu «" + topic.title + "»"));
       gb.addEventListener("click", function () { window.italoGoGrammar(topic.id); });
       gl.appendChild(gb); card.appendChild(gl);
