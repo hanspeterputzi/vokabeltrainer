@@ -825,7 +825,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-25-fix2";
-  const APP_VERSION = "2026-11-25-e"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-26-a"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -6879,7 +6879,6 @@
   #lessonView .ls-glink .gl-btn::after { content: "\203A"; position: absolute; right: 16px; top: 50%; transform: translateY(-52%); font-size: 2rem; line-height: 1; font-weight: 700; color: var(--k-orange, #ea580c); }
   #lessonView .ls-glink .gl-btn:active { transform: translateY(3px); box-shadow: none; }
   #lessonView .ls-glink .gl-main { font-size: 1.12rem; font-weight: 800; }
-  #lessonView .ls-glink .gl-sub { font-size: .84rem; font-weight: 500; color: var(--k-muted, #666); }
   #lessonView .ls-btn.two { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; line-height: 1.25; text-align: center; }
   #lessonView .ls-btn.two .b-it { font-weight: 800; }
   #lessonView .ls-btn.two .b-de { font-size: .78rem; font-weight: 500; opacity: .88; }
@@ -8819,8 +8818,7 @@
       var ss = el("span", "ss"); ss.appendChild(el("span", "tag ls-it", tagOf(ls)));
       if (done) ss.appendChild(el("span", "cnt", " · " + countOf(ls.id) + "× geübt"));
       tx.appendChild(ss);
-      var gt_ = (window.italoGrammar || []).filter(function (g) { return g.id === ls.topic; })[0];
-      tx.appendChild(el("span", "dl", headDe(ls) + (gt_ ? " · " + gt_.title : "")));
+      tx.appendChild(el("span", "dl", headDe(ls)));
       if (cur) tx.appendChild(el("span", "go", done ? "Ripeti · Wiederholen" : "Andiamo! · Los geht's"));
       n.appendChild(tx);
       if (!lock) n.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".lw")) return; startLesson(i); });
@@ -9286,7 +9284,6 @@
       gl.appendChild(hl("div", "ls-gt ls-it", "Prima gli esercizi di grammatica", "Zuerst die Grammatik-Übungen"));
       var gb = el("button", "ls-btn gl-btn"); gb.type = "button"; gb.classList.add("lk"); gb.classList.remove("ls-it");
       gb.appendChild(el("span", "gl-main lk ls-it", "Vai a «" + (LS_IT[S.ls.id] ? LS_IT[S.ls.id][1] : topic.title) + "»"));
-      gb.appendChild(el("span", "gl-sub", "Gehe zu «" + topic.title + "»"));
       gb.addEventListener("click", function () { window.italoGoGrammar(topic.id); });
       gl.appendChild(gb); card.appendChild(gl);
     }
