@@ -825,7 +825,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-27-riflessivi";
-  const APP_VERSION = "2026-11-27-c"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-27-d"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -9881,10 +9881,10 @@
   #dictIdx span.up { color: #fff; background: var(--k-blue, #2563eb); border-radius: 8px; margin: 0 2px 3px; flex: 0 0 auto; padding: 5px 0; font-size: 13px; }
   #dictView.dict-idx #dictList { padding-right: 28px; }
   #dictList .dw { scroll-margin-top: 12px; }
-  /* Zweiter Buchstabe (vorerst nur P), bleibt mit dem Suchfeld oben stehen */
-  #dictSub { display: none; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 8px; padding-right: 24px; }
+  /* Zweiter Buchstabe (alle Buchstaben), bleibt mit dem Suchfeld oben stehen */
+  #dictSub { display: none; grid-template-columns: repeat(6, 1fr); gap: 5px; margin-top: 8px; padding-right: 24px; }
   #dictSub.on { display: grid; }
-  #dictSub button { min-height: 40px; padding: 0; border-radius: 12px; border: 1px solid var(--k-line, #d8deea); background: var(--k-card, #fff); color: var(--k-text, #12203a); font: inherit; font-size: 1rem; font-weight: 700; box-shadow: none; }
+  #dictSub button { min-width: 0; min-height: 38px; margin: 0; padding: 0; border-radius: 12px; border: 1px solid var(--k-line, #d8deea); background: var(--k-card, #fff); color: var(--k-text, #12203a); font: inherit; font-size: 1rem; font-weight: 700; box-shadow: none; }
   #dictSub button.active { background: var(--k-blue, #2563eb); border-color: transparent; color: #fff; }
   #dictSticky.sub-on #dictMic, #dictSticky.sub-on #dictDeepl { display: none; }
 </style>
@@ -9971,11 +9971,10 @@
     if (target.dataset.up) { hideSub(); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
     var l = target.dataset.l, el = l && first[l];
     if (!el) return;
-    if (SUB.indexOf(l) >= 0) { if (subLetter !== l) showSub(l); toEntry(el); }
-    else { hideSub(); el.scrollIntoView({ block: "start" }); }
+    if (subLetter !== l) showSub(l);
+    if (subLetter) toEntry(el); else el.scrollIntoView({ block: "start" });
   }
-  // Zweiter Buchstabe: nach Tipp auf einen Buchstaben aus SUB erscheinen Pa, Pe, ... Pr oben
-  var SUB = ["P"];
+  // Zweiter Buchstabe: nach Tipp auf einen Buchstaben erscheinen z. B. Pa, Pe, ... Pr oben
   var sub = document.createElement("div"); sub.id = "dictSub";
   var firstSub = {}, subLetter = "";
   function keyText(text) {
