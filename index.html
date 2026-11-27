@@ -825,7 +825,7 @@
   // Bei einer neuen Quelldatei diese Version hochzaehlen: laedt die App dann
   // einmalig neu mit SEED_WORDS, unabhaengig davon, was schon gespeichert war.
   const SEED_VERSION = "2026-11-27-riflessivi";
-  const APP_VERSION = "2026-11-27-b"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
+  const APP_VERSION = "2026-11-27-c"; // bei jeder Code-Aenderung hochzaehlen (Auto-Update)
 
   // Reihenfolge = Reihenfolge im Quelldokument (Italienisch_Vokabular_Italo),
   // dort bereits nach Wortarten sortiert. Jedes Wort traegt seine Wortart in "cat".
@@ -1860,6 +1860,7 @@
     const g = grpOfSel(name);
     return selName(cat, g && gl.indexOf(g) !== -1 ? g : gl[0]);
   }
+  window.italoSel = () => selectedCategory;
   function renderCategoryBar() {
     categoryBar.innerHTML = "";
     const names = CATEGORIES.slice();
@@ -9880,6 +9881,12 @@
   #dictIdx span.up { color: #fff; background: var(--k-blue, #2563eb); border-radius: 8px; margin: 0 2px 3px; flex: 0 0 auto; padding: 5px 0; font-size: 13px; }
   #dictView.dict-idx #dictList { padding-right: 28px; }
   #dictList .dw { scroll-margin-top: 12px; }
+  /* Zweiter Buchstabe (vorerst nur P), bleibt mit dem Suchfeld oben stehen */
+  #dictSub { display: none; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 8px; padding-right: 24px; }
+  #dictSub.on { display: grid; }
+  #dictSub button { min-height: 40px; padding: 0; border-radius: 12px; border: 1px solid var(--k-line, #d8deea); background: var(--k-card, #fff); color: var(--k-text, #12203a); font: inherit; font-size: 1rem; font-weight: 700; box-shadow: none; }
+  #dictSub button.active { background: var(--k-blue, #2563eb); border-color: transparent; color: #fff; }
+  #dictSticky.sub-on #dictMic, #dictSticky.sub-on #dictDeepl { display: none; }
 </style>
 <style>
   /* Navigation: vier Uebungs-Reiter in einer Leiste + eigener Woerterbuch-Knopf rechts */
@@ -9961,10 +9968,53 @@
 
   function go(target) {
     if (!target) return;
-    if (target.dataset.up) { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+    if (target.dataset.up) { hideSub(); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
     var l = target.dataset.l, el = l && first[l];
-    if (el) el.scrollIntoView({ block: "start" });
+    if (!el) return;
+    if (SUB.indexOf(l) >= 0) { if (subLetter !== l) showSub(l); toEntry(el); }
+    else { hideSub(); el.scrollIntoView({ block: "start" }); }
   }
+  // Zweiter Buchstabe: nach Tipp auf einen Buchstaben aus SUB erscheinen Pa, Pe, ... Pr oben
+  var SUB = ["P"];
+  var sub = document.createElement("div"); sub.id = "dictSub";
+  var firstSub = {}, subLetter = "";
+  function keyText(text) {
+    var de = view.dataset.dir === "de";
+    return fold((de ? function (x) { return x; } : stripArt)(String(text).replace(/^\s*\([^)]*\)\s*/, "").replace(/^[^A-Za-zÀ-ÿ]+/, "")));
+  }
+  function toEntry(el, smooth) {
+    var st = document.getElementById("dictSticky"), off = st ? st.offsetHeight + 18 : 12;
+    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - off, behavior: smooth ? "smooth" : "auto" });
+  }
+  function hideSub() {
+    subLetter = ""; sub.classList.remove("on"); sub.innerHTML = "";
+    var st = document.getElementById("dictSticky"); if (st) st.classList.remove("sub-on");
+  }
+  function showSub(l) {
+    var st = document.getElementById("dictSticky"); if (!st) return;
+    if (sub.parentNode !== st) st.appendChild(sub);
+    subLetter = l; sub.innerHTML = ""; firstSub = {};
+    var keys = [];
+    Array.prototype.forEach.call(list.querySelectorAll(".dw"), function (el) {
+      var d = el.querySelector(".dit"); if (!d) return;
+      var k = keyText(d.textContent).slice(0, 2);
+      if (k.charAt(0) !== l.toLowerCase() || !/^[a-z]{2}$/.test(k) || firstSub[k]) return;
+      firstSub[k] = el; keys.push(k);
+    });
+    if (!keys.length) { hideSub(); return; }
+    keys.sort().forEach(function (k) {
+      var b = document.createElement("button"); b.type = "button"; b.dataset.k = k; b.textContent = l + k.charAt(1); sub.appendChild(b);
+    });
+    sub.classList.add("on"); st.classList.add("sub-on");
+  }
+  sub.addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b || !firstSub[b.dataset.k]) return;
+    Array.prototype.forEach.call(sub.children, function (x) { x.classList.toggle("active", x === b); });
+    toEntry(firstSub[b.dataset.k]);
+  });
+  new MutationObserver(function () { if (!subLetter) return; if (inp.value.trim()) hideSub(); else showSub(subLetter); }).observe(list, { childList: true });
+  inp.addEventListener("input", function () { if (inp.value.trim()) hideSub(); });
+
   var down = false;
   bar.addEventListener("pointerdown", function (e) { down = true; try { bar.setPointerCapture(e.pointerId); } catch (x) {} go(document.elementFromPoint(e.clientX, e.clientY)); e.preventDefault(); });
   bar.addEventListener("pointermove", function (e) { if (!down) return; var t = document.elementFromPoint(e.clientX, e.clientY); if (t && t.dataset && t.dataset.l) go(t); });
@@ -10689,6 +10739,100 @@ h2 .ins-de, summary .ins-de, #gProgress .ins-de, #quizProgress .ins-de, #quizDir
     });
     _cache[key] = out; return out;
   };
+})();
+</script>
+<style>
+  #hvCard .hv-go { display: block; width: 100%; margin: 0 0 12px; padding: 12px; line-height: 1.25; }
+  #hvCard .hv-go small { display: block; font-size: .75rem; font-weight: 500; opacity: .85; }
+  #hvCard .hv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  #hvCard .hv-v { display: block; width: 100%; min-width: 0; margin: 0; padding: 7px 8px; border-radius: 14px; border: 1px solid var(--k-line, #d8deea); background: var(--k-card, #fff); color: var(--k-text, #12203a); font: inherit; line-height: 1.25; text-align: left; box-shadow: none; }
+  #hvCard .hv-v b { display: block; font-size: 1rem; }
+  #hvCard .hv-v span { display: block; font-size: .75rem; font-weight: 500; color: var(--k-muted, #5d6b85); }
+  #hvCard .hv-v.open { border: 2px solid var(--k-blue, #2563eb); padding: 6px 7px; }
+  #hvCard .hv-forms { grid-column: 1 / -1; padding: 6px 12px; border-radius: 14px; background: var(--k-bg, #eef2fa); }
+  #hvCard .hv-f { display: flex; align-items: center; gap: 8px; padding: 3px 0; }
+  #hvCard .hv-f i { flex: 0 0 62px; font-style: normal; font-weight: 600; font-size: .85rem; color: var(--k-muted, #5d6b85); }
+  #hvCard .hv-f em { flex: 1; min-width: 0; font-style: normal; font-weight: 700; }
+  #hvCard .hv-sp { flex: 0 0 34px; width: 34px; height: 34px; margin: 0; padding: 0; border-radius: 50%; border: 1px solid var(--k-line, #d8deea); background: var(--k-card, #fff); color: var(--k-blue, #2563eb); display: inline-flex; align-items: center; justify-content: center; box-shadow: none; }
+  #hvCard .hv-sp svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  #vocabView.hv-over #groupBar { display: none !important; }
+</style>
+<script>
+/* Uebersicht der Hauptverben vor der Uebung: alle Verben in zwei Spalten, Tipp zeigt die Konjugation */
+(function () {
+  "use strict";
+  var view = document.getElementById("vocabView"), catBar = document.getElementById("categoryBar"), quiz = document.getElementById("quizArea");
+  if (!view || !catBar || !quiz || !window.italoSel) return;
+  var quizCard = quiz.closest(".card");
+  var PRON = ["io", "tu", "lui/lei", "noi", "voi", "loro"];
+  var SPK = "<svg viewBox='0 0 24 24'><path d='M11 5 6 9H3v6h3l5 4z'/><path d='M15.5 8.5a5 5 0 0 1 0 7'/><path d='M18.5 5.5a9 9 0 0 1 0 13'/></svg>";
+  var started = false;
+  var card = document.createElement("div"); card.id = "hvCard"; card.className = "card";
+  card.innerHTML = "<h2><span class='lw' data-de='Hauptverben'>Verbi principali</span></h2><button type='button' class='hv-go'>Inizia l'esercizio<small>Übung starten</small></button><div class='hv-grid'></div>";
+  quizCard.parentNode.insertBefore(card, quizCard);
+  var grid = card.querySelector(".hv-grid");
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function verbs() {
+    var conj = window.italoConj || [];
+    return (window.italoWordsRef ? window.italoWordsRef() : []).filter(function (w) { return w.cat === "Hauptverben"; }).map(function (w) {
+      var it = String(w.it).replace(/\s*\(.*$/, "").replace(/\s*[:\/].*$/, "").trim(), de = String(w.de).replace(/\s*\([^)]*\)/g, ""), v;
+      if (/^sono nato/.test(w.it)) { it = "essere nato"; v = { f: ["sono nato/a", "sei nato/a", "è nato/a", "siamo nati/e", "siete nati/e", "sono nati/e"] }; de = "geboren sein"; }
+      else v = conj.filter(function (x) { return x.inf === it; })[0];
+      return { it: it, de: de, f: v ? v.f : null };
+    }).sort(function (a, b) { return a.it.localeCompare(b.it, "it"); });
+  }
+  function speak(text) {
+    try {
+      var ss = window.speechSynthesis; ss.cancel();
+      var u = new SpeechSynthesisUtterance(text); u.lang = "it-IT"; u.rate = 0.85;
+      var vs = ss.getVoices().filter(function (v) { return /^it/i.test(v.lang); }), v = vs.filter(function (x) { return x.localService; })[0] || vs[0];
+      if (v) u.voice = v;
+      ss.speak(u);
+    } catch (e) {}
+  }
+  function fill() {
+    grid.innerHTML = "";
+    verbs().forEach(function (v) {
+      var b = el("button", "hv-v"); b.type = "button"; b.appendChild(el("b", "", v.it)); b.appendChild(el("span", "", v.de)); b._v = v; grid.appendChild(b);
+    });
+  }
+  function toggle(b) {
+    var was = b.classList.contains("open"), old = grid.querySelector(".hv-forms");
+    if (old) old.remove();
+    Array.prototype.forEach.call(grid.querySelectorAll(".hv-v.open"), function (x) { x.classList.remove("open"); });
+    if (was || !b._v.f) return;
+    b.classList.add("open");
+    var box = el("div", "hv-forms");
+    b._v.f.forEach(function (f, i) {
+      if (f === null) return;
+      var row = el("div", "hv-f"); row.appendChild(el("i", "", PRON[i])); row.appendChild(el("em", "", f));
+      var s = el("button", "hv-sp"); s.type = "button"; s.innerHTML = SPK; s.setAttribute("aria-label", "Aussprache anhören");
+      s.dataset.s = (PRON[i].split("/")[0] + " " + String(f).replace(/\/[ae]\b/g, "")).trim(); row.appendChild(s); box.appendChild(row);
+    });
+    // unter die Zeile des angetippten Verbs (zwei Spalten)
+    var all = Array.prototype.slice.call(grid.querySelectorAll(".hv-v")), k = all.indexOf(b), last = all[Math.min(all.length - 1, k % 2 ? k : k + 1)];
+    grid.insertBefore(box, last.nextSibling);
+    var over = box.getBoundingClientRect().bottom - (window.innerHeight - 110);
+    if (over > 0) window.scrollBy({ top: Math.min(over, b.getBoundingClientRect().top - 12), behavior: "smooth" });
+  }
+  function sync() {
+    var on = !started && String(window.italoSel()).indexOf("Hauptverben") === 0;
+    var was = view.classList.contains("hv-over");
+    if (on && (!was || !grid.firstChild)) { fill(); }
+    view.classList.toggle("hv-over", on);
+    card.style.display = on ? "" : "none";
+    quizCard.style.display = on ? "none" : "";
+  }
+  card.addEventListener("click", function (e) {
+    var s = e.target.closest(".hv-sp"); if (s) { speak(s.dataset.s); return; }
+    var v = e.target.closest(".hv-v"); if (v) { toggle(v); return; }
+    if (e.target.closest(".hv-go")) { started = true; sync(); }
+  });
+  // Tipp auf eine Kategorie: die Uebersicht kommt wieder zuerst
+  catBar.addEventListener("click", function (e) { if (e.target.closest("button")) { started = false; setTimeout(sync, 0); } }, true);
+  new MutationObserver(sync).observe(catBar, { childList: true });
+  var today = document.getElementById("todayGo"); if (today) today.addEventListener("click", function () { setTimeout(sync, 0); });
+  sync();
 })();
 </script>
 <!-- HAUPTVERBEN END -->
